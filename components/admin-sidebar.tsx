@@ -30,7 +30,7 @@ import {
 const menuItems = [
   {
     title: "Dashboard",
-    href: "/admin",
+    href: "/",
     icon: LayoutDashboard,
     color: "text-blue-600 dark:text-blue-400",
     bgColor: "bg-blue-50 dark:bg-blue-900/20",
@@ -41,9 +41,9 @@ const menuItems = [
     color: "text-purple-600 dark:text-purple-400",
     bgColor: "bg-purple-50 dark:bg-purple-900/20",
     children: [
-      { title: "Danh sách Admin", href: "/admin/admins", icon: Users },
-      { title: "Vai trò & Quyền", href: "/admin/roles", icon: Shield },
-      { title: "Nhật ký hoạt động", href: "/admin/logs", icon: Activity },
+      { title: "Danh sách Admin", href: "/admins", icon: Users },
+      { title: "Vai trò & Quyền", href: "/roles", icon: Shield },
+      { title: "Nhật ký hoạt động", href: "/logs", icon: Activity },
     ],
   },
   {
@@ -52,8 +52,8 @@ const menuItems = [
     color: "text-gray-600 dark:text-gray-400",
     bgColor: "bg-gray-50 dark:bg-gray-900/20",
     children: [
-      { title: "Quốc gia", href: "/admin/countries", icon: Globe },
-      { title: "Cài đặt", href: "/admin/settings", icon: Settings },
+      { title: "Quốc gia", href: "/countries", icon: Globe },
+      { title: "Cài đặt", href: "/settings", icon: Settings },
     ],
   },
   {
@@ -62,9 +62,9 @@ const menuItems = [
     color: "text-green-600 dark:text-green-400",
     bgColor: "bg-green-50 dark:bg-green-900/20",
     children: [
-      { title: "Danh sách sản phẩm", href: "/admin/products", icon: Package },
-      { title: "Danh mục", href: "/admin/categories", icon: FileText },
-      { title: "Tags", href: "/admin/tags", icon: Tags },
+      { title: "Danh sách sản phẩm", href: "/products", icon: Package },
+      { title: "Danh mục", href: "/categories", icon: FileText },
+      { title: "Tags", href: "/tags", icon: Tags },
     ],
   },
   {
@@ -73,9 +73,9 @@ const menuItems = [
     color: "text-orange-600 dark:text-orange-400",
     bgColor: "bg-orange-50 dark:bg-orange-900/20",
     children: [
-      { title: "Template in", href: "/admin/print-templates", icon: FileText },
-      { title: "Chọn sản phẩm in", href: "/admin/print-select", icon: Printer },
-      { title: "Lịch sử in", href: "/admin/print-logs", icon: History },
+      { title: "Template in", href: "/print-templates", icon: FileText },
+      { title: "Chọn sản phẩm in", href: "/print-select", icon: Printer },
+      { title: "Lịch sử in", href: "/print-logs", icon: History },
     ],
   },
 ]

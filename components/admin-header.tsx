@@ -85,7 +85,7 @@ export function AdminHeader() {
         </DropdownMenu>
 
         {/* Notifications */}
-        <DropdownMenu>
+        {/* <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
               variant="ghost"
@@ -132,7 +132,7 @@ export function AdminHeader() {
               </div>
             </DropdownMenuItem>
           </DropdownMenuContent>
-        </DropdownMenu>
+        </DropdownMenu> */}
 
         {/* Settings */}
         <Button
