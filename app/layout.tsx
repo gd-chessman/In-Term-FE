@@ -28,7 +28,7 @@ export default function RootLayout({
   const [sidebarOpen, setSidebarOpen] = useState(false)
   
   // Check if current page is login
-  const isLoginPage = pathname === "/login" || pathname === "/forgot-password"
+  const isLoginPage = pathname === "/login" || pathname === "/forgot-password" || pathname === "/change-password"
 
   return (
     <html lang="en" suppressHydrationWarning>
