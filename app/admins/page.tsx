@@ -145,24 +145,24 @@ export default function AdminsPage() {
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-gray-900 via-purple-800 to-indigo-800 dark:from-gray-100 dark:via-purple-400 dark:to-indigo-400 bg-clip-text text-transparent">
-            Quản lý Admin
+            Quản lý người dùng
           </h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-2">Quản lý tài khoản admin và phân quyền</p>
+          <p className="text-gray-600 dark:text-gray-400 mt-2">Quản lý tài khoản người dùng và phân quyền</p>
         </div>
         <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
           <DialogTrigger asChild>
             <Button className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 dark:from-purple-500 dark:to-indigo-500 dark:hover:from-purple-600 dark:hover:to-indigo-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl">
               <Plus className="mr-2 h-4 w-4" />
-              Thêm Admin
+              Thêm người dùng
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[500px] bg-white dark:bg-gray-800 backdrop-blur-xl border-gray-200 dark:border-gray-700 shadow-2xl rounded-2xl">
             <DialogHeader>
               <DialogTitle className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-                Thêm Admin mới
+                Thêm người dùng mới
               </DialogTitle>
               <DialogDescription className="text-gray-600 dark:text-gray-400">
-                Tạo tài khoản admin mới cho hệ thống
+                Tạo tài khoản người dùng mới cho hệ thống
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-6 py-4">
@@ -249,7 +249,7 @@ export default function AdminsPage() {
             </div>
             <DialogFooter>
               <Button className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 dark:from-purple-500 dark:to-indigo-500 dark:hover:from-purple-600 dark:hover:to-indigo-600 text-white rounded-xl">
-                Tạo Admin
+                Tạo người dùng
               </Button>
             </DialogFooter>
           </DialogContent>

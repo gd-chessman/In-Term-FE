@@ -41,7 +41,7 @@ const menuItems = [
     color: "text-purple-600 dark:text-purple-400",
     bgColor: "bg-purple-50 dark:bg-purple-900/20",
     children: [
-      { title: "Danh sách Admin", href: "/admins", icon: Users },
+      { title: "Danh sách người dùng", href: "/admins", icon: Users },
       { title: "Vai trò & Quyền", href: "/roles", icon: Shield },
       { title: "Nhật ký hoạt động", href: "/logs", icon: Activity },
     ],
