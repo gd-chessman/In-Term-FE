@@ -158,7 +158,7 @@ export function AdminSidebar({ onClose }: AdminSidebarProps) {
                   {expandedItem === item.title && (
                     <div
                       className={cn(
-                        "ml-4 lg:ml-6 mt-1 lg:mt-2 space-y-1 animate-in slide-in-from-top-2 duration-300 relative",
+                        "ml-2 mt-1 lg:mt-2 space-y-1 animate-in slide-in-from-top-2 duration-300 relative",
                         settings.compactMode && "ml-3 mt-1 space-y-0.5",
                       )}
                     >
