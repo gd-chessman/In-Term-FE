@@ -170,7 +170,7 @@ export default function PrintSelectPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
   const [selectedItems, setSelectedItems] = useState<number[]>([])
-  const [viewMode, setViewMode] = useState<"cards" | "table">("cards")
+  const [viewMode, setViewMode] = useState<"cards" | "table">("table")
   const [selectedCountry, setSelectedCountry] = useState("all")
   const [selectedType, setSelectedType] = useState("all")
   const [selectedStatus, setSelectedStatus] = useState("all")
@@ -334,7 +334,7 @@ export default function PrintSelectPage() {
               variant={viewMode === "cards" ? "default" : "ghost"}
               size="sm"
               onClick={() => setViewMode("cards")}
-              className={viewMode === "cards" ? "bg-white shadow-sm" : ""}
+              className={viewMode === "cards" ? "shadow-sm" : ""}
             >
               <Grid3X3 className="h-4 w-4" />
             </Button>
@@ -342,7 +342,7 @@ export default function PrintSelectPage() {
               variant={viewMode === "table" ? "default" : "ghost"}
               size="sm"
               onClick={() => setViewMode("table")}
-              className={viewMode === "table" ? "bg-white shadow-sm" : ""}
+              className={viewMode === "table" ? "shadow-sm" : ""}
             >
               <List className="h-4 w-4" />
             </Button>
