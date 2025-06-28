@@ -10,9 +10,9 @@ export const login = async (item: any) => {
     }
 }
 
-export const getProfile = async () => {
+export const getUserMe = async () => {
     try {
-        const temp = await axiosClient.get(`admins/profile`);
+        const temp = await axiosClient.get(`admins/me`);
         return temp.data.data;
     } catch (e) {
         return {};

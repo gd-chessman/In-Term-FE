@@ -15,12 +15,12 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { useTheme } from "@/contexts/theme-context"
 import { useQuery } from "@tanstack/react-query"
-import { getProfile } from "@/services/AdminService"
+import { getUserMe } from "@/services/AdminService"
 
 export function AdminHeader() {
-  const { data: profile } = useQuery({
-    queryKey: ["profile"],
-    queryFn: getProfile,
+  const { data: userMe } = useQuery({
+    queryKey: ["userMe"],
+    queryFn: getUserMe,
   })
   const { settings, updateTheme } = useTheme()
 
@@ -33,6 +33,16 @@ export function AdminHeader() {
       default:
         return <Monitor className="h-4 w-4 text-gray-600 dark:text-zinc-400" />
     }
+  }
+
+  // Get initials from admin_fullname
+  const getInitials = (fullname: string) => {
+    return fullname
+      .split(' ')
+      .map(name => name.charAt(0))
+      .join('')
+      .toUpperCase()
+      .slice(0, 2)
   }
 
   return (
@@ -157,9 +167,9 @@ export function AdminHeader() {
               className="relative h-10 w-10 rounded-full hover:bg-gray-100 dark:hover:bg-zinc-800 transition-all duration-200"
             >
               <Avatar className="h-9 w-9 ring-2 ring-gray-200 dark:ring-zinc-700 shadow-md">
-                <AvatarImage src="/placeholder.svg?height=36&width=36" />
+                <AvatarImage src="" alt="" />
                 <AvatarFallback className="bg-gradient-to-r from-blue-500 to-blue-700 text-white text-sm font-semibold">
-                  AU
+                  {userMe?.admin_fullname ? getInitials(userMe.admin_fullname) : ""}
                 </AvatarFallback>
               </Avatar>
             </Button>
@@ -171,8 +181,12 @@ export function AdminHeader() {
           >
             <DropdownMenuLabel className="font-normal p-4">
               <div className="flex flex-col space-y-1">
-                <p className="text-sm font-semibold leading-none text-gray-900 dark:text-zinc-100">Admin User</p>
-                <p className="text-xs leading-none text-gray-500 dark:text-zinc-400">admin@example.com</p>
+                <p className="text-sm font-semibold leading-none text-gray-900 dark:text-zinc-100">
+                  {userMe?.admin_fullname || "Admin User"}
+                </p>
+                <p className="text-xs leading-none text-gray-500 dark:text-zinc-400">
+                  {userMe?.admin_email || "admin@example.com"}
+                </p>
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator className="bg-gray-200 dark:bg-zinc-800" />
