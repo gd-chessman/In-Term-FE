@@ -11,6 +11,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Eye, EyeOff, Lock, Mail, User, AlertCircle, Sparkles } from "lucide-react"
 import { useTheme } from "@/contexts/theme-context"
+import { login } from "@/services/AdminService"
 
 export default function LoginPage() {
   const router = useRouter()
@@ -36,20 +37,22 @@ export default function LoginPage() {
     setIsLoading(true)
     setError("")
 
-    // Simulate API call
     try {
-      await new Promise(resolve => setTimeout(resolve, 1500))
+      // Call the actual login API
+      const response = await login({
+        username: formData.username,
+        password: formData.password
+      })
       
-      // Mock validation
-      if (formData.username === "admin" && formData.password === "admin123") {
-        // Store auth token
-        localStorage.setItem("admin-auth-token", "mock-jwt-token")
-        localStorage.setItem("admin-user", JSON.stringify({
-          id: 1,
-          username: "admin",
-          email: "admin@example.com",
-          fullname: "Admin User",
-          role: "super_admin"
+      // Store auth token and user data from response
+      if (response.data) {
+        localStorage.setItem("admin-auth-token", response.data.token || "auth-token")
+        localStorage.setItem("admin-user", JSON.stringify(response.data.user || {
+          id: response.data.id,
+          username: formData.username,
+          email: response.data.email,
+          fullname: response.data.fullname,
+          role: response.data.role
         }))
         
         // Redirect to dashboard
@@ -57,8 +60,15 @@ export default function LoginPage() {
       } else {
         setError("Tên đăng nhập hoặc mật khẩu không đúng")
       }
-    } catch (err) {
-      setError("Đã xảy ra lỗi. Vui lòng thử lại.")
+    } catch (err: any) {
+      // Handle different types of errors
+      if (err.response?.data?.message) {
+        setError(err.response.data.message)
+      } else if (err.message) {
+        setError(err.message)
+      } else {
+        setError("Đã xảy ra lỗi. Vui lòng thử lại.")
+      }
     } finally {
       setIsLoading(false)
     }

@@ -14,8 +14,14 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Badge } from "@/components/ui/badge"
 import { useTheme } from "@/contexts/theme-context"
+import { useQuery } from "@tanstack/react-query"
+import { getProfile } from "@/services/AdminService"
 
 export function AdminHeader() {
+  const { data: profile } = useQuery({
+    queryKey: ["profile"],
+    queryFn: getProfile,
+  })
   const { settings, updateTheme } = useTheme()
 
   const getThemeIcon = () => {
