@@ -37,122 +37,69 @@ import {
   TrendingUp,
   BarChart3,
 } from "lucide-react"
-
-// Mock data
-const categories = [
-  {
-    category_id: 1,
-    category_name: "Điện thoại",
-    parent_id: null,
-    created_at: "2024-01-01 00:00:00",
-    product_count: 450,
-    icon: "📱",
-    color: "from-blue-500 to-cyan-500",
-    children: [
-      {
-        category_id: 2,
-        category_name: "iPhone",
-        parent_id: 1,
-        created_at: "2024-01-01 00:00:00",
-        product_count: 180,
-        icon: "🍎",
-      },
-      {
-        category_id: 3,
-        category_name: "Samsung",
-        parent_id: 1,
-        created_at: "2024-01-01 00:00:00",
-        product_count: 150,
-        icon: "📱",
-      },
-      {
-        category_id: 4,
-        category_name: "Xiaomi",
-        parent_id: 1,
-        created_at: "2024-01-01 00:00:00",
-        product_count: 120,
-        icon: "📱",
-      },
-    ],
-  },
-  {
-    category_id: 5,
-    category_name: "Laptop",
-    parent_id: null,
-    created_at: "2024-01-01 00:00:00",
-    product_count: 320,
-    icon: "💻",
-    color: "from-green-500 to-emerald-500",
-    children: [
-      {
-        category_id: 6,
-        category_name: "MacBook",
-        parent_id: 5,
-        created_at: "2024-01-01 00:00:00",
-        product_count: 120,
-        icon: "🍎",
-      },
-      {
-        category_id: 7,
-        category_name: "Dell",
-        parent_id: 5,
-        created_at: "2024-01-01 00:00:00",
-        product_count: 100,
-        icon: "💻",
-      },
-      {
-        category_id: 8,
-        category_name: "HP",
-        parent_id: 5,
-        created_at: "2024-01-01 00:00:00",
-        product_count: 100,
-        icon: "💻",
-      },
-    ],
-  },
-  {
-    category_id: 9,
-    category_name: "Tablet",
-    parent_id: null,
-    created_at: "2024-01-01 00:00:00",
-    product_count: 180,
-    icon: "📱",
-    color: "from-purple-500 to-violet-500",
-    children: [
-      {
-        category_id: 10,
-        category_name: "iPad",
-        parent_id: 9,
-        created_at: "2024-01-01 00:00:00",
-        product_count: 120,
-        icon: "🍎",
-      },
-      {
-        category_id: 11,
-        category_name: "Samsung Tab",
-        parent_id: 9,
-        created_at: "2024-01-01 00:00:00",
-        product_count: 60,
-        icon: "📱",
-      },
-    ],
-  },
-  {
-    category_id: 12,
-    category_name: "Phụ kiện",
-    parent_id: null,
-    created_at: "2024-01-01 00:00:00",
-    product_count: 280,
-    icon: "🎧",
-    color: "from-orange-500 to-red-500",
-    children: [],
-  },
-]
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
+import { getCategoriesTree, createCategory } from "@/services/CategoryService"
+import { toast } from "sonner"
 
 export default function CategoriesPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
-  const [expandedCategories, setExpandedCategories] = useState<number[]>([1, 5, 9])
+  const [expandedCategories, setExpandedCategories] = useState<number[]>([])
+  const [formData, setFormData] = useState({
+    category_name: "",
+    parent_id: "none"
+  })
+
+  const queryClient = useQueryClient()
+
+  // Fetch categories data
+  const { data: categoriesTree = [], isLoading, error } = useQuery({
+    queryKey: ["categories-tree"],
+    queryFn: getCategoriesTree,
+  })
+
+  // Create category mutation
+  const createCategoryMutation = useMutation({
+    mutationFn: createCategory,
+    onSuccess: () => {
+      toast.success("Tạo danh mục thành công!")
+      queryClient.invalidateQueries({ queryKey: ["categories-tree"] })
+      setIsCreateDialogOpen(false)
+      setFormData({ category_name: "", parent_id: "none" })
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || "Có lỗi xảy ra khi tạo danh mục")
+    }
+  })
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target
+    setFormData(prev => ({ ...prev, [name]: value }))
+  }
+
+  const handleParentIdChange = (value: string) => {
+    setFormData(prev => ({ ...prev, parent_id: value }))
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    if (!formData.category_name.trim()) {
+      toast.error("Vui lòng nhập tên danh mục")
+      return
+    }
+
+    const payload: { category_name: string; parent_id?: number } = {
+      category_name: formData.category_name.trim()
+    }
+
+    // Handle parent_id
+    if (formData.parent_id !== "none") {
+      payload.parent_id = parseInt(formData.parent_id)
+    }
+
+    createCategoryMutation.mutate(payload)
+  }
 
   const toggleExpanded = (categoryId: number) => {
     setExpandedCategories((prev) =>
@@ -162,15 +109,62 @@ export default function CategoriesPage() {
 
   const flattenCategories = () => {
     const result: any[] = []
-    categories.forEach((category) => {
+    categoriesTree.forEach((category: any) => {
       result.push({ ...category, level: 0 })
       if (expandedCategories.includes(category.category_id) && category.children) {
-        category.children.forEach((child) => {
+        category.children.forEach((child: any) => {
           result.push({ ...child, level: 1 })
         })
       }
     })
     return result
+  }
+
+  // Calculate stats from real data
+  const totalCategories = categoriesTree.length + categoriesTree.reduce((sum: number, c: any) => sum + (c.children?.length || 0), 0)
+  const rootCategories = categoriesTree.length
+  const childCategories = categoriesTree.reduce((sum: number, c: any) => sum + (c.children?.length || 0), 0)
+
+  if (isLoading) {
+    return (
+      <div className="space-y-8">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-slate-900 via-green-800 to-emerald-800 bg-clip-text text-transparent">
+              Quản lý Danh mục
+            </h1>
+            <p className="text-slate-600 mt-2">Đang tải dữ liệu...</p>
+          </div>
+        </div>
+        <div className="grid gap-6 md:grid-cols-4">
+          {[1, 2, 3, 4].map((i) => (
+            <Card key={i} className="animate-pulse">
+              <CardHeader>
+                <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+              </CardHeader>
+              <CardContent>
+                <div className="h-8 bg-gray-200 rounded w-1/2"></div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="space-y-8">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-slate-900 via-green-800 to-emerald-800 bg-clip-text text-transparent">
+              Quản lý Danh mục
+            </h1>
+            <p className="text-red-600 mt-2">Có lỗi xảy ra khi tải dữ liệu</p>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -195,40 +189,66 @@ export default function CategoriesPage() {
               <DialogTitle className="text-xl font-semibold text-slate-900">Thêm Danh mục mới</DialogTitle>
               <DialogDescription className="text-slate-600">Tạo danh mục sản phẩm mới</DialogDescription>
             </DialogHeader>
-            <div className="grid gap-6 py-4">
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="category_name" className="text-right font-medium text-slate-700">
-                  Tên danh mục
-                </Label>
-                <Input
-                  id="category_name"
-                  className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100"
-                />
+            <form onSubmit={handleSubmit}>
+              <div className="grid gap-6 py-4">
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="category_name" className="text-right font-medium text-slate-700">
+                    Tên danh mục
+                  </Label>
+                  <Input
+                    id="category_name"
+                    name="category_name"
+                    value={formData.category_name}
+                    onChange={handleInputChange}
+                    className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100"
+                    placeholder="Nhập tên danh mục..."
+                    required
+                  />
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="parent_id" className="text-right font-medium text-slate-700">
+                    Danh mục cha
+                  </Label>
+                  <Select value={formData.parent_id} onValueChange={handleParentIdChange}>
+                    <SelectTrigger className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100">
+                      <SelectValue placeholder="Chọn danh mục cha (tùy chọn)" />
+                    </SelectTrigger>
+                    <SelectContent className="rounded-xl border-slate-200 shadow-xl">
+                      <SelectItem value="none">📁 Không có danh mục cha (Danh mục gốc)</SelectItem>
+                      {categoriesTree.map((category: any) => (
+                        <SelectItem key={category.category_id} value={category.category_id.toString()}>
+                          📁 {category.category_name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="parent_id" className="text-right font-medium text-slate-700">
-                  Danh mục cha
-                </Label>
-                <Select>
-                  <SelectTrigger className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100">
-                    <SelectValue placeholder="Chọn danh mục cha (tùy chọn)" />
-                  </SelectTrigger>
-                  <SelectContent className="rounded-xl border-slate-200 shadow-xl">
-                    <SelectItem value="none">Không có danh mục cha</SelectItem>
-                    {categories.map((category) => (
-                      <SelectItem key={category.category_id} value={category.category_id.toString()}>
-                        {category.icon} {category.category_name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            <DialogFooter>
-              <Button className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white rounded-xl">
-                Tạo Danh mục
-              </Button>
-            </DialogFooter>
+              <DialogFooter>
+                <Button 
+                  type="button"
+                  variant="outline" 
+                  onClick={() => setIsCreateDialogOpen(false)}
+                  className="rounded-xl"
+                >
+                  Hủy
+                </Button>
+                <Button 
+                  type="submit"
+                  disabled={createCategoryMutation.isPending}
+                  className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white rounded-xl"
+                >
+                  {createCategoryMutation.isPending ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
+                      Đang tạo...
+                    </>
+                  ) : (
+                    "Tạo Danh mục"
+                  )}
+                </Button>
+              </DialogFooter>
+            </form>
           </DialogContent>
         </Dialog>
       </div>
@@ -244,12 +264,10 @@ export default function CategoriesPage() {
             </div>
           </CardHeader>
           <CardContent className="relative">
-            <div className="text-3xl font-bold text-slate-900">
-              {categories.length + categories.reduce((sum, c) => sum + c.children.length, 0)}
-            </div>
+            <div className="text-3xl font-bold text-slate-900">{totalCategories}</div>
             <div className="flex items-center text-xs text-green-600 mt-2">
               <TrendingUp className="h-3 w-3 mr-1" />
-              {categories.length} danh mục gốc
+              {rootCategories} danh mục gốc
             </div>
           </CardContent>
         </Card>
@@ -263,7 +281,7 @@ export default function CategoriesPage() {
             </div>
           </CardHeader>
           <CardContent className="relative">
-            <div className="text-3xl font-bold text-slate-900">{categories.length}</div>
+            <div className="text-3xl font-bold text-slate-900">{rootCategories}</div>
             <p className="text-xs text-blue-600 mt-1">Cấp độ cao nhất</p>
           </CardContent>
         </Card>
@@ -277,9 +295,7 @@ export default function CategoriesPage() {
             </div>
           </CardHeader>
           <CardContent className="relative">
-            <div className="text-3xl font-bold text-slate-900">
-              {categories.reduce((sum, c) => sum + c.children.length, 0)}
-            </div>
+            <div className="text-3xl font-bold text-slate-900">{childCategories}</div>
             <p className="text-xs text-purple-600 mt-1">Cấp độ 2</p>
           </CardContent>
         </Card>
@@ -293,31 +309,27 @@ export default function CategoriesPage() {
             </div>
           </CardHeader>
           <CardContent className="relative">
-            <div className="text-3xl font-bold text-slate-900">
-              {categories.reduce((sum, c) => sum + c.product_count, 0).toLocaleString()}
-            </div>
-            <p className="text-xs text-orange-600 mt-1">Trên tất cả danh mục</p>
+            <div className="text-3xl font-bold text-slate-900">-</div>
+            <p className="text-xs text-orange-600 mt-1">Chưa có dữ liệu</p>
           </CardContent>
         </Card>
       </div>
 
       {/* Categories Grid */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-        {categories.map((category) => (
+        {categoriesTree.map((category: any) => (
           <Card
             key={category.category_id}
             className="relative overflow-hidden bg-white/70 backdrop-blur-sm border-slate-200/60 hover:shadow-xl transition-all duration-300 group hover:-translate-y-1 rounded-xl"
           >
-            <div
-              className={`absolute top-0 right-0 w-20 h-20 bg-gradient-to-br ${category.color} opacity-10 rounded-full -mr-10 -mt-10`}
-            ></div>
+            <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-blue-500 to-cyan-500 opacity-10 rounded-full -mr-10 -mt-10"></div>
             <CardHeader className="pb-3 relative">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
-                  <div className="text-3xl">{category.icon}</div>
+                  <div className="text-3xl">📁</div>
                   <div>
                     <h3 className="text-lg font-semibold text-slate-900">{category.category_name}</h3>
-                    <p className="text-sm text-slate-600">{category.children.length} danh mục con</p>
+                    <p className="text-sm text-slate-600">{category.children?.length || 0} danh mục con</p>
                   </div>
                 </div>
                 <DropdownMenu>
@@ -352,13 +364,13 @@ export default function CategoriesPage() {
             <CardContent>
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-slate-600">Sản phẩm:</span>
-                  <Badge className={`bg-gradient-to-r ${category.color} text-white border-0 shadow-lg`}>
-                    {category.product_count}
+                  <span className="text-sm text-slate-600">Danh mục con:</span>
+                  <Badge className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white border-0 shadow-lg">
+                    {category.children?.length || 0}
                   </Badge>
                 </div>
                 <div className="text-xs text-slate-500 pt-2 border-t border-slate-100">
-                  Tạo: {new Date(category.created_at).toLocaleDateString("vi-VN")}
+                  ID: {category.category_id}
                 </div>
               </div>
             </CardContent>
@@ -395,13 +407,13 @@ export default function CategoriesPage() {
             <TableHeader>
               <TableRow className="border-slate-100 hover:bg-slate-50/50">
                 <TableHead className="text-slate-600 font-semibold">Danh mục</TableHead>
-                <TableHead className="text-slate-600 font-semibold">Số sản phẩm</TableHead>
-                <TableHead className="text-slate-600 font-semibold">Ngày tạo</TableHead>
+                <TableHead className="text-slate-600 font-semibold">Danh mục con</TableHead>
+                <TableHead className="text-slate-600 font-semibold">ID</TableHead>
                 <TableHead className="text-right text-slate-600 font-semibold">Thao tác</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {flattenCategories().map((category) => (
+              {flattenCategories().map((category: any) => (
                 <TableRow key={category.category_id} className="hover:bg-slate-50/80 transition-colors duration-200">
                   <TableCell>
                     <div className={`flex items-center ${category.level > 0 ? "ml-6" : ""}`}>
@@ -425,7 +437,7 @@ export default function CategoriesPage() {
                         </div>
                       )}
                       <div className="flex items-center space-x-2">
-                        <span className="text-lg">{category.icon}</span>
+                        <span className="text-lg">📁</span>
                         <span className={category.level === 0 ? "font-semibold text-slate-900" : "text-slate-600"}>
                           {category.category_name}
                         </span>
@@ -435,17 +447,17 @@ export default function CategoriesPage() {
                   <TableCell>
                     <Badge
                       className={`${
-                        category.level === 0 && category.color
-                          ? `bg-gradient-to-r ${category.color} text-white border-0 shadow-lg`
+                        category.level === 0 && category.children && category.children.length > 0
+                          ? "bg-gradient-to-r from-blue-500 to-cyan-500 text-white border-0 shadow-lg"
                           : "bg-gradient-to-r from-gray-100 to-slate-100 text-gray-700 border-0"
                       }`}
                     >
-                      {category.product_count}
+                      {category.children?.length || 0}
                     </Badge>
                   </TableCell>
                   <TableCell>
                     <div className="text-sm text-slate-600">
-                      {new Date(category.created_at).toLocaleDateString("vi-VN")}
+                      {category.category_id}
                     </div>
                   </TableCell>
                   <TableCell className="text-right">
