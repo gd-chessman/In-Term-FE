@@ -1,3 +1,4 @@
+import { useAuth } from "@/hooks/useAuth";
 import axiosClient from "@/utils/axiosClient";
 
 
@@ -13,6 +14,7 @@ export const login = async (item: any) => {
 export const logout = async () => {
     try {
         const temp = await axiosClient.post(`admins/logout`);
+        useAuth.getState().logout();
         return temp.data;
     } catch (e) {
         throw e;
@@ -22,8 +24,10 @@ export const logout = async () => {
 export const getUserMe = async () => {
     try {
         const temp = await axiosClient.get(`admins/me`);
+        useAuth.getState().login();
         return temp.data.data;
     } catch (e) {
+        useAuth.getState().logout();
         return {};
     }
 }

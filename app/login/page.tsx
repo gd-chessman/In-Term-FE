@@ -10,12 +10,15 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Checkbox } from "@/components/ui/checkbox"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Eye, EyeOff, Lock, Mail, User, AlertCircle, Sparkles } from "lucide-react"
-import { useTheme } from "@/contexts/theme-context"
-import { login } from "@/services/AdminService"
+import { getUserMe, login } from "@/services/AdminService"
+import { useQuery } from "@tanstack/react-query"
 
 export default function LoginPage() {
+  const { refetch: refetchUserMe } = useQuery({
+    queryKey: ["userMe"],
+    queryFn: getUserMe,
+  })
   const router = useRouter()
-  const { settings } = useTheme()
   const [showPassword, setShowPassword] = useState(false)
   const [rememberMe, setRememberMe] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -44,22 +47,9 @@ export default function LoginPage() {
         password: formData.password
       })
       
-      // Store auth token and user data from response
-      if (response.data) {
-        localStorage.setItem("admin-auth-token", response.data.token || "auth-token")
-        localStorage.setItem("admin-user", JSON.stringify(response.data.user || {
-          id: response.data.id,
-          username: formData.username,
-          email: response.data.email,
-          fullname: response.data.fullname,
-          role: response.data.role
-        }))
-        
-        // Redirect to dashboard
-        router.push("/")
-      } else {
-        setError("Tên đăng nhập hoặc mật khẩu không đúng")
-      }
+      await refetchUserMe();  
+      router.push("/")
+  
     } catch (err: any) {
       // Handle different types of errors
       if (err.response?.data?.message) {

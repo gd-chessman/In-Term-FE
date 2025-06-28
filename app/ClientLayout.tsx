@@ -1,7 +1,7 @@
 "use client";
 
-import React from "react";
-import { usePathname } from "next/navigation";
+import React, { useEffect } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import { AdminSidebar } from "@/components/admin-sidebar";
 import { AdminHeader } from "@/components/admin-header";
@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "@/contexts/theme-context";
+import { useAuth } from "@/hooks/useAuth";
 
 interface ClientLayoutProps {
   children: React.ReactNode;
@@ -27,6 +28,7 @@ export function ClientLayout({ children }: ClientLayoutProps) {
   );
 
   const pathname = usePathname();
+  const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // Check if current page is login
@@ -34,6 +36,19 @@ export function ClientLayout({ children }: ClientLayoutProps) {
     pathname === "/login" ||
     pathname === "/forgot-password" ||
     pathname === "/change-password";
+
+  const { isAuth } = useAuth();
+
+  // Handle authentication redirects
+  useEffect(() => {
+    if (!isAuth && !isLoginPage) {
+      router.push("/login");
+    }
+    // Nếu đã login mà đang ở trang login thì chuyển hướng đến /dashboard
+    if (isAuth && isLoginPage) {
+      router.push("/"); // hoặc trang bạn muốn mặc định sau khi login
+    }
+  }, [isAuth, isLoginPage, router]);
 
   return (
     <QueryClientProvider client={queryClient}>
