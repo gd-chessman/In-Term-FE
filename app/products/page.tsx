@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -25,6 +26,12 @@ import {
 } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Textarea } from "@/components/ui/textarea"
+import { Checkbox } from "@/components/ui/checkbox"
+import { useToast } from "@/hooks/use-toast"
+import { getProducts, createProduct, deleteProduct } from "@/services/ProductService"
+import { getCategoriesTree } from "@/services/CategoryService"
+import { getTags } from "@/services/TagService"
 import {
   Plus,
   Search,
@@ -37,55 +44,94 @@ import {
   TrendingUp,
   ShoppingCart,
   Star,
+  Loader2,
 } from "lucide-react"
-
-// Mock data
-const products = [
-  {
-    product_id: 1,
-    product_name: "iPhone 15 Pro Max",
-    product_code: "IP15PM001",
-    price: 29990000,
-    product_status: "active",
-    category_name: "Điện thoại",
-    created_at: "2024-01-15 10:30:00",
-    tags: ["Apple", "Flagship", "5G"],
-    image: "/placeholder.svg?height=60&width=60",
-  },
-  {
-    product_id: 2,
-    product_name: "Samsung Galaxy S24 Ultra",
-    product_code: "SGS24U001",
-    price: 31990000,
-    product_status: "active",
-    category_name: "Điện thoại",
-    created_at: "2024-01-14 15:20:00",
-    tags: ["Samsung", "Android", "Camera"],
-    image: "/placeholder.svg?height=60&width=60",
-  },
-  {
-    product_id: 3,
-    product_name: "MacBook Pro M3",
-    product_code: "MBP14M3001",
-    price: 52990000,
-    product_status: "inactive",
-    category_name: "Laptop",
-    created_at: "2024-01-13 09:45:00",
-    tags: ["Apple", "M3", "Professional"],
-    image: "/placeholder.svg?height=60&width=60",
-  },
-]
-
-const categories = [
-  { category_id: 1, category_name: "Điện thoại" },
-  { category_id: 2, category_name: "Laptop" },
-  { category_id: 3, category_name: "Tablet" },
-  { category_id: 4, category_name: "Phụ kiện" },
-]
 
 export default function ProductsPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
+  const [selectedCategory, setSelectedCategory] = useState("all")
+  const [selectedStatus, setSelectedStatus] = useState("all")
+  const { toast } = useToast()
+  const queryClient = useQueryClient()
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL
+
+  // Fetch products
+  const {
+    data: products = [],
+    isLoading: isLoadingProducts,
+    error: productsError,
+  } = useQuery({
+    queryKey: ["products"],
+    queryFn: getProducts,
+  })
+
+  // Fetch categories for form and filter
+  const {
+    data: categories = [],
+    isLoading: isLoadingCategories,
+  } = useQuery({
+    queryKey: ["categories-tree"],
+    queryFn: getCategoriesTree,
+  })
+
+  // Fetch tags for tag selection
+  const {
+    data: tags = [],
+    isLoading: isLoadingTags,
+  } = useQuery({
+    queryKey: ["tags"],
+    queryFn: getTags,
+  })
+
+  // Create product mutation
+  const createProductMutation = useMutation({
+    mutationFn: createProduct,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["products"] })
+      setIsCreateDialogOpen(false)
+      toast({
+        title: "Thành công",
+        description: "Sản phẩm đã được tạo thành công",
+      })
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Lỗi",
+        description: error.response?.data?.message || "Có lỗi xảy ra khi tạo sản phẩm",
+        variant: "destructive",
+      })
+    },
+  })
+
+  // Delete product mutation
+  const deleteProductMutation = useMutation({
+    mutationFn: deleteProduct,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["products"] })
+      toast({
+        title: "Thành công",
+        description: "Sản phẩm đã được xóa thành công",
+      })
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Lỗi",
+        description: error.response?.data?.message || "Có lỗi xảy ra khi xóa sản phẩm",
+        variant: "destructive",
+      })
+    },
+  })
+
+  // Filter products based on search and filters
+  const filteredProducts = products.filter((product: any) => {
+    const matchesSearch = product.product_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         product.product_code.toLowerCase().includes(searchTerm.toLowerCase())
+    const matchesCategory = selectedCategory === "all" || product.category_id?.toString() === selectedCategory
+    const matchesStatus = selectedStatus === "all" || product.product_status === selectedStatus
+    
+    return matchesSearch && matchesCategory && matchesStatus
+  })
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -113,6 +159,65 @@ export default function ProductsPage() {
     }).format(price)
   }
 
+  const handleCreateProduct = (formData: FormData) => {
+    const productData: any = {
+      product_name: formData.get("product_name") as string,
+      product_code: formData.get("product_code") as string,
+      product_description: formData.get("product_description") as string,
+      category_id: Number(formData.get("category_id")),
+      price: Number(formData.get("price")),
+      product_status: formData.get("product_status") as string || "active",
+      tagIds: formData.getAll("tagIds").map(id => Number(id)),
+    }
+    
+    // Handle image file
+    const imageFile = formData.get("image") as File
+    if (imageFile && imageFile.size > 0) {
+      productData.image = imageFile
+    }
+    
+    createProductMutation.mutate(productData)
+  }
+
+  const handleDeleteProduct = (productId: number) => {
+    if (confirm("Bạn có chắc chắn muốn xóa sản phẩm này?")) {
+      deleteProductMutation.mutate(productId)
+    }
+  }
+
+  // Flatten categories for select options
+  const flattenedCategories = categories.reduce((acc: any[], category: any) => {
+    acc.push(category)
+    if (category.children) {
+      acc.push(...category.children)
+    }
+    return acc
+  }, [])
+
+  if (isLoadingProducts) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="flex items-center space-x-2">
+          <Loader2 className="h-6 w-6 animate-spin" />
+          <span>Đang tải danh sách sản phẩm...</span>
+        </div>
+      </div>
+    )
+  }
+
+  if (productsError) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <p className="text-red-600 mb-2">Có lỗi xảy ra khi tải danh sách sản phẩm</p>
+          <Button onClick={() => queryClient.refetchQueries({ queryKey: ["products"] })}>
+            Thử lại
+          </Button>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-8">
       {/* Page Header */}
@@ -135,72 +240,153 @@ export default function ProductsPage() {
               <DialogTitle className="text-xl font-semibold text-slate-900">Thêm Sản phẩm mới</DialogTitle>
               <DialogDescription className="text-slate-600">Tạo sản phẩm mới trong hệ thống</DialogDescription>
             </DialogHeader>
-            <div className="grid gap-6 py-4">
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="product_name" className="text-right font-medium text-slate-700">
-                  Tên sản phẩm
-                </Label>
-                <Input
-                  id="product_name"
-                  className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100"
-                />
+            <form onSubmit={(e) => {
+              e.preventDefault()
+              handleCreateProduct(new FormData(e.currentTarget))
+            }}>
+              <div className="grid gap-6 py-4">
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="product_name" className="text-right font-medium text-slate-700">
+                    Tên sản phẩm *
+                  </Label>
+                  <Input
+                    id="product_name"
+                    name="product_name"
+                    required
+                    minLength={1}
+                    maxLength={200}
+                    placeholder="Nhập tên sản phẩm (1-200 ký tự)"
+                    className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100"
+                  />
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="product_code" className="text-right font-medium text-slate-700">
+                    Mã sản phẩm *
+                  </Label>
+                  <Input
+                    id="product_code"
+                    name="product_code"
+                    required
+                    minLength={1}
+                    maxLength={100}
+                    placeholder="Nhập mã sản phẩm (1-100 ký tự)"
+                    className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100"
+                  />
+                </div>
+                <div className="grid grid-cols-4 items-start gap-4">
+                  <Label htmlFor="product_description" className="text-right font-medium text-slate-700 pt-2">
+                    Mô tả
+                  </Label>
+                  <Textarea
+                    id="product_description"
+                    name="product_description"
+                    placeholder="Nhập mô tả sản phẩm (tùy chọn)"
+                    className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100 min-h-[80px]"
+                  />
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="category_id" className="text-right font-medium text-slate-700">
+                    Danh mục *
+                  </Label>
+                  <Select name="category_id" required>
+                    <SelectTrigger className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100">
+                      <SelectValue placeholder="Chọn danh mục" />
+                    </SelectTrigger>
+                    <SelectContent className="rounded-xl border-slate-200 shadow-xl">
+                      {isLoadingCategories ? (
+                        <SelectItem value="" disabled>Đang tải...</SelectItem>
+                      ) : (
+                        flattenedCategories.map((category: any) => (
+                          <SelectItem key={category.category_id} value={category.category_id.toString()}>
+                            {category.category_name}
+                          </SelectItem>
+                        ))
+                      )}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="price" className="text-right font-medium text-slate-700">
+                    Giá *
+                  </Label>
+                  <Input
+                    id="price"
+                    name="price"
+                    type="number"
+                    required
+                    min={0}
+                    step={1000}
+                    placeholder="Nhập giá sản phẩm"
+                    className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100"
+                  />
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="product_status" className="text-right font-medium text-slate-700">
+                    Trạng thái
+                  </Label>
+                  <Select name="product_status" defaultValue="active">
+                    <SelectTrigger className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100">
+                      <SelectValue placeholder="Chọn trạng thái" />
+                    </SelectTrigger>
+                    <SelectContent className="rounded-xl border-slate-200 shadow-xl">
+                      <SelectItem value="active">Hoạt động</SelectItem>
+                      <SelectItem value="inactive">Không hoạt động</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="grid grid-cols-4 items-start gap-4">
+                  <Label className="text-right font-medium text-slate-700 pt-2">
+                    Tags
+                  </Label>
+                  <div className="col-span-3 space-y-2 max-h-32 overflow-y-auto border border-slate-200 rounded-xl p-3">
+                    {isLoadingTags ? (
+                      <div className="text-sm text-slate-500">Đang tải tags...</div>
+                    ) : tags.length > 0 ? (
+                      tags.map((tag: any) => (
+                        <div key={tag.tag_id} className="flex items-center space-x-2">
+                          <Checkbox
+                            id={`tag-${tag.tag_id}`}
+                            name="tagIds"
+                            value={tag.tag_id}
+                            className="rounded border-slate-300"
+                          />
+                          <Label
+                            htmlFor={`tag-${tag.tag_id}`}
+                            className="text-sm font-normal cursor-pointer hover:text-green-600"
+                          >
+                            {tag.tag_name}
+                          </Label>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="text-sm text-slate-500">Không có tags nào</div>
+                    )}
+                  </div>
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="image" className="text-right font-medium text-slate-700">
+                    Ảnh sản phẩm
+                  </Label>
+                  <Input
+                    id="image"
+                    name="image"
+                    type="file"
+                    accept="image/*"
+                    className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100"
+                  />
+                </div>
               </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="product_code" className="text-right font-medium text-slate-700">
-                  Mã sản phẩm
-                </Label>
-                <Input
-                  id="product_code"
-                  className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100"
-                />
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="price" className="text-right font-medium text-slate-700">
-                  Giá
-                </Label>
-                <Input
-                  id="price"
-                  type="number"
-                  className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100"
-                />
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="category" className="text-right font-medium text-slate-700">
-                  Danh mục
-                </Label>
-                <Select>
-                  <SelectTrigger className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100">
-                    <SelectValue placeholder="Chọn danh mục" />
-                  </SelectTrigger>
-                  <SelectContent className="rounded-xl border-slate-200 shadow-xl">
-                    {categories.map((category) => (
-                      <SelectItem key={category.category_id} value={category.category_id.toString()}>
-                        {category.category_name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="status" className="text-right font-medium text-slate-700">
-                  Trạng thái
-                </Label>
-                <Select>
-                  <SelectTrigger className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100">
-                    <SelectValue placeholder="Chọn trạng thái" />
-                  </SelectTrigger>
-                  <SelectContent className="rounded-xl border-slate-200 shadow-xl">
-                    <SelectItem value="active">Hoạt động</SelectItem>
-                    <SelectItem value="inactive">Không hoạt động</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            <DialogFooter>
-              <Button className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white rounded-xl">
-                Tạo Sản phẩm
-              </Button>
-            </DialogFooter>
+              <DialogFooter>
+                <Button 
+                  type="submit" 
+                  disabled={createProductMutation.isPending}
+                  className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white rounded-xl"
+                >
+                  {createProductMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  Tạo Sản phẩm
+                </Button>
+              </DialogFooter>
+            </form>
           </DialogContent>
         </Dialog>
       </div>
@@ -234,10 +420,10 @@ export default function ProductsPage() {
           </CardHeader>
           <CardContent className="relative">
             <div className="text-3xl font-bold text-slate-900">
-              {products.filter((p) => p.product_status === "active").length}
+              {products.filter((p: any) => p.product_status === "active").length}
             </div>
             <p className="text-xs text-blue-600 mt-1">
-              {Math.round((products.filter((p) => p.product_status === "active").length / products.length) * 100)}% tổng
+              {products.length > 0 ? Math.round((products.filter((p: any) => p.product_status === "active").length / products.length) * 100) : 0}% tổng
               số
             </p>
           </CardContent>
@@ -252,7 +438,7 @@ export default function ProductsPage() {
             </div>
           </CardHeader>
           <CardContent className="relative">
-            <div className="text-3xl font-bold text-slate-900">{categories.length}</div>
+            <div className="text-3xl font-bold text-slate-900">{flattenedCategories.length}</div>
             <p className="text-xs text-purple-600 mt-1">Tổng danh mục</p>
           </CardContent>
         </Card>
@@ -267,7 +453,7 @@ export default function ProductsPage() {
           </CardHeader>
           <CardContent className="relative">
             <div className="text-2xl font-bold text-slate-900">
-              {formatPrice(products.reduce((sum, p) => sum + p.price, 0) / products.length)}
+              {products.length > 0 ? formatPrice(products.reduce((sum: number, p: any) => sum + p.price, 0) / products.length) : "0 ₫"}
             </div>
             <p className="text-xs text-orange-600 mt-1">Giá trung bình</p>
           </CardContent>
@@ -290,20 +476,20 @@ export default function ProductsPage() {
                 className="pl-10 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100"
               />
             </div>
-            <Select>
+            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
               <SelectTrigger className="w-[180px] rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100">
                 <SelectValue placeholder="Danh mục" />
               </SelectTrigger>
               <SelectContent className="rounded-xl border-slate-200 shadow-xl">
                 <SelectItem value="all">Tất cả</SelectItem>
-                {categories.map((category) => (
-                  <SelectItem key={category.category_id} value={category.category_id.toString()}>
+                {flattenedCategories.map((category: any, index: number) => (
+                  <SelectItem key={index} value={category.category_id.toString()}>
                     {category.category_name}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
-            <Select>
+            <Select value={selectedStatus} onValueChange={setSelectedStatus}>
               <SelectTrigger className="w-[180px] rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100">
                 <SelectValue placeholder="Trạng thái" />
               </SelectTrigger>
@@ -319,7 +505,7 @@ export default function ProductsPage() {
 
       {/* Mobile Cards View */}
       <div className="lg:hidden space-y-4">
-        {products.map((product) => (
+        {filteredProducts.map((product: any) => (
           <Card
             key={product.product_id}
             className="bg-white/70 backdrop-blur-sm border-slate-200/60 hover:shadow-xl transition-all duration-300 rounded-xl"
@@ -327,8 +513,17 @@ export default function ProductsPage() {
             <CardContent className="p-4">
               <div className="flex items-start justify-between mb-3">
                 <div className="flex items-center space-x-3">
-                  <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center shadow-md">
-                    <Package className="h-6 w-6 text-slate-600" />
+                  <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center shadow-md overflow-hidden">
+                    <img 
+                      src={apiUrl + product.product_image} 
+                      alt={"product_image"}
+                      className="h-full w-full object-cover"
+                      onError={(e) => {
+                        e.currentTarget.style.display = 'none'
+                        e.currentTarget.nextElementSibling?.classList.remove('hidden')
+                      }}
+                    />
+                    <Package className="h-6 w-6 text-slate-600 hidden" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="font-semibold text-slate-900 truncate">{product.product_name}</div>
@@ -362,7 +557,11 @@ export default function ProductsPage() {
                       Quản lý Tags
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem className="text-red-600 hover:bg-red-50/80 rounded-lg">
+                    <DropdownMenuItem 
+                      className="text-red-600 hover:bg-red-50/80 rounded-lg"
+                      onClick={() => handleDeleteProduct(product.product_id)}
+                      disabled={deleteProductMutation.isPending}
+                    >
                       <Trash2 className="mr-2 h-4 w-4" />
                       Xóa
                     </DropdownMenuItem>
@@ -374,7 +573,7 @@ export default function ProductsPage() {
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-slate-600">Danh mục:</span>
                   <Badge variant="outline" className="border-slate-300 text-slate-700 rounded-lg">
-                    {product.category_name}
+                    {product.category?.category_name || "N/A"}
                   </Badge>
                 </div>
                 <div className="flex items-center justify-between">
@@ -384,17 +583,17 @@ export default function ProductsPage() {
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-slate-600">Tags:</span>
                   <div className="flex flex-wrap gap-1">
-                    {product.tags.slice(0, 2).map((tag, index) => (
+                    {product.productTags?.slice(0, 2).map((tag: any, index: number) => (
                       <Badge
                         key={index}
                         className="bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-700 border-0 text-xs rounded-lg"
                       >
-                        {tag}
+                        {tag.tag?.tag_name || tag}
                       </Badge>
                     ))}
-                    {product.tags.length > 2 && (
+                    {product.productTags && product.productTags.length > 2 && (
                       <Badge className="bg-gradient-to-r from-gray-100 to-slate-100 text-gray-700 border-0 text-xs rounded-lg">
-                        +{product.tags.length - 2}
+                        +{product.productTags.length - 2}
                       </Badge>
                     )}
                   </div>
@@ -416,116 +615,11 @@ export default function ProductsPage() {
       </div>
 
       {/* Products Table */}
-      <Card className="bg-white/70 backdrop-blur-sm border-slate-200/60 hover:shadow-xl transition-all duration-300 rounded-xl lg:hidden">
-        <CardHeader>
-          <CardTitle className="text-slate-900">Danh sách Sản phẩm</CardTitle>
-          <CardDescription>Tổng cộng {products.length} sản phẩm trong hệ thống</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow className="border-slate-100 hover:bg-slate-50/50">
-                <TableHead className="text-slate-600 font-semibold">Sản phẩm</TableHead>
-                <TableHead className="text-slate-600 font-semibold">Mã SP</TableHead>
-                <TableHead className="text-slate-600 font-semibold">Danh mục</TableHead>
-                <TableHead className="text-slate-600 font-semibold">Giá</TableHead>
-                <TableHead className="text-slate-600 font-semibold">Tags</TableHead>
-                <TableHead className="text-slate-600 font-semibold">Trạng thái</TableHead>
-                <TableHead className="text-slate-600 font-semibold">Ngày tạo</TableHead>
-                <TableHead className="text-right text-slate-600 font-semibold">Thao tác</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {products.map((product) => (
-                <TableRow key={product.product_id} className="hover:bg-slate-50/80 transition-colors duration-200">
-                  <TableCell>
-                    <div className="flex items-center space-x-3">
-                      <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center shadow-md">
-                        <Package className="h-6 w-6 text-slate-600" />
-                      </div>
-                      <div className="font-semibold text-slate-900">{product.product_name}</div>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <code className="text-xs bg-slate-100 px-2 py-1 rounded-lg text-slate-700 font-mono">
-                      {product.product_code}
-                    </code>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant="outline" className="border-slate-300 text-slate-700 rounded-lg">
-                      {product.category_name}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="font-semibold text-slate-900">{formatPrice(product.price)}</TableCell>
-                  <TableCell>
-                    <div className="flex flex-wrap gap-1">
-                      {product.tags.slice(0, 2).map((tag, index) => (
-                        <Badge
-                          key={index}
-                          className="bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-700 border-0 text-xs rounded-lg"
-                        >
-                          {tag}
-                        </Badge>
-                      ))}
-                      {product.tags.length > 2 && (
-                        <Badge className="bg-gradient-to-r from-gray-100 to-slate-100 text-gray-700 border-0 text-xs rounded-lg">
-                          +{product.tags.length - 2}
-                        </Badge>
-                      )}
-                    </div>
-                  </TableCell>
-                  <TableCell>{getStatusBadge(product.product_status)}</TableCell>
-                  <TableCell>
-                    <div className="text-sm text-slate-600">
-                      {new Date(product.created_at).toLocaleDateString("vi-VN")}
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-slate-100 rounded-lg">
-                          <span className="sr-only">Mở menu</span>
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent
-                        align="end"
-                        className="bg-white/95 backdrop-blur-xl border-slate-200/60 shadow-xl rounded-xl"
-                      >
-                        <DropdownMenuLabel>Thao tác</DropdownMenuLabel>
-                        <DropdownMenuItem className="hover:bg-slate-50/80 rounded-lg">
-                          <Eye className="mr-2 h-4 w-4" />
-                          Xem chi tiết
-                        </DropdownMenuItem>
-                        <DropdownMenuItem className="hover:bg-slate-50/80 rounded-lg">
-                          <Edit className="mr-2 h-4 w-4" />
-                          Chỉnh sửa
-                        </DropdownMenuItem>
-                        <DropdownMenuItem className="hover:bg-slate-50/80 rounded-lg">
-                          <Tags className="mr-2 h-4 w-4" />
-                          Quản lý Tags
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem className="text-red-600 hover:bg-red-50/80 rounded-lg">
-                          <Trash2 className="mr-2 h-4 w-4" />
-                          Xóa
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
-
-      {/* Desktop Table View */}
       <div className="hidden lg:block">
         <Card className="bg-white/70 backdrop-blur-sm border-slate-200/60 hover:shadow-xl transition-all duration-300 rounded-xl">
           <CardHeader>
             <CardTitle className="text-slate-900">Danh sách Sản phẩm</CardTitle>
-            <CardDescription>Tổng cộng {products.length} sản phẩm trong hệ thống</CardDescription>
+            <CardDescription>Tổng cộng {filteredProducts.length} sản phẩm trong hệ thống</CardDescription>
           </CardHeader>
           <CardContent>
             <Table>
@@ -542,12 +636,21 @@ export default function ProductsPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {products.map((product) => (
+                {filteredProducts.map((product: any) => (
                   <TableRow key={product.product_id} className="hover:bg-slate-50/80 transition-colors duration-200">
                     <TableCell>
                       <div className="flex items-center space-x-3">
-                        <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center shadow-md">
-                          <Package className="h-6 w-6 text-slate-600" />
+                        <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center shadow-md overflow-hidden">
+                          <img 
+                            src={apiUrl + product.product_image} 
+                            alt={product.product_name}
+                            className="h-full w-full object-cover"
+                            onError={(e) => {
+                              e.currentTarget.style.display = 'none'
+                              e.currentTarget.nextElementSibling?.classList.remove('hidden')
+                            }}
+                          />
+                          <Package className="h-6 w-6 text-slate-600 hidden" />
                         </div>
                         <div className="font-semibold text-slate-900">{product.product_name}</div>
                       </div>
@@ -559,23 +662,23 @@ export default function ProductsPage() {
                     </TableCell>
                     <TableCell>
                       <Badge variant="outline" className="border-slate-300 text-slate-700 rounded-lg">
-                        {product.category_name}
+                        {product.category?.category_name || "N/A"}
                       </Badge>
                     </TableCell>
                     <TableCell className="font-semibold text-slate-900">{formatPrice(product.price)}</TableCell>
                     <TableCell>
                       <div className="flex flex-wrap gap-1">
-                        {product.tags.slice(0, 2).map((tag, index) => (
+                        {product.productTags?.slice(0, 2).map((tag: any, index: number) => (
                           <Badge
                             key={index}
                             className="bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-700 border-0 text-xs rounded-lg"
                           >
-                            {tag}
+                            {tag.tag?.tag_name || tag}
                           </Badge>
                         ))}
-                        {product.tags.length > 2 && (
+                        {product.productTags && product.productTags.length > 2 && (
                           <Badge className="bg-gradient-to-r from-gray-100 to-slate-100 text-gray-700 border-0 text-xs rounded-lg">
-                            +{product.tags.length - 2}
+                            +{product.productTags.length - 2}
                           </Badge>
                         )}
                       </div>
@@ -612,7 +715,11 @@ export default function ProductsPage() {
                             Quản lý Tags
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
-                          <DropdownMenuItem className="text-red-600 hover:bg-red-50/80 rounded-lg">
+                          <DropdownMenuItem 
+                            className="text-red-600 hover:bg-red-50/80 rounded-lg"
+                            onClick={() => handleDeleteProduct(product.product_id)}
+                            disabled={deleteProductMutation.isPending}
+                          >
                             <Trash2 className="mr-2 h-4 w-4" />
                             Xóa
                           </DropdownMenuItem>
