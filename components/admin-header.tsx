@@ -77,18 +77,23 @@ export function AdminHeader() {
 
   return (
     <header className="flex h-16 items-center justify-between border-b border-gray-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-4 lg:px-6 shadow-sm transition-colors duration-300">
-      <div className="flex items-center space-x-4 flex-1">
+      {/* Left side - empty for balance */}
+      <div className="flex-1" />
+
+      {/* Center - Search */}
+      <div className="flex items-center justify-center flex-1">
         <div className="relative max-w-md w-full">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 dark:text-zinc-500" />
           <Input
             type="search"
             placeholder="Tìm kiếm..."
-            className="w-full pl-10 bg-gray-50 dark:bg-zinc-800 border-gray-200 dark:border-zinc-700 focus:bg-white dark:focus:bg-zinc-700 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 transition-all duration-200 rounded-xl text-sm text-gray-900 dark:text-zinc-100 placeholder-gray-500 dark:placeholder-zinc-400"
+            className="w-full pl-10 rounded-full bg-gray-50 dark:bg-zinc-800 border-gray-200 dark:border-zinc-700 focus:bg-white dark:focus:bg-zinc-700 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 transition-all duration-200 text-sm text-gray-900 dark:text-zinc-100 placeholder-gray-500 dark:placeholder-zinc-400"
           />
         </div>
       </div>
 
-      <div className="flex items-center space-x-2 lg:space-x-3">
+      {/* Right side - Theme toggle, settings, user menu */}
+      <div className="flex items-center space-x-2 lg:space-x-3 flex-1 justify-end">
         {/* Theme Toggle */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
