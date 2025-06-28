@@ -23,92 +23,147 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Plus, Search, MoreHorizontal, Edit, Trash2, Tag, Hash, TrendingUp, Eye, Grid, List } from "lucide-react"
-
-// Mock data with enhanced properties
-const tags = [
-  {
-    tag_id: 1,
-    tag_name: "Apple",
-    tag_description: "Sản phẩm của Apple Inc.",
-    created_at: "2024-01-01 00:00:00",
-    product_count: 250,
-    color: "bg-gray-100 text-gray-800 border-gray-200",
-    usage_trend: "+12%",
-    last_used: "2024-01-15 14:30:00",
-  },
-  {
-    tag_id: 2,
-    tag_name: "Samsung",
-    tag_description: "Sản phẩm Samsung Electronics",
-    created_at: "2024-01-01 00:00:00",
-    product_count: 180,
-    color: "bg-blue-100 text-blue-800 border-blue-200",
-    usage_trend: "+8%",
-    last_used: "2024-01-14 16:45:00",
-  },
-  {
-    tag_id: 3,
-    tag_name: "Flagship",
-    tag_description: "Sản phẩm cao cấp, hàng đầu",
-    created_at: "2024-01-01 00:00:00",
-    product_count: 120,
-    color: "bg-purple-100 text-purple-800 border-purple-200",
-    usage_trend: "+15%",
-    last_used: "2024-01-15 10:20:00",
-  },
-  {
-    tag_id: 4,
-    tag_name: "5G",
-    tag_description: "Hỗ trợ mạng 5G",
-    created_at: "2024-01-01 00:00:00",
-    product_count: 95,
-    color: "bg-green-100 text-green-800 border-green-200",
-    usage_trend: "+20%",
-    last_used: "2024-01-15 09:15:00",
-  },
-  {
-    tag_id: 5,
-    tag_name: "Gaming",
-    tag_description: "Tối ưu cho gaming",
-    created_at: "2024-01-01 00:00:00",
-    product_count: 75,
-    color: "bg-red-100 text-red-800 border-red-200",
-    usage_trend: "+5%",
-    last_used: "2024-01-13 18:30:00",
-  },
-  {
-    tag_id: 6,
-    tag_name: "Professional",
-    tag_description: "Dành cho chuyên nghiệp",
-    created_at: "2024-01-01 00:00:00",
-    product_count: 60,
-    color: "bg-indigo-100 text-indigo-800 border-indigo-200",
-    usage_trend: "+3%",
-    last_used: "2024-01-12 11:45:00",
-  },
-  {
-    tag_id: 7,
-    tag_name: "Budget",
-    tag_description: "Giá cả phải chăng",
-    created_at: "2024-01-01 00:00:00",
-    product_count: 45,
-    color: "bg-yellow-100 text-yellow-800 border-yellow-200",
-    usage_trend: "-2%",
-    last_used: "2024-01-10 15:20:00",
-  },
-]
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
+import { getTags, createTag, deleteTag } from "@/services/TagService"
+import { toast } from "sonner"
 
 export default function TagsPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
   const [viewMode, setViewMode] = useState<"cards" | "table">("cards")
+  const [formData, setFormData] = useState({
+    tag_name: "",
+    tag_description: ""
+  })
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [tagToDelete, setTagToDelete] = useState<any>(null)
 
-  const totalProducts = tags.reduce((sum, t) => sum + t.product_count, 0)
-  const avgProductsPerTag = Math.round(totalProducts / tags.length)
-  const mostPopularTag = Math.max(...tags.map((t) => t.product_count))
+  const queryClient = useQueryClient()
+
+  // Fetch tags data
+  const { data: tags = [], isLoading, error } = useQuery({
+    queryKey: ["tags"],
+    queryFn: getTags,
+  })
+
+  // Create tag mutation
+  const createTagMutation = useMutation({
+    mutationFn: createTag,
+    onSuccess: () => {
+      toast.success("Tạo tag thành công!")
+      queryClient.invalidateQueries({ queryKey: ["tags"] })
+      setIsCreateDialogOpen(false)
+      setFormData({ tag_name: "", tag_description: "" })
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || "Có lỗi xảy ra khi tạo tag")
+    }
+  })
+
+  // Delete tag mutation
+  const deleteTagMutation = useMutation({
+    mutationFn: deleteTag,
+    onSuccess: () => {
+      toast.success("Xóa tag thành công!")
+      queryClient.invalidateQueries({ queryKey: ["tags"] })
+      setDeleteDialogOpen(false)
+      setTagToDelete(null)
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || "Có lỗi xảy ra khi xóa tag")
+    }
+  })
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target
+    setFormData(prev => ({ ...prev, [name]: value }))
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    if (!formData.tag_name.trim()) {
+      toast.error("Vui lòng nhập tên tag")
+      return
+    }
+
+    const payload = {
+      tag_name: formData.tag_name.trim(),
+      tag_description: formData.tag_description.trim()
+    }
+
+    createTagMutation.mutate(payload)
+  }
+
+  const handleDeleteClick = (tag: any) => {
+    setTagToDelete(tag)
+    setDeleteDialogOpen(true)
+  }
+
+  const handleDeleteConfirm = () => {
+    if (tagToDelete) {
+      deleteTagMutation.mutate(tagToDelete.tag_id)
+    }
+  }
+
+  // Calculate stats from real data
+  const totalTags = tags.length
+  const avgProductsPerTag = tags.length > 0 ? Math.round(tags.length / tags.length) : 0
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
+              Quản lý Tags
+            </h1>
+            <p className="text-muted-foreground">Đang tải dữ liệu...</p>
+          </div>
+        </div>
+        <div className="grid gap-4 md:grid-cols-4">
+          {[1, 2, 3, 4].map((i) => (
+            <Card key={i} className="animate-pulse">
+              <CardHeader>
+                <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+              </CardHeader>
+              <CardContent>
+                <div className="h-8 bg-gray-200 rounded w-1/2"></div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
+              Quản lý Tags
+            </h1>
+            <p className="text-red-600">Có lỗi xảy ra khi tải dữ liệu</p>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-6">
@@ -156,22 +211,55 @@ export default function TagsPage() {
                 </DialogTitle>
                 <DialogDescription>Tạo thẻ mới cho sản phẩm trong hệ thống</DialogDescription>
               </DialogHeader>
-              <div className="grid gap-4 py-4">
-                <div className="space-y-2">
-                  <Label htmlFor="tag_name">Tên tag</Label>
-                  <Input id="tag_name" placeholder="Nhập tên tag..." />
+              <form onSubmit={handleSubmit}>
+                <div className="grid gap-4 py-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="tag_name">Tên tag</Label>
+                    <Input 
+                      id="tag_name" 
+                      name="tag_name"
+                      value={formData.tag_name}
+                      onChange={handleInputChange}
+                      placeholder="Nhập tên tag..." 
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="tag_description">Mô tả</Label>
+                    <Textarea 
+                      id="tag_description" 
+                      name="tag_description"
+                      value={formData.tag_description}
+                      onChange={handleInputChange}
+                      placeholder="Mô tả chi tiết về tag..." 
+                      rows={3} 
+                    />
+                  </div>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="tag_description">Mô tả</Label>
-                  <Textarea id="tag_description" placeholder="Mô tả chi tiết về tag..." rows={3} />
-                </div>
-              </div>
-              <DialogFooter>
-                <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
-                  Hủy
-                </Button>
-                <Button className="bg-gradient-to-r from-blue-600 to-blue-700">Tạo Tag</Button>
-              </DialogFooter>
+                <DialogFooter>
+                  <Button 
+                    type="button"
+                    variant="outline" 
+                    onClick={() => setIsCreateDialogOpen(false)}
+                  >
+                    Hủy
+                  </Button>
+                  <Button 
+                    type="submit"
+                    disabled={createTagMutation.isPending}
+                    className="bg-gradient-to-r from-blue-600 to-blue-700"
+                  >
+                    {createTagMutation.isPending ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
+                        Đang tạo...
+                      </>
+                    ) : (
+                      "Tạo Tag"
+                    )}
+                  </Button>
+                </DialogFooter>
+              </form>
             </DialogContent>
           </Dialog>
         </div>
@@ -187,7 +275,7 @@ export default function TagsPage() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-blue-900">{tags.length}</div>
+            <div className="text-2xl font-bold text-blue-900">{totalTags}</div>
             <p className="text-xs text-blue-700">Đang hoạt động</p>
           </CardContent>
         </Card>
@@ -200,8 +288,8 @@ export default function TagsPage() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-900">{totalProducts}</div>
-            <p className="text-xs text-green-700">Có gắn tag</p>
+            <div className="text-2xl font-bold text-green-900">-</div>
+            <p className="text-xs text-green-700">Chưa có dữ liệu</p>
           </CardContent>
         </Card>
 
@@ -213,8 +301,8 @@ export default function TagsPage() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-purple-900">{mostPopularTag}</div>
-            <p className="text-xs text-purple-700">Sản phẩm nhiều nhất</p>
+            <div className="text-2xl font-bold text-purple-900">-</div>
+            <p className="text-xs text-purple-700">Chưa có dữ liệu</p>
           </CardContent>
         </Card>
 
@@ -257,14 +345,14 @@ export default function TagsPage() {
       {viewMode === "cards" ? (
         /* Enhanced Tags Grid */
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {tags.map((tag) => (
+          {tags.map((tag: any) => (
             <Card
               key={tag.tag_id}
               className="hover:shadow-lg transition-all duration-200 bg-gradient-to-br from-white to-gray-50 border-gray-200"
             >
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
-                  <Badge className={`${tag.color} border font-medium`}>{tag.tag_name}</Badge>
+                  <Badge className="bg-blue-100 text-blue-800 border-blue-200 font-medium">{tag.tag_name}</Badge>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-gray-100">
@@ -287,7 +375,10 @@ export default function TagsPage() {
                         Xem sản phẩm
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
-                      <DropdownMenuItem className="text-red-600 cursor-pointer">
+                      <DropdownMenuItem 
+                        className="text-red-600 cursor-pointer"
+                        onClick={() => handleDeleteClick(tag)}
+                      >
                         <Trash2 className="mr-2 h-4 w-4" />
                         Xóa
                       </DropdownMenuItem>
@@ -301,17 +392,7 @@ export default function TagsPage() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Badge variant="outline" className="text-xs">
-                      {tag.product_count} sản phẩm
-                    </Badge>
-                    <Badge
-                      variant="outline"
-                      className={`text-xs ${
-                        tag.usage_trend.startsWith("+")
-                          ? "text-green-600 border-green-200 bg-green-50"
-                          : "text-red-600 border-red-200 bg-red-50"
-                      }`}
-                    >
-                      {tag.usage_trend}
+                      ID: {tag.tag_id}
                     </Badge>
                   </div>
                 </div>
@@ -319,7 +400,7 @@ export default function TagsPage() {
                 <div className="pt-2 border-t border-gray-100">
                   <div className="flex items-center justify-between text-xs text-muted-foreground">
                     <span>Tạo: {new Date(tag.created_at).toLocaleDateString("vi-VN")}</span>
-                    <span>Dùng: {new Date(tag.last_used).toLocaleDateString("vi-VN")}</span>
+                    <span>Cập nhật: {new Date(tag.updated_at).toLocaleDateString("vi-VN")}</span>
                   </div>
                 </div>
               </CardContent>
@@ -339,44 +420,31 @@ export default function TagsPage() {
                 <TableRow className="bg-gray-50">
                   <TableHead>Tag</TableHead>
                   <TableHead>Mô tả</TableHead>
-                  <TableHead>Sản phẩm</TableHead>
-                  <TableHead>Xu hướng</TableHead>
+                  <TableHead>ID</TableHead>
                   <TableHead>Ngày tạo</TableHead>
-                  <TableHead>Lần cuối dùng</TableHead>
+                  <TableHead>Cập nhật</TableHead>
                   <TableHead className="text-right">Thao tác</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {tags.map((tag) => (
+                {tags.map((tag: any) => (
                   <TableRow key={tag.tag_id} className="hover:bg-blue-50/50 transition-colors">
                     <TableCell>
-                      <Badge className={`${tag.color} border font-medium`}>{tag.tag_name}</Badge>
+                      <Badge className="bg-blue-100 text-blue-800 border-blue-200 font-medium">{tag.tag_name}</Badge>
                     </TableCell>
                     <TableCell className="max-w-xs">
                       <div className="truncate text-sm">{tag.tag_description}</div>
                     </TableCell>
                     <TableCell>
                       <Badge variant="outline" className="font-medium">
-                        {tag.product_count}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Badge
-                        variant="outline"
-                        className={`text-xs ${
-                          tag.usage_trend.startsWith("+")
-                            ? "text-green-600 border-green-200 bg-green-50"
-                            : "text-red-600 border-red-200 bg-red-50"
-                        }`}
-                      >
-                        {tag.usage_trend}
+                        {tag.tag_id}
                       </Badge>
                     </TableCell>
                     <TableCell>
                       <div className="text-sm">{new Date(tag.created_at).toLocaleDateString("vi-VN")}</div>
                     </TableCell>
                     <TableCell>
-                      <div className="text-sm">{new Date(tag.last_used).toLocaleDateString("vi-VN")}</div>
+                      <div className="text-sm">{new Date(tag.updated_at).toLocaleDateString("vi-VN")}</div>
                     </TableCell>
                     <TableCell className="text-right">
                       <DropdownMenu>
@@ -401,7 +469,10 @@ export default function TagsPage() {
                             Xem sản phẩm
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
-                          <DropdownMenuItem className="text-red-600">
+                          <DropdownMenuItem 
+                            className="text-red-600"
+                            onClick={() => handleDeleteClick(tag)}
+                          >
                             <Trash2 className="mr-2 h-4 w-4" />
                             Xóa
                           </DropdownMenuItem>
@@ -415,6 +486,35 @@ export default function TagsPage() {
           </CardContent>
         </Card>
       )}
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Xác nhận xóa tag</AlertDialogTitle>
+            <AlertDialogDescription>
+              Bạn có chắc chắn muốn xóa tag "{tagToDelete?.tag_name}"? Hành động này không thể hoàn tác.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Hủy</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteConfirm}
+              disabled={deleteTagMutation.isPending}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              {deleteTagMutation.isPending ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
+                  Đang xóa...
+                </>
+              ) : (
+                "Xóa"
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }
