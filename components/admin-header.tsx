@@ -14,8 +14,9 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Badge } from "@/components/ui/badge"
 import { useTheme } from "@/contexts/theme-context"
-import { useQuery } from "@tanstack/react-query"
-import { getUserMe } from "@/services/AdminService"
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
+import { getUserMe, logout } from "@/services/AdminService"
+import { useRouter } from "next/navigation"
 
 export function AdminHeader() {
   const { data: userMe } = useQuery({
@@ -23,6 +24,35 @@ export function AdminHeader() {
     queryFn: getUserMe,
   })
   const { settings, updateTheme } = useTheme()
+  const router = useRouter()
+  const queryClient = useQueryClient()
+
+  const logoutMutation = useMutation({
+    mutationFn: logout,
+    onSuccess: () => {
+      // Clear local storage
+      localStorage.removeItem("admin-auth-token")
+      localStorage.removeItem("admin-user")
+      
+      // Clear all queries
+      queryClient.clear()
+      
+      // Redirect to login page
+      router.push("/login")
+    },
+    onError: (error) => {
+      console.error("Logout error:", error)
+      // Still clear local storage and redirect even if API call fails
+      localStorage.removeItem("admin-auth-token")
+      localStorage.removeItem("admin-user")
+      queryClient.clear()
+      router.push("/login")
+    }
+  })
+
+  const handleLogout = () => {
+    logoutMutation.mutate()
+  }
 
   const getThemeIcon = () => {
     switch (settings.theme) {
@@ -199,8 +229,14 @@ export function AdminHeader() {
               <span>Cài đặt</span>
             </DropdownMenuItem>
             <DropdownMenuSeparator className="bg-gray-200 dark:bg-zinc-800" />
-            <DropdownMenuItem className="hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 dark:text-red-400 rounded-lg m-1">
-              <span>Đăng xuất</span>
+            <DropdownMenuItem 
+              onClick={handleLogout}
+              disabled={logoutMutation.isPending}
+              className="hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 dark:text-red-400 rounded-lg m-1"
+            >
+              <span>
+                {logoutMutation.isPending ? "Đang đăng xuất..." : "Đăng xuất"}
+              </span>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

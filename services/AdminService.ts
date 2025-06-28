@@ -10,6 +10,15 @@ export const login = async (item: any) => {
     }
 }
 
+export const logout = async () => {
+    try {
+        const temp = await axiosClient.post(`admins/logout`);
+        return temp.data;
+    } catch (e) {
+        throw e;
+    }
+}
+
 export const getUserMe = async () => {
     try {
         const temp = await axiosClient.get(`admins/me`);
