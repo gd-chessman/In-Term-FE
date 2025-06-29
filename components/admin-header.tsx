@@ -30,10 +30,7 @@ export function AdminHeader() {
   const logoutMutation = useMutation({
     mutationFn: logout,
     onSuccess: () => {
-      // Clear local storage
-      localStorage.removeItem("admin-auth-token")
-      localStorage.removeItem("admin-user")
-      
+      // Clear local storage   
       // Clear all queries
       queryClient.clear()
       
@@ -43,8 +40,6 @@ export function AdminHeader() {
     onError: (error) => {
       console.error("Logout error:", error)
       // Still clear local storage and redirect even if API call fails
-      localStorage.removeItem("admin-auth-token")
-      localStorage.removeItem("admin-user")
       queryClient.clear()
       router.push("/login")
     }
@@ -95,7 +90,7 @@ export function AdminHeader() {
       {/* Right side - Theme toggle, settings, user menu */}
       <div className="flex items-center space-x-2 lg:space-x-3 flex-1 justify-end">
         {/* Theme Toggle */}
-        <DropdownMenu>
+        {/* <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
               variant="ghost"
@@ -133,57 +128,8 @@ export function AdminHeader() {
               <span>Auto</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
-        </DropdownMenu>
-
-        {/* Notifications */}
-        {/* <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="relative hover:bg-gray-100 dark:hover:bg-zinc-800 transition-all duration-200 rounded-xl h-10 w-10"
-            >
-              <Bell className="h-4 w-4 text-gray-600 dark:text-zinc-400" />
-              <Badge className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 text-xs bg-red-500 text-white border-2 border-white dark:border-zinc-900 shadow-lg animate-pulse">
-                3
-              </Badge>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent
-            align="end"
-            className="w-80 bg-white dark:bg-zinc-900 border-gray-200 dark:border-zinc-800 shadow-xl rounded-xl"
-          >
-            <DropdownMenuLabel className="text-gray-700 dark:text-zinc-300 font-semibold">Thông báo</DropdownMenuLabel>
-            <DropdownMenuSeparator className="bg-gray-200 dark:bg-zinc-800" />
-            <DropdownMenuItem className="p-4 hover:bg-gray-50 dark:hover:bg-zinc-800 rounded-lg m-1">
-              <div className="flex items-start space-x-3">
-                <div className="h-2 w-2 rounded-full bg-blue-500 mt-2 shadow-sm"></div>
-                <div className="flex-1 space-y-1">
-                  <p className="text-sm font-medium text-gray-900 dark:text-zinc-100">Admin mới đăng nhập</p>
-                  <p className="text-xs text-gray-500 dark:text-zinc-400">john.doe@example.com - 2 phút trước</p>
-                </div>
-              </div>
-            </DropdownMenuItem>
-            <DropdownMenuItem className="p-4 hover:bg-gray-50 dark:hover:bg-zinc-800 rounded-lg m-1">
-              <div className="flex items-start space-x-3">
-                <div className="h-2 w-2 rounded-full bg-green-500 mt-2 shadow-sm"></div>
-                <div className="flex-1 space-y-1">
-                  <p className="text-sm font-medium text-gray-900 dark:text-zinc-100">Sản phẩm mới được thêm</p>
-                  <p className="text-xs text-gray-500 dark:text-zinc-400">Product #1234 - 5 phút trước</p>
-                </div>
-              </div>
-            </DropdownMenuItem>
-            <DropdownMenuItem className="p-4 hover:bg-gray-50 dark:hover:bg-zinc-800 rounded-lg m-1">
-              <div className="flex items-start space-x-3">
-                <div className="h-2 w-2 rounded-full bg-orange-500 mt-2 shadow-sm"></div>
-                <div className="flex-1 space-y-1">
-                  <p className="text-sm font-medium text-gray-900 dark:text-zinc-100">Template in được cập nhật</p>
-                  <p className="text-xs text-gray-500 dark:text-zinc-400">Template Vietnam - 10 phút trước</p>
-                </div>
-              </div>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
         </DropdownMenu> */}
+
 
         {/* Settings */}
         <Button
