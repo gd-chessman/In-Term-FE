@@ -19,9 +19,9 @@ export const createTag = async (item: any) => {
     }
 }
 
-export const updateTag = async (item: any) => {
+export const updateTag = async (id: number, item: any) => {
     try {
-        const temp = await axiosClient.put(`tags/${item.tag_id}`, item);
+        const temp = await axiosClient.patch(`tags/${id}`, item);
         return temp.data;
     } catch (e) {
         throw e;

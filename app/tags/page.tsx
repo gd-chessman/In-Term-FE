@@ -37,17 +37,19 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Plus, Search, MoreHorizontal, Edit, Trash2, Tag, Hash, TrendingUp, Eye, Grid, List } from "lucide-react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { getTags, createTag, deleteTag } from "@/services/TagService"
+import { getTags, createTag, deleteTag, updateTag } from "@/services/TagService"
 import { toast } from "sonner"
 
 export default function TagsPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
   const [viewMode, setViewMode] = useState<"cards" | "table">("cards")
   const [formData, setFormData] = useState({
     tag_name: "",
     tag_description: ""
   })
+  const [editingTag, setEditingTag] = useState<any>(null)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [tagToDelete, setTagToDelete] = useState<any>(null)
 
@@ -73,6 +75,21 @@ export default function TagsPage() {
     }
   })
 
+  // Update tag mutation
+  const updateTagMutation = useMutation({
+    mutationFn: ({ id, item }: { id: number; item: any }) => updateTag(id, item),
+    onSuccess: () => {
+      toast.success("Cập nhật tag thành công!")
+      queryClient.invalidateQueries({ queryKey: ["tags"] })
+      setIsEditDialogOpen(false)
+      setEditingTag(null)
+      setFormData({ tag_name: "", tag_description: "" })
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || "Có lỗi xảy ra khi cập nhật tag")
+    }
+  })
+
   // Delete tag mutation
   const deleteTagMutation = useMutation({
     mutationFn: deleteTag,
@@ -83,7 +100,12 @@ export default function TagsPage() {
       setTagToDelete(null)
     },
     onError: (error: any) => {
-      toast.error(error.response?.data?.message || "Có lỗi xảy ra khi xóa tag")
+      if (error.response?.status === 409) {
+        console.log(error)
+        toast.error("Tag đang được sử dụng bởi sản phẩm. Vui lòng xóa tag khỏi sản phẩm trước khi xóa tag.")
+      } else {
+        toast.error(error.response?.data?.message || "Có lỗi xảy ra khi xóa tag")
+      }
     }
   })
 
@@ -106,6 +128,34 @@ export default function TagsPage() {
     }
 
     createTagMutation.mutate(payload)
+  }
+
+  const handleEditSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    if (!formData.tag_name.trim()) {
+      toast.error("Vui lòng nhập tên tag")
+      return
+    }
+
+    const payload = {
+      tag_name: formData.tag_name.trim(),
+      tag_description: formData.tag_description.trim()
+    }
+
+    updateTagMutation.mutate({
+      id: editingTag.tag_id,
+      item: payload
+    })
+  }
+
+  const handleEditClick = (tag: any) => {
+    setEditingTag(tag)
+    setFormData({
+      tag_name: tag.tag_name,
+      tag_description: tag.tag_description
+    })
+    setIsEditDialogOpen(true)
   }
 
   const handleDeleteClick = (tag: any) => {
@@ -366,7 +416,10 @@ export default function TagsPage() {
                         <Eye className="mr-2 h-4 w-4" />
                         Xem chi tiết
                       </DropdownMenuItem>
-                      <DropdownMenuItem className="cursor-pointer">
+                      <DropdownMenuItem 
+                        className="cursor-pointer"
+                        onClick={() => handleEditClick(tag)}
+                      >
                         <Edit className="mr-2 h-4 w-4" />
                         Chỉnh sửa
                       </DropdownMenuItem>
@@ -460,7 +513,10 @@ export default function TagsPage() {
                             <Eye className="mr-2 h-4 w-4" />
                             Xem chi tiết
                           </DropdownMenuItem>
-                          <DropdownMenuItem>
+                          <DropdownMenuItem 
+                            className="cursor-pointer"
+                            onClick={() => handleEditClick(tag)}
+                          >
                             <Edit className="mr-2 h-4 w-4" />
                             Chỉnh sửa
                           </DropdownMenuItem>
@@ -493,7 +549,11 @@ export default function TagsPage() {
           <AlertDialogHeader>
             <AlertDialogTitle>Xác nhận xóa tag</AlertDialogTitle>
             <AlertDialogDescription>
-              Bạn có chắc chắn muốn xóa tag "{tagToDelete?.tag_name}"? Hành động này không thể hoàn tác.
+              Bạn có chắc chắn muốn xóa tag <strong>"{tagToDelete?.tag_name}"</strong>? 
+              <br /><br />
+              <span className="text-amber-600 font-medium">⚠️ Lưu ý:</span> Nếu tag này đang được sử dụng bởi sản phẩm, bạn sẽ không thể xóa được. Hãy xóa tag khỏi sản phẩm trước.
+              <br /><br />
+              Hành động này không thể hoàn tác.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -515,6 +575,70 @@ export default function TagsPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Edit Tag Dialog */}
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
+                <Edit className="h-4 w-4 text-white" />
+              </div>
+              Chỉnh sửa Tag
+            </DialogTitle>
+            <DialogDescription>Cập nhật thông tin tag trong hệ thống</DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleEditSubmit}>
+            <div className="grid gap-4 py-4">
+              <div className="space-y-2">
+                <Label htmlFor="edit_tag_name">Tên tag</Label>
+                <Input 
+                  id="edit_tag_name" 
+                  name="tag_name"
+                  value={formData.tag_name}
+                  onChange={handleInputChange}
+                  placeholder="Nhập tên tag..." 
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit_tag_description">Mô tả</Label>
+                <Textarea 
+                  id="edit_tag_description" 
+                  name="tag_description"
+                  value={formData.tag_description}
+                  onChange={handleInputChange}
+                  placeholder="Mô tả chi tiết về tag..." 
+                  rows={3} 
+                />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button 
+                type="button"
+                variant="outline" 
+                onClick={() => setIsEditDialogOpen(false)}
+              >
+                Hủy
+              </Button>
+              <Button 
+                type="submit"
+                disabled={updateTagMutation.isPending}
+                className="bg-gradient-to-r from-blue-600 to-blue-700"
+              >
+                {updateTagMutation.isPending ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
+                    Đang cập nhật...
+                  </>
+                ) : (
+                  "Cập nhật Tag"
+                )}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

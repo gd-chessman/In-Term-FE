@@ -28,3 +28,21 @@ export const createCategory = async (item: any) => {
         throw e;
     }
 }
+
+export const updateCategory = async (id: number, item: any) => {
+    try {
+        const temp = await axiosClient.patch(`categories/${id}`, item);
+        return temp.data;
+    } catch (e) {
+        throw e;
+    }
+}
+
+export const deleteCategory = async (id: number) => {
+    try {
+        const temp = await axiosClient.delete(`categories/${id}`);
+        return temp.data;
+    } catch (e) {
+        throw e;
+    }
+}

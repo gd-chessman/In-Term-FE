@@ -10,6 +10,7 @@ import { Menu } from "lucide-react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "@/contexts/theme-context";
 import { useAuth } from "@/hooks/useAuth";
+import { Toaster } from "@/components/ui/sonner";
 
 interface ClientLayoutProps {
   children: React.ReactNode;
@@ -106,6 +107,7 @@ export function ClientLayout({ children }: ClientLayoutProps) {
             </div>
           </div>
         )}
+        <Toaster position="top-right" />
       </ThemeProvider>
     </QueryClientProvider>
   );
