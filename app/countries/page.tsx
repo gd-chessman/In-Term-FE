@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -24,60 +25,168 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
-import { Plus, Search, MoreHorizontal, Edit, Trash2, Globe, Flag, MapPin, FileText, TrendingUp } from "lucide-react"
+import { Plus, Search, MoreHorizontal, Edit, Trash2, Globe, Flag, MapPin, FileText, TrendingUp, Loader2 } from "lucide-react"
+import { getCountries, createCountry, updateCountry, deleteCountry } from "@/services/CountryService"
+import { toast } from "sonner"
 
-// Mock data
-const countries = [
-  {
-    country_id: 1,
-    country_name: "Việt Nam",
-    country_code: "VN",
-    created_at: "2024-01-01 00:00:00",
-    product_count: 1250,
-    template_count: 5,
-    flag: "🇻🇳",
-  },
-  {
-    country_id: 2,
-    country_name: "Hoa Kỳ",
-    country_code: "US",
-    created_at: "2024-01-01 00:00:00",
-    product_count: 890,
-    template_count: 3,
-    flag: "🇺🇸",
-  },
-  {
-    country_id: 3,
-    country_name: "Nhật Bản",
-    country_code: "JP",
-    created_at: "2024-01-01 00:00:00",
-    product_count: 567,
-    template_count: 4,
-    flag: "🇯🇵",
-  },
-  {
-    country_id: 4,
-    country_name: "Hàn Quốc",
-    country_code: "KR",
-    created_at: "2024-01-01 00:00:00",
-    product_count: 432,
-    template_count: 2,
-    flag: "🇰🇷",
-  },
-  {
-    country_id: 5,
-    country_name: "Thái Lan",
-    country_code: "TH",
-    created_at: "2024-01-01 00:00:00",
-    product_count: 321,
-    template_count: 3,
-    flag: "🇹🇭",
-  },
-]
+// Helper function to get flag emoji from country code
+const getFlagEmoji = (countryCode: string) => {
+  const codePoints = countryCode
+    .toUpperCase()
+    .split('')
+    .map(char => 127397 + char.charCodeAt(0));
+  return String.fromCodePoint(...codePoints);
+}
 
 export default function CountriesPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
+  const [editingCountry, setEditingCountry] = useState<any>(null)
+  const [deletingCountry, setDeletingCountry] = useState<any>(null)
+  const [formData, setFormData] = useState({
+    country_name: "",
+    country_code: ""
+  })
+
+  const queryClient = useQueryClient()
+
+  // Fetch countries data
+  const { data: countries = [], isLoading, error, refetch } = useQuery({
+    queryKey: ['countries'],
+    queryFn: getCountries,
+  })
+
+  // Create country mutation
+  const createCountryMutation = useMutation({
+    mutationFn: createCountry,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['countries'] })
+      toast.success("Thêm quốc gia thành công!")
+      setIsCreateDialogOpen(false)
+      setFormData({ country_name: "", country_code: "" })
+    },
+    onError: (error: any) => {
+      toast.error(error?.response?.data?.message || "Có lỗi xảy ra khi thêm quốc gia")
+    }
+  })
+
+  // Update country mutation
+  const updateCountryMutation = useMutation({
+    mutationFn: ({ id, item }: { id: number; item: any }) => updateCountry(id, item),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['countries'] })
+      toast.success("Cập nhật quốc gia thành công!")
+      setIsEditDialogOpen(false)
+      setEditingCountry(null)
+      setFormData({ country_name: "", country_code: "" })
+    },
+    onError: (error: any) => {
+      toast.error(error?.response?.data?.message || "Có lỗi xảy ra khi cập nhật quốc gia")
+    }
+  })
+
+  // Delete country mutation
+  const deleteCountryMutation = useMutation({
+    mutationFn: deleteCountry,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['countries'] })
+      toast.success("Xóa quốc gia thành công!")
+      setIsDeleteDialogOpen(false)
+      setDeletingCountry(null)
+    },
+    onError: (error: any) => {
+      toast.error(error?.response?.data?.message || "Có lỗi xảy ra khi xóa quốc gia")
+    }
+  })
+
+  // Filter countries based on search term
+  const filteredCountries = countries.filter((country: any) =>
+    country.country_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    country.country_code.toLowerCase().includes(searchTerm.toLowerCase())
+  )
+
+  // Handle form submission for create
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!formData.country_name.trim() || !formData.country_code.trim()) {
+      toast.error("Vui lòng điền đầy đủ thông tin")
+      return
+    }
+    createCountryMutation.mutate(formData)
+  }
+
+  // Handle form submission for update
+  const handleUpdateSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!formData.country_name.trim() || !formData.country_code.trim()) {
+      toast.error("Vui lòng điền đầy đủ thông tin")
+      return
+    }
+    updateCountryMutation.mutate({
+      id: editingCountry.country_id,
+      item: {
+        country_name: formData.country_name,
+        country_code: formData.country_code
+      }
+    })
+  }
+
+  // Handle input changes
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }))
+  }
+
+  // Handle edit button click
+  const handleEdit = (country: any) => {
+    setEditingCountry(country)
+    setFormData({
+      country_name: country.country_name,
+      country_code: country.country_code
+    })
+    setIsEditDialogOpen(true)
+  }
+
+  // Handle delete button click
+  const handleDelete = (country: any) => {
+    setDeletingCountry(country)
+    setIsDeleteDialogOpen(true)
+  }
+
+  // Handle confirm delete
+  const handleConfirmDelete = () => {
+    if (deletingCountry) {
+      deleteCountryMutation.mutate(deletingCountry.country_id)
+    }
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="flex items-center space-x-2">
+          <Loader2 className="h-6 w-6 animate-spin text-blue-600" />
+          <span className="text-slate-600">Đang tải dữ liệu quốc gia...</span>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <div className="text-red-600 mb-2">Có lỗi xảy ra khi tải dữ liệu</div>
+          <Button onClick={() => refetch()} variant="outline">
+            Thử lại
+          </Button>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-8">
@@ -101,35 +210,158 @@ export default function CountriesPage() {
               <DialogTitle className="text-xl font-semibold text-slate-900">Thêm Quốc gia mới</DialogTitle>
               <DialogDescription className="text-slate-600">Thêm quốc gia mới vào hệ thống</DialogDescription>
             </DialogHeader>
+            <form onSubmit={handleSubmit}>
+              <div className="grid gap-6 py-4">
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="country_name" className="text-right font-medium text-slate-700">
+                    Tên quốc gia
+                  </Label>
+                  <Input
+                    id="country_name"
+                    value={formData.country_name}
+                    onChange={(e) => handleInputChange('country_name', e.target.value)}
+                    className="col-span-3 rounded-xl border-slate-200 focus:border-blue-300 focus:ring-2 focus:ring-blue-100"
+                    placeholder="Nhập tên quốc gia"
+                    required
+                  />
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="country_code" className="text-right font-medium text-slate-700">
+                    Mã quốc gia
+                  </Label>
+                  <Input
+                    id="country_code"
+                    value={formData.country_code}
+                    onChange={(e) => handleInputChange('country_code', e.target.value.toUpperCase())}
+                    placeholder="VN, US, JP..."
+                    className="col-span-3 rounded-xl border-slate-200 focus:border-blue-300 focus:ring-2 focus:ring-blue-100"
+                    required
+                  />
+                </div>
+              </div>
+              <DialogFooter>
+                <Button 
+                  type="submit" 
+                  className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white rounded-xl"
+                  disabled={createCountryMutation.isPending}
+                >
+                  {createCountryMutation.isPending ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Đang thêm...
+                    </>
+                  ) : (
+                    'Thêm Quốc gia'
+                  )}
+                </Button>
+              </DialogFooter>
+            </form>
+          </DialogContent>
+        </Dialog>
+      </div>
+
+      {/* Edit Dialog */}
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent className="sm:max-w-[500px] bg-white/95 backdrop-blur-xl border-slate-200/60 shadow-2xl rounded-2xl">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-semibold text-slate-900">Chỉnh sửa Quốc gia</DialogTitle>
+            <DialogDescription className="text-slate-600">Cập nhật thông tin quốc gia</DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleUpdateSubmit}>
             <div className="grid gap-6 py-4">
               <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="country_name" className="text-right font-medium text-slate-700">
+                <Label htmlFor="edit_country_name" className="text-right font-medium text-slate-700">
                   Tên quốc gia
                 </Label>
                 <Input
-                  id="country_name"
+                  id="edit_country_name"
+                  value={formData.country_name}
+                  onChange={(e) => handleInputChange('country_name', e.target.value)}
                   className="col-span-3 rounded-xl border-slate-200 focus:border-blue-300 focus:ring-2 focus:ring-blue-100"
+                  placeholder="Nhập tên quốc gia"
+                  required
                 />
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="country_code" className="text-right font-medium text-slate-700">
+                <Label htmlFor="edit_country_code" className="text-right font-medium text-slate-700">
                   Mã quốc gia
                 </Label>
                 <Input
-                  id="country_code"
+                  id="edit_country_code"
+                  value={formData.country_code}
+                  onChange={(e) => handleInputChange('country_code', e.target.value.toUpperCase())}
                   placeholder="VN, US, JP..."
                   className="col-span-3 rounded-xl border-slate-200 focus:border-blue-300 focus:ring-2 focus:ring-blue-100"
+                  required
                 />
               </div>
             </div>
             <DialogFooter>
-              <Button className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white rounded-xl">
-                Thêm Quốc gia
+              <Button 
+                type="submit" 
+                className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white rounded-xl"
+                disabled={updateCountryMutation.isPending}
+              >
+                {updateCountryMutation.isPending ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Đang cập nhật...
+                  </>
+                ) : (
+                  'Cập nhật Quốc gia'
+                )}
               </Button>
             </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      </div>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <DialogContent className="sm:max-w-[500px] bg-white/95 backdrop-blur-xl border-slate-200/60 shadow-2xl rounded-2xl">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-semibold text-slate-900">Xác nhận xóa quốc gia</DialogTitle>
+            <DialogDescription className="text-slate-600">
+              Bạn có chắc chắn muốn xóa quốc gia <strong>{deletingCountry?.country_name}</strong> ({deletingCountry?.country_code})?
+              <br />
+              Hành động này không thể hoàn tác.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex items-center space-x-2 p-4 bg-red-50 rounded-lg border border-red-200">
+            <div className="text-2xl">{deletingCountry && getFlagEmoji(deletingCountry.country_code)}</div>
+            <div>
+              <div className="font-semibold text-red-800">{deletingCountry?.country_name}</div>
+              <div className="text-sm text-red-600">Mã: {deletingCountry?.country_code}</div>
+            </div>
+          </div>
+          <DialogFooter className="space-x-2">
+            <Button 
+              variant="outline"
+              onClick={() => setIsDeleteDialogOpen(false)}
+              disabled={deleteCountryMutation.isPending}
+            >
+              Hủy
+            </Button>
+            <Button 
+              variant="destructive"
+              onClick={handleConfirmDelete}
+              disabled={deleteCountryMutation.isPending}
+            >
+              {deleteCountryMutation.isPending ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Đang xóa...
+                </>
+              ) : (
+                <>
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  Xóa Quốc gia
+                </>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Stats Cards */}
       <div className="grid gap-6 md:grid-cols-4">
@@ -160,7 +392,8 @@ export default function CountriesPage() {
           </CardHeader>
           <CardContent className="relative">
             <div className="text-3xl font-bold text-slate-900">
-              {countries.reduce((sum, c) => sum + c.product_count, 0).toLocaleString()}
+              {/* Placeholder for product count - would need API integration */}
+              0
             </div>
             <p className="text-xs text-green-600 mt-1">Trên tất cả quốc gia</p>
           </CardContent>
@@ -176,7 +409,8 @@ export default function CountriesPage() {
           </CardHeader>
           <CardContent className="relative">
             <div className="text-3xl font-bold text-slate-900">
-              {countries.reduce((sum, c) => sum + c.template_count, 0)}
+              {/* Placeholder for template count - would need API integration */}
+              0
             </div>
             <p className="text-xs text-purple-600 mt-1">Tổng template</p>
           </CardContent>
@@ -192,7 +426,8 @@ export default function CountriesPage() {
           </CardHeader>
           <CardContent className="relative">
             <div className="text-3xl font-bold text-slate-900">
-              {Math.round(countries.reduce((sum, c) => sum + c.product_count, 0) / countries.length)}
+              {/* Placeholder for average product count - would need API integration */}
+              0
             </div>
             <p className="text-xs text-orange-600 mt-1">Sản phẩm/quốc gia</p>
           </CardContent>
@@ -201,7 +436,7 @@ export default function CountriesPage() {
 
       {/* Countries Grid */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {countries.map((country) => (
+        {filteredCountries.map((country: any) => (
           <Card
             key={country.country_id}
             className="relative overflow-hidden bg-white/70 backdrop-blur-sm border-slate-200/60 hover:shadow-xl transition-all duration-300 group hover:-translate-y-1 rounded-xl"
@@ -210,7 +445,7 @@ export default function CountriesPage() {
             <CardHeader className="pb-3 relative">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
-                  <div className="text-3xl">{country.flag}</div>
+                  <div className="text-3xl">{getFlagEmoji(country.country_code)}</div>
                   <div>
                     <h3 className="text-lg font-semibold text-slate-900">{country.country_name}</h3>
                     <Badge variant="outline" className="border-slate-300 text-slate-700 rounded-lg mt-1">
@@ -230,7 +465,10 @@ export default function CountriesPage() {
                     className="bg-white/95 backdrop-blur-xl border-slate-200/60 shadow-xl rounded-xl"
                   >
                     <DropdownMenuLabel>Thao tác</DropdownMenuLabel>
-                    <DropdownMenuItem className="hover:bg-slate-50/80 rounded-lg">
+                    <DropdownMenuItem 
+                      className="hover:bg-slate-50/80 rounded-lg"
+                      onClick={() => handleEdit(country)}
+                    >
                       <Edit className="mr-2 h-4 w-4" />
                       Chỉnh sửa
                     </DropdownMenuItem>
@@ -239,7 +477,10 @@ export default function CountriesPage() {
                       Xem Template
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem className="text-red-600 hover:bg-red-50/80 rounded-lg">
+                    <DropdownMenuItem 
+                      className="text-red-600 hover:bg-red-50/80 rounded-lg"
+                      onClick={() => handleDelete(country)}
+                    >
                       <Trash2 className="mr-2 h-4 w-4" />
                       Xóa
                     </DropdownMenuItem>
@@ -252,13 +493,15 @@ export default function CountriesPage() {
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-slate-600">Sản phẩm:</span>
                   <Badge className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white border-0 shadow-lg">
-                    {country.product_count.toLocaleString()}
+                    {/* Placeholder - would need API integration */}
+                    0
                   </Badge>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-slate-600">Template:</span>
                   <Badge className="bg-gradient-to-r from-green-500 to-emerald-500 text-white border-0 shadow-lg">
-                    {country.template_count}
+                    {/* Placeholder - would need API integration */}
+                    0
                   </Badge>
                 </div>
                 <div className="text-xs text-slate-500 pt-2 border-t border-slate-100">
@@ -292,7 +535,7 @@ export default function CountriesPage() {
       <Card className="bg-white/70 backdrop-blur-sm border-slate-200/60 hover:shadow-xl transition-all duration-300 rounded-xl">
         <CardHeader>
           <CardTitle className="text-slate-900">Danh sách Quốc gia</CardTitle>
-          <CardDescription>Tổng cộng {countries.length} quốc gia trong hệ thống</CardDescription>
+          <CardDescription>Tổng cộng {filteredCountries.length} quốc gia trong hệ thống</CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
@@ -307,11 +550,11 @@ export default function CountriesPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {countries.map((country) => (
+              {filteredCountries.map((country: any) => (
                 <TableRow key={country.country_id} className="hover:bg-slate-50/80 transition-colors duration-200">
                   <TableCell>
                     <div className="flex items-center space-x-3">
-                      <div className="text-2xl">{country.flag}</div>
+                      <div className="text-2xl">{getFlagEmoji(country.country_code)}</div>
                       <span className="font-semibold text-slate-900">{country.country_name}</span>
                     </div>
                   </TableCell>
@@ -322,12 +565,14 @@ export default function CountriesPage() {
                   </TableCell>
                   <TableCell>
                     <Badge className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white border-0 shadow-lg">
-                      {country.product_count.toLocaleString()}
+                      {/* Placeholder - would need API integration */}
+                      0
                     </Badge>
                   </TableCell>
                   <TableCell>
                     <Badge className="bg-gradient-to-r from-green-500 to-emerald-500 text-white border-0 shadow-lg">
-                      {country.template_count}
+                      {/* Placeholder - would need API integration */}
+                      0
                     </Badge>
                   </TableCell>
                   <TableCell>
@@ -348,7 +593,10 @@ export default function CountriesPage() {
                         className="bg-white/95 backdrop-blur-xl border-slate-200/60 shadow-xl rounded-xl"
                       >
                         <DropdownMenuLabel>Thao tác</DropdownMenuLabel>
-                        <DropdownMenuItem className="hover:bg-slate-50/80 rounded-lg">
+                        <DropdownMenuItem 
+                          className="hover:bg-slate-50/80 rounded-lg"
+                          onClick={() => handleEdit(country)}
+                        >
                           <Edit className="mr-2 h-4 w-4" />
                           Chỉnh sửa
                         </DropdownMenuItem>
@@ -357,7 +605,10 @@ export default function CountriesPage() {
                           Xem Template
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem className="text-red-600 hover:bg-red-50/80 rounded-lg">
+                        <DropdownMenuItem 
+                          className="text-red-600 hover:bg-red-50/80 rounded-lg"
+                          onClick={() => handleDelete(country)}
+                        >
                           <Trash2 className="mr-2 h-4 w-4" />
                           Xóa
                         </DropdownMenuItem>
