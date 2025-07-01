@@ -1,6 +1,11 @@
 "use client"
 
 import { useState } from "react"
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
+import { toast } from "sonner"
+import { createPrintSelect, getPrintSelects } from "@/services/PrintService"
+import { getProducts } from "@/services/ProductService"
+import { getCountries } from "@/services/CountryService"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -46,6 +51,7 @@ import {
   Globe,
   Loader2,
 } from "lucide-react"
+import html2pdf from 'html2pdf.js'
 
 // Mock data with enhanced information
 const printFormats = [
@@ -81,91 +87,6 @@ const printFormats = [
   },
 ]
 
-const printSelections = [
-  {
-    ps_id: 1,
-    product_name: "iPhone 15 Pro Max",
-    product_code: "IP15PM001",
-    country_name: "Việt Nam",
-    country_flag: "🇻🇳",
-    ps_price_sale: 29990000,
-    ps_type: "a4",
-    ps_format: "pdf", // Thêm format
-    ps_quality: "High", // Thêm quality
-    ps_status: "active",
-    created_at: "2024-01-15 10:30:00",
-    print_count: 245,
-    last_printed: "2024-01-20 14:30:00",
-    category: "Điện thoại",
-    priority: "high",
-  },
-  {
-    ps_id: 2,
-    product_name: "Samsung Galaxy S24 Ultra",
-    product_code: "SGS24U001",
-    country_name: "Việt Nam",
-    country_flag: "🇻🇳",
-    ps_price_sale: 31990000,
-    ps_type: "a4",
-    ps_format: "png", // Thêm format
-    ps_quality: "300 DPI", // Thêm quality
-    ps_status: "active",
-    created_at: "2024-01-14 15:20:00",
-    print_count: 189,
-    last_printed: "2024-01-19 09:15:00",
-    category: "Điện thoại",
-    priority: "high",
-  },
-  {
-    ps_id: 3,
-    product_name: "MacBook Pro M3",
-    product_code: "MBP14M3001",
-    country_name: "Hoa Kỳ",
-    country_flag: "🇺🇸",
-    ps_price_sale: 1999,
-    ps_type: "a3",
-    ps_format: "jpg", // Thêm format
-    ps_quality: "High", // Thêm quality
-    ps_status: "inactive",
-    created_at: "2024-01-13 09:45:00",
-    print_count: 67,
-    last_printed: "2024-01-18 16:45:00",
-    category: "Laptop",
-    priority: "medium",
-  },
-  {
-    ps_id: 4,
-    product_name: "iPad Pro 12.9",
-    product_code: "IPADPRO129",
-    country_name: "Nhật Bản",
-    country_flag: "🇯🇵",
-    ps_price_sale: 150000,
-    ps_type: "a5",
-    ps_format: "svg", // Thêm format
-    ps_quality: "Optimized", // Thêm quality
-    ps_status: "active",
-    created_at: "2024-01-12 14:20:00",
-    print_count: 134,
-    last_printed: "2024-01-21 11:20:00",
-    category: "Tablet",
-    priority: "low",
-  },
-]
-
-const products = [
-  { product_id: 1, product_name: "iPhone 15 Pro Max", product_code: "IP15PM001", category: "Điện thoại" },
-  { product_id: 2, product_name: "Samsung Galaxy S24 Ultra", product_code: "SGS24U001", category: "Điện thoại" },
-  { product_id: 3, product_name: "MacBook Pro M3", product_code: "MBP14M3001", category: "Laptop" },
-  { product_id: 4, product_name: "iPad Pro 12.9", product_code: "IPADPRO129", category: "Tablet" },
-]
-
-const countries = [
-  { country_id: 1, country_name: "Việt Nam", country_flag: "🇻🇳", currency: "VND" },
-  { country_id: 2, country_name: "Hoa Kỳ", country_flag: "🇺🇸", currency: "USD" },
-  { country_id: 3, country_name: "Nhật Bản", country_flag: "🇯🇵", currency: "JPY" },
-  { country_id: 4, country_name: "Hàn Quốc", country_flag: "🇰🇷", currency: "KRW" },
-]
-
 export default function PrintSelectPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
@@ -181,6 +102,134 @@ export default function PrintSelectPage() {
   const [selectedPrintFormat, setSelectedPrintFormat] = useState("pdf")
   const [selectedPrintQuality, setSelectedPrintQuality] = useState("high")
   const [printCopies, setPrintCopies] = useState(1)
+
+  // Form state for creating print selection
+  const [formData, setFormData] = useState({
+    ps_product_id: "",
+    ps_country_id: "",
+    ps_price_sale: "",
+    ps_type: "",
+    ps_status: "active",
+    ps_num: "1",
+    ps_option_1: "",
+    ps_option_2: "",
+    ps_option_3: "",
+  })
+
+  const queryClient = useQueryClient()
+
+  // Fetch print selections, products and countries
+  const { data: printSelections = [], isLoading: isLoadingPrintSelections } = useQuery({
+    queryKey: ["printSelects"],
+    queryFn: getPrintSelects,
+  })
+
+  const { data: products = [] } = useQuery({
+    queryKey: ["products"],
+    queryFn: getProducts,
+  })
+
+  const { data: countries = [] } = useQuery({
+    queryKey: ["countries"],
+    queryFn: getCountries,
+  })
+
+  // Create print selection mutation
+  const createMutation = useMutation({
+    mutationFn: createPrintSelect,
+    onSuccess: () => {
+      toast.success("Thêm sản phẩm vào danh sách in thành công!")
+      setIsCreateDialogOpen(false)
+      setFormData({
+        ps_product_id: "",
+        ps_country_id: "",
+        ps_price_sale: "",
+        ps_type: "",
+        ps_status: "active",
+        ps_num: "1",
+        ps_option_1: "",
+        ps_option_2: "",
+        ps_option_3: "",
+      })
+      // Refresh data if needed
+      queryClient.invalidateQueries({ queryKey: ["printSelects"] })
+    },
+    onError: (error: any) => {
+      toast.error(error?.response?.data?.message || "Có lỗi xảy ra khi thêm sản phẩm!")
+    },
+  })
+
+  // Print mutation
+  const printMutation = useMutation({
+    mutationFn: async (printData: any) => {
+      // Tạo file thật dựa trên dữ liệu
+      const { items, format, quality, copies } = printData
+      
+      // Tạo nội dung file
+      let fileContent = ''
+      let fileName = `print_${new Date().toISOString().split('T')[0]}_${items.length}_items`
+      
+      if (format === 'pdf') {
+        const html = generatePDFContent(items, quality, copies);
+        fileName += '.pdf';
+        exportToPDF(html, fileName);
+        return { success: true, fileName };
+      } else if (format === 'txt') {
+        fileContent = generateTextContent(items, quality, copies)
+        fileName += '.txt'
+      } else {
+        // Mặc định tạo file text
+        fileContent = generateTextContent(items, quality, copies)
+        fileName += '.txt'
+      }
+      
+      // Tạo và tải xuống file text
+      const blob = new Blob([fileContent], { type: 'text/plain;charset=utf-8' })
+      const url = window.URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url
+      link.download = fileName
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      window.URL.revokeObjectURL(url)
+      
+      return { success: true, fileName }
+    },
+    onSuccess: (data) => {
+      toast.success(`File đã được tạo và tải xuống: ${data.fileName}`)
+      setIsPrintDialogOpen(false)
+      setPrintProgress(0)
+      setPrintingItems([])
+    },
+    onError: (error: any) => {
+      toast.error("Có lỗi xảy ra khi tạo file!")
+      setPrintProgress(0)
+    },
+  })
+
+  const handleCreateSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    if (!formData.ps_product_id || !formData.ps_country_id || !formData.ps_type) {
+      toast.error("Vui lòng điền đầy đủ thông tin bắt buộc!")
+      return
+    }
+
+    const submitData = {
+      ps_product_id: parseInt(formData.ps_product_id),
+      ps_country_id: parseInt(formData.ps_country_id),
+      ps_price_sale: formData.ps_price_sale ? parseFloat(formData.ps_price_sale) : null,
+      ps_type: formData.ps_type as "a0" | "a1" | "a2" | "a5" | "a6" | "a7",
+      ps_status: formData.ps_status as "active" | "inactive",
+      ps_num: parseInt(formData.ps_num),
+      ps_option_1: formData.ps_option_1 || null,
+      ps_option_2: formData.ps_option_2 || null,
+      ps_option_3: formData.ps_option_3 || null,
+    }
+
+    createMutation.mutate(submitData)
+  }
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -233,7 +282,126 @@ export default function PrintSelectPage() {
     )
   }
 
-  const formatPrice = (price: number, country: string) => {
+  const getCountryFlag = (countryCode: string) => {
+    if (!countryCode || typeof countryCode !== 'string') {
+      return "🌍"
+    }
+    const codePoints = countryCode
+      .toUpperCase()
+      .split('')
+      .map(char => 127397 + char.charCodeAt(0));
+    return String.fromCodePoint(...codePoints);
+  }
+
+  const generateTextContent = (items: any[], quality: string, copies: number) => {
+    let content = `THÔNG TIN IN SẢN PHẨM\n`
+    content += `Ngày tạo: ${new Date().toLocaleDateString('vi-VN')}\n`
+    content += `Chất lượng: ${quality}\n`
+    content += `Số bản in: ${copies}\n`
+    content += `Tổng số sản phẩm: ${items.length}\n`
+    content += `\n${'='.repeat(50)}\n\n`
+
+    items.forEach((item, index) => {
+      content += `SẢN PHẨM ${index + 1}\n`
+      content += `Tên sản phẩm: ${item.product?.product_name}\n`
+      content += `Mã sản phẩm: ${item.product?.product_code}\n`
+      content += `Quốc gia: ${item.country?.country_name}\n`
+      content += `Giá bán: ${formatPrice(item.ps_price_sale, item.country?.country_name)}\n`
+      content += `Khổ giấy: ${item.ps_type}\n`
+      content += `Số lượng: ${item.ps_num}\n`
+      content += `Trạng thái: ${item.ps_status}\n`
+      if (item.templates?.ps_option_1) {
+        content += `Tùy chọn 1: ${item.templates.ps_option_1}\n`
+      }
+      if (item.templates?.ps_option_2) {
+        content += `Tùy chọn 2: ${item.templates.ps_option_2}\n`
+      }
+      if (item.templates?.ps_option_3) {
+        content += `Tùy chọn 3: ${item.templates.ps_option_3}\n`
+      }
+      content += `\n${'-'.repeat(30)}\n\n`
+    })
+
+    return content
+  }
+
+  const generatePDFContent = (items: any[], quality: string, copies: number) => {
+    let html = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="UTF-8">
+      <title>Thông tin in sản phẩm</title>
+      <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .header { text-align: center; border-bottom: 2px solid #333; padding-bottom: 10px; margin-bottom: 20px; }
+        .product { border: 1px solid #ddd; margin: 20px 0; padding: 15px; border-radius: 5px; }
+        .product-title { font-size: 18px; font-weight: bold; color: #333; margin-bottom: 10px; }
+        .product-info { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .label { font-weight: bold; color: #666; }
+        .value { color: #333; }
+        .footer { text-align: center; margin-top: 30px; color: #666; font-size: 12px; }
+      </style>
+    </head>
+    <body>
+      <div class="header">
+        <h1>THÔNG TIN IN SẢN PHẨM</h1>
+        <p>Ngày tạo: ${new Date().toLocaleDateString('vi-VN')}</p>
+        <p>Chất lượng: ${quality} | Số bản in: ${copies}</p>
+      </div>
+    `
+
+    items.forEach((item, index) => {
+      html += `
+      <div class="product">
+        <div class="product-title">SẢN PHẨM ${index + 1}</div>
+        <div class="product-info">
+          <div><span class="label">Tên sản phẩm:</span> <span class="value">${item.product?.product_name}</span></div>
+          <div><span class="label">Mã sản phẩm:</span> <span class="value">${item.product?.product_code}</span></div>
+          <div><span class="label">Quốc gia:</span> <span class="value">${item.country?.country_name}</span></div>
+          <div><span class="label">Giá bán:</span> <span class="value">${formatPrice(item.ps_price_sale, item.country?.country_name)}</span></div>
+          <div><span class="label">Khổ giấy:</span> <span class="value">${item.ps_type}</span></div>
+          <div><span class="label">Số lượng:</span> <span class="value">${item.ps_num}</span></div>
+          <div><span class="label">Trạng thái:</span> <span class="value">${item.ps_status}</span></div>
+          ${item.templates?.ps_option_1 ? `<div><span class="label">Tùy chọn 1:</span> <span class="value">${item.templates.ps_option_1}</span></div>` : ''}
+          ${item.templates?.ps_option_2 ? `<div><span class="label">Tùy chọn 2:</span> <span class="value">${item.templates.ps_option_2}</span></div>` : ''}
+          ${item.templates?.ps_option_3 ? `<div><span class="label">Tùy chọn 3:</span> <span class="value">${item.templates.ps_option_3}</span></div>` : ''}
+        </div>
+      </div>
+      `
+    })
+
+    html += `
+      <div class="footer">
+        <p>© 2024 Company Name. All rights reserved.</p>
+      </div>
+    </body>
+    </html>
+    `
+
+    return html
+  }
+
+  const exportToPDF = (htmlContent: string, fileName: string) => {
+    const element = document.createElement('div');
+    element.innerHTML = htmlContent;
+    document.body.appendChild(element);
+
+    html2pdf()
+      .set({
+        margin: 10,
+        filename: fileName,
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      })
+      .from(element)
+      .save()
+      .then(() => {
+        document.body.removeChild(element);
+      });
+  }
+
+  const formatPrice = (price: number, country: any) => {
     if (country === "Việt Nam") {
       return new Intl.NumberFormat("vi-VN", {
         style: "currency",
@@ -255,7 +423,7 @@ export default function PrintSelectPage() {
 
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
-      setSelectedItems(printSelections.map((item) => item.ps_id))
+      setSelectedItems(printSelections.map((item: any) => item.ps_id))
     } else {
       setSelectedItems([])
     }
@@ -269,20 +437,20 @@ export default function PrintSelectPage() {
     }
   }
 
-  const filteredItems = printSelections.filter((item) => {
+  const filteredItems = printSelections.filter((item: any) => {
     const matchesSearch =
-      item.product_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.product_code.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesCountry = selectedCountry === "all" || item.country_name === selectedCountry
+      item.product?.product_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.product?.product_code?.toLowerCase().includes(searchTerm.toLowerCase())
+    const matchesCountry = selectedCountry === "all" || item.country?.country_name === selectedCountry
     const matchesType = selectedType === "all" || item.ps_type === selectedType
     const matchesStatus = selectedStatus === "all" || item.ps_status === selectedStatus
 
     return matchesSearch && matchesCountry && matchesType && matchesStatus
   })
 
-  const totalPrintCount = printSelections.reduce((sum, item) => sum + item.print_count, 0)
-  const activeCount = printSelections.filter((item) => item.ps_status === "active").length
-  const a4Count = printSelections.filter((item) => item.ps_type === "a4").length
+  const totalPrintCount = printSelections.reduce((sum: number, item: any) => sum + (item.ps_num || 0), 0)
+  const activeCount = printSelections.filter((item: any) => item.ps_status === "active").length
+  const a4Count = printSelections.filter((item: any) => item.ps_type === "a4").length
 
   const handlePrintSingle = (item: any) => {
     setPrintingItems([item.ps_id])
@@ -296,26 +464,22 @@ export default function PrintSelectPage() {
   }
 
   const handlePrintAll = () => {
-    setPrintingItems(filteredItems.map((item) => item.ps_id))
+    setPrintingItems(filteredItems.map((item: any) => item.ps_id))
     setIsPrintDialogOpen(true)
   }
 
   const executePrint = async () => {
-    setPrintProgress(0)
-    const itemsToPrint = printSelections.filter((item) => printingItems.includes(item.ps_id))
-
-    for (let i = 0; i < itemsToPrint.length; i++) {
-      // Simulate printing process
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-      setPrintProgress(((i + 1) / itemsToPrint.length) * 100)
+    const itemsToPrint = printSelections.filter((item: any) => printingItems.includes(item.ps_id))
+    
+    const printData = {
+      items: itemsToPrint,
+      format: selectedPrintFormat,
+      quality: selectedPrintQuality,
+      copies: printCopies,
+      totalPages: printingItems.length * printCopies
     }
 
-    // Reset after completion
-    setTimeout(() => {
-      setIsPrintDialogOpen(false)
-      setPrintProgress(0)
-      setPrintingItems([])
-    }, 1000)
+    printMutation.mutate(printData)
   }
 
   return (
@@ -378,18 +542,18 @@ export default function PrintSelectPage() {
                 <TabsContent value="basic" className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="product">Sản phẩm</Label>
-                      <Select>
+                      <Label htmlFor="product">Sản phẩm *</Label>
+                      <Select value={formData.ps_product_id} onValueChange={(value) => setFormData({...formData, ps_product_id: value})}>
                         <SelectTrigger>
                           <SelectValue placeholder="Chọn sản phẩm" />
                         </SelectTrigger>
                         <SelectContent>
-                          {products.map((product) => (
+                          {products.map((product: any) => (
                             <SelectItem key={product.product_id} value={product.product_id.toString()}>
                               <div className="flex items-center space-x-2">
                                 <span>{product.product_name}</span>
                                 <Badge variant="outline" className="text-xs">
-                                  {product.category}
+                                  {product.category?.category_name}
                                 </Badge>
                               </div>
                             </SelectItem>
@@ -398,13 +562,13 @@ export default function PrintSelectPage() {
                       </Select>
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="country">Quốc gia</Label>
-                      <Select>
+                      <Label htmlFor="country">Quốc gia *</Label>
+                      <Select value={formData.ps_country_id} onValueChange={(value) => setFormData({...formData, ps_country_id: value})}>
                         <SelectTrigger>
                           <SelectValue placeholder="Chọn quốc gia" />
                         </SelectTrigger>
                         <SelectContent>
-                          {countries.map((country) => (
+                          {countries.map((country: any) => (
                             <SelectItem key={country.country_id} value={country.country_id.toString()}>
                               <div className="flex items-center space-x-2">
                                 <span className="text-lg">{country.country_flag}</span>
@@ -420,15 +584,33 @@ export default function PrintSelectPage() {
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="price_sale">Giá bán</Label>
-                    <Input id="price_sale" type="number" placeholder="Nhập giá bán" />
+                    <Label htmlFor="price_sale">Giá bán (tùy chọn)</Label>
+                    <Input 
+                      id="price_sale" 
+                      type="number" 
+                      placeholder="Nhập giá bán (để trống để dùng giá mặc định)" 
+                      value={formData.ps_price_sale}
+                      onChange={(e) => setFormData({...formData, ps_price_sale: e.target.value})}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="ps_num">Số lượng *</Label>
+                    <Input 
+                      id="ps_num" 
+                      type="number" 
+                      min="1"
+                      max="999999"
+                      placeholder="Nhập số lượng" 
+                      value={formData.ps_num}
+                      onChange={(e) => setFormData({...formData, ps_num: e.target.value})}
+                    />
                   </div>
                 </TabsContent>
                 <TabsContent value="config" className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="type">Khổ giấy</Label>
-                      <Select>
+                      <Label htmlFor="type">Khổ giấy *</Label>
+                      <Select value={formData.ps_type} onValueChange={(value) => setFormData({...formData, ps_type: value})}>
                         <SelectTrigger>
                           <SelectValue placeholder="Chọn khổ giấy" />
                         </SelectTrigger>
@@ -436,8 +618,6 @@ export default function PrintSelectPage() {
                           <SelectItem value="a0">A0 (841×1189mm)</SelectItem>
                           <SelectItem value="a1">A1 (594×841mm)</SelectItem>
                           <SelectItem value="a2">A2 (420×594mm)</SelectItem>
-                          <SelectItem value="a3">A3 (297×420mm)</SelectItem>
-                          <SelectItem value="a4">A4 (210×297mm)</SelectItem>
                           <SelectItem value="a5">A5 (148×210mm)</SelectItem>
                           <SelectItem value="a6">A6 (105×148mm)</SelectItem>
                           <SelectItem value="a7">A7 (74×105mm)</SelectItem>
@@ -445,66 +625,44 @@ export default function PrintSelectPage() {
                       </Select>
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="priority">Độ ưu tiên</Label>
-                      <Select>
+                      <Label htmlFor="status">Trạng thái *</Label>
+                      <Select value={formData.ps_status} onValueChange={(value) => setFormData({...formData, ps_status: value})}>
                         <SelectTrigger>
-                          <SelectValue placeholder="Chọn độ ưu tiên" />
+                          <SelectValue placeholder="Chọn trạng thái" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="high">Cao</SelectItem>
-                          <SelectItem value="medium">Trung bình</SelectItem>
-                          <SelectItem value="low">Thấp</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="format">Định dạng in</Label>
-                      <Select>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Chọn định dạng" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {printFormats.map((format) => (
-                            <SelectItem key={format.id} value={format.id}>
-                              <div className="flex items-center space-x-2">
-                                <span>{format.icon}</span>
-                                <div>
-                                  <div className="font-medium">{format.name}</div>
-                                  <div className="text-xs text-muted-foreground">{format.description}</div>
-                                </div>
-                              </div>
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="quality">Chất lượng</Label>
-                      <Select>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Chọn chất lượng" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="standard">Standard</SelectItem>
-                          <SelectItem value="high">High Quality</SelectItem>
-                          <SelectItem value="print">Print Quality</SelectItem>
+                          <SelectItem value="active">Hoạt động</SelectItem>
+                          <SelectItem value="inactive">Tạm dừng</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="status">Trạng thái</Label>
-                    <Select>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Chọn trạng thái" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="active">Hoạt động</SelectItem>
-                        <SelectItem value="inactive">Tạm dừng</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <Label htmlFor="ps_option_1">Tùy chọn 1 (tùy chọn)</Label>
+                    <Input 
+                      id="ps_option_1" 
+                      placeholder="Nhập tùy chọn 1" 
+                      value={formData.ps_option_1}
+                      onChange={(e) => setFormData({...formData, ps_option_1: e.target.value})}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="ps_option_2">Tùy chọn 2 (tùy chọn)</Label>
+                    <Input 
+                      id="ps_option_2" 
+                      placeholder="Nhập tùy chọn 2" 
+                      value={formData.ps_option_2}
+                      onChange={(e) => setFormData({...formData, ps_option_2: e.target.value})}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="ps_option_3">Tùy chọn 3 (tùy chọn)</Label>
+                    <Input 
+                      id="ps_option_3" 
+                      placeholder="Nhập tùy chọn 3" 
+                      value={formData.ps_option_3}
+                      onChange={(e) => setFormData({...formData, ps_option_3: e.target.value})}
+                    />
                   </div>
                 </TabsContent>
                 <TabsContent value="preview" className="space-y-4">
@@ -519,9 +677,18 @@ export default function PrintSelectPage() {
               <DialogFooter>
                 <Button
                   type="submit"
+                  onClick={handleCreateSubmit}
+                  disabled={createMutation.isPending}
                   className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600"
                 >
-                  Thêm vào danh sách
+                  {createMutation.isPending ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Đang thêm...
+                    </>
+                  ) : (
+                    "Thêm vào danh sách"
+                  )}
                 </Button>
               </DialogFooter>
             </DialogContent>
@@ -634,7 +801,7 @@ export default function PrintSelectPage() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Tất cả quốc gia</SelectItem>
-                  {countries.map((country) => (
+                  {countries.map((country: any) => (
                     <SelectItem key={country.country_id} value={country.country_name}>
                       <div className="flex items-center space-x-2">
                         <span className="text-lg">{country.country_flag}</span>
@@ -670,10 +837,22 @@ export default function PrintSelectPage() {
         </CardContent>
       </Card>
 
+      {/* Loading State */}
+      {isLoadingPrintSelections && (
+        <Card className="backdrop-blur-sm bg-white/90">
+          <CardContent className="flex items-center justify-center py-12">
+            <div className="flex items-center space-x-2">
+              <Loader2 className="h-6 w-6 animate-spin" />
+              <span>Đang tải dữ liệu...</span>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Cards View */}
-      {viewMode === "cards" && (
+      {viewMode === "cards" && !isLoadingPrintSelections && (
         <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-          {filteredItems.map((item) => (
+          {filteredItems.map((item: any) => (
             <Card
               key={item.ps_id}
               className="group hover:shadow-xl transition-all duration-300 border-0 bg-gradient-to-br from-white to-gray-50 hover:from-blue-50 hover:to-purple-50"
@@ -720,12 +899,12 @@ export default function PrintSelectPage() {
                 </div>
                 <div>
                   <CardTitle className="text-lg group-hover:text-blue-600 transition-colors">
-                    {item.product_name}
+                    {item.product?.product_name}
                   </CardTitle>
                   <CardDescription className="flex items-center space-x-2 mt-1">
-                    <code className="bg-muted px-2 py-1 rounded text-xs">{item.product_code}</code>
+                    <code className="bg-muted px-2 py-1 rounded text-xs">{item.product?.product_code}</code>
                     <Badge variant="outline" className="text-xs">
-                      {item.category}
+                      Số lượng: {item.ps_num}
                     </Badge>
                   </CardDescription>
                 </div>
@@ -734,7 +913,7 @@ export default function PrintSelectPage() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2">
                     <Globe className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm font-medium">{item.country_name}</span>
+                    <span className="text-sm font-medium">{item.country?.country_name}</span>
                   </div>
                   {getStatusBadge(item.ps_status)}
                 </div>
@@ -743,7 +922,7 @@ export default function PrintSelectPage() {
                   <div className="flex items-center space-x-2">
                     <DollarSign className="h-4 w-4 text-muted-foreground" />
                     <span className="text-lg font-bold text-green-600">
-                      {formatPrice(item.ps_price_sale, item.country_name)}
+                      {formatPrice(item.ps_price_sale, item.country?.country_name)}
                     </span>
                   </div>
                   {getTypeBadge(item.ps_type)}
@@ -752,31 +931,24 @@ export default function PrintSelectPage() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2">
                     <FileText className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm font-medium">Định dạng:</span>
+                    <span className="text-sm font-medium">Tùy chọn:</span>
                   </div>
-                  {getFormatBadge(item.ps_format)}
-                </div>
-
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted-foreground">Chất lượng:</span>
                   <Badge variant="secondary" className="text-xs">
-                    {item.ps_quality}
+                    {item.templates?.ps_option_1 || "Không có"}
                   </Badge>
                 </div>
 
                 <div className="space-y-2">
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">Lượt in:</span>
-                    <span className="font-medium">{item.print_count}</span>
+                    <span className="text-muted-foreground">Ngày tạo:</span>
+                    <span className="font-medium">{new Date(item.created_at).toLocaleDateString("vi-VN")}</span>
                   </div>
-                  <Progress value={(item.print_count / 300) * 100} className="h-2" />
                 </div>
 
                 <div className="flex items-center justify-between">
-                  {getPriorityBadge(item.priority)}
                   <div className="flex items-center space-x-1 text-xs text-muted-foreground">
                     <Clock className="h-3 w-3" />
-                    <span>{new Date(item.last_printed).toLocaleDateString("vi-VN")}</span>
+                    <span>Cập nhật: {new Date(item.updated_at).toLocaleDateString("vi-VN")}</span>
                   </div>
                 </div>
               </CardContent>
@@ -786,7 +958,7 @@ export default function PrintSelectPage() {
       )}
 
       {/* Enhanced Table View */}
-      {viewMode === "table" && (
+      {viewMode === "table" && !isLoadingPrintSelections && (
         <Card className="backdrop-blur-sm bg-white/90">
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
@@ -811,16 +983,15 @@ export default function PrintSelectPage() {
                   <TableHead>Quốc gia</TableHead>
                   <TableHead>Giá bán</TableHead>
                   <TableHead>Khổ giấy</TableHead>
-                  <TableHead>Định dạng</TableHead>
-                  <TableHead>Lượt in</TableHead>
-                  <TableHead>Ưu tiên</TableHead>
+                  <TableHead>Tùy chọn</TableHead>
+                  <TableHead>Số lượng</TableHead>
                   <TableHead>Trạng thái</TableHead>
-                  <TableHead>Lần cuối in</TableHead>
+                  <TableHead>Ngày tạo</TableHead>
                   <TableHead className="text-right">Thao tác</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredItems.map((item) => (
+                {filteredItems.map((item: any) => (
                   <TableRow
                     key={item.ps_id}
                     className="hover:bg-gradient-to-r hover:from-blue-50/50 hover:to-purple-50/50"
@@ -833,44 +1004,43 @@ export default function PrintSelectPage() {
                     </TableCell>
                     <TableCell>
                       <div className="space-y-1">
-                        <div className="font-medium">{item.product_name}</div>
+                        <div className="font-medium">{item.product?.product_name}</div>
                         <div className="flex items-center space-x-2">
-                          <code className="bg-muted px-2 py-1 rounded text-xs">{item.product_code}</code>
+                          <code className="bg-muted px-2 py-1 rounded text-xs">{item.product?.product_code}</code>
                           <Badge variant="outline" className="text-xs">
-                            {item.category}
+                            Số lượng: {item.ps_num}
                           </Badge>
                         </div>
                       </div>
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center space-x-2">
-                        <span className="text-xl">{item.country_flag}</span>
-                        <span>{item.country_name}</span>
+                        <span className="text-xl">{item.country?.country_code ? getCountryFlag(item.country.country_code) : "🌍"}</span>
+                        <span>{item.country?.country_name}</span>
                       </div>
                     </TableCell>
                     <TableCell className="font-medium text-green-600">
-                      {formatPrice(item.ps_price_sale, item.country_name)}
+                      {formatPrice(item.ps_price_sale, item.country?.country_name)}
                     </TableCell>
                     <TableCell>{getTypeBadge(item.ps_type)}</TableCell>
                     <TableCell>
                       <div className="space-y-1">
-                        {getFormatBadge(item.ps_format)}
-                        <div className="text-xs text-muted-foreground">{item.ps_quality}</div>
+                        <Badge variant="secondary" className="text-xs">
+                          {item.templates?.ps_option_1 || "Không có"}
+                        </Badge>
                       </div>
                     </TableCell>
                     <TableCell>
                       <div className="space-y-1">
-                        <div className="font-medium">{item.print_count}</div>
-                        <Progress value={(item.print_count / 300) * 100} className="h-1 w-16" />
+                        <div className="font-medium">{item.ps_num}</div>
                       </div>
                     </TableCell>
-                    <TableCell>{getPriorityBadge(item.priority)}</TableCell>
                     <TableCell>{getStatusBadge(item.ps_status)}</TableCell>
                     <TableCell>
                       <div className="text-sm">
-                        <div>{new Date(item.last_printed).toLocaleDateString("vi-VN")}</div>
+                        <div>{new Date(item.created_at).toLocaleDateString("vi-VN")}</div>
                         <div className="text-xs text-muted-foreground">
-                          {new Date(item.last_printed).toLocaleTimeString("vi-VN", {
+                          {new Date(item.updated_at).toLocaleTimeString("vi-VN", {
                             hour: "2-digit",
                             minute: "2-digit",
                           })}
@@ -932,16 +1102,18 @@ export default function PrintSelectPage() {
               <Label className="text-sm font-medium">Sản phẩm sẽ in:</Label>
               <div className="max-h-32 overflow-y-auto space-y-2 bg-gray-50 p-3 rounded-lg">
                 {printSelections
-                  .filter((item) => printingItems.includes(item.ps_id))
-                  .map((item) => (
+                  .filter((item: any) => printingItems.includes(item.ps_id))
+                  .map((item: any) => (
                     <div key={item.ps_id} className="flex items-center justify-between text-sm">
                       <div className="flex items-center space-x-2">
-                        <span className="text-lg">{item.country_flag}</span>
-                        <span className="font-medium">{item.product_name}</span>
-                        <code className="bg-white px-2 py-1 rounded text-xs">{item.product_code}</code>
+                        <span className="text-lg">{item.country?.country_code ? getCountryFlag(item.country.country_code) : "🌍"}</span>
+                        <span className="font-medium">{item.product?.product_name}</span>
+                        <code className="bg-white px-2 py-1 rounded text-xs">{item.product?.product_code}</code>
                       </div>
                       <div className="flex items-center space-x-2">
-                        {getFormatBadge(item.ps_format)}
+                        <Badge variant="secondary" className="text-xs">
+                          {item.templates?.ps_option_1 || "Không có"}
+                        </Badge>
                         {getTypeBadge(item.ps_type)}
                       </div>
                     </div>
@@ -969,6 +1141,15 @@ export default function PrintSelectPage() {
                         </div>
                       </SelectItem>
                     ))}
+                    <SelectItem value="txt">
+                      <div className="flex items-center space-x-2">
+                        <span>📄</span>
+                        <div>
+                          <div className="font-medium">TXT</div>
+                          <div className="text-xs text-muted-foreground">Plain Text Format</div>
+                        </div>
+                      </div>
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -1046,8 +1227,8 @@ export default function PrintSelectPage() {
                       <div className="p-6 bg-white min-h-[400px] max-h-[500px] overflow-auto">
                         <div className="space-y-6">
                           {printSelections
-                            .filter((item) => printingItems.includes(item.ps_id))
-                            .map((item, index) => (
+                            .filter((item: any) => printingItems.includes(item.ps_id))
+                            .map((item: any, index: number) => (
                               <div
                                 key={item.ps_id}
                                 className="max-w-2xl mx-auto bg-white shadow-lg border rounded-lg p-8"
@@ -1056,7 +1237,7 @@ export default function PrintSelectPage() {
                                   <div className="text-center border-b pb-4">
                                     <h2 className="text-2xl font-bold text-gray-800">THÔNG TIN SẢN PHẨM</h2>
                                     <p className="text-sm text-gray-600 mt-2">
-                                      {item.country_flag} Template {item.country_name}
+                                      {item.country?.country_code ? getCountryFlag(item.country.country_code) : "🌍"} Template {item.country?.country_name}
                                     </p>
                                   </div>
 
@@ -1064,15 +1245,15 @@ export default function PrintSelectPage() {
                                     <div className="space-y-3">
                                       <div>
                                         <label className="text-sm font-medium text-gray-600">Tên sản phẩm:</label>
-                                        <p className="text-lg font-semibold text-gray-800">{item.product_name}</p>
+                                        <p className="text-lg font-semibold text-gray-800">{item.product?.product_name}</p>
                                       </div>
                                       <div>
                                         <label className="text-sm font-medium text-gray-600">Mã sản phẩm:</label>
-                                        <p className="font-mono text-gray-800">{item.product_code}</p>
+                                        <p className="font-mono text-gray-800">{item.product?.product_code}</p>
                                       </div>
                                       <div>
-                                        <label className="text-sm font-medium text-gray-600">Danh mục:</label>
-                                        <p className="text-gray-800">{item.category}</p>
+                                        <label className="text-sm font-medium text-gray-600">Số lượng:</label>
+                                        <p className="text-gray-800">{item.ps_num}</p>
                                       </div>
                                     </div>
 
@@ -1080,7 +1261,7 @@ export default function PrintSelectPage() {
                                       <div>
                                         <label className="text-sm font-medium text-gray-600">Giá bán:</label>
                                         <p className="text-xl font-bold text-green-600">
-                                          {formatPrice(item.ps_price_sale, item.country_name)}
+                                          {formatPrice(item.ps_price_sale, item.country?.country_name)}
                                         </p>
                                       </div>
                                       <div>
@@ -1162,13 +1343,13 @@ export default function PrintSelectPage() {
             </div>
 
             {/* Print Progress */}
-            {printProgress > 0 && (
+            {printMutation.isPending && (
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span>Đang in...</span>
-                  <span>{Math.round(printProgress)}%</span>
+                  <span>Đang xử lý in...</span>
+                  <span>Vui lòng chờ</span>
                 </div>
-                <Progress value={printProgress} className="h-2" />
+                <Progress value={100} className="h-2" />
               </div>
             )}
 
@@ -1207,10 +1388,10 @@ export default function PrintSelectPage() {
               </Button>
               <Button
                 onClick={executePrint}
-                disabled={printProgress > 0}
+                disabled={printMutation.isPending}
                 className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600"
               >
-                {printProgress > 0 ? (
+                {printMutation.isPending ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     Đang in...

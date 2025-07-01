@@ -18,6 +18,15 @@ export const createPrintTemplate = async (item: any) => {
     }
 }
 
+export const getPrintSelects = async () => {
+    try {
+        const temp = await axiosClient.get(`prints/selects`);
+        return temp.data.data;
+    } catch (e) {
+        return [];
+    }
+}
+
 export const createPrintSelect = async (item: any) => {
     try {
         const temp = await axiosClient.post(`prints/selects`, item);
