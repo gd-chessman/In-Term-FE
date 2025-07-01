@@ -24,6 +24,16 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
@@ -52,6 +62,8 @@ export default function ProductsPage() {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState("all")
   const [selectedStatus, setSelectedStatus] = useState("all")
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [productToDelete, setProductToDelete] = useState<any>(null)
   const { toast } = useToast()
   const queryClient = useQueryClient()
   const apiUrl = process.env.NEXT_PUBLIC_API_URL
@@ -113,6 +125,8 @@ export default function ProductsPage() {
         title: "Thành công",
         description: "Sản phẩm đã được xóa thành công",
       })
+      setDeleteDialogOpen(false)
+      setProductToDelete(null)
     },
     onError: (error: any) => {
       toast({
@@ -179,9 +193,14 @@ export default function ProductsPage() {
     createProductMutation.mutate(productData)
   }
 
-  const handleDeleteProduct = (productId: number) => {
-    if (confirm("Bạn có chắc chắn muốn xóa sản phẩm này?")) {
-      deleteProductMutation.mutate(productId)
+  const handleDeleteProduct = (product: any) => {
+    setProductToDelete(product)
+    setDeleteDialogOpen(true)
+  }
+
+  const handleDeleteConfirm = () => {
+    if (productToDelete) {
+      deleteProductMutation.mutate(productToDelete.product_id)
     }
   }
 
@@ -391,6 +410,55 @@ export default function ProductsPage() {
         </Dialog>
       </div>
 
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent className="bg-white/95 backdrop-blur-xl border-slate-200/60 shadow-2xl rounded-2xl">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-xl font-semibold text-slate-900">Xác nhận xóa sản phẩm</AlertDialogTitle>
+            <AlertDialogDescription className="text-slate-600">
+              Bạn có chắc chắn muốn xóa sản phẩm <strong>{productToDelete?.product_name}</strong> ({productToDelete?.product_code})?
+              <br />
+              Hành động này không thể hoàn tác.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="flex items-center space-x-3 p-4 bg-red-50 rounded-lg border border-red-200">
+            <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-red-100 to-red-200 flex items-center justify-center shadow-md">
+              <Package className="h-6 w-6 text-red-600" />
+            </div>
+            <div>
+              <div className="font-semibold text-red-800">{productToDelete?.product_name}</div>
+              <div className="text-sm text-red-600">Mã: {productToDelete?.product_code}</div>
+              <div className="text-sm text-red-600">Giá: {productToDelete?.price ? formatPrice(productToDelete.price) : "N/A"}</div>
+            </div>
+          </div>
+          <AlertDialogFooter className="space-x-2">
+            <AlertDialogCancel 
+              className="rounded-xl"
+              disabled={deleteProductMutation.isPending}
+            >
+              Hủy
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteConfirm}
+              disabled={deleteProductMutation.isPending}
+              className="bg-red-600 hover:bg-red-700 text-white rounded-xl"
+            >
+              {deleteProductMutation.isPending ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Đang xóa...
+                </>
+              ) : (
+                <>
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  Xóa Sản phẩm
+                </>
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       {/* Stats Cards */}
       <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         <Card className="relative overflow-hidden bg-gradient-to-br from-green-50 to-emerald-50 border-green-200/50 hover:shadow-xl transition-all duration-300 group hover:-translate-y-1 rounded-xl">
@@ -559,7 +627,7 @@ export default function ProductsPage() {
                     <DropdownMenuSeparator />
                     <DropdownMenuItem 
                       className="text-red-600 hover:bg-red-50/80 rounded-lg"
-                      onClick={() => handleDeleteProduct(product.product_id)}
+                      onClick={() => handleDeleteProduct(product)}
                       disabled={deleteProductMutation.isPending}
                     >
                       <Trash2 className="mr-2 h-4 w-4" />
@@ -717,7 +785,7 @@ export default function ProductsPage() {
                           <DropdownMenuSeparator />
                           <DropdownMenuItem 
                             className="text-red-600 hover:bg-red-50/80 rounded-lg"
-                            onClick={() => handleDeleteProduct(product.product_id)}
+                            onClick={() => handleDeleteProduct(product)}
                             disabled={deleteProductMutation.isPending}
                           >
                             <Trash2 className="mr-2 h-4 w-4" />
