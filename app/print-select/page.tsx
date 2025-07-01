@@ -51,7 +51,6 @@ import {
   Globe,
   Loader2,
 } from "lucide-react"
-import html2pdf from 'html2pdf.js'
 
 // Mock data with enhanced information
 const printFormats = [
@@ -172,7 +171,7 @@ export default function PrintSelectPage() {
       if (format === 'pdf') {
         const html = generatePDFContent(items, quality, copies);
         fileName += '.pdf';
-        exportToPDF(html, fileName);
+        await exportToPDF(html, fileName);
         return { success: true, fileName };
       } else if (format === 'txt') {
         fileContent = generateTextContent(items, quality, copies)
@@ -382,7 +381,9 @@ export default function PrintSelectPage() {
     return html
   }
 
-  const exportToPDF = (htmlContent: string, fileName: string) => {
+  const exportToPDF = async (htmlContent: string, fileName: string) => {
+    if (typeof window === 'undefined') return; // Chỉ chạy trên client
+    const html2pdf = (await import('html2pdf.js')).default;
     const element = document.createElement('div');
     element.innerHTML = htmlContent;
     document.body.appendChild(element);
