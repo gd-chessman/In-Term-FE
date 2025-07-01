@@ -25,7 +25,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
-import { Plus, Search, MoreHorizontal, Edit, Trash2, Globe, Flag, MapPin, FileText, TrendingUp, Loader2 } from "lucide-react"
+import { Plus, Search, MoreHorizontal, Edit, Trash2, Globe, Flag, MapPin, FileText, TrendingUp, Loader2, Grid, List } from "lucide-react"
 import { getCountries, createCountry, updateCountry, deleteCountry } from "@/services/CountryService"
 import { toast } from "sonner"
 
@@ -45,6 +45,7 @@ export default function CountriesPage() {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
   const [editingCountry, setEditingCountry] = useState<any>(null)
   const [deletingCountry, setDeletingCountry] = useState<any>(null)
+  const [viewMode, setViewMode] = useState<'table' | 'card'>('table')
   const [formData, setFormData] = useState({
     country_name: "",
     country_code: ""
@@ -198,66 +199,86 @@ export default function CountriesPage() {
           </h1>
           <p className="text-slate-600 mt-2">Quản lý danh sách quốc gia và template in</p>
         </div>
-        <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-          <DialogTrigger asChild>
-            <Button className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl">
-              <Plus className="mr-2 h-4 w-4" />
-              Thêm Quốc gia
+        <div className="flex items-center gap-2">
+          <div className="flex items-center bg-white rounded-lg border shadow-sm">
+            <Button
+              variant={viewMode === "card" ? "default" : "ghost"}
+              size="sm"
+              onClick={() => setViewMode("card")}
+              className="rounded-r-none"
+            >
+              <Grid className="h-4 w-4" />
             </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[500px] bg-white/95 backdrop-blur-xl border-slate-200/60 shadow-2xl rounded-2xl">
-            <DialogHeader>
-              <DialogTitle className="text-xl font-semibold text-slate-900">Thêm Quốc gia mới</DialogTitle>
-              <DialogDescription className="text-slate-600">Thêm quốc gia mới vào hệ thống</DialogDescription>
-            </DialogHeader>
-            <form onSubmit={handleSubmit}>
-              <div className="grid gap-6 py-4">
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="country_name" className="text-right font-medium text-slate-700">
-                    Tên quốc gia
-                  </Label>
-                  <Input
-                    id="country_name"
-                    value={formData.country_name}
-                    onChange={(e) => handleInputChange('country_name', e.target.value)}
-                    className="col-span-3 rounded-xl border-slate-200 focus:border-blue-300 focus:ring-2 focus:ring-blue-100"
-                    placeholder="Nhập tên quốc gia"
-                    required
-                  />
+            <Button
+              variant={viewMode === "table" ? "default" : "ghost"}
+              size="sm"
+              onClick={() => setViewMode("table")}
+              className="rounded-l-none"
+            >
+              <List className="h-4 w-4" />
+            </Button>
+          </div>
+          <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+            <DialogTrigger asChild>
+              <Button className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl">
+                <Plus className="mr-2 h-4 w-4" />
+                Thêm Quốc gia
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[500px] bg-white/95 backdrop-blur-xl border-slate-200/60 shadow-2xl rounded-2xl">
+              <DialogHeader>
+                <DialogTitle className="text-xl font-semibold text-slate-900">Thêm Quốc gia mới</DialogTitle>
+                <DialogDescription className="text-slate-600">Thêm quốc gia mới vào hệ thống</DialogDescription>
+              </DialogHeader>
+              <form onSubmit={handleSubmit}>
+                <div className="grid gap-6 py-4">
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="country_name" className="text-right font-medium text-slate-700">
+                      Tên quốc gia
+                    </Label>
+                    <Input
+                      id="country_name"
+                      value={formData.country_name}
+                      onChange={(e) => handleInputChange('country_name', e.target.value)}
+                      className="col-span-3 rounded-xl border-slate-200 focus:border-blue-300 focus:ring-2 focus:ring-blue-100"
+                      placeholder="Nhập tên quốc gia"
+                      required
+                    />
+                  </div>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="country_code" className="text-right font-medium text-slate-700">
+                      Mã quốc gia
+                    </Label>
+                    <Input
+                      id="country_code"
+                      value={formData.country_code}
+                      onChange={(e) => handleInputChange('country_code', e.target.value.toUpperCase())}
+                      placeholder="VN, US, JP..."
+                      className="col-span-3 rounded-xl border-slate-200 focus:border-blue-300 focus:ring-2 focus:ring-blue-100"
+                      required
+                    />
+                  </div>
                 </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="country_code" className="text-right font-medium text-slate-700">
-                    Mã quốc gia
-                  </Label>
-                  <Input
-                    id="country_code"
-                    value={formData.country_code}
-                    onChange={(e) => handleInputChange('country_code', e.target.value.toUpperCase())}
-                    placeholder="VN, US, JP..."
-                    className="col-span-3 rounded-xl border-slate-200 focus:border-blue-300 focus:ring-2 focus:ring-blue-100"
-                    required
-                  />
-                </div>
-              </div>
-              <DialogFooter>
-                <Button 
-                  type="submit" 
-                  className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white rounded-xl"
-                  disabled={createCountryMutation.isPending}
-                >
-                  {createCountryMutation.isPending ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Đang thêm...
-                    </>
-                  ) : (
-                    'Thêm Quốc gia'
-                  )}
-                </Button>
-              </DialogFooter>
-            </form>
-          </DialogContent>
-        </Dialog>
+                <DialogFooter>
+                  <Button 
+                    type="submit" 
+                    className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white rounded-xl"
+                    disabled={createCountryMutation.isPending}
+                  >
+                    {createCountryMutation.isPending ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Đang thêm...
+                      </>
+                    ) : (
+                      'Thêm Quốc gia'
+                    )}
+                  </Button>
+                </DialogFooter>
+              </form>
+            </DialogContent>
+          </Dialog>
+        </div>
       </div>
 
       {/* Edit Dialog */}
@@ -434,85 +455,6 @@ export default function CountriesPage() {
         </Card>
       </div>
 
-      {/* Countries Grid */}
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {filteredCountries.map((country: any) => (
-          <Card
-            key={country.country_id}
-            className="relative overflow-hidden bg-white/70 backdrop-blur-sm border-slate-200/60 hover:shadow-xl transition-all duration-300 group hover:-translate-y-1 rounded-xl"
-          >
-            <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-blue-400/10 to-cyan-400/10 rounded-full -mr-10 -mt-10"></div>
-            <CardHeader className="pb-3 relative">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <div className="text-3xl">{getFlagEmoji(country.country_code)}</div>
-                  <div>
-                    <h3 className="text-lg font-semibold text-slate-900">{country.country_name}</h3>
-                    <Badge variant="outline" className="border-slate-300 text-slate-700 rounded-lg mt-1">
-                      {country.country_code}
-                    </Badge>
-                  </div>
-                </div>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-slate-100 rounded-lg">
-                      <span className="sr-only">Mở menu</span>
-                      <MoreHorizontal className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent
-                    align="end"
-                    className="bg-white/95 backdrop-blur-xl border-slate-200/60 shadow-xl rounded-xl"
-                  >
-                    <DropdownMenuLabel>Thao tác</DropdownMenuLabel>
-                    <DropdownMenuItem 
-                      className="hover:bg-slate-50/80 rounded-lg"
-                      onClick={() => handleEdit(country)}
-                    >
-                      <Edit className="mr-2 h-4 w-4" />
-                      Chỉnh sửa
-                    </DropdownMenuItem>
-                    <DropdownMenuItem className="hover:bg-slate-50/80 rounded-lg">
-                      <FileText className="mr-2 h-4 w-4" />
-                      Xem Template
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem 
-                      className="text-red-600 hover:bg-red-50/80 rounded-lg"
-                      onClick={() => handleDelete(country)}
-                    >
-                      <Trash2 className="mr-2 h-4 w-4" />
-                      Xóa
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-slate-600">Sản phẩm:</span>
-                  <Badge className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white border-0 shadow-lg">
-                    {/* Placeholder - would need API integration */}
-                    0
-                  </Badge>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-slate-600">Template:</span>
-                  <Badge className="bg-gradient-to-r from-green-500 to-emerald-500 text-white border-0 shadow-lg">
-                    {/* Placeholder - would need API integration */}
-                    0
-                  </Badge>
-                </div>
-                <div className="text-xs text-slate-500 pt-2 border-t border-slate-100">
-                  Tạo: {new Date(country.created_at).toLocaleDateString("vi-VN")}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-
       {/* Search */}
       <Card className="bg-white/70 backdrop-blur-sm border-slate-200/60 hover:shadow-xl transition-all duration-300 rounded-xl">
         <CardHeader>
@@ -531,96 +473,178 @@ export default function CountriesPage() {
         </CardContent>
       </Card>
 
-      {/* Countries Table */}
-      <Card className="bg-white/70 backdrop-blur-sm border-slate-200/60 hover:shadow-xl transition-all duration-300 rounded-xl">
-        <CardHeader>
-          <CardTitle className="text-slate-900">Danh sách Quốc gia</CardTitle>
-          <CardDescription>Tổng cộng {filteredCountries.length} quốc gia trong hệ thống</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow className="border-slate-100 hover:bg-slate-50/50">
-                <TableHead className="text-slate-600 font-semibold">Quốc gia</TableHead>
-                <TableHead className="text-slate-600 font-semibold">Mã</TableHead>
-                <TableHead className="text-slate-600 font-semibold">Số sản phẩm</TableHead>
-                <TableHead className="text-slate-600 font-semibold">Template in</TableHead>
-                <TableHead className="text-slate-600 font-semibold">Ngày tạo</TableHead>
-                <TableHead className="text-right text-slate-600 font-semibold">Thao tác</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredCountries.map((country: any) => (
-                <TableRow key={country.country_id} className="hover:bg-slate-50/80 transition-colors duration-200">
-                  <TableCell>
-                    <div className="flex items-center space-x-3">
-                      <div className="text-2xl">{getFlagEmoji(country.country_code)}</div>
-                      <span className="font-semibold text-slate-900">{country.country_name}</span>
+      {/* Countries Display */}
+      {viewMode === 'table' ? (
+        /* Table View */
+        <Card className="bg-white/70 backdrop-blur-sm border-slate-200/60 hover:shadow-xl transition-all duration-300 rounded-xl">
+          <CardHeader>
+            <CardTitle className="text-slate-900">Danh sách Quốc gia</CardTitle>
+            <CardDescription>Tổng cộng {filteredCountries.length} quốc gia trong hệ thống</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow className="border-slate-100 hover:bg-slate-50/50">
+                  <TableHead className="text-slate-600 font-semibold">Quốc gia</TableHead>
+                  <TableHead className="text-slate-600 font-semibold">Mã</TableHead>
+                  <TableHead className="text-slate-600 font-semibold">Số sản phẩm</TableHead>
+                  <TableHead className="text-slate-600 font-semibold">Template in</TableHead>
+                  <TableHead className="text-slate-600 font-semibold">Ngày tạo</TableHead>
+                  <TableHead className="text-right text-slate-600 font-semibold">Thao tác</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredCountries.map((country: any) => (
+                  <TableRow key={country.country_id} className="hover:bg-slate-50/80 transition-colors duration-200">
+                    <TableCell>
+                      <div className="flex items-center space-x-3">
+                        <div className="text-2xl">{getFlagEmoji(country.country_code)}</div>
+                        <span className="font-semibold text-slate-900">{country.country_name}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="outline" className="border-slate-300 text-slate-700 rounded-lg">
+                        {country.country_code}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <Badge className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white border-0 shadow-lg">
+                        {/* Placeholder - would need API integration */}
+                        0
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <Badge className="bg-gradient-to-r from-green-500 to-emerald-500 text-white border-0 shadow-lg">
+                        {/* Placeholder - would need API integration */}
+                        0
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <div className="text-sm text-slate-600">
+                        {new Date(country.created_at).toLocaleDateString("vi-VN")}
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-slate-100 rounded-lg">
+                            <span className="sr-only">Mở menu</span>
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent
+                          align="end"
+                          className="bg-white/95 backdrop-blur-xl border-slate-200/60 shadow-xl rounded-xl"
+                        >
+                          <DropdownMenuLabel>Thao tác</DropdownMenuLabel>
+                          <DropdownMenuItem 
+                            className="hover:bg-slate-50/80 rounded-lg"
+                            onClick={() => handleEdit(country)}
+                          >
+                            <Edit className="mr-2 h-4 w-4" />
+                            Chỉnh sửa
+                          </DropdownMenuItem>
+                          {/* <DropdownMenuItem className="hover:bg-slate-50/80 rounded-lg">
+                            <FileText className="mr-2 h-4 w-4" />
+                            Xem Template
+                          </DropdownMenuItem> */}
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem 
+                            className="text-red-600 hover:bg-red-50/80 rounded-lg"
+                            onClick={() => handleDelete(country)}
+                          >
+                            <Trash2 className="mr-2 h-4 w-4" />
+                            Xóa
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+      ) : (
+        /* Card View */
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {filteredCountries.map((country: any) => (
+            <Card
+              key={country.country_id}
+              className="relative overflow-hidden bg-white/70 backdrop-blur-sm border-slate-200/60 hover:shadow-xl transition-all duration-300 group hover:-translate-y-1 rounded-xl"
+            >
+              <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-blue-400/10 to-cyan-400/10 rounded-full -mr-10 -mt-10"></div>
+              <CardHeader className="pb-3 relative">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <div className="text-3xl">{getFlagEmoji(country.country_code)}</div>
+                    <div>
+                      <h3 className="text-lg font-semibold text-slate-900">{country.country_name}</h3>
+                      <Badge variant="outline" className="border-slate-300 text-slate-700 rounded-lg mt-1">
+                        {country.country_code}
+                      </Badge>
                     </div>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant="outline" className="border-slate-300 text-slate-700 rounded-lg">
-                      {country.country_code}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
+                  </div>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-slate-100 rounded-lg">
+                        <span className="sr-only">Mở menu</span>
+                        <MoreHorizontal className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent
+                      align="end"
+                      className="bg-white/95 backdrop-blur-xl border-slate-200/60 shadow-xl rounded-xl"
+                    >
+                      <DropdownMenuLabel>Thao tác</DropdownMenuLabel>
+                      <DropdownMenuItem 
+                        className="hover:bg-slate-50/80 rounded-lg"
+                        onClick={() => handleEdit(country)}
+                      >
+                        <Edit className="mr-2 h-4 w-4" />
+                        Chỉnh sửa
+                      </DropdownMenuItem>
+                      <DropdownMenuItem className="hover:bg-slate-50/80 rounded-lg">
+                        <FileText className="mr-2 h-4 w-4" />
+                        Xem Template
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem 
+                        className="text-red-600 hover:bg-red-50/80 rounded-lg"
+                        onClick={() => handleDelete(country)}
+                      >
+                        <Trash2 className="mr-2 h-4 w-4" />
+                        Xóa
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-slate-600">Sản phẩm:</span>
                     <Badge className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white border-0 shadow-lg">
                       {/* Placeholder - would need API integration */}
                       0
                     </Badge>
-                  </TableCell>
-                  <TableCell>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-slate-600">Template:</span>
                     <Badge className="bg-gradient-to-r from-green-500 to-emerald-500 text-white border-0 shadow-lg">
                       {/* Placeholder - would need API integration */}
                       0
                     </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <div className="text-sm text-slate-600">
-                      {new Date(country.created_at).toLocaleDateString("vi-VN")}
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-slate-100 rounded-lg">
-                          <span className="sr-only">Mở menu</span>
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent
-                        align="end"
-                        className="bg-white/95 backdrop-blur-xl border-slate-200/60 shadow-xl rounded-xl"
-                      >
-                        <DropdownMenuLabel>Thao tác</DropdownMenuLabel>
-                        <DropdownMenuItem 
-                          className="hover:bg-slate-50/80 rounded-lg"
-                          onClick={() => handleEdit(country)}
-                        >
-                          <Edit className="mr-2 h-4 w-4" />
-                          Chỉnh sửa
-                        </DropdownMenuItem>
-                        <DropdownMenuItem className="hover:bg-slate-50/80 rounded-lg">
-                          <FileText className="mr-2 h-4 w-4" />
-                          Xem Template
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem 
-                          className="text-red-600 hover:bg-red-50/80 rounded-lg"
-                          onClick={() => handleDelete(country)}
-                        >
-                          <Trash2 className="mr-2 h-4 w-4" />
-                          Xóa
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+                  </div>
+                  <div className="text-xs text-slate-500 pt-2 border-t border-slate-100">
+                    Tạo: {new Date(country.created_at).toLocaleDateString("vi-VN")}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
     </div>
   )
 }
