@@ -1,6 +1,10 @@
 "use client"
 
 import { useState } from "react"
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
+import { toast } from "sonner"
+import { createPrintTemplate, getPrintTemplates } from "@/services/PrintService"
+import { getCountries } from "@/services/CountryService"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -47,93 +51,16 @@ import {
   Calendar,
 } from "lucide-react"
 
-// Mock data with enhanced information
-const templates = [
-  {
-    pt_id: 1,
-    pt_title: "Template Việt Nam - Chuẩn",
-    pt_country_name: "Việt Nam",
-    pt_country_code: "VN",
-    pt_content: `Thông tin sản phẩm: {product_name}
-Giá bán: {price} VND
-Mã sản phẩm: {product_code}
-Danh mục: {category_name}
-Ngày in: {print_date}`,
-    pt_footer: "© 2024 Company Name. All rights reserved.",
-    created_at: "2024-01-01 00:00:00",
-    updated_at: "2024-01-15 10:30:00",
-    usage_count: 1250,
-    last_used: "2024-01-20 14:30:00",
-    status: "active",
-    variables: ["product_name", "price", "product_code", "category_name", "print_date"],
-  },
-  {
-    pt_id: 2,
-    pt_title: "Template US - Standard",
-    pt_country_name: "Hoa Kỳ",
-    pt_country_code: "US",
-    pt_content: `Product Information: {product_name}
-Price: {price} USD
-SKU: {product_code}
-Category: {category_name}
-Print Date: {print_date}`,
-    pt_footer: "© 2024 Company Name. All rights reserved.",
-    created_at: "2024-01-01 00:00:00",
-    updated_at: "2024-01-18 09:15:00",
-    usage_count: 890,
-    last_used: "2024-01-19 16:45:00",
-    status: "active",
-    variables: ["product_name", "price", "product_code", "category_name", "print_date"],
-  },
-  {
-    pt_id: 3,
-    pt_title: "Template Japan - 標準",
-    pt_country_name: "Nhật Bản",
-    pt_country_code: "JP",
-    pt_content: `商品情報: {product_name}
-価格: ¥{price}
-商品コード: {product_code}
-カテゴリー: {category_name}
-印刷日: {print_date}`,
-    pt_footer: "© 2024 Company Name. All rights reserved.",
-    created_at: "2024-01-01 00:00:00",
-    updated_at: "2024-01-12 11:20:00",
-    usage_count: 567,
-    last_used: "2024-01-18 13:20:00",
-    status: "active",
-    variables: ["product_name", "price", "product_code", "category_name", "print_date"],
-  },
-  {
-    pt_id: 4,
-    pt_title: "Template Korea - 표준",
-    pt_country_name: "Hàn Quốc",
-    pt_country_code: "KR",
-    pt_content: `제품 정보: {product_name}
-가격: ₩{price}
-제품 코드: {product_code}
-카테고리: {category_name}
-인쇄 날짜: {print_date}`,
-    pt_footer: "© 2024 Company Name. All rights reserved.",
-    created_at: "2024-01-01 00:00:00",
-    updated_at: "2024-01-10 15:45:00",
-    usage_count: 432,
-    last_used: "2024-01-17 10:15:00",
-    status: "inactive",
-    variables: ["product_name", "price", "product_code", "category_name", "print_date"],
-  },
-]
-
-const countries = [
-  { country_id: 1, country_name: "Việt Nam", country_code: "VN", flag: "🇻🇳" },
-  { country_id: 2, country_name: "Hoa Kỳ", country_code: "US", flag: "🇺🇸" },
-  { country_id: 3, country_name: "Nhật Bản", country_code: "JP", flag: "🇯🇵" },
-  { country_id: 4, country_name: "Hàn Quốc", country_code: "KR", flag: "🇰🇷" },
-  { country_id: 5, country_name: "Thái Lan", country_code: "TH", flag: "🇹🇭" },
-]
 
 const getCountryFlag = (countryCode: string) => {
-  const country = countries.find((c) => c.country_code === countryCode)
-  return country?.flag || "🌍"
+  if (!countryCode || typeof countryCode !== 'string') {
+    return "🌍"
+  }
+  const codePoints = countryCode
+    .toUpperCase()
+    .split('')
+    .map(char => 127397 + char.charCodeAt(0));
+  return String.fromCodePoint(...codePoints);
 }
 
 export default function PrintTemplatesPage() {
@@ -144,20 +71,109 @@ export default function PrintTemplatesPage() {
   const [isPreviewDialogOpen, setIsPreviewDialogOpen] = useState(false)
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
   const [selectedTemplate, setSelectedTemplate] = useState<any>(null)
+  const [formData, setFormData] = useState({
+    pt_country_id: "",
+    pt_title: "",
+    pt_content: "",
+    pt_footer: ""
+  })
 
-  const filteredTemplates = templates.filter((template) => {
+  const queryClient = useQueryClient()
+
+  // Fetch print templates
+  const { data: templates = [], isLoading, error } = useQuery({
+    queryKey: ['print-templates'],
+    queryFn: getPrintTemplates,
+  })
+
+  // Fetch countries
+  const { data: countries = [], isLoading: isLoadingCountries } = useQuery({
+    queryKey: ['countries'],
+    queryFn: getCountries,
+  })
+
+  // Create template mutation
+  const createTemplateMutation = useMutation({
+    mutationFn: createPrintTemplate,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['print-templates'] })
+      toast.success("Tạo template thành công!")
+      setIsCreateDialogOpen(false)
+      setFormData({
+        pt_country_id: "",
+        pt_title: "",
+        pt_content: "",
+        pt_footer: ""
+      })
+    },
+    onError: (error: any) => {
+      toast.error(error?.response?.data?.message || "Có lỗi xảy ra khi tạo template")
+    }
+  })
+
+  const filteredTemplates = templates.filter((template: any) => {
     const matchesSearch =
       template.pt_title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       template.pt_content.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesCountry = selectedCountry === "all" || template.pt_country_code === selectedCountry
+    const matchesCountry = selectedCountry === "all" || template.country?.country_code === selectedCountry
     return matchesSearch && matchesCountry
   })
 
-  const totalUsage = templates.reduce((sum, t) => sum + t.usage_count, 0)
-  const activeTemplates = templates.filter((t) => t.status === "active").length
-  const mostUsedTemplate = templates.reduce((prev, current) =>
-    prev.usage_count > current.usage_count ? prev : current,
-  )
+  // Calculate stats from real data
+  const totalUsage = templates.reduce((sum: number, t: any) => sum + (t.usage_count || 0), 0)
+  const mostUsedTemplate = templates.length > 0 ? templates.reduce((prev: any, current: any) =>
+    (prev.usage_count || 0) > (current.usage_count || 0) ? prev : current,
+  ) : { pt_title: "N/A", usage_count: 0 }
+
+  // Handle form submission
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!formData.pt_country_id || !formData.pt_title || !formData.pt_content) {
+      toast.error("Vui lòng điền đầy đủ thông tin bắt buộc")
+      return
+    }
+    
+    const payload = {
+      pt_country_id: Number(formData.pt_country_id),
+      pt_title: formData.pt_title.trim(),
+      pt_content: formData.pt_content.trim(),
+      pt_footer: formData.pt_footer.trim()
+    }
+    
+    createTemplateMutation.mutate(payload)
+  }
+
+  // Handle input changes
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }))
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="flex items-center space-x-2">
+          <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+          <span className="text-slate-600">Đang tải danh sách template...</span>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <div className="text-red-600 mb-2">Có lỗi xảy ra khi tải danh sách template</div>
+          <Button onClick={() => queryClient.refetchQueries({ queryKey: ['print-templates'] })} variant="outline">
+            Thử lại
+          </Button>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-6">
@@ -189,81 +205,129 @@ export default function PrintTemplatesPage() {
                 </DialogTitle>
                 <DialogDescription>Tạo template in mới cho quốc gia</DialogDescription>
               </DialogHeader>
-              <Tabs defaultValue="basic" className="w-full">
-                <TabsList className="grid w-full grid-cols-3">
-                  <TabsTrigger value="basic">Thông tin cơ bản</TabsTrigger>
-                  <TabsTrigger value="content">Nội dung</TabsTrigger>
-                  <TabsTrigger value="preview">Xem trước</TabsTrigger>
-                </TabsList>
-                <TabsContent value="basic" className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="pt_title">Tiêu đề Template</Label>
-                      <Input id="pt_title" placeholder="Nhập tiêu đề..." />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="pt_country">Quốc gia</Label>
-                      <Select>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Chọn quốc gia" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {countries.map((country) => (
-                            <SelectItem key={country.country_id} value={country.country_code}>
-                              <div className="flex items-center gap-2">
-                                <span>{country.flag}</span>
-                                <span>{country.country_name}</span>
-                              </div>
-                            </SelectItem>
-                          ))}
+              <form onSubmit={handleSubmit}>
+                <Tabs defaultValue="basic" className="w-full">
+                  <TabsList className="grid w-full grid-cols-3">
+                    <TabsTrigger value="basic">Thông tin cơ bản</TabsTrigger>
+                    <TabsTrigger value="content">Nội dung</TabsTrigger>
+                    <TabsTrigger value="preview">Xem trước</TabsTrigger>
+                  </TabsList>
+                  <TabsContent value="basic" className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="pt_title">Tiêu đề Template *</Label>
+                        <Input 
+                          id="pt_title" 
+                          value={formData.pt_title}
+                          onChange={(e) => handleInputChange('pt_title', e.target.value)}
+                          placeholder="Nhập tiêu đề..." 
+                          required
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="pt_country">Quốc gia *</Label>
+                        <Select 
+                          value={formData.pt_country_id} 
+                          onValueChange={(value) => handleInputChange('pt_country_id', value)}
+                          required
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Chọn quốc gia" />
+                          </SelectTrigger>
+                                                  <SelectContent>
+                          {isLoadingCountries ? (
+                            <SelectItem value="" disabled>Đang tải...</SelectItem>
+                          ) : (
+                            countries.map((country: any) => (
+                              <SelectItem key={country.country_id} value={country.country_id.toString()}>
+                                <div className="flex items-center gap-2">
+                                  <span>{getCountryFlag(country.country_code)}</span>
+                                  <span>{country.country_name}</span>
+                                </div>
+                              </SelectItem>
+                            ))
+                          )}
                         </SelectContent>
-                      </Select>
+                        </Select>
+                      </div>
                     </div>
-                  </div>
-                </TabsContent>
-                <TabsContent value="content" className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="pt_content">Nội dung Template</Label>
-                    <Textarea
-                      id="pt_content"
-                      className="h-40 font-mono text-sm"
-                      placeholder="Sử dụng {product_name}, {price}, {product_code}, {category_name}, {print_date}"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="pt_footer">Footer</Label>
-                    <Textarea id="pt_footer" placeholder="Footer template..." />
-                  </div>
-                  <div className="p-3 bg-blue-50 rounded-lg">
-                    <h4 className="font-medium text-sm mb-2 flex items-center gap-2">
-                      <Code className="h-4 w-4" />
-                      Biến có thể sử dụng:
-                    </h4>
-                    <div className="flex flex-wrap gap-2">
-                      {["product_name", "price", "product_code", "category_name", "print_date"].map((variable) => (
-                        <Badge key={variable} variant="secondary" className="text-xs">
-                          {`{${variable}}`}
-                        </Badge>
-                      ))}
+                  </TabsContent>
+                  <TabsContent value="content" className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="pt_content">Nội dung Template *</Label>
+                      <Textarea
+                        id="pt_content"
+                        value={formData.pt_content}
+                        onChange={(e) => handleInputChange('pt_content', e.target.value)}
+                        className="h-40 font-mono text-sm"
+                        placeholder="Sử dụng {product_name}, {price}, {product_code}, {category_name}, {print_date}"
+                        required
+                      />
                     </div>
-                  </div>
-                </TabsContent>
-                <TabsContent value="preview" className="space-y-4">
-                  <div className="border rounded-lg p-4 bg-gray-50 min-h-[200px]">
-                    <h4 className="font-medium mb-3 flex items-center gap-2">
-                      <Eye className="h-4 w-4" />
-                      Xem trước Template:
-                    </h4>
-                    <div className="bg-white p-4 rounded border font-mono text-sm whitespace-pre-wrap">
-                      Template preview sẽ hiển thị ở đây...
+                    <div className="space-y-2">
+                      <Label htmlFor="pt_footer">Footer</Label>
+                      <Textarea 
+                        id="pt_footer" 
+                        value={formData.pt_footer}
+                        onChange={(e) => handleInputChange('pt_footer', e.target.value)}
+                        placeholder="Footer template..." 
+                      />
                     </div>
-                  </div>
-                </TabsContent>
-              </Tabs>
-              <DialogFooter>
-                <Button variant="outline">Hủy</Button>
-                <Button className="bg-gradient-to-r from-blue-500 to-purple-600">Tạo Template</Button>
-              </DialogFooter>
+                    <div className="p-3 bg-blue-50 rounded-lg">
+                      <h4 className="font-medium text-sm mb-2 flex items-center gap-2">
+                        <Code className="h-4 w-4" />
+                        Biến có thể sử dụng:
+                      </h4>
+                      <div className="flex flex-wrap gap-2">
+                        {["product_name", "price", "product_code", "category_name", "print_date"].map((variable) => (
+                          <Badge key={variable} variant="secondary" className="text-xs">
+                            {`{${variable}}`}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  </TabsContent>
+                  <TabsContent value="preview" className="space-y-4">
+                    <div className="border rounded-lg p-4 bg-gray-50 min-h-[200px]">
+                      <h4 className="font-medium mb-3 flex items-center gap-2">
+                        <Eye className="h-4 w-4" />
+                        Xem trước Template:
+                      </h4>
+                      <div className="bg-white p-4 rounded border font-mono text-sm whitespace-pre-wrap">
+                        {formData.pt_content || "Template preview sẽ hiển thị ở đây..."}
+                      </div>
+                      {formData.pt_footer && (
+                        <div className="mt-3 p-3 bg-white rounded border text-sm">
+                          <strong>Footer:</strong> {formData.pt_footer}
+                        </div>
+                      )}
+                    </div>
+                  </TabsContent>
+                </Tabs>
+                <DialogFooter className="mt-4">
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    onClick={() => setIsCreateDialogOpen(false)}
+                  >
+                    Hủy
+                  </Button>
+                  <Button 
+                    type="submit"
+                    disabled={createTemplateMutation.isPending}
+                    className="bg-gradient-to-r from-blue-500 to-purple-600"
+                  >
+                    {createTemplateMutation.isPending ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
+                        Đang tạo...
+                      </>
+                    ) : (
+                      'Tạo Template'
+                    )}
+                  </Button>
+                </DialogFooter>
+              </form>
             </DialogContent>
           </Dialog>
         </div>
@@ -283,7 +347,7 @@ export default function PrintTemplatesPage() {
             <div className="text-2xl font-bold text-blue-600">{templates.length}</div>
             <p className="text-xs text-muted-foreground flex items-center gap-1">
               <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-              {activeTemplates} đang hoạt động
+              Tất cả template
             </p>
           </CardContent>
         </Card>
@@ -362,10 +426,10 @@ export default function PrintTemplatesPage() {
                       <span>Tất cả quốc gia</span>
                     </div>
                   </SelectItem>
-                  {countries.map((country) => (
+                  {countries.map((country: any) => (
                     <SelectItem key={country.country_id} value={country.country_code}>
                       <div className="flex items-center gap-2">
-                        <span>{country.flag}</span>
+                        <span>{getCountryFlag(country.country_code)}</span>
                         <span>{country.country_name}</span>
                       </div>
                     </SelectItem>
@@ -398,7 +462,7 @@ export default function PrintTemplatesPage() {
       {/* Templates Display */}
       {viewMode === "cards" ? (
         <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-          {filteredTemplates.map((template) => (
+          {filteredTemplates.map((template: any) => (
             <Card
               key={template.pt_id}
               className="group hover:shadow-lg transition-all duration-300 relative overflow-hidden"
@@ -407,15 +471,12 @@ export default function PrintTemplatesPage() {
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="text-2xl">{getCountryFlag(template.pt_country_code)}</div>
+                    <div className="text-2xl">{getCountryFlag(template.country?.country_code)}</div>
                     <div>
                       <CardTitle className="text-lg leading-tight">{template.pt_title}</CardTitle>
                       <CardDescription className="flex items-center gap-2 mt-1">
                         <Badge variant="outline" className="text-xs">
-                          {template.pt_country_name}
-                        </Badge>
-                        <Badge variant={template.status === "active" ? "default" : "secondary"} className="text-xs">
-                          {template.status === "active" ? "Hoạt động" : "Tạm dừng"}
+                          {template.country?.country_name}
                         </Badge>
                       </CardDescription>
                     </div>
@@ -485,22 +546,19 @@ export default function PrintTemplatesPage() {
                     <span>Mức độ sử dụng</span>
                     <span>{Math.round((template.usage_count / totalUsage) * 100)}%</span>
                   </div>
-                  <Progress value={(template.usage_count / totalUsage) * 100} className="h-2" />
-                </div>
+                                      <Progress value={(template.usage_count / totalUsage) * 100} className="h-2" />
+                  </div>
 
-                <div className="flex flex-wrap gap-1">
-                  {template.variables.slice(0, 3).map((variable) => (
-                    <Badge key={variable} variant="secondary" className="text-xs">
-                      {`{${variable}}`}
-                    </Badge>
-                  ))}
-                  {template.variables.length > 3 && (
-                    <Badge variant="secondary" className="text-xs">
-                      +{template.variables.length - 3}
-                    </Badge>
-                  )}
-                </div>
-              </CardContent>
+                  <div className="flex items-center justify-between text-sm">
+                    <div className="flex items-center gap-2">
+                      <Globe className="h-4 w-4 text-muted-foreground" />
+                      <span className="font-medium">{template.country?.country_name}</span>
+                      <Badge variant="outline" className="text-xs">
+                        {template.country?.country_code}
+                      </Badge>
+                    </div>
+                  </div>
+                </CardContent>
             </Card>
           ))}
         </div>
@@ -518,17 +576,16 @@ export default function PrintTemplatesPage() {
                   <TableHead>Quốc gia</TableHead>
                   <TableHead>Nội dung</TableHead>
                   <TableHead>Lượt sử dụng</TableHead>
-                  <TableHead>Trạng thái</TableHead>
                   <TableHead>Cập nhật</TableHead>
                   <TableHead className="text-right">Thao tác</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredTemplates.map((template) => (
+                {filteredTemplates.map((template: any) => (
                   <TableRow key={template.pt_id} className="group">
                     <TableCell>
                       <div className="flex items-center gap-3">
-                        <div className="text-lg">{getCountryFlag(template.pt_country_code)}</div>
+                        <div className="text-lg">{getCountryFlag(template.country?.country_code)}</div>
                         <div>
                           <div className="font-medium">{template.pt_title}</div>
                           <div className="text-sm text-muted-foreground">ID: {template.pt_id}</div>
@@ -536,13 +593,13 @@ export default function PrintTemplatesPage() {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Badge variant="outline">{template.pt_country_name}</Badge>
+                      <Badge variant="outline">{template.country?.country_name}</Badge>
                     </TableCell>
                     <TableCell>
                       <div className="max-w-xs">
                         <div className="text-sm font-mono truncate">{template.pt_content}</div>
                         <div className="flex gap-1 mt-1">
-                          {template.variables.slice(0, 2).map((variable) => (
+                          {(template.variables || []).slice(0, 2).map((variable: any) => (
                             <Badge key={variable} variant="secondary" className="text-xs">
                               {`{${variable}}`}
                             </Badge>
@@ -557,14 +614,6 @@ export default function PrintTemplatesPage() {
                           <Progress value={(template.usage_count / totalUsage) * 100} className="h-1" />
                         </div>
                       </div>
-                    </TableCell>
-                    <TableCell>
-                      <Badge
-                        variant={template.status === "active" ? "default" : "secondary"}
-                        className={template.status === "active" ? "bg-green-100 text-green-800" : ""}
-                      >
-                        {template.status === "active" ? "Hoạt động" : "Tạm dừng"}
-                      </Badge>
                     </TableCell>
                     <TableCell>
                       <div className="text-sm">{new Date(template.updated_at).toLocaleDateString("vi-VN")}</div>
@@ -731,40 +780,19 @@ export default function PrintTemplatesPage() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      {countries.map((country) => (
-                        <SelectItem key={country.country_id} value={country.country_code}>
-                          <div className="flex items-center gap-2">
-                            <span>{country.flag}</span>
-                            <span>{country.country_name}</span>
-                          </div>
-                        </SelectItem>
-                      ))}
+                    {countries?.map((country: any) => (
+                      <SelectItem key={country.country_id} value={country.country_code}>
+                        <div className="flex items-center gap-2">
+                          <span>{getCountryFlag(country.country_code)}</span>
+                          <span>{country.country_name}</span>
+                        </div>
+                      </SelectItem>
+                    ))}
                     </SelectContent>
                   </Select>
                 </div>
               </div>
-              <div className="space-y-2">
-                <Label>Trạng thái</Label>
-                <Select defaultValue={selectedTemplate?.status}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="active">
-                      <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                        <span>Hoạt động</span>
-                      </div>
-                    </SelectItem>
-                    <SelectItem value="inactive">
-                      <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
-                        <span>Tạm dừng</span>
-                      </div>
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+
             </TabsContent>
             <TabsContent value="content" className="space-y-4">
               <div className="space-y-2">
