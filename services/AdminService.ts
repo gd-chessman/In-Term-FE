@@ -23,7 +23,7 @@ export const logout = async () => {
 
 export const getUserMe = async () => {
     try {
-        const temp = await axiosClient.get(`admins/me`);
+        const temp = await axiosClient.get(`admins/profile`);
         useAuth.getState().login();
         return temp.data.data;
     } catch (e) {

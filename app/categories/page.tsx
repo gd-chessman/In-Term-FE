@@ -405,74 +405,7 @@ export default function CategoriesPage() {
         </Card>
       </div>
 
-      {/* Categories Grid */}
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-        {categoriesTree.map((category: any) => (
-          <Card
-            key={category.category_id}
-            className="relative overflow-hidden bg-white/70 backdrop-blur-sm border-slate-200/60 hover:shadow-xl transition-all duration-300 group hover:-translate-y-1 rounded-xl"
-          >
-            <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-blue-500 to-cyan-500 opacity-10 rounded-full -mr-10 -mt-10"></div>
-            <CardHeader className="pb-3 relative">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <div className="text-3xl">📁</div>
-                  <div>
-                    <h3 className="text-lg font-semibold text-slate-900">{category.category_name}</h3>
-                    <p className="text-sm text-slate-600">{category.children?.length || 0} danh mục con</p>
-                  </div>
-                </div>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-slate-100 rounded-lg">
-                      <span className="sr-only">Mở menu</span>
-                      <MoreHorizontal className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent
-                    align="end"
-                    className="bg-white/95 backdrop-blur-xl border-slate-200/60 shadow-xl rounded-xl"
-                  >
-                    <DropdownMenuLabel>Thao tác</DropdownMenuLabel>
-                    <DropdownMenuItem 
-                      className="hover:bg-slate-50/80 rounded-lg"
-                      onClick={() => handleEditClick(category)}
-                    >
-                      <Edit className="mr-2 h-4 w-4" />
-                      Chỉnh sửa
-                    </DropdownMenuItem>
-                    <DropdownMenuItem className="hover:bg-slate-50/80 rounded-lg">
-                      <Plus className="mr-2 h-4 w-4" />
-                      Thêm danh mục con
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem 
-                      className="text-red-600 hover:bg-red-50/80 rounded-lg"
-                      onClick={() => handleDeleteClick(category)}
-                    >
-                      <Trash2 className="mr-2 h-4 w-4" />
-                      Xóa
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-slate-600">Danh mục con:</span>
-                  <Badge className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white border-0 shadow-lg">
-                    {category.children?.length || 0}
-                  </Badge>
-                </div>
-                <div className="text-xs text-slate-500 pt-2 border-t border-slate-100">
-                  ID: {category.category_id}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+
 
       {/* Search */}
       <Card className="bg-white/70 backdrop-blur-sm border-slate-200/60 hover:shadow-xl transition-all duration-300 rounded-xl">
