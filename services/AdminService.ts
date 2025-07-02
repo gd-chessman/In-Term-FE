@@ -37,3 +37,22 @@ export const getUserMe = async () => {
         }
     }
 }
+
+export const getAdmins = async (page: number, limit: number, search: string, level: string, status: string) => {
+    try {
+        const temp = await axiosClient.get(`admins?page=${page}&limit=${limit}&search=${search}`);
+        return temp.data;
+    } catch (e) {
+        throw e;
+    }
+}
+
+
+export const createAdmin = async (item: any) => {
+    try {
+        const temp = await axiosClient.post(`admins/create`, item);
+        return temp.data;
+    } catch (e) {
+        throw e;
+    }
+}

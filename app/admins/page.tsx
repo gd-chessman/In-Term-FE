@@ -1,6 +1,8 @@
 "use client"
 
 import { useState } from "react"
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
+import { createAdmin, getAdmins } from "@/services/AdminService"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -26,7 +28,8 @@ import {
 } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Plus, Search, MoreHorizontal, Edit, Trash2, Shield, Eye, Users, UserCheck, UserX, Crown } from "lucide-react"
+import { toast } from "sonner"
+import { Plus, Search, MoreHorizontal, Edit, Trash2, Shield, Eye, Users, UserCheck, UserX, Crown, Loader2 } from "lucide-react"
 
 // Mock data
 const admins = [
@@ -78,6 +81,67 @@ const roles = [
 export default function AdminsPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [selectedLevel, setSelectedLevel] = useState("all")
+  const [selectedStatus, setSelectedStatus] = useState("all")
+  const [formData, setFormData] = useState({
+    admin_username: "",
+    admin_email: "",
+    admin_password: "",
+    admin_fullname: "",
+    admin_level: "",
+    admin_role_id: ""
+  })
+  const queryClient = useQueryClient()
+
+  // Fetch admins data
+  const { data: adminsData, isLoading, error } = useQuery({
+    queryKey: ["admins", currentPage, searchTerm, selectedLevel, selectedStatus],
+    queryFn: () => getAdmins(currentPage, 10, searchTerm, selectedLevel, selectedStatus),
+  })
+
+  const admins = adminsData?.data?.admins || []
+  const pagination = adminsData?.data?.pagination || { page: 1, limit: 10, total: 0, total_pages: 1 }
+
+  const createAdminMutation = useMutation({
+    mutationFn: createAdmin,
+    onSuccess: () => {
+      toast.success("Tạo admin mới thành công")
+      setIsCreateDialogOpen(false)
+      setFormData({
+        admin_username: "",
+        admin_email: "",
+        admin_password: "",
+        admin_fullname: "",
+        admin_level: "",
+        admin_role_id: ""
+      })
+      // Refresh admin list
+      queryClient.invalidateQueries({ queryKey: ["admins"] })
+    },
+    onError: (error: any) => {
+      toast.error(error?.response?.data?.message || "Không thể tạo admin mới")
+    }
+  })
+
+  const handleCreateAdmin = () => {
+    if (!formData.admin_username || !formData.admin_email || !formData.admin_password || 
+        !formData.admin_fullname || !formData.admin_level || !formData.admin_role_id) {
+      toast.error("Vui lòng điền đầy đủ thông tin")
+      return
+    }
+
+    const payload = {
+      ...formData,
+      admin_role_id: parseInt(formData.admin_role_id)
+    }
+
+    createAdminMutation.mutate(payload)
+  }
+
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }))
+  }
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -172,7 +236,10 @@ export default function AdminsPage() {
                 </Label>
                 <Input
                   id="username"
+                  value={formData.admin_username}
+                  onChange={(e) => handleInputChange("admin_username", e.target.value)}
                   className="col-span-3 rounded-xl border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:border-purple-300 dark:focus:border-purple-500 focus:ring-2 focus:ring-purple-100 dark:focus:ring-purple-900"
+                  placeholder="Nhập username"
                 />
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
@@ -182,7 +249,10 @@ export default function AdminsPage() {
                 <Input
                   id="email"
                   type="email"
+                  value={formData.admin_email}
+                  onChange={(e) => handleInputChange("admin_email", e.target.value)}
                   className="col-span-3 rounded-xl border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:border-purple-300 dark:focus:border-purple-500 focus:ring-2 focus:ring-purple-100 dark:focus:ring-purple-900"
+                  placeholder="Nhập email"
                 />
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
@@ -191,23 +261,17 @@ export default function AdminsPage() {
                 </Label>
                 <Input
                   id="fullname"
+                  value={formData.admin_fullname}
+                  onChange={(e) => handleInputChange("admin_fullname", e.target.value)}
                   className="col-span-3 rounded-xl border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:border-purple-300 dark:focus:border-purple-500 focus:ring-2 focus:ring-purple-100 dark:focus:ring-purple-900"
-                />
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="phone" className="text-right font-medium text-gray-700 dark:text-gray-300">
-                  Điện thoại
-                </Label>
-                <Input
-                  id="phone"
-                  className="col-span-3 rounded-xl border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:border-purple-300 dark:focus:border-purple-500 focus:ring-2 focus:ring-purple-100 dark:focus:ring-purple-900"
+                  placeholder="Nhập họ tên"
                 />
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="level" className="text-right font-medium text-gray-700 dark:text-gray-300">
                   Cấp độ
                 </Label>
-                <Select>
+                <Select value={formData.admin_level} onValueChange={(value) => handleInputChange("admin_level", value)}>
                   <SelectTrigger className="col-span-3 rounded-xl border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:border-purple-300 dark:focus:border-purple-500 focus:ring-2 focus:ring-purple-100 dark:focus:ring-purple-900">
                     <SelectValue placeholder="Chọn cấp độ" />
                   </SelectTrigger>
@@ -223,7 +287,7 @@ export default function AdminsPage() {
                 <Label htmlFor="role" className="text-right font-medium text-gray-700 dark:text-gray-300">
                   Vai trò
                 </Label>
-                <Select>
+                <Select value={formData.admin_role_id} onValueChange={(value) => handleInputChange("admin_role_id", value)}>
                   <SelectTrigger className="col-span-3 rounded-xl border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:border-purple-300 dark:focus:border-purple-500 focus:ring-2 focus:ring-purple-100 dark:focus:ring-purple-900">
                     <SelectValue placeholder="Chọn vai trò" />
                   </SelectTrigger>
@@ -243,13 +307,27 @@ export default function AdminsPage() {
                 <Input
                   id="password"
                   type="password"
+                  value={formData.admin_password}
+                  onChange={(e) => handleInputChange("admin_password", e.target.value)}
                   className="col-span-3 rounded-xl border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:border-purple-300 dark:focus:border-purple-500 focus:ring-2 focus:ring-purple-100 dark:focus:ring-purple-900"
+                  placeholder="Nhập mật khẩu"
                 />
               </div>
             </div>
             <DialogFooter>
-              <Button className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 dark:from-purple-500 dark:to-indigo-500 dark:hover:from-purple-600 dark:hover:to-indigo-600 text-white rounded-xl">
-                Tạo người dùng
+              <Button 
+                onClick={handleCreateAdmin}
+                disabled={createAdminMutation.isPending}
+                className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 dark:from-purple-500 dark:to-indigo-500 dark:hover:from-purple-600 dark:hover:to-indigo-600 text-white rounded-xl"
+              >
+                {createAdminMutation.isPending ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Đang tạo...
+                  </>
+                ) : (
+                  "Tạo người dùng"
+                )}
               </Button>
             </DialogFooter>
           </DialogContent>
@@ -267,8 +345,10 @@ export default function AdminsPage() {
             </div>
           </CardHeader>
           <CardContent className="relative">
-            <div className="text-3xl font-bold text-gray-900 dark:text-gray-100">{admins.length}</div>
-            <p className="text-xs text-green-600 dark:text-green-400 mt-1">+2 từ tháng trước</p>
+            <div className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+              {isLoading ? "..." : pagination.total}
+            </div>
+            <p className="text-xs text-green-600 dark:text-green-400 mt-1">Tổng số admin</p>
           </CardContent>
         </Card>
 
@@ -282,10 +362,10 @@ export default function AdminsPage() {
           </CardHeader>
           <CardContent className="relative">
             <div className="text-3xl font-bold text-gray-900 dark:text-gray-100">
-              {admins.filter((a) => a.admin_status === "active").length}
+              {isLoading ? "..." : admins.filter((a: any) => a.admin_status === "active").length}
             </div>
             <p className="text-xs text-green-600 dark:text-green-400 mt-1">
-              {Math.round((admins.filter((a) => a.admin_status === "active").length / admins.length) * 100)}% tổng số
+              {isLoading ? "..." : admins.length > 0 ? Math.round((admins.filter((a: any) => a.admin_status === "active").length / admins.length) * 100) : 0}% tổng số
             </p>
           </CardContent>
         </Card>
@@ -300,7 +380,7 @@ export default function AdminsPage() {
           </CardHeader>
           <CardContent className="relative">
             <div className="text-3xl font-bold text-gray-900 dark:text-gray-100">
-              {admins.filter((a) => a.admin_status === "inactive").length}
+              {isLoading ? "..." : admins.filter((a: any) => a.admin_status === "inactive").length}
             </div>
             <p className="text-xs text-orange-600 dark:text-orange-400 mt-1">Cần kiểm tra</p>
           </CardContent>
@@ -327,42 +407,42 @@ export default function AdminsPage() {
           <CardTitle className="text-gray-900 dark:text-gray-100">Tìm kiếm & Lọc</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
-            <div className="relative flex-1 w-full">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 dark:text-gray-500" />
-              <Input
-                placeholder="Tìm kiếm theo tên, email, username..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 rounded-xl border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:border-purple-300 dark:focus:border-purple-500 focus:ring-2 focus:ring-purple-100 dark:focus:ring-purple-900"
-              />
+                      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
+              <div className="relative flex-1 w-full">
+                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 dark:text-gray-500" />
+                <Input
+                  placeholder="Tìm kiếm theo tên, email, username..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10 rounded-xl border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:border-purple-300 dark:focus:border-purple-500 focus:ring-2 focus:ring-purple-100 dark:focus:ring-purple-900"
+                />
+              </div>
+              <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
+                <Select value={selectedStatus} onValueChange={setSelectedStatus}>
+                  <SelectTrigger className="w-full sm:w-[180px] rounded-xl border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:border-purple-300 dark:focus:border-purple-500 focus:ring-2 focus:ring-purple-100 dark:focus:ring-purple-900">
+                    <SelectValue placeholder="Trạng thái" />
+                  </SelectTrigger>
+                  <SelectContent className="rounded-xl border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 shadow-xl">
+                    <SelectItem value="all">Tất cả</SelectItem>
+                    <SelectItem value="active">Hoạt động</SelectItem>
+                    <SelectItem value="inactive">Không hoạt động</SelectItem>
+                    <SelectItem value="suspended">Tạm khóa</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Select value={selectedLevel} onValueChange={setSelectedLevel}>
+                  <SelectTrigger className="w-full sm:w-[180px] rounded-xl border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:border-purple-300 dark:focus:border-purple-500 focus:ring-2 focus:ring-purple-100 dark:focus:ring-purple-900">
+                    <SelectValue placeholder="Cấp độ" />
+                  </SelectTrigger>
+                  <SelectContent className="rounded-xl border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 shadow-xl">
+                    <SelectItem value="all">Tất cả</SelectItem>
+                    <SelectItem value="super_admin">Super Admin</SelectItem>
+                    <SelectItem value="admin">Admin</SelectItem>
+                    <SelectItem value="moderator">Moderator</SelectItem>
+                    <SelectItem value="support">Support</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
-            <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
-              <Select>
-                <SelectTrigger className="w-full sm:w-[180px] rounded-xl border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:border-purple-300 dark:focus:border-purple-500 focus:ring-2 focus:ring-purple-100 dark:focus:ring-purple-900">
-                  <SelectValue placeholder="Trạng thái" />
-                </SelectTrigger>
-                <SelectContent className="rounded-xl border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 shadow-xl">
-                  <SelectItem value="all">Tất cả</SelectItem>
-                  <SelectItem value="active">Hoạt động</SelectItem>
-                  <SelectItem value="inactive">Không hoạt động</SelectItem>
-                  <SelectItem value="suspended">Tạm khóa</SelectItem>
-                </SelectContent>
-              </Select>
-              <Select>
-                <SelectTrigger className="w-full sm:w-[180px] rounded-xl border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:border-purple-300 dark:focus:border-purple-500 focus:ring-2 focus:ring-purple-100 dark:focus:ring-purple-900">
-                  <SelectValue placeholder="Cấp độ" />
-                </SelectTrigger>
-                <SelectContent className="rounded-xl border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 shadow-xl">
-                  <SelectItem value="all">Tất cả</SelectItem>
-                  <SelectItem value="super_admin">Super Admin</SelectItem>
-                  <SelectItem value="admin">Admin</SelectItem>
-                  <SelectItem value="moderator">Moderator</SelectItem>
-                  <SelectItem value="support">Support</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
         </CardContent>
       </Card>
 
@@ -371,13 +451,24 @@ export default function AdminsPage() {
         <CardHeader>
           <CardTitle className="text-gray-900 dark:text-gray-100">Danh sách Admin</CardTitle>
           <CardDescription className="text-gray-600 dark:text-gray-400">
-            Tổng cộng {admins.length} admin trong hệ thống
+            {isLoading ? "Đang tải..." : `Tổng cộng ${pagination.total} admin trong hệ thống`}
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {/* Mobile Cards View */}
-          <div className="lg:hidden space-y-4">
-            {admins.map((admin) => (
+          {isLoading ? (
+            <div className="flex items-center justify-center py-8">
+              <Loader2 className="h-8 w-8 animate-spin text-purple-600" />
+              <span className="ml-2 text-gray-600 dark:text-gray-400">Đang tải dữ liệu...</span>
+            </div>
+          ) : error ? (
+            <div className="flex items-center justify-center py-8">
+              <span className="text-red-600 dark:text-red-400">Không thể tải dữ liệu admin</span>
+            </div>
+          ) : (
+            <>
+              {/* Mobile Cards View */}
+              <div className="lg:hidden space-y-4">
+                {admins.map((admin: any) => (
               <Card
                 key={admin.admin_id}
                 className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm border-gray-200/60 dark:border-gray-700/60 hover:shadow-xl transition-all duration-300 rounded-xl"
@@ -390,7 +481,7 @@ export default function AdminsPage() {
                         <AvatarFallback className="bg-gradient-to-r from-purple-500 to-indigo-500 dark:from-purple-400 dark:to-indigo-400 text-white font-semibold">
                           {admin.admin_fullname
                             .split(" ")
-                            .map((n) => n[0])
+                            .map((n: any) => n[0])
                             .join("")}
                         </AvatarFallback>
                       </Avatar>
@@ -438,17 +529,8 @@ export default function AdminsPage() {
 
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-600 dark:text-gray-400">Cấp độ:</span>
-                      {getLevelBadge(admin.admin_level)}
-                    </div>
-                    <div className="flex items-center justify-between">
                       <span className="text-sm text-gray-600 dark:text-gray-400">Vai trò:</span>
-                      <Badge
-                        variant="outline"
-                        className="border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg"
-                      >
-                        {admin.role_name}
-                      </Badge>
+                      {getLevelBadge(admin.admin_level)}
                     </div>
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-gray-600 dark:text-gray-400">Trạng thái:</span>
@@ -457,14 +539,14 @@ export default function AdminsPage() {
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-gray-600 dark:text-gray-400">Đăng nhập cuối:</span>
                       <div className="text-sm text-gray-600 dark:text-gray-300">
-                        {new Date(admin.admin_last_login).toLocaleString("vi-VN")}
+                        {admin.admin_last_login ? new Date(admin.admin_last_login).toLocaleString("vi-VN") : "Chưa đăng nhập"}
                       </div>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-600 dark:text-gray-400">IP cuối:</span>
-                      <code className="text-xs bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-lg text-gray-700 dark:text-gray-300 font-mono">
-                        {admin.admin_last_ip}
-                      </code>
+                      <span className="text-sm text-gray-600 dark:text-gray-400">Ngày tạo:</span>
+                      <div className="text-sm text-gray-600 dark:text-gray-300">
+                        {admin.created_at ? new Date(admin.created_at).toLocaleDateString("vi-VN") : "N/A"}
+                      </div>
                     </div>
                   </div>
                 </CardContent>
@@ -472,23 +554,21 @@ export default function AdminsPage() {
             ))}
           </div>
 
-          {/* Desktop Table View */}
-          <div className="hidden lg:block">
-            <Table>
-              <TableHeader>
-                <TableRow className="border-gray-100 dark:border-gray-700 hover:bg-gray-50/50 dark:hover:bg-gray-800/50">
-                  <TableHead className="text-gray-600 dark:text-gray-400 font-semibold">Admin</TableHead>
-                  <TableHead className="text-gray-600 dark:text-gray-400 font-semibold">Email</TableHead>
-                  <TableHead className="text-gray-600 dark:text-gray-400 font-semibold">Cấp độ</TableHead>
-                  <TableHead className="text-gray-600 dark:text-gray-400 font-semibold">Vai trò</TableHead>
-                  <TableHead className="text-gray-600 dark:text-gray-400 font-semibold">Trạng thái</TableHead>
-                  <TableHead className="text-gray-600 dark:text-gray-400 font-semibold">Đăng nhập cuối</TableHead>
-                  <TableHead className="text-gray-600 dark:text-gray-400 font-semibold">IP cuối</TableHead>
-                  <TableHead className="text-right text-gray-600 dark:text-gray-400 font-semibold">Thao tác</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {admins.map((admin) => (
+              {/* Desktop Table View */}
+              <div className="hidden lg:block">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="border-gray-100 dark:border-gray-700 hover:bg-gray-50/50 dark:hover:bg-gray-800/50">
+                      <TableHead className="text-gray-600 dark:text-gray-400 font-semibold">Admin</TableHead>
+                      <TableHead className="text-gray-600 dark:text-gray-400 font-semibold">Email</TableHead>
+                      <TableHead className="text-gray-600 dark:text-gray-400 font-semibold">Vai trò</TableHead>
+                      <TableHead className="text-gray-600 dark:text-gray-400 font-semibold">Trạng thái</TableHead>
+                      <TableHead className="text-gray-600 dark:text-gray-400 font-semibold">Đăng nhập cuối</TableHead>
+                      <TableHead className="text-right text-gray-600 dark:text-gray-400 font-semibold">Thao tác</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {admins.map((admin: any) => (
                   <TableRow
                     key={admin.admin_id}
                     className="hover:bg-gray-50/80 dark:hover:bg-gray-800/50 transition-colors duration-200"
@@ -500,7 +580,7 @@ export default function AdminsPage() {
                           <AvatarFallback className="bg-gradient-to-r from-purple-500 to-indigo-500 dark:from-purple-400 dark:to-indigo-400 text-white font-semibold">
                             {admin.admin_fullname
                               .split(" ")
-                              .map((n) => n[0])
+                              .map((n: any) => n[0])
                               .join("")}
                           </AvatarFallback>
                         </Avatar>
@@ -511,25 +591,14 @@ export default function AdminsPage() {
                       </div>
                     </TableCell>
                     <TableCell className="text-gray-600 dark:text-gray-300">{admin.admin_email}</TableCell>
-                    <TableCell>{getLevelBadge(admin.admin_level)}</TableCell>
                     <TableCell>
-                      <Badge
-                        variant="outline"
-                        className="border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg"
-                      >
-                        {admin.role_name}
-                      </Badge>
+                      {getLevelBadge(admin.admin_level)}
                     </TableCell>
                     <TableCell>{getStatusBadge(admin.admin_status)}</TableCell>
                     <TableCell>
                       <div className="text-sm text-gray-600 dark:text-gray-300">
-                        {new Date(admin.admin_last_login).toLocaleString("vi-VN")}
+                        {admin.admin_last_login ? new Date(admin.admin_last_login).toLocaleString("vi-VN") : "Chưa đăng nhập"}
                       </div>
-                    </TableCell>
-                    <TableCell>
-                      <code className="text-xs bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-lg text-gray-700 dark:text-gray-300 font-mono">
-                        {admin.admin_last_ip}
-                      </code>
                     </TableCell>
                     <TableCell className="text-right">
                       <DropdownMenu>
@@ -572,6 +641,8 @@ export default function AdminsPage() {
               </TableBody>
             </Table>
           </div>
+            </>
+          )}
         </CardContent>
       </Card>
     </div>
