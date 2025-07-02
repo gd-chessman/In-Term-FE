@@ -11,6 +11,7 @@ import { useTheme } from "@/contexts/theme-context"
 import {
   LayoutDashboard,
   Users,
+  User,
   Package,
   Printer,
   Settings,
@@ -34,6 +35,13 @@ const menuItems = [
     icon: LayoutDashboard,
     color: "text-blue-600 dark:text-blue-400",
     bgColor: "bg-blue-50 dark:bg-blue-900/20",
+  },
+  {
+    title: "Hồ sơ cá nhân",
+    href: "/profile",
+    icon: User,
+    color: "text-indigo-600 dark:text-indigo-400",
+    bgColor: "bg-indigo-50 dark:bg-indigo-900/20",
   },
   {
     title: "Quản lý Admin",

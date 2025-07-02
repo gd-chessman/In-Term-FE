@@ -171,7 +171,10 @@ export function AdminHeader() {
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator className="bg-gray-200 dark:bg-zinc-800" />
-            <DropdownMenuItem className="hover:bg-gray-50 dark:hover:bg-zinc-800 rounded-lg m-1 text-gray-700 dark:text-zinc-300">
+            <DropdownMenuItem 
+              onClick={() => router.push("/profile")}
+              className="hover:bg-gray-50 dark:hover:bg-zinc-800 rounded-lg m-1 text-gray-700 dark:text-zinc-300"
+            >
               <User className="mr-2 h-4 w-4" />
               <span>Hồ sơ</span>
             </DropdownMenuItem>
