@@ -1,9 +1,9 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { toast } from "sonner"
-import { createPrintTemplate, getPrintTemplates } from "@/services/PrintService"
+import { createPrintTemplate, getPrintTemplates, deletePrintTemplate, updatePrintTemplate } from "@/services/PrintService"
 import { getCountries } from "@/services/CountryService"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -27,6 +27,16 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -49,6 +59,7 @@ import {
   Palette,
   BarChart3,
   Calendar,
+  Loader2,
 } from "lucide-react"
 
 
@@ -76,6 +87,14 @@ export default function PrintTemplatesPage() {
     pt_title: "",
     pt_content: "",
     pt_footer: ""
+  })
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [templateToDelete, setTemplateToDelete] = useState<any>(null)
+  const [editForm, setEditForm] = useState({
+    pt_title: '',
+    pt_country_id: '',
+    pt_content: '',
+    pt_footer: ''
   })
 
   const queryClient = useQueryClient()
@@ -108,6 +127,35 @@ export default function PrintTemplatesPage() {
     },
     onError: (error: any) => {
       toast.error(error?.response?.data?.message || "Có lỗi xảy ra khi tạo template")
+    }
+  })
+
+  const deleteTemplateMutation = useMutation({
+    mutationFn: deletePrintTemplate,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['print-templates'] })
+      toast.success("Xóa template thành công!")
+      setDeleteDialogOpen(false)
+      setTemplateToDelete(null)
+    },
+    onError: (error: any) => {
+      toast.error(error?.response?.data?.message || "Có lỗi xảy ra khi xóa template")
+      setDeleteDialogOpen(false)
+      setTemplateToDelete(null)
+    }
+  })
+
+  // Update template mutation
+  const updateTemplateMutation = useMutation({
+    mutationFn: ({ countryId, item }: { countryId: number, item: any }) => updatePrintTemplate(countryId, item),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['print-templates'] })
+      toast.success("Cập nhật template thành công!")
+      setIsEditDialogOpen(false)
+      setSelectedTemplate(null)
+    },
+    onError: (error: any) => {
+      toast.error(error?.response?.data?.message || "Có lỗi xảy ra khi cập nhật template")
     }
   })
 
@@ -149,6 +197,41 @@ export default function PrintTemplatesPage() {
       ...prev,
       [field]: value
     }))
+  }
+
+  const handleDeleteTemplate = (template: any) => {
+    setTemplateToDelete(template)
+    setDeleteDialogOpen(true)
+  }
+
+  // Khi mở dialog chỉnh sửa, fill dữ liệu
+  useEffect(() => {
+    if (isEditDialogOpen && selectedTemplate) {
+      setEditForm({
+        pt_title: selectedTemplate.pt_title || '',
+        pt_country_id: selectedTemplate.country?.country_id?.toString() || '',
+        pt_content: selectedTemplate.pt_content || '',
+        pt_footer: selectedTemplate.pt_footer || ''
+      })
+    }
+  }, [isEditDialogOpen, selectedTemplate])
+
+  // Xử lý submit cập nhật
+  const handleEditSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!editForm.pt_title || !editForm.pt_country_id || !editForm.pt_content) {
+      toast.error("Vui lòng điền đầy đủ thông tin bắt buộc")
+      return
+    }
+    updateTemplateMutation.mutate({
+      countryId: selectedTemplate.country.country_id,
+      item: {
+        pt_title: editForm.pt_title.trim(),
+        pt_country_id: Number(editForm.pt_country_id),
+        pt_content: editForm.pt_content.trim(),
+        pt_footer: editForm.pt_footer.trim()
+      }
+    })
   }
 
   if (isLoading) {
@@ -485,12 +568,12 @@ export default function PrintTemplatesPage() {
                     <DropdownMenuTrigger asChild>
                       <Button
                         variant="ghost"
-                        className="h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                        className="h-8 w-8 p-0 hover:bg-slate-100 rounded-lg relative z-10"
                       >
                         <MoreHorizontal className="h-4 w-4" />
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
+                                            <DropdownMenuContent align="end" className="bg-white/95 backdrop-blur-xl border-slate-200/60 shadow-xl rounded-xl z-50">
                       <DropdownMenuLabel>Thao tác</DropdownMenuLabel>
                       <DropdownMenuItem
                         onClick={() => {
@@ -515,9 +598,13 @@ export default function PrintTemplatesPage() {
                         Sao chép
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
-                      <DropdownMenuItem className="text-red-600">
+                      <DropdownMenuItem 
+                        className="text-red-600"
+                        onClick={() => handleDeleteTemplate(template)}
+                        disabled={deleteTemplateMutation.isPending}
+                      >
                         <Trash2 className="mr-2 h-4 w-4" />
-                        Xóa
+                        {deleteTemplateMutation.isPending && templateToDelete?.pt_id === template.pt_id ? 'Đang xóa...' : 'Xóa'}
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -546,7 +633,7 @@ export default function PrintTemplatesPage() {
                     <span>Mức độ sử dụng</span>
                     <span>{Math.round((template.usage_count / totalUsage) * 100)}%</span>
                   </div>
-                                      <Progress value={(template.usage_count / totalUsage) * 100} className="h-2" />
+                      <Progress value={(template.usage_count / totalUsage) * 100} className="h-2" />
                   </div>
 
                   <div className="flex items-center justify-between text-sm">
@@ -629,12 +716,12 @@ export default function PrintTemplatesPage() {
                         <DropdownMenuTrigger asChild>
                           <Button
                             variant="ghost"
-                            className="h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                            className="h-8 w-8 p-0"
                           >
                             <MoreHorizontal className="h-4 w-4" />
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
+                        <DropdownMenuContent align="end" className="bg-white/95 backdrop-blur-xl border-slate-200/60 shadow-xl rounded-xl z-50">
                           <DropdownMenuLabel>Thao tác</DropdownMenuLabel>
                           <DropdownMenuItem
                             onClick={() => {
@@ -659,9 +746,13 @@ export default function PrintTemplatesPage() {
                             Sao chép
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
-                          <DropdownMenuItem className="text-red-600">
+                          <DropdownMenuItem 
+                            className="text-red-600"
+                            onClick={() => handleDeleteTemplate(template)}
+                            disabled={deleteTemplateMutation.isPending}
+                          >
                             <Trash2 className="mr-2 h-4 w-4" />
-                            Xóa
+                            {deleteTemplateMutation.isPending && templateToDelete?.pt_id === template.pt_id ? 'Đang xóa...' : 'Xóa'}
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -761,98 +852,164 @@ export default function PrintTemplatesPage() {
               {selectedTemplate?.pt_title}
             </DialogDescription>
           </DialogHeader>
-          <Tabs defaultValue="basic" className="w-full">
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="basic">Thông tin cơ bản</TabsTrigger>
-              <TabsTrigger value="content">Nội dung</TabsTrigger>
-              <TabsTrigger value="analytics">Thống kê</TabsTrigger>
-            </TabsList>
-            <TabsContent value="basic" className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+          <form onSubmit={handleEditSubmit}>
+            <Tabs defaultValue="basic" className="w-full">
+              <TabsList className="grid w-full grid-cols-3">
+                <TabsTrigger value="basic">Thông tin cơ bản</TabsTrigger>
+                <TabsTrigger value="content">Nội dung</TabsTrigger>
+                <TabsTrigger value="analytics">Thống kê</TabsTrigger>
+              </TabsList>
+              <TabsContent value="basic" className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="edit_title">Tiêu đề Template</Label>
+                    <Input id="edit_title" value={editForm.pt_title} onChange={e => setEditForm(f => ({...f, pt_title: e.target.value}))} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="edit_country">Quốc gia</Label>
+                    <Select value={editForm.pt_country_id} onValueChange={v => setEditForm(f => ({...f, pt_country_id: v}))}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {countries?.map((country: any) => (
+                          <SelectItem key={country.country_id} value={country.country_id.toString()}>
+                            <div className="flex items-center gap-2">
+                              <span>{getCountryFlag(country.country_code)}</span>
+                              <span>{country.country_name}</span>
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </TabsContent>
+              <TabsContent value="content" className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="edit_title">Tiêu đề Template</Label>
-                  <Input id="edit_title" defaultValue={selectedTemplate?.pt_title} />
+                  <Label htmlFor="edit_content">Nội dung Template</Label>
+                  <Textarea
+                    id="edit_content"
+                    className="h-40 font-mono text-sm"
+                    value={editForm.pt_content}
+                    onChange={e => setEditForm(f => ({...f, pt_content: e.target.value}))}
+                  />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="edit_country">Quốc gia</Label>
-                  <Select defaultValue={selectedTemplate?.pt_country_code}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                    {countries?.map((country: any) => (
-                      <SelectItem key={country.country_id} value={country.country_code}>
-                        <div className="flex items-center gap-2">
-                          <span>{getCountryFlag(country.country_code)}</span>
-                          <span>{country.country_name}</span>
-                        </div>
-                      </SelectItem>
+                  <Label htmlFor="edit_footer">Footer</Label>
+                  <Textarea id="edit_footer" value={editForm.pt_footer} onChange={e => setEditForm(f => ({...f, pt_footer: e.target.value}))} />
+                </div>
+              </TabsContent>
+              <TabsContent value="analytics" className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <Card>
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-sm">Lượt sử dụng</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold text-blue-600">{selectedTemplate?.usage_count}</div>
+                      <Progress value={(selectedTemplate?.usage_count / totalUsage) * 100} className="mt-2" />
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-sm">Lần cuối sử dụng</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-sm font-medium">
+                        {selectedTemplate?.last_used && new Date(selectedTemplate.last_used).toLocaleDateString("vi-VN")}
+                      </div>
+                      <div className="text-xs text-muted-foreground mt-1">
+                        {selectedTemplate?.last_used && new Date(selectedTemplate.last_used).toLocaleTimeString("vi-VN")}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+                <div className="space-y-2">
+                  <Label>Biến được sử dụng</Label>
+                  <div className="flex flex-wrap gap-2 p-3 bg-gray-50 rounded-lg">
+                    {selectedTemplate?.variables?.map((variable: string) => (
+                      <Badge key={variable} variant="secondary">
+                        {`{${variable}}`}
+                      </Badge>
                     ))}
-                    </SelectContent>
-                  </Select>
+                  </div>
                 </div>
-              </div>
-
-            </TabsContent>
-            <TabsContent value="content" className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="edit_content">Nội dung Template</Label>
-                <Textarea
-                  id="edit_content"
-                  className="h-40 font-mono text-sm"
-                  defaultValue={selectedTemplate?.pt_content}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="edit_footer">Footer</Label>
-                <Textarea id="edit_footer" defaultValue={selectedTemplate?.pt_footer} />
-              </div>
-            </TabsContent>
-            <TabsContent value="analytics" className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-sm">Lượt sử dụng</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold text-blue-600">{selectedTemplate?.usage_count}</div>
-                    <Progress value={(selectedTemplate?.usage_count / totalUsage) * 100} className="mt-2" />
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-sm">Lần cuối sử dụng</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-sm font-medium">
-                      {selectedTemplate?.last_used && new Date(selectedTemplate.last_used).toLocaleDateString("vi-VN")}
-                    </div>
-                    <div className="text-xs text-muted-foreground mt-1">
-                      {selectedTemplate?.last_used && new Date(selectedTemplate.last_used).toLocaleTimeString("vi-VN")}
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-              <div className="space-y-2">
-                <Label>Biến được sử dụng</Label>
-                <div className="flex flex-wrap gap-2 p-3 bg-gray-50 rounded-lg">
-                  {selectedTemplate?.variables?.map((variable: string) => (
-                    <Badge key={variable} variant="secondary">
-                      {`{${variable}}`}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-            </TabsContent>
-          </Tabs>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
-              Hủy
-            </Button>
-            <Button className="bg-gradient-to-r from-blue-500 to-purple-600">Lưu thay đổi</Button>
-          </DialogFooter>
+              </TabsContent>
+            </Tabs>
+            <DialogFooter className="mt-4">
+              <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
+                Hủy
+              </Button>
+              <Button type="submit" disabled={updateTemplateMutation.isPending} className="bg-gradient-to-r from-blue-500 to-purple-600">
+                {updateTemplateMutation.isPending ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Đang lưu...
+                  </>
+                ) : (
+                  'Lưu thay đổi'
+                )}
+              </Button>
+            </DialogFooter>
+          </form>
         </DialogContent>
       </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent className="bg-white/95 backdrop-blur-xl border-slate-200/60 shadow-2xl rounded-2xl">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-xl font-semibold text-slate-900">Xác nhận xóa template</AlertDialogTitle>
+            <AlertDialogDescription className="text-slate-600">
+              Bạn có chắc chắn muốn xóa template <strong>"{templateToDelete?.pt_title}"</strong>?
+              <br /><br />
+              <span className="text-amber-600 font-medium">⚠️ Lưu ý:</span> Template này đang được sử dụng cho quốc gia {templateToDelete?.country?.country_name}. Việc xóa template có thể ảnh hưởng đến quá trình in ấn.
+              <br /><br />
+              Hành động này không thể hoàn tác.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="flex items-center space-x-3 p-4 bg-red-50 rounded-lg border border-red-200">
+            <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-red-100 to-red-200 flex items-center justify-center shadow-md">
+              <FileText className="h-6 w-6 text-red-600" />
+            </div>
+            <div>
+              <div className="font-semibold text-red-800">{templateToDelete?.pt_title}</div>
+              <div className="text-sm text-red-600">
+                Quốc gia: {templateToDelete?.country?.country_name} {getCountryFlag(templateToDelete?.country?.country_code)}
+              </div>
+              <div className="text-sm text-red-600">
+                Lượt sử dụng: {templateToDelete?.usage_count || 0}
+              </div>
+            </div>
+          </div>
+          <AlertDialogFooter className="space-x-2">
+            <AlertDialogCancel 
+              className="rounded-xl"
+              disabled={deleteTemplateMutation.isPending}
+            >
+              Hủy
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => templateToDelete && deleteTemplateMutation.mutate(templateToDelete.pt_country_id)}
+              disabled={deleteTemplateMutation.isPending}
+              className="bg-red-600 hover:bg-red-700 text-white rounded-xl"
+            >
+              {deleteTemplateMutation.isPending ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Đang xóa...
+                </>
+              ) : (
+                <>
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  Xóa Template
+                </>
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }

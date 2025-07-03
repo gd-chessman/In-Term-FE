@@ -18,6 +18,24 @@ export const createPrintTemplate = async (item: any) => {
     }
 }
 
+export const updatePrintTemplate = async (countryId: number, item: any) => {
+    try {
+        const temp = await axiosClient.patch(`prints/templates/country/${countryId}`, item);
+        return temp.data;
+    } catch (e) {
+        throw e;
+    }
+}
+
+export const deletePrintTemplate = async (countryId: number) => {
+    try {
+        const temp = await axiosClient.delete(`prints/templates/country/${countryId}`);
+        return temp.data;
+    } catch (e) {
+        throw e;
+    }
+}
+
 export const getPrintSelects = async () => {
     try {
         const temp = await axiosClient.get(`prints/selects`);
@@ -35,3 +53,4 @@ export const createPrintSelect = async (item: any) => {
         throw e;
     }
 }
+
