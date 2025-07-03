@@ -393,7 +393,7 @@ export default function AdminsPage() {
         <Card className="relative overflow-hidden bg-gradient-to-br from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20 border-purple-200/50 dark:border-purple-800/50 hover:shadow-xl transition-all duration-300 group hover:-translate-y-1 rounded-xl">
           <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-purple-400/20 to-indigo-400/20 dark:from-purple-400/30 dark:to-indigo-400/30 rounded-full -mr-10 -mt-10"></div>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative">
-            <CardTitle className="text-sm font-medium text-gray-700 dark:text-gray-300">Tổng Admin</CardTitle>
+            <CardTitle className="text-sm font-medium text-gray-700 dark:text-gray-300">Tổng người dùng</CardTitle>
             <div className="h-12 w-12 rounded-xl bg-gradient-to-r from-purple-500 to-indigo-500 dark:from-purple-400 dark:to-indigo-400 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
               <Users className="h-6 w-6 text-white" />
             </div>
@@ -402,7 +402,7 @@ export default function AdminsPage() {
             <div className="text-3xl font-bold text-gray-900 dark:text-gray-100">
               {statsLoading ? "..." : statistics.total || 0}
             </div>
-            <p className="text-xs text-green-600 dark:text-green-400 mt-1">Tổng số admin</p>
+            <p className="text-xs text-green-600 dark:text-green-400 mt-1">Tổng số người dùng</p>
           </CardContent>
         </Card>
 
@@ -510,7 +510,7 @@ export default function AdminsPage() {
         <CardHeader>
           <CardTitle className="text-gray-900 dark:text-gray-100">Danh sách Admin</CardTitle>
           <CardDescription className="text-gray-600 dark:text-gray-400">
-            {isLoading ? "Đang tải..." : `Tổng cộng ${pagination.total} admin trong hệ thống`}
+            {isLoading ? "Đang tải..." : `Tổng cộng ${pagination.total} người dùng trong hệ thống`}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -552,148 +552,7 @@ export default function AdminsPage() {
                         <div className="text-sm text-gray-600 dark:text-gray-300">{admin.admin_email}</div>
                       </div>
                     </div>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          className="h-8 w-8 p-0 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
-                        >
-                          <span className="sr-only">Mở menu</span>
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent
-                        align="end"
-                        className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl border-gray-200/60 dark:border-gray-700/60 shadow-xl rounded-xl"
-                      >
-                        <DropdownMenuLabel>Thao tác</DropdownMenuLabel>
-                        <DropdownMenuItem className="hover:bg-gray-50/80 dark:hover:bg-gray-700/80 rounded-lg">
-                          <Eye className="mr-2 h-4 w-4" />
-                          Xem chi tiết
-                        </DropdownMenuItem>
-                        {admin.admin_id !== userMe?.admin_id && (
-                          <DropdownMenuItem 
-                            onClick={() => handleLevelUpdate(admin)}
-                            className="hover:bg-gray-50/80 dark:hover:bg-gray-700/80 rounded-lg"
-                          >
-                            <Shield className="mr-2 h-4 w-4" />
-                            Phân quyền
-                          </DropdownMenuItem>
-                        )}
-                        <DropdownMenuSeparator />
-                        {admin.admin_id !== userMe?.admin_id && (
-                          <>
-                            {admin.admin_status === "active" ? (
-                              <>
-                                <DropdownMenuItem 
-                                  onClick={() => handleStatusUpdate(admin.admin_id.toString(), "inactive")}
-                                  disabled={updateStatusMutation.isPending}
-                                  className="text-orange-600 dark:text-orange-400 hover:bg-orange-50/80 dark:hover:bg-orange-900/20 rounded-lg"
-                                >
-                                  <UserX className="mr-2 h-4 w-4" />
-                                  Vô hiệu hóa
-                                </DropdownMenuItem>
-                                <DropdownMenuItem 
-                                  onClick={() => handleStatusUpdate(admin.admin_id.toString(), "suspended")}
-                                  disabled={updateStatusMutation.isPending}
-                                  className="text-red-600 dark:text-red-400 hover:bg-red-50/80 dark:hover:bg-red-900/20 rounded-lg"
-                                >
-                                  <Trash2 className="mr-2 h-4 w-4" />
-                                  Tạm khóa
-                                </DropdownMenuItem>
-                              </>
-                            ) : (
-                              <DropdownMenuItem 
-                                onClick={() => handleStatusUpdate(admin.admin_id.toString(), "active")}
-                                disabled={updateStatusMutation.isPending}
-                                className="text-green-600 dark:text-green-400 hover:bg-green-50/80 dark:hover:bg-green-900/20 rounded-lg"
-                              >
-                                <UserCheck className="mr-2 h-4 w-4" />
-                                Kích hoạt
-                              </DropdownMenuItem>
-                            )}
-                          </>
-                        )}
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </div>
-
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-600 dark:text-gray-400">Vai trò:</span>
-                      {getLevelBadge(admin.admin_level)}
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-600 dark:text-gray-400">Trạng thái:</span>
-                      {getStatusBadge(admin.admin_status)}
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-600 dark:text-gray-400">Đăng nhập cuối:</span>
-                      <div className="text-sm text-gray-600 dark:text-gray-300">
-                        {admin.admin_last_login ? new Date(admin.admin_last_login).toLocaleString("vi-VN") : "Chưa đăng nhập"}
-                      </div>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-600 dark:text-gray-400">Ngày tạo:</span>
-                      <div className="text-sm text-gray-600 dark:text-gray-300">
-                        {admin.created_at ? new Date(admin.created_at).toLocaleDateString("vi-VN") : "N/A"}
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-
-              {/* Desktop Table View */}
-              <div className="hidden lg:block">
-                <Table>
-                  <TableHeader>
-                    <TableRow className="border-gray-100 dark:border-gray-700 hover:bg-gray-50/50 dark:hover:bg-gray-800/50">
-                      <TableHead className="text-gray-600 dark:text-gray-400 font-semibold">Admin</TableHead>
-                      <TableHead className="text-gray-600 dark:text-gray-400 font-semibold">Email</TableHead>
-                      <TableHead className="text-gray-600 dark:text-gray-400 font-semibold">Vai trò</TableHead>
-                      <TableHead className="text-gray-600 dark:text-gray-400 font-semibold">Trạng thái</TableHead>
-                      <TableHead className="text-gray-600 dark:text-gray-400 font-semibold">Đăng nhập cuối</TableHead>
-                      <TableHead className="text-right text-gray-600 dark:text-gray-400 font-semibold">Thao tác</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {admins.map((admin: any) => (
-                  <TableRow
-                    key={admin.admin_id}
-                    className="hover:bg-gray-50/80 dark:hover:bg-gray-800/50 transition-colors duration-200"
-                  >
-                    <TableCell>
-                      <div className="flex items-center space-x-3">
-                        <Avatar className="h-10 w-10 ring-2 ring-gray-200/60 dark:ring-gray-700/60 shadow-md">
-                          <AvatarImage src={admin.avatar} alt={admin.admin_fullname} />
-                          <AvatarFallback className="bg-gradient-to-r from-purple-500 to-indigo-500 dark:from-purple-400 dark:to-indigo-400 text-white font-semibold">
-                            {admin.admin_fullname
-                              .split(" ")
-                              .map((n: any) => n[0])
-                              .join("")
-                              .toUpperCase()
-                              .slice(0, 2)}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <div className="font-semibold text-gray-900 dark:text-gray-100">{admin.admin_fullname}</div>
-                          <div className="text-sm text-gray-500 dark:text-gray-400">@{admin.admin_username}</div>
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-gray-600 dark:text-gray-300">{admin.admin_email}</TableCell>
-                    <TableCell>
-                      {getLevelBadge(admin.admin_level)}
-                    </TableCell>
-                    <TableCell>{getStatusBadge(admin.admin_status)}</TableCell>
-                    <TableCell>
-                      <div className="text-sm text-gray-600 dark:text-gray-300">
-                        {admin.admin_last_login ? new Date(admin.admin_last_login).toLocaleString("vi-VN") : "Chưa đăng nhập"}
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-right">
+                    {admin.admin_id !== userMe?.admin_id && (
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Button
@@ -709,10 +568,10 @@ export default function AdminsPage() {
                           className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl border-gray-200/60 dark:border-gray-700/60 shadow-xl rounded-xl"
                         >
                           <DropdownMenuLabel>Thao tác</DropdownMenuLabel>
-                          <DropdownMenuItem className="hover:bg-gray-50/80 dark:hover:bg-gray-700/80 rounded-lg">
+                          {/* <DropdownMenuItem className="hover:bg-gray-50/80 dark:hover:bg-gray-700/80 rounded-lg">
                             <Eye className="mr-2 h-4 w-4" />
                             Xem chi tiết
-                          </DropdownMenuItem>
+                          </DropdownMenuItem> */}
                           {admin.admin_id !== userMe?.admin_id && (
                             <DropdownMenuItem 
                               onClick={() => handleLevelUpdate(admin)}
@@ -758,6 +617,169 @@ export default function AdminsPage() {
                           )}
                         </DropdownMenuContent>
                       </DropdownMenu>
+                    )}
+                  </div>
+
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-600 dark:text-gray-400">Vai trò:</span>
+                      {getLevelBadge(admin.admin_level)}
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-600 dark:text-gray-400">Cấp độ:</span>
+                      <div className="text-sm text-gray-600 dark:text-gray-300">
+                        {getLevelLabel(admin.admin_level)}
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-600 dark:text-gray-400">Vai trò:</span>
+                      <div className="text-sm text-gray-600 dark:text-gray-300">
+                        {admin.role?.role_name || "Chưa phân quyền"}
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-600 dark:text-gray-400">Trạng thái:</span>
+                      {getStatusBadge(admin.admin_status)}
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-600 dark:text-gray-400">Đăng nhập cuối:</span>
+                      <div className="text-sm text-gray-600 dark:text-gray-300">
+                        {admin.admin_last_login ? new Date(admin.admin_last_login).toLocaleString("vi-VN") : "Chưa đăng nhập"}
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-600 dark:text-gray-400">Ngày tạo:</span>
+                      <div className="text-sm text-gray-600 dark:text-gray-300">
+                        {admin.created_at ? new Date(admin.created_at).toLocaleDateString("vi-VN") : "N/A"}
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+              {/* Desktop Table View */}
+              <div className="hidden lg:block">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="border-gray-100 dark:border-gray-700 hover:bg-gray-50/50 dark:hover:bg-gray-800/50">
+                      <TableHead className="text-gray-600 dark:text-gray-400 font-semibold">Admin</TableHead>
+                      <TableHead className="text-gray-600 dark:text-gray-400 font-semibold">Email</TableHead>
+                      <TableHead className="text-gray-600 dark:text-gray-400 font-semibold">Cấp độ</TableHead>
+                      <TableHead className="text-gray-600 dark:text-gray-400 font-semibold">Vai trò</TableHead>
+                      <TableHead className="text-gray-600 dark:text-gray-400 font-semibold">Trạng thái</TableHead>
+                      <TableHead className="text-gray-600 dark:text-gray-400 font-semibold">Đăng nhập cuối</TableHead>
+                      <TableHead className="text-right text-gray-600 dark:text-gray-400 font-semibold">Thao tác</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {admins.map((admin: any) => (
+                  <TableRow
+                    key={admin.admin_id}
+                    className="hover:bg-gray-50/80 dark:hover:bg-gray-800/50 transition-colors duration-200"
+                  >
+                    <TableCell>
+                      <div className="flex items-center space-x-3">
+                        <Avatar className="h-10 w-10 ring-2 ring-gray-200/60 dark:ring-gray-700/60 shadow-md">
+                          <AvatarImage src={admin.avatar} alt={admin.admin_fullname} />
+                          <AvatarFallback className="bg-gradient-to-r from-purple-500 to-indigo-500 dark:from-purple-400 dark:to-indigo-400 text-white font-semibold">
+                            {admin.admin_fullname
+                              .split(" ")
+                              .map((n: any) => n[0])
+                              .join("")
+                              .toUpperCase()
+                              .slice(0, 2)}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <div className="font-semibold text-gray-900 dark:text-gray-100">{admin.admin_fullname}</div>
+                          <div className="text-sm text-gray-500 dark:text-gray-400">@{admin.admin_username}</div>
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-gray-600 dark:text-gray-300">{admin.admin_email}</TableCell>
+                    <TableCell>
+                      {getLevelBadge(admin.admin_level)}
+                    </TableCell>
+                    <TableCell>
+                      <div className="text-sm text-gray-600 dark:text-gray-300">
+                        {admin.role?.role_name || "Chưa phân quyền"}
+                      </div>
+                    </TableCell>
+                    <TableCell>{getStatusBadge(admin.admin_status)}</TableCell>
+                    <TableCell>
+                      <div className="text-sm text-gray-600 dark:text-gray-300">
+                        {admin.admin_last_login ? new Date(admin.admin_last_login).toLocaleString("vi-VN") : "Chưa đăng nhập"}
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      {admin.admin_id !== userMe?.admin_id && (
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              className="h-8 w-8 p-0 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
+                            >
+                              <span className="sr-only">Mở menu</span>
+                              <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent
+                            align="end"
+                            className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl border-gray-200/60 dark:border-gray-700/60 shadow-xl rounded-xl"
+                          >
+                            <DropdownMenuLabel>Thao tác</DropdownMenuLabel>
+                            {/* <DropdownMenuItem className="hover:bg-gray-50/80 dark:hover:bg-gray-700/80 rounded-lg">
+                              <Eye className="mr-2 h-4 w-4" />
+                              Xem chi tiết
+                            </DropdownMenuItem> */}
+                            {admin.admin_id !== userMe?.admin_id && (
+                              <DropdownMenuItem 
+                                onClick={() => handleLevelUpdate(admin)}
+                                className="hover:bg-gray-50/80 dark:hover:bg-gray-700/80 rounded-lg"
+                              >
+                                <Shield className="mr-2 h-4 w-4" />
+                                Phân quyền
+                              </DropdownMenuItem>
+                            )}
+                            <DropdownMenuSeparator />
+                            {admin.admin_id !== userMe?.admin_id && (
+                              <>
+                                {admin.admin_status === "active" ? (
+                                  <>
+                                    <DropdownMenuItem 
+                                      onClick={() => handleStatusUpdate(admin.admin_id.toString(), "inactive")}
+                                      disabled={updateStatusMutation.isPending}
+                                      className="text-orange-600 dark:text-orange-400 hover:bg-orange-50/80 dark:hover:bg-orange-900/20 rounded-lg"
+                                    >
+                                      <UserX className="mr-2 h-4 w-4" />
+                                      Vô hiệu hóa
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem 
+                                      onClick={() => handleStatusUpdate(admin.admin_id.toString(), "suspended")}
+                                      disabled={updateStatusMutation.isPending}
+                                      className="text-red-600 dark:text-red-400 hover:bg-red-50/80 dark:hover:bg-red-900/20 rounded-lg"
+                                    >
+                                      <Trash2 className="mr-2 h-4 w-4" />
+                                      Tạm khóa
+                                    </DropdownMenuItem>
+                                  </>
+                                ) : (
+                                  <DropdownMenuItem 
+                                    onClick={() => handleStatusUpdate(admin.admin_id.toString(), "active")}
+                                    disabled={updateStatusMutation.isPending}
+                                    className="text-green-600 dark:text-green-400 hover:bg-green-50/80 dark:hover:bg-green-900/20 rounded-lg"
+                                  >
+                                    <UserCheck className="mr-2 h-4 w-4" />
+                                    Kích hoạt
+                                  </DropdownMenuItem>
+                                )}
+                              </>
+                            )}
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      )}
                     </TableCell>
                   </TableRow>
                 ))}
