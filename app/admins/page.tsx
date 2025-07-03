@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { createAdmin, getAdmins, getStatistics, updateStatus } from "@/services/AdminService"
+import { createAdmin, getAdmins, getStatistics, updateStatus, updateLevel, getUserMe } from "@/services/AdminService"
 import { getRoles } from "@/services/RoleService"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -51,6 +51,9 @@ const ADMIN_STATUSES = [
 export default function AdminsPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
+  const [isUpdateLevelDialogOpen, setIsUpdateLevelDialogOpen] = useState(false)
+  const [selectedAdmin, setSelectedAdmin] = useState<any>(null)
+  const [selectedNewLevel, setSelectedNewLevel] = useState("")
   const [currentPage, setCurrentPage] = useState(1)
   const [selectedLevel, setSelectedLevel] = useState("all")
   const [selectedStatus, setSelectedStatus] = useState("all")
@@ -63,6 +66,11 @@ export default function AdminsPage() {
     admin_role_id: ""
   })
   const queryClient = useQueryClient()
+
+  const { data: userMe, isLoading: userMeLoading, error: userMeError } = useQuery({
+    queryKey: ["userMe"],
+    queryFn: getUserMe,
+  })
 
   // Fetch admins data
   const { data: adminsData, isLoading, error } = useQuery({
@@ -119,8 +127,36 @@ export default function AdminsPage() {
     }
   })
 
+  const updateLevelMutation = useMutation({
+    mutationFn: ({ id, level }: { id: string, level: string }) => updateLevel(id, level),
+    onSuccess: () => {
+      toast.success("Cập nhật cấp độ thành công")
+      setIsUpdateLevelDialogOpen(false)
+      setSelectedAdmin(null)
+      setSelectedNewLevel("")
+      // Refresh admin list and statistics
+      queryClient.invalidateQueries({ queryKey: ["admins"] })
+      queryClient.invalidateQueries({ queryKey: ["admin-statistics"] })
+    },
+    onError: (error: any) => {
+      toast.error(error?.response?.data?.message || "Không thể cập nhật cấp độ")
+    }
+  })
+
   const handleStatusUpdate = (adminId: string, newStatus: string) => {
     updateStatusMutation.mutate({ id: adminId, status: newStatus })
+  }
+
+  const handleLevelUpdate = (admin: any) => {
+    setSelectedAdmin(admin)
+    setSelectedNewLevel(admin.admin_level)
+    setIsUpdateLevelDialogOpen(true)
+  }
+
+  const handleConfirmLevelUpdate = () => {
+    if (selectedAdmin && selectedNewLevel) {
+      updateLevelMutation.mutate({ id: selectedAdmin.admin_id.toString(), level: selectedNewLevel })
+    }
   }
 
   const handleCreateAdmin = () => {
@@ -535,43 +571,48 @@ export default function AdminsPage() {
                           <Eye className="mr-2 h-4 w-4" />
                           Xem chi tiết
                         </DropdownMenuItem>
-                        <DropdownMenuItem className="hover:bg-gray-50/80 dark:hover:bg-gray-700/80 rounded-lg">
-                          <Edit className="mr-2 h-4 w-4" />
-                          Chỉnh sửa
-                        </DropdownMenuItem>
-                        <DropdownMenuItem className="hover:bg-gray-50/80 dark:hover:bg-gray-700/80 rounded-lg">
-                          <Shield className="mr-2 h-4 w-4" />
-                          Phân quyền
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        {admin.admin_status === "active" ? (
-                          <>
-                            <DropdownMenuItem 
-                              onClick={() => handleStatusUpdate(admin.admin_id.toString(), "inactive")}
-                              disabled={updateStatusMutation.isPending}
-                              className="text-orange-600 dark:text-orange-400 hover:bg-orange-50/80 dark:hover:bg-orange-900/20 rounded-lg"
-                            >
-                              <UserX className="mr-2 h-4 w-4" />
-                              Vô hiệu hóa
-                            </DropdownMenuItem>
-                            <DropdownMenuItem 
-                              onClick={() => handleStatusUpdate(admin.admin_id.toString(), "suspended")}
-                              disabled={updateStatusMutation.isPending}
-                              className="text-red-600 dark:text-red-400 hover:bg-red-50/80 dark:hover:bg-red-900/20 rounded-lg"
-                            >
-                              <Trash2 className="mr-2 h-4 w-4" />
-                              Tạm khóa
-                            </DropdownMenuItem>
-                          </>
-                        ) : (
+                        {admin.admin_id !== userMe?.admin_id && (
                           <DropdownMenuItem 
-                            onClick={() => handleStatusUpdate(admin.admin_id.toString(), "active")}
-                            disabled={updateStatusMutation.isPending}
-                            className="text-green-600 dark:text-green-400 hover:bg-green-50/80 dark:hover:bg-green-900/20 rounded-lg"
+                            onClick={() => handleLevelUpdate(admin)}
+                            className="hover:bg-gray-50/80 dark:hover:bg-gray-700/80 rounded-lg"
                           >
-                            <UserCheck className="mr-2 h-4 w-4" />
-                            Kích hoạt
+                            <Shield className="mr-2 h-4 w-4" />
+                            Phân quyền
                           </DropdownMenuItem>
+                        )}
+                        <DropdownMenuSeparator />
+                        {admin.admin_id !== userMe?.admin_id && (
+                          <>
+                            {admin.admin_status === "active" ? (
+                              <>
+                                <DropdownMenuItem 
+                                  onClick={() => handleStatusUpdate(admin.admin_id.toString(), "inactive")}
+                                  disabled={updateStatusMutation.isPending}
+                                  className="text-orange-600 dark:text-orange-400 hover:bg-orange-50/80 dark:hover:bg-orange-900/20 rounded-lg"
+                                >
+                                  <UserX className="mr-2 h-4 w-4" />
+                                  Vô hiệu hóa
+                                </DropdownMenuItem>
+                                <DropdownMenuItem 
+                                  onClick={() => handleStatusUpdate(admin.admin_id.toString(), "suspended")}
+                                  disabled={updateStatusMutation.isPending}
+                                  className="text-red-600 dark:text-red-400 hover:bg-red-50/80 dark:hover:bg-red-900/20 rounded-lg"
+                                >
+                                  <Trash2 className="mr-2 h-4 w-4" />
+                                  Tạm khóa
+                                </DropdownMenuItem>
+                              </>
+                            ) : (
+                              <DropdownMenuItem 
+                                onClick={() => handleStatusUpdate(admin.admin_id.toString(), "active")}
+                                disabled={updateStatusMutation.isPending}
+                                className="text-green-600 dark:text-green-400 hover:bg-green-50/80 dark:hover:bg-green-900/20 rounded-lg"
+                              >
+                                <UserCheck className="mr-2 h-4 w-4" />
+                                Kích hoạt
+                              </DropdownMenuItem>
+                            )}
+                          </>
                         )}
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -672,43 +713,48 @@ export default function AdminsPage() {
                             <Eye className="mr-2 h-4 w-4" />
                             Xem chi tiết
                           </DropdownMenuItem>
-                          <DropdownMenuItem className="hover:bg-gray-50/80 dark:hover:bg-gray-700/80 rounded-lg">
-                            <Edit className="mr-2 h-4 w-4" />
-                            Chỉnh sửa
-                          </DropdownMenuItem>
-                          <DropdownMenuItem className="hover:bg-gray-50/80 dark:hover:bg-gray-700/80 rounded-lg">
-                            <Shield className="mr-2 h-4 w-4" />
-                            Phân quyền
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          {admin.admin_status === "active" ? (
-                            <>
-                              <DropdownMenuItem 
-                                onClick={() => handleStatusUpdate(admin.admin_id.toString(), "inactive")}
-                                disabled={updateStatusMutation.isPending}
-                                className="text-orange-600 dark:text-orange-400 hover:bg-orange-50/80 dark:hover:bg-orange-900/20 rounded-lg"
-                              >
-                                <UserX className="mr-2 h-4 w-4" />
-                                Vô hiệu hóa
-                              </DropdownMenuItem>
-                              <DropdownMenuItem 
-                                onClick={() => handleStatusUpdate(admin.admin_id.toString(), "suspended")}
-                                disabled={updateStatusMutation.isPending}
-                                className="text-red-600 dark:text-red-400 hover:bg-red-50/80 dark:hover:bg-red-900/20 rounded-lg"
-                              >
-                                <Trash2 className="mr-2 h-4 w-4" />
-                                Tạm khóa
-                              </DropdownMenuItem>
-                            </>
-                          ) : (
+                          {admin.admin_id !== userMe?.admin_id && (
                             <DropdownMenuItem 
-                              onClick={() => handleStatusUpdate(admin.admin_id.toString(), "active")}
-                              disabled={updateStatusMutation.isPending}
-                              className="text-green-600 dark:text-green-400 hover:bg-green-50/80 dark:hover:bg-green-900/20 rounded-lg"
+                              onClick={() => handleLevelUpdate(admin)}
+                              className="hover:bg-gray-50/80 dark:hover:bg-gray-700/80 rounded-lg"
                             >
-                              <UserCheck className="mr-2 h-4 w-4" />
-                              Kích hoạt
+                              <Shield className="mr-2 h-4 w-4" />
+                              Phân quyền
                             </DropdownMenuItem>
+                          )}
+                          <DropdownMenuSeparator />
+                          {admin.admin_id !== userMe?.admin_id && (
+                            <>
+                              {admin.admin_status === "active" ? (
+                                <>
+                                  <DropdownMenuItem 
+                                    onClick={() => handleStatusUpdate(admin.admin_id.toString(), "inactive")}
+                                    disabled={updateStatusMutation.isPending}
+                                    className="text-orange-600 dark:text-orange-400 hover:bg-orange-50/80 dark:hover:bg-orange-900/20 rounded-lg"
+                                  >
+                                    <UserX className="mr-2 h-4 w-4" />
+                                    Vô hiệu hóa
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem 
+                                    onClick={() => handleStatusUpdate(admin.admin_id.toString(), "suspended")}
+                                    disabled={updateStatusMutation.isPending}
+                                    className="text-red-600 dark:text-red-400 hover:bg-red-50/80 dark:hover:bg-red-900/20 rounded-lg"
+                                  >
+                                    <Trash2 className="mr-2 h-4 w-4" />
+                                    Tạm khóa
+                                  </DropdownMenuItem>
+                                </>
+                              ) : (
+                                <DropdownMenuItem 
+                                  onClick={() => handleStatusUpdate(admin.admin_id.toString(), "active")}
+                                  disabled={updateStatusMutation.isPending}
+                                  className="text-green-600 dark:text-green-400 hover:bg-green-50/80 dark:hover:bg-green-900/20 rounded-lg"
+                                >
+                                  <UserCheck className="mr-2 h-4 w-4" />
+                                  Kích hoạt
+                                </DropdownMenuItem>
+                              )}
+                            </>
                           )}
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -722,6 +768,63 @@ export default function AdminsPage() {
           )}
         </CardContent>
       </Card>
+
+      {/* Update Level Dialog */}
+      <Dialog open={isUpdateLevelDialogOpen} onOpenChange={setIsUpdateLevelDialogOpen}>
+        <DialogContent className="sm:max-w-[500px] bg-white dark:bg-gray-800 backdrop-blur-xl border-gray-200 dark:border-gray-700 shadow-2xl rounded-2xl">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+              Cập nhật cấp độ
+            </DialogTitle>
+            <DialogDescription className="text-gray-600 dark:text-gray-400">
+              Thay đổi cấp độ cho admin: {selectedAdmin?.admin_fullname}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-6 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="current-level" className="text-right font-medium text-gray-700 dark:text-gray-300">
+                Cấp độ hiện tại
+              </Label>
+              <div className="col-span-3">
+                {selectedAdmin && getLevelBadge(selectedAdmin.admin_level)}
+              </div>
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="new-level" className="text-right font-medium text-gray-700 dark:text-gray-300">
+                Cấp độ mới
+              </Label>
+              <Select value={selectedNewLevel} onValueChange={setSelectedNewLevel}>
+                <SelectTrigger className="col-span-3 rounded-xl border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:border-purple-300 dark:focus:border-purple-500 focus:ring-2 focus:ring-purple-100 dark:focus:ring-purple-900">
+                  <SelectValue placeholder="Chọn cấp độ mới" />
+                </SelectTrigger>
+                <SelectContent className="rounded-xl border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 shadow-xl">
+                  {ADMIN_LEVELS.map((level) => (
+                    <SelectItem key={level.value} value={level.value}>
+                      {level.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button 
+              onClick={handleConfirmLevelUpdate}
+              disabled={updateLevelMutation.isPending || !selectedNewLevel || selectedNewLevel === selectedAdmin?.admin_level}
+              className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 dark:from-purple-500 dark:to-indigo-500 dark:hover:from-purple-600 dark:hover:to-indigo-600 text-white rounded-xl"
+            >
+              {updateLevelMutation.isPending ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Đang cập nhật...
+                </>
+              ) : (
+                "Cập nhật cấp độ"
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

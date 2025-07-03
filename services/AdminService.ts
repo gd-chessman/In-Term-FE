@@ -84,3 +84,12 @@ export const updateStatus = async (id: string, status: string) => {
         throw e;
     }
 }   
+
+export const updateLevel = async (id: string, level: string) => {
+    try {
+        const temp = await axiosClient.patch(`admins/${id}/level`, { admin_level: level });
+        return temp.data;
+    } catch (e) {
+        throw e;
+    }
+}
