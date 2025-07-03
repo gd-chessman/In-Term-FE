@@ -476,15 +476,16 @@ export default function AdminsPage() {
                 <CardContent className="p-4">
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex items-center space-x-3">
-                      <Avatar className="h-12 w-12 ring-2 ring-gray-200/60 dark:ring-gray-700/60 shadow-md">
-                        <AvatarImage src={admin.avatar || "/placeholder.svg"} />
-                        <AvatarFallback className="bg-gradient-to-r from-purple-500 to-indigo-500 dark:from-purple-400 dark:to-indigo-400 text-white font-semibold">
-                          {admin.admin_fullname
-                            .split(" ")
-                            .map((n: any) => n[0])
-                            .join("")}
-                        </AvatarFallback>
-                      </Avatar>
+                                              <Avatar className="h-12 w-12 ring-2 ring-gray-200/60 dark:ring-gray-700/60 shadow-md">
+                          <AvatarImage src={admin.avatar} alt={admin.admin_fullname} />
+                          <AvatarFallback className="bg-gradient-to-r from-purple-500 to-indigo-500 dark:from-purple-400 dark:to-indigo-400 text-white font-semibold">
+                            {admin.admin_fullname
+                              .split(" ")
+                              .map((n: any) => n[0])
+                              .join("")
+                              .toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
                       <div>
                         <div className="font-semibold text-gray-900 dark:text-gray-100">{admin.admin_fullname}</div>
                         <div className="text-sm text-gray-500 dark:text-gray-400">@{admin.admin_username}</div>
@@ -576,12 +577,13 @@ export default function AdminsPage() {
                     <TableCell>
                       <div className="flex items-center space-x-3">
                         <Avatar className="h-10 w-10 ring-2 ring-gray-200/60 dark:ring-gray-700/60 shadow-md">
-                          <AvatarImage src={admin.avatar || "/placeholder.svg"} />
+                          <AvatarImage src={admin.avatar} alt={admin.admin_fullname} />
                           <AvatarFallback className="bg-gradient-to-r from-purple-500 to-indigo-500 dark:from-purple-400 dark:to-indigo-400 text-white font-semibold">
                             {admin.admin_fullname
                               .split(" ")
                               .map((n: any) => n[0])
-                              .join("")}
+                              .join("")
+                              .toUpperCase()}
                           </AvatarFallback>
                         </Avatar>
                         <div>

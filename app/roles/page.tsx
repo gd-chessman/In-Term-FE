@@ -232,71 +232,7 @@ export default function RolesPage() {
         </Card>
       </div>
 
-      {/* Roles Grid */}
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-        {roles.map((role: any) => (
-          <Card
-            key={role.role_id}
-            className="relative overflow-hidden bg-white/70 backdrop-blur-sm border-slate-200/60 hover:shadow-xl transition-all duration-300 group hover:-translate-y-1 rounded-xl"
-          >
-            <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-blue-500 to-cyan-500 opacity-10 rounded-full -mr-10 -mt-10"></div>
-            <CardHeader className="pb-3 relative">
-              <div className="flex items-center justify-between">
-                <div className="h-12 w-12 rounded-xl bg-gradient-to-r from-blue-500 to-cyan-500 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
-                  <Shield className="h-6 w-6 text-white" />
-                </div>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-slate-100 rounded-lg">
-                      <span className="sr-only">Mở menu</span>
-                      <MoreHorizontal className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent
-                    align="end"
-                    className="bg-white/95 backdrop-blur-xl border-slate-200/60 shadow-xl rounded-xl"
-                  >
-                    <DropdownMenuLabel>Thao tác</DropdownMenuLabel>
-                    <DropdownMenuItem className="hover:bg-slate-50/80 rounded-lg">
-                      <Edit className="mr-2 h-4 w-4" />
-                      Chỉnh sửa
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      className="hover:bg-slate-50/80 rounded-lg"
-                      onClick={() => {
-                        setSelectedRole(role)
-                        setIsPermissionDialogOpen(true)
-                      }}
-                    >
-                      <Shield className="mr-2 h-4 w-4" />
-                      Phân quyền
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem className="text-red-600 hover:bg-red-50/80 rounded-lg">
-                      <Trash2 className="mr-2 h-4 w-4" />
-                      Xóa
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
-              <div className="mt-4">
-                <h3 className="text-lg font-semibold text-slate-900">{role.role_name}</h3>
-                <p className="text-sm text-slate-600 mt-1">{role.role_description}</p>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-2">
-                  {getStatusBadge(role.role_status)}
-                </div>
-              </div>
-              <div className="text-xs text-slate-500 mt-3">
-                Tạo: {new Date(role.created_at).toLocaleDateString("vi-VN")}
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+
 
       {/* Roles Table */}
       <Card className="bg-white/70 backdrop-blur-sm border-slate-200/60 hover:shadow-xl transition-all duration-300 rounded-xl">

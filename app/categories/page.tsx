@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -71,6 +71,16 @@ export default function CategoriesPage() {
     queryKey: ["categories-tree"],
     queryFn: getCategoriesTree,
   })
+
+  // Auto-expand first category when data is loaded
+  useEffect(() => {
+    if (categoriesTree.length > 0 && expandedCategories.length === 0) {
+      const firstCategory = categoriesTree[0]
+      if (firstCategory.children && firstCategory.children.length > 0) {
+        setExpandedCategories([firstCategory.category_id])
+      }
+    }
+  }, [categoriesTree, expandedCategories.length])
 
   // Create category mutation
   const createCategoryMutation = useMutation({
