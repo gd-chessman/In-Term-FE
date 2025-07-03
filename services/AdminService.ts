@@ -55,15 +55,6 @@ export const getAdmins = async (page: number, limit: number, search: string, lev
     }
 }
 
-export const getRoles = async () => {
-    try {
-        const temp = await axiosClient.get(`roles`);
-        return temp.data;
-    } catch (e) {
-        throw e;
-    }
-}
-
 
 export const createAdmin = async (item: any) => {
     try {
@@ -73,3 +64,23 @@ export const createAdmin = async (item: any) => {
         throw e;
     }
 }
+
+
+export const getStatistics = async () => {
+    try {
+        const temp = await axiosClient.get(`admins/statistics`);
+        return temp.data.data;
+    } catch (e) {
+        throw e;
+    }
+}
+
+
+export const updateStatus = async (id: string, status: string) => {
+    try {
+        const temp = await axiosClient.patch(`admins/${id}/status`, { admin_status: status });
+        return temp.data;
+    } catch (e) {
+        throw e;
+    }
+}   

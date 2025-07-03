@@ -2,7 +2,8 @@
 
 import { useState } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { createAdmin, getAdmins } from "@/services/AdminService"
+import { createAdmin, getAdmins, getStatistics, updateStatus } from "@/services/AdminService"
+import { getRoles } from "@/services/RoleService"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -47,13 +48,6 @@ const ADMIN_STATUSES = [
 ]
 
 
-const roles = [
-  { role_id: 1, role_name: "Super Admin" },
-  { role_id: 2, role_name: "Administrator" },
-  { role_id: 3, role_name: "Moderator" },
-  { role_id: 4, role_name: "Support" },
-]
-
 export default function AdminsPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
@@ -74,6 +68,18 @@ export default function AdminsPage() {
   const { data: adminsData, isLoading, error } = useQuery({
     queryKey: ["admins", currentPage, searchTerm, selectedLevel, selectedStatus],
     queryFn: () => getAdmins(currentPage, 10, searchTerm, selectedLevel, selectedStatus),
+  })
+
+  // Fetch roles data
+  const { data: roles, isLoading: rolesLoading } = useQuery({
+    queryKey: ["roles"],
+    queryFn: getRoles,
+  })
+
+  // Fetch statistics data
+  const { data: statistics, isLoading: statsLoading } = useQuery({
+    queryKey: ["admin-statistics"],
+    queryFn: getStatistics,
   })
 
   const admins = adminsData?.data?.admins || []
@@ -99,6 +105,23 @@ export default function AdminsPage() {
       toast.error(error?.response?.data?.message || "Không thể tạo admin mới")
     }
   })
+
+  const updateStatusMutation = useMutation({
+    mutationFn: ({ id, status }: { id: string, status: string }) => updateStatus(id, status),
+    onSuccess: () => {
+      toast.success("Cập nhật trạng thái thành công")
+      // Refresh admin list and statistics
+      queryClient.invalidateQueries({ queryKey: ["admins"] })
+      queryClient.invalidateQueries({ queryKey: ["admin-statistics"] })
+    },
+    onError: (error: any) => {
+      toast.error(error?.response?.data?.message || "Không thể cập nhật trạng thái")
+    }
+  })
+
+  const handleStatusUpdate = (adminId: string, newStatus: string) => {
+    updateStatusMutation.mutate({ id: adminId, status: newStatus })
+  }
 
   const handleCreateAdmin = () => {
     if (!formData.admin_username || !formData.admin_email || !formData.admin_password || 
@@ -280,11 +303,18 @@ export default function AdminsPage() {
                     <SelectValue placeholder="Chọn vai trò" />
                   </SelectTrigger>
                   <SelectContent className="rounded-xl border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 shadow-xl">
-                    {roles.map((role) => (
-                      <SelectItem key={role.role_id} value={role.role_id.toString()}>
-                        {role.role_name}
-                      </SelectItem>
-                    ))}
+                    {rolesLoading ? (
+                      <div className="flex items-center justify-center p-2">
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        <span className="ml-2 text-sm">Đang tải...</span>
+                      </div>
+                    ) : (
+                      roles.map((role: any) => (
+                        <SelectItem key={role.role_id} value={role.role_id.toString()}>
+                          {role.role_name}
+                        </SelectItem>
+                      ))
+                    )}
                   </SelectContent>
                 </Select>
               </div>
@@ -334,7 +364,7 @@ export default function AdminsPage() {
           </CardHeader>
           <CardContent className="relative">
             <div className="text-3xl font-bold text-gray-900 dark:text-gray-100">
-              {isLoading ? "..." : pagination.total}
+              {statsLoading ? "..." : statistics.total || 0}
             </div>
             <p className="text-xs text-green-600 dark:text-green-400 mt-1">Tổng số admin</p>
           </CardContent>
@@ -350,10 +380,10 @@ export default function AdminsPage() {
           </CardHeader>
           <CardContent className="relative">
             <div className="text-3xl font-bold text-gray-900 dark:text-gray-100">
-              {isLoading ? "..." : admins.filter((a: any) => a.admin_status === "active").length}
+              {statsLoading ? "..." : statistics.by_status?.active || 0}
             </div>
             <p className="text-xs text-green-600 dark:text-green-400 mt-1">
-              {isLoading ? "..." : admins.length > 0 ? Math.round((admins.filter((a: any) => a.admin_status === "active").length / admins.length) * 100) : 0}% tổng số
+              {statsLoading ? "..." : statistics.total ? Math.round((statistics.by_status?.active || 0) / statistics.total * 100) : 0}% tổng số
             </p>
           </CardContent>
         </Card>
@@ -368,7 +398,7 @@ export default function AdminsPage() {
           </CardHeader>
           <CardContent className="relative">
             <div className="text-3xl font-bold text-gray-900 dark:text-gray-100">
-              {isLoading ? "..." : admins.filter((a: any) => a.admin_status === "inactive").length}
+              {statsLoading ? "..." : (statistics.by_status?.inactive || 0) + (statistics.by_status?.suspended || 0)}
             </div>
             <p className="text-xs text-orange-600 dark:text-orange-400 mt-1">Cần kiểm tra</p>
           </CardContent>
@@ -383,7 +413,9 @@ export default function AdminsPage() {
             </div>
           </CardHeader>
           <CardContent className="relative">
-            <div className="text-3xl font-bold text-gray-900 dark:text-gray-100">{roles.length}</div>
+            <div className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+              {rolesLoading ? "..." : roles.length}
+            </div>
             <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">Tổng vai trò</p>
           </CardContent>
         </Card>
@@ -512,10 +544,35 @@ export default function AdminsPage() {
                           Phân quyền
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem className="text-red-600 dark:text-red-400 hover:bg-red-50/80 dark:hover:bg-red-900/20 rounded-lg">
-                          <Trash2 className="mr-2 h-4 w-4" />
-                          Xóa
-                        </DropdownMenuItem>
+                        {admin.admin_status === "active" ? (
+                          <>
+                            <DropdownMenuItem 
+                              onClick={() => handleStatusUpdate(admin.admin_id.toString(), "inactive")}
+                              disabled={updateStatusMutation.isPending}
+                              className="text-orange-600 dark:text-orange-400 hover:bg-orange-50/80 dark:hover:bg-orange-900/20 rounded-lg"
+                            >
+                              <UserX className="mr-2 h-4 w-4" />
+                              Vô hiệu hóa
+                            </DropdownMenuItem>
+                            <DropdownMenuItem 
+                              onClick={() => handleStatusUpdate(admin.admin_id.toString(), "suspended")}
+                              disabled={updateStatusMutation.isPending}
+                              className="text-red-600 dark:text-red-400 hover:bg-red-50/80 dark:hover:bg-red-900/20 rounded-lg"
+                            >
+                              <Trash2 className="mr-2 h-4 w-4" />
+                              Tạm khóa
+                            </DropdownMenuItem>
+                          </>
+                        ) : (
+                          <DropdownMenuItem 
+                            onClick={() => handleStatusUpdate(admin.admin_id.toString(), "active")}
+                            disabled={updateStatusMutation.isPending}
+                            className="text-green-600 dark:text-green-400 hover:bg-green-50/80 dark:hover:bg-green-900/20 rounded-lg"
+                          >
+                            <UserCheck className="mr-2 h-4 w-4" />
+                            Kích hoạt
+                          </DropdownMenuItem>
+                        )}
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </div>
@@ -624,10 +681,35 @@ export default function AdminsPage() {
                             Phân quyền
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
-                          <DropdownMenuItem className="text-red-600 dark:text-red-400 hover:bg-red-50/80 dark:hover:bg-red-900/20 rounded-lg">
-                            <Trash2 className="mr-2 h-4 w-4" />
-                            Xóa
-                          </DropdownMenuItem>
+                          {admin.admin_status === "active" ? (
+                            <>
+                              <DropdownMenuItem 
+                                onClick={() => handleStatusUpdate(admin.admin_id.toString(), "inactive")}
+                                disabled={updateStatusMutation.isPending}
+                                className="text-orange-600 dark:text-orange-400 hover:bg-orange-50/80 dark:hover:bg-orange-900/20 rounded-lg"
+                              >
+                                <UserX className="mr-2 h-4 w-4" />
+                                Vô hiệu hóa
+                              </DropdownMenuItem>
+                              <DropdownMenuItem 
+                                onClick={() => handleStatusUpdate(admin.admin_id.toString(), "suspended")}
+                                disabled={updateStatusMutation.isPending}
+                                className="text-red-600 dark:text-red-400 hover:bg-red-50/80 dark:hover:bg-red-900/20 rounded-lg"
+                              >
+                                <Trash2 className="mr-2 h-4 w-4" />
+                                Tạm khóa
+                              </DropdownMenuItem>
+                            </>
+                          ) : (
+                            <DropdownMenuItem 
+                              onClick={() => handleStatusUpdate(admin.admin_id.toString(), "active")}
+                              disabled={updateStatusMutation.isPending}
+                              className="text-green-600 dark:text-green-400 hover:bg-green-50/80 dark:hover:bg-green-900/20 rounded-lg"
+                            >
+                              <UserCheck className="mr-2 h-4 w-4" />
+                              Kích hoạt
+                            </DropdownMenuItem>
+                          )}
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>
