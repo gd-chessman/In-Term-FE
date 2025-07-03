@@ -2,7 +2,6 @@
 
 import { useState } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { getRoles } from "@/services/AdminService"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -29,6 +28,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { toast } from "sonner"
 import { Plus, MoreHorizontal, Edit, Trash2, Shield, Users, Crown, UserCheck, Settings, Lock, Loader2 } from "lucide-react"
+import { getRoles } from "@/services/RoleService"
 
 
 
@@ -94,17 +94,13 @@ const permissions = [
 export default function RolesPage() {
   const [isPermissionDialogOpen, setIsPermissionDialogOpen] = useState(false)
   const [selectedRole, setSelectedRole] = useState<any>(null)
-  const queryClient = useQueryClient()
 
   // Fetch roles data
-  const { data: rolesData, isLoading, error } = useQuery({
+  const { data: roles, isLoading, error } = useQuery({
     queryKey: ["roles"],
     queryFn: getRoles,
   })
 
-  const roles = rolesData?.data ? [...rolesData.data].sort((a: any, b: any) => 
-    new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
-  ) : []
 
   const getStatusBadge = (status: string) => {
     switch (status) {
