@@ -1298,76 +1298,117 @@ Số lượng: ${item.ps_num}
                         <div className="space-y-6">
                           {printSelections
                             .filter((item: any) => printingItems.includes(item.ps_id))
-                            .map((item: any, index: number) => (
-                              <div
-                                key={item.ps_id}
-                                className="max-w-2xl mx-auto bg-white shadow-lg border rounded-lg p-8"
-                              >
-                                <div className="space-y-4">
-                                  <div className="text-center border-b pb-4">
-                                    <h2 className="text-2xl font-bold text-gray-800">THÔNG TIN SẢN PHẨM</h2>
-                                    <p className="text-sm text-gray-600 mt-2">
-                                      {item.country?.country_code ? getCountryFlag(item.country.country_code) : "🌍"} Template {item.country?.country_name}
-                                    </p>
+                            .map((item: any, index: number) => {
+                              // Tìm template cho quốc gia này
+                              const selectedTemplate = printFormats.find((f: any) => f.id === selectedPrintFormat)?.template
+                              
+                              return (
+                                <div
+                                  key={item.ps_id}
+                                  className="max-w-2xl mx-auto bg-white shadow-lg border rounded-lg p-8"
+                                >
+                                  <div className="space-y-4">
+                                    {selectedTemplate ? (
+                                      // Hiển thị theo template thực tế
+                                      <>
+                                        <div className="text-center border-b pb-4">
+                                          <h2 className="text-2xl font-bold text-gray-800">{selectedTemplate.pt_title}</h2>
+                                          <p className="text-sm text-gray-600 mt-2">
+                                            {item.country?.country_code ? getCountryFlag(item.country.country_code) : "🌍"} {item.country?.country_name}
+                                          </p>
+                                        </div>
+                                        
+                                        <div className="bg-gray-50 p-4 rounded-lg">
+                                          <div className="font-mono text-sm whitespace-pre-wrap">
+                                            {selectedTemplate.pt_content
+                                              .replace(/{product_name}/g, item.product?.product_name || '')
+                                              .replace(/{product_code}/g, item.product?.product_code || '')
+                                              .replace(/{price}/g, formatPrice(item.ps_price_sale, item.country?.country_name))
+                                              .replace(/{category_name}/g, item.product?.category?.category_name || '')
+                                              .replace(/{print_date}/g, new Date().toLocaleDateString('vi-VN'))
+                                              .replace(/{country_name}/g, item.country?.country_name || '')
+                                              .replace(/{ps_num}/g, item.ps_num?.toString() || '')
+                                              .replace(/{ps_type}/g, item.ps_type || '')
+                                            }
+                                          </div>
+                                        </div>
+                                        
+                                        {selectedTemplate.pt_footer && (
+                                          <div className="text-center text-sm text-gray-600 border-t pt-4">
+                                            {selectedTemplate.pt_footer}
+                                          </div>
+                                        )}
+                                      </>
+                                    ) : (
+                                      // Fallback layout khi không có template
+                                      <>
+                                        <div className="text-center border-b pb-4">
+                                          <h2 className="text-2xl font-bold text-gray-800">THÔNG TIN SẢN PHẨM</h2>
+                                          <p className="text-sm text-gray-600 mt-2">
+                                            {item.country?.country_code ? getCountryFlag(item.country.country_code) : "🌍"} {item.country?.country_name}
+                                          </p>
+                                        </div>
+
+                                        <div className="grid grid-cols-2 gap-6">
+                                          <div className="space-y-3">
+                                            <div>
+                                              <label className="text-sm font-medium text-gray-600">Tên sản phẩm:</label>
+                                              <p className="text-lg font-semibold text-gray-800">{item.product?.product_name}</p>
+                                            </div>
+                                            <div>
+                                              <label className="text-sm font-medium text-gray-600">Mã sản phẩm:</label>
+                                              <p className="font-mono text-gray-800">{item.product?.product_code}</p>
+                                            </div>
+                                            <div>
+                                              <label className="text-sm font-medium text-gray-600">Số lượng:</label>
+                                              <p className="text-gray-800">{item.ps_num}</p>
+                                            </div>
+                                          </div>
+
+                                          <div className="space-y-3">
+                                            <div>
+                                              <label className="text-sm font-medium text-gray-600">Giá bán:</label>
+                                              <p className="text-xl font-bold text-green-600">
+                                                {formatPrice(item.ps_price_sale, item.country?.country_name)}
+                                              </p>
+                                            </div>
+                                            <div>
+                                              <label className="text-sm font-medium text-gray-600">Ngày in:</label>
+                                              <p className="text-gray-800">{new Date().toLocaleDateString("vi-VN")}</p>
+                                            </div>
+                                            <div>
+                                              <label className="text-sm font-medium text-gray-600">Định dạng:</label>
+                                              <p className="text-gray-800">
+                                                {selectedPrintFormat.toUpperCase()} - {selectedPrintQuality}
+                                              </p>
+                                            </div>
+                                          </div>
+                                        </div>
+
+                                        <div className="text-center py-6 border-t">
+                                          <div className="inline-block p-4 border-2 border-dashed border-gray-300 rounded">
+                                            <div className="w-24 h-24 bg-gray-200 flex items-center justify-center text-xs text-gray-500">
+                                              QR CODE
+                                            </div>
+                                          </div>
+                                          <p className="text-xs text-gray-500 mt-2">Mã QR sản phẩm</p>
+                                        </div>
+
+                                        <div className="text-center text-xs text-gray-500 border-t pt-4">
+                                          © 2024 Company Name. All rights reserved.
+                                        </div>
+                                      </>
+                                    )}
                                   </div>
 
-                                  <div className="grid grid-cols-2 gap-6">
-                                    <div className="space-y-3">
-                                      <div>
-                                        <label className="text-sm font-medium text-gray-600">Tên sản phẩm:</label>
-                                        <p className="text-lg font-semibold text-gray-800">{item.product?.product_name}</p>
-                                      </div>
-                                      <div>
-                                        <label className="text-sm font-medium text-gray-600">Mã sản phẩm:</label>
-                                        <p className="font-mono text-gray-800">{item.product?.product_code}</p>
-                                      </div>
-                                      <div>
-                                        <label className="text-sm font-medium text-gray-600">Số lượng:</label>
-                                        <p className="text-gray-800">{item.ps_num}</p>
-                                      </div>
+                                  {index < printingItems.length - 1 && (
+                                    <div className="text-center text-xs text-gray-400 mt-4 border-t pt-2">
+                                      Trang {index + 1} / {printingItems.length}
                                     </div>
-
-                                    <div className="space-y-3">
-                                      <div>
-                                        <label className="text-sm font-medium text-gray-600">Giá bán:</label>
-                                        <p className="text-xl font-bold text-green-600">
-                                          {formatPrice(item.ps_price_sale, item.country?.country_name)}
-                                        </p>
-                                      </div>
-                                      <div>
-                                        <label className="text-sm font-medium text-gray-600">Ngày in:</label>
-                                        <p className="text-gray-800">{new Date().toLocaleDateString("vi-VN")}</p>
-                                      </div>
-                                      <div>
-                                        <label className="text-sm font-medium text-gray-600">Định dạng:</label>
-                                        <p className="text-gray-800">
-                                          {printFormats.find((f: any) => f.id === selectedPrintFormat)?.template ? 'PDF' : selectedPrintFormat.toUpperCase()} - {selectedPrintQuality}
-                                        </p>
-                                      </div>
-                                    </div>
-                                  </div>
-
-                                  <div className="text-center py-6 border-t">
-                                    <div className="inline-block p-4 border-2 border-dashed border-gray-300 rounded">
-                                      <div className="w-24 h-24 bg-gray-200 flex items-center justify-center text-xs text-gray-500">
-                                        QR CODE
-                                      </div>
-                                    </div>
-                                    <p className="text-xs text-gray-500 mt-2">Mã QR sản phẩm</p>
-                                  </div>
-
-                                  <div className="text-center text-xs text-gray-500 border-t pt-4">
-                                    © 2024 Company Name. All rights reserved.
-                                  </div>
+                                  )}
                                 </div>
-
-                                {index < printingItems.length - 1 && (
-                                  <div className="text-center text-xs text-gray-400 mt-4 border-t pt-2">
-                                    Trang {index + 1} / {printingItems.length}
-                                  </div>
-                                )}
-                              </div>
-                            ))}
+                              )
+                            })}
                         </div>
                       </div>
                     </div>
