@@ -31,45 +31,21 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { toast } from "sonner"
 import { Plus, Search, MoreHorizontal, Edit, Trash2, Shield, Eye, Users, UserCheck, UserX, Crown, Loader2 } from "lucide-react"
 
-// Mock data
-const admins = [
-  {
-    admin_id: 1,
-    admin_username: "superadmin",
-    admin_email: "super@example.com",
-    admin_fullname: "Super Administrator",
-    admin_level: "super_admin",
-    admin_status: "active",
-    admin_last_login: "2024-01-15 10:30:00",
-    admin_last_ip: "192.168.1.100",
-    role_name: "Super Admin",
-    avatar: "/placeholder.svg?height=40&width=40",
-  },
-  {
-    admin_id: 2,
-    admin_username: "admin1",
-    admin_email: "admin1@example.com",
-    admin_fullname: "John Doe",
-    admin_level: "admin",
-    admin_status: "active",
-    admin_last_login: "2024-01-15 09:15:00",
-    admin_last_ip: "192.168.1.101",
-    role_name: "Administrator",
-    avatar: "/placeholder.svg?height=40&width=40",
-  },
-  {
-    admin_id: 3,
-    admin_username: "moderator1",
-    admin_email: "mod1@example.com",
-    admin_fullname: "Jane Smith",
-    admin_level: "moderator",
-    admin_status: "inactive",
-    admin_last_login: "2024-01-14 16:45:00",
-    admin_last_ip: "192.168.1.102",
-    role_name: "Moderator",
-    avatar: "/placeholder.svg?height=40&width=40",
-  },
+// Admin levels constants
+const ADMIN_LEVELS = [
+  { value: "super_admin", label: "Super Admin" },
+  { value: "admin", label: "Admin" },
+  { value: "moderator", label: "Moderator" },
+  { value: "support", label: "Support" },
 ]
+
+// Admin statuses constants
+const ADMIN_STATUSES = [
+  { value: "active", label: "Hoạt động" },
+  { value: "inactive", label: "Không hoạt động" },
+  { value: "suspended", label: "Tạm khóa" },
+]
+
 
 const roles = [
   { role_id: 1, role_name: "Super Admin" },
@@ -143,28 +119,39 @@ export default function AdminsPage() {
     setFormData(prev => ({ ...prev, [field]: value }))
   }
 
+  // Helper functions to get labels from values
+  const getLevelLabel = (value: string) => {
+    const level = ADMIN_LEVELS.find(l => l.value === value)
+    return level ? level.label : value
+  }
+
+  const getStatusLabel = (value: string) => {
+    const status = ADMIN_STATUSES.find(s => s.value === value)
+    return status ? status.label : value
+  }
+
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "active":
         return (
           <Badge className="bg-gradient-to-r from-green-500 to-emerald-500 dark:from-green-400 dark:to-emerald-400 text-white border-0">
-            Hoạt động
+            {getStatusLabel(status)}
           </Badge>
         )
       case "inactive":
         return (
           <Badge className="bg-gradient-to-r from-gray-400 to-gray-500 dark:from-gray-500 dark:to-gray-600 text-white border-0">
-            Không hoạt động
+            {getStatusLabel(status)}
           </Badge>
         )
       case "suspended":
         return (
           <Badge className="bg-gradient-to-r from-red-500 to-pink-500 dark:from-red-400 dark:to-pink-400 text-white border-0">
-            Tạm khóa
+            {getStatusLabel(status)}
           </Badge>
         )
       default:
-        return <Badge variant="secondary">{status}</Badge>
+        return <Badge variant="secondary">{getStatusLabel(status)}</Badge>
     }
   }
 
@@ -174,32 +161,32 @@ export default function AdminsPage() {
         return (
           <Badge className="bg-gradient-to-r from-purple-600 to-indigo-600 dark:from-purple-400 dark:to-indigo-400 text-white border-0 shadow-lg">
             <Crown className="w-3 h-3 mr-1" />
-            Super Admin
+            {getLevelLabel(level)}
           </Badge>
         )
       case "admin":
         return (
           <Badge className="bg-gradient-to-r from-blue-500 to-cyan-500 dark:from-blue-400 dark:to-cyan-400 text-white border-0 shadow-lg">
             <Shield className="w-3 h-3 mr-1" />
-            Admin
+            {getLevelLabel(level)}
           </Badge>
         )
       case "moderator":
         return (
           <Badge className="bg-gradient-to-r from-orange-500 to-yellow-500 dark:from-orange-400 dark:to-yellow-400 text-white border-0 shadow-lg">
             <UserCheck className="w-3 h-3 mr-1" />
-            Moderator
+            {getLevelLabel(level)}
           </Badge>
         )
       case "support":
         return (
           <Badge className="bg-gradient-to-r from-gray-500 to-slate-500 dark:from-gray-400 dark:to-slate-400 text-white border-0 shadow-lg">
             <Users className="w-3 h-3 mr-1" />
-            Support
+            {getLevelLabel(level)}
           </Badge>
         )
       default:
-        return <Badge variant="secondary">{level}</Badge>
+        return <Badge variant="secondary">{getLevelLabel(level)}</Badge>
     }
   }
 
@@ -276,10 +263,11 @@ export default function AdminsPage() {
                     <SelectValue placeholder="Chọn cấp độ" />
                   </SelectTrigger>
                   <SelectContent className="rounded-xl border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 shadow-xl">
-                    <SelectItem value="support">Support</SelectItem>
-                    <SelectItem value="moderator">Moderator</SelectItem>
-                    <SelectItem value="admin">Admin</SelectItem>
-                    <SelectItem value="super_admin">Super Admin</SelectItem>
+                    {ADMIN_LEVELS.map((level) => (
+                      <SelectItem key={level.value} value={level.value}>
+                        {level.label}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
@@ -424,9 +412,11 @@ export default function AdminsPage() {
                   </SelectTrigger>
                   <SelectContent className="rounded-xl border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 shadow-xl">
                     <SelectItem value="all">Tất cả</SelectItem>
-                    <SelectItem value="active">Hoạt động</SelectItem>
-                    <SelectItem value="inactive">Không hoạt động</SelectItem>
-                    <SelectItem value="suspended">Tạm khóa</SelectItem>
+                    {ADMIN_STATUSES.map((status) => (
+                      <SelectItem key={status.value} value={status.value}>
+                        {status.label}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
                 <Select value={selectedLevel} onValueChange={setSelectedLevel}>
@@ -435,10 +425,11 @@ export default function AdminsPage() {
                   </SelectTrigger>
                   <SelectContent className="rounded-xl border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 shadow-xl">
                     <SelectItem value="all">Tất cả</SelectItem>
-                    <SelectItem value="super_admin">Super Admin</SelectItem>
-                    <SelectItem value="admin">Admin</SelectItem>
-                    <SelectItem value="moderator">Moderator</SelectItem>
-                    <SelectItem value="support">Support</SelectItem>
+                    {ADMIN_LEVELS.map((level) => (
+                      <SelectItem key={level.value} value={level.value}>
+                        {level.label}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
@@ -476,14 +467,15 @@ export default function AdminsPage() {
                 <CardContent className="p-4">
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex items-center space-x-3">
-                                              <Avatar className="h-12 w-12 ring-2 ring-gray-200/60 dark:ring-gray-700/60 shadow-md">
+                          <Avatar className="h-12 w-12 ring-2 ring-gray-200/60 dark:ring-gray-700/60 shadow-md">
                           <AvatarImage src={admin.avatar} alt={admin.admin_fullname} />
                           <AvatarFallback className="bg-gradient-to-r from-purple-500 to-indigo-500 dark:from-purple-400 dark:to-indigo-400 text-white font-semibold">
                             {admin.admin_fullname
                               .split(" ")
                               .map((n: any) => n[0])
                               .join("")
-                              .toUpperCase()}
+                              .toUpperCase()
+                              .slice(0, 2)}
                           </AvatarFallback>
                         </Avatar>
                       <div>
@@ -583,7 +575,8 @@ export default function AdminsPage() {
                               .split(" ")
                               .map((n: any) => n[0])
                               .join("")
-                              .toUpperCase()}
+                              .toUpperCase()
+                              .slice(0, 2)}
                           </AvatarFallback>
                         </Avatar>
                         <div>

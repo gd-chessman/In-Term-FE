@@ -40,7 +40,15 @@ export const getUserMe = async () => {
 
 export const getAdmins = async (page: number, limit: number, search: string, level: string, status: string) => {
     try {
-        const temp = await axiosClient.get(`admins?page=${page}&limit=${limit}&search=${search}`);
+        const params = new URLSearchParams();
+        
+        if (page) params.append('page', page.toString());
+        if (limit) params.append('limit', limit.toString());
+        if (search) params.append('search', search);
+        if (level && level !== 'all') params.append('level', level);
+        if (status && status !== 'all') params.append('status', status);
+        
+        const temp = await axiosClient.get(`admins?${params.toString()}`);
         return temp.data;
     } catch (e) {
         throw e;
