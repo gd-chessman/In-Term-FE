@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { toast } from "sonner"
-import { createPrintSelect, getPrintSelects } from "@/services/PrintService"
+import { createPrintSelect, getPrintSelects, getPrintTemplates } from "@/services/PrintService"
 import { getProducts } from "@/services/ProductService"
 import { getCountries } from "@/services/CountryService"
 import { Button } from "@/components/ui/button"
@@ -52,8 +52,8 @@ import {
   Loader2,
 } from "lucide-react"
 
-// Mock data with enhanced information
-const printFormats = [
+// Default print formats fallback
+const defaultPrintFormats = [
   {
     id: "pdf",
     name: "PDF",
@@ -133,6 +133,24 @@ export default function PrintSelectPage() {
     queryFn: getCountries,
   })
 
+  // Fetch print templates
+  const { data: printTemplates = [] } = useQuery({
+    queryKey: ["printTemplates"],
+    queryFn: getPrintTemplates,
+  })
+
+  // Combine templates with default formats
+  const printFormats = printTemplates.length > 0 
+    ? printTemplates.map((template: any) => ({
+        id: template.pt_id.toString(),
+        name: template.pt_title,
+        icon: "📄",
+        description: `Template cho ${template.country?.country_name}`,
+        quality: ["Standard", "High", "Print"],
+        template: template
+      }))
+    : defaultPrintFormats
+
   // Create print selection mutation
   const createMutation = useMutation({
     mutationFn: createPrintSelect,
@@ -164,36 +182,42 @@ export default function PrintSelectPage() {
       // Tạo file thật dựa trên dữ liệu
       const { items, format, quality, copies } = printData
       
+      // Tìm template được chọn
+      const selectedTemplate = printFormats.find((f: any) => f.id === format)?.template
+      
       // Tạo nội dung file
       let fileContent = ''
       let fileName = `print_${new Date().toISOString().split('T')[0]}_${items.length}_items`
       
-      if (format === 'pdf') {
-        const html = generatePDFContent(items, quality, copies);
+      // Nếu có template từ API hoặc format là pdf, tạo PDF
+      if (selectedTemplate || format === 'pdf') {
+        const html = generatePDFContent(items, quality, copies, selectedTemplate);
         fileName += '.pdf';
         await exportToPDF(html, fileName);
         return { success: true, fileName };
       } else if (format === 'txt') {
-        fileContent = generateTextContent(items, quality, copies)
+        fileContent = generateTextContent(items, quality, copies, selectedTemplate)
         fileName += '.txt'
+        
+        // Tạo và tải xuống file text
+        const blob = new Blob([fileContent], { type: 'text/plain;charset=utf-8' })
+        const url = window.URL.createObjectURL(blob)
+        const link = document.createElement('a')
+        link.href = url
+        link.download = fileName
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+        window.URL.revokeObjectURL(url)
+        
+        return { success: true, fileName }
       } else {
-        // Mặc định tạo file text
-        fileContent = generateTextContent(items, quality, copies)
-        fileName += '.txt'
+        // Các format khác (png, jpg, svg, eps, tiff) - tạo PDF với template mặc định
+        const html = generatePDFContent(items, quality, copies, null);
+        fileName += '.pdf';
+        await exportToPDF(html, fileName);
+        return { success: true, fileName };
       }
-      
-      // Tạo và tải xuống file text
-      const blob = new Blob([fileContent], { type: 'text/plain;charset=utf-8' })
-      const url = window.URL.createObjectURL(blob)
-      const link = document.createElement('a')
-      link.href = url
-      link.download = fileName
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
-      window.URL.revokeObjectURL(url)
-      
-      return { success: true, fileName }
     },
     onSuccess: (data) => {
       toast.success(`File đã được tạo và tải xuống: ${data.fileName}`)
@@ -270,7 +294,7 @@ export default function PrintSelectPage() {
   }
 
   const getFormatBadge = (format: string) => {
-    const formatInfo = printFormats.find((f) => f.id === format)
+    const formatInfo = printFormats.find((f: any) => f.id === format)
     if (!formatInfo) return <Badge variant="outline">{format}</Badge>
 
     return (
@@ -292,87 +316,130 @@ export default function PrintSelectPage() {
     return String.fromCodePoint(...codePoints);
   }
 
-  const generateTextContent = (items: any[], quality: string, copies: number) => {
-    let content = `THÔNG TIN IN SẢN PHẨM\n`
-    content += `Ngày tạo: ${new Date().toLocaleDateString('vi-VN')}\n`
-    content += `Chất lượng: ${quality}\n`
-    content += `Số bản in: ${copies}\n`
-    content += `Tổng số sản phẩm: ${items.length}\n`
-    content += `\n${'='.repeat(50)}\n\n`
+  const generateTextContent = (items: any[], quality: string, copies: number, template?: any) => {
+    let content = ''
+    
+    if (template) {
+      // Sử dụng template từ API
+      content += `${template.pt_title}\n`
+      content += `Ngày tạo: ${new Date().toLocaleDateString('vi-VN')}\n`
+      content += `Chất lượng: ${quality}\n`
+      content += `Số bản in: ${copies}\n`
+      content += `Tổng số sản phẩm: ${items.length}\n`
+      content += `\n${'='.repeat(50)}\n\n`
 
-    items.forEach((item, index) => {
-      content += `SẢN PHẨM ${index + 1}\n`
-      content += `Tên sản phẩm: ${item.product?.product_name}\n`
-      content += `Mã sản phẩm: ${item.product?.product_code}\n`
-      content += `Quốc gia: ${item.country?.country_name}\n`
-      content += `Giá bán: ${formatPrice(item.ps_price_sale, item.country?.country_name)}\n`
-      content += `Khổ giấy: ${item.ps_type}\n`
-      content += `Số lượng: ${item.ps_num}\n`
-      content += `Trạng thái: ${item.ps_status}\n`
-      if (item.templates?.ps_option_1) {
-        content += `Tùy chọn 1: ${item.templates.ps_option_1}\n`
+      items.forEach((item, index) => {
+        // Thay thế các biến trong template
+        let itemContent = template.pt_content
+          .replace(/{product_name}/g, item.product?.product_name || '')
+          .replace(/{product_code}/g, item.product?.product_code || '')
+          .replace(/{price}/g, formatPrice(item.ps_price_sale, item.country?.country_name))
+          .replace(/{category_name}/g, item.product?.category?.category_name || '')
+          .replace(/{print_date}/g, new Date().toLocaleDateString('vi-VN'))
+          .replace(/{country_name}/g, item.country?.country_name || '')
+          .replace(/{ps_num}/g, item.ps_num?.toString() || '')
+          .replace(/{ps_type}/g, item.ps_type || '')
+        
+        content += `SẢN PHẨM ${index + 1}\n`
+        content += itemContent
+        content += `\n${'-'.repeat(30)}\n\n`
+      })
+
+      if (template.pt_footer) {
+        content += `\n${template.pt_footer}\n`
       }
-      if (item.templates?.ps_option_2) {
-        content += `Tùy chọn 2: ${item.templates.ps_option_2}\n`
-      }
-      if (item.templates?.ps_option_3) {
-        content += `Tùy chọn 3: ${item.templates.ps_option_3}\n`
-      }
-      content += `\n${'-'.repeat(30)}\n\n`
-    })
+    } else {
+      // Fallback to default format
+      content += `THÔNG TIN IN SẢN PHẨM\n`
+      content += `Ngày tạo: ${new Date().toLocaleDateString('vi-VN')}\n`
+      content += `Chất lượng: ${quality}\n`
+      content += `Số bản in: ${copies}\n`
+      content += `Tổng số sản phẩm: ${items.length}\n`
+      content += `\n${'='.repeat(50)}\n\n`
+
+      items.forEach((item, index) => {
+        content += `SẢN PHẨM ${index + 1}\n`
+        content += `Tên sản phẩm: ${item.product?.product_name}\n`
+        content += `Mã sản phẩm: ${item.product?.product_code}\n`
+        content += `Quốc gia: ${item.country?.country_name}\n`
+        content += `Giá bán: ${formatPrice(item.ps_price_sale, item.country?.country_name)}\n`
+        content += `Khổ giấy: ${item.ps_type}\n`
+        content += `Số lượng: ${item.ps_num}\n`
+        content += `Trạng thái: ${item.ps_status}\n`
+        if (item.templates?.ps_option_1) {
+          content += `Tùy chọn 1: ${item.templates.ps_option_1}\n`
+        }
+        if (item.templates?.ps_option_2) {
+          content += `Tùy chọn 2: ${item.templates.ps_option_2}\n`
+        }
+        if (item.templates?.ps_option_3) {
+          content += `Tùy chọn 3: ${item.templates.ps_option_3}\n`
+        }
+        content += `\n${'-'.repeat(30)}\n\n`
+      })
+    }
 
     return content
   }
 
-  const generatePDFContent = (items: any[], quality: string, copies: number) => {
+  const generatePDFContent = (items: any[], quality: string, copies: number, template?: any) => {
     let html = `
     <!DOCTYPE html>
     <html>
     <head>
       <meta charset="UTF-8">
-      <title>Thông tin in sản phẩm</title>
+      <title>${template ? template.pt_title : 'Thông tin in sản phẩm'}</title>
       <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
+        body { font-family: Arial, sans-serif; margin: 20px; line-height: 1.6; }
         .header { text-align: center; border-bottom: 2px solid #333; padding-bottom: 10px; margin-bottom: 20px; }
         .product { border: 1px solid #ddd; margin: 20px 0; padding: 15px; border-radius: 5px; }
         .product-title { font-size: 18px; font-weight: bold; color: #333; margin-bottom: 10px; }
-        .product-info { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .label { font-weight: bold; color: #666; }
-        .value { color: #333; }
+        .template-content { white-space: pre-wrap; }
         .footer { text-align: center; margin-top: 30px; color: #666; font-size: 12px; }
       </style>
     </head>
     <body>
-      <div class="header">
-        <h1>THÔNG TIN IN SẢN PHẨM</h1>
-        <p>Ngày tạo: ${new Date().toLocaleDateString('vi-VN')}</p>
-        <p>Chất lượng: ${quality} | Số bản in: ${copies}</p>
-      </div>
     `
-
     items.forEach((item, index) => {
-      html += `
-      <div class="product">
-        <div class="product-title">SẢN PHẨM ${index + 1}</div>
-        <div class="product-info">
-          <div><span class="label">Tên sản phẩm:</span> <span class="value">${item.product?.product_name}</span></div>
-          <div><span class="label">Mã sản phẩm:</span> <span class="value">${item.product?.product_code}</span></div>
-          <div><span class="label">Quốc gia:</span> <span class="value">${item.country?.country_name}</span></div>
-          <div><span class="label">Giá bán:</span> <span class="value">${formatPrice(item.ps_price_sale, item.country?.country_name)}</span></div>
-          <div><span class="label">Khổ giấy:</span> <span class="value">${item.ps_type}</span></div>
-          <div><span class="label">Số lượng:</span> <span class="value">${item.ps_num}</span></div>
-          <div><span class="label">Trạng thái:</span> <span class="value">${item.ps_status}</span></div>
-          ${item.templates?.ps_option_1 ? `<div><span class="label">Tùy chọn 1:</span> <span class="value">${item.templates.ps_option_1}</span></div>` : ''}
-          ${item.templates?.ps_option_2 ? `<div><span class="label">Tùy chọn 2:</span> <span class="value">${item.templates.ps_option_2}</span></div>` : ''}
-          ${item.templates?.ps_option_3 ? `<div><span class="label">Tùy chọn 3:</span> <span class="value">${item.templates.ps_option_3}</span></div>` : ''}
+      if (template) {
+        // Thay thế biến từ template
+        let itemContent = template.pt_content
+          .replace(/{product_name}/g, item.product?.product_name || '')
+          .replace(/{product_code}/g, item.product?.product_code || '')
+          .replace(/{price}/g, formatPrice(item.ps_price_sale, item.country?.country_name))
+          .replace(/{category_name}/g, item.product?.category?.category_name || '')
+          .replace(/{print_date}/g, new Date().toLocaleDateString('vi-VN'))
+          .replace(/{country_name}/g, item.country?.country_name || '')
+          .replace(/{ps_num}/g, item.ps_num?.toString() || '')
+          .replace(/{ps_type}/g, item.ps_type || '')
+        
+        html += `
+        <div class="product">
+          <div class="product-title">SẢN PHẨM ${index + 1}</div>
+          <div class="template-content">${itemContent}</div>
         </div>
-      </div>
-      `
+        `
+      } else {
+        // Fallback đơn giản khi không có template
+        html += `
+        <div class="product">
+          <div class="product-title">SẢN PHẨM ${index + 1}</div>
+          <div class="template-content">
+Tên sản phẩm: ${item.product?.product_name}
+Mã sản phẩm: ${item.product?.product_code}
+Quốc gia: ${item.country?.country_name}
+Giá bán: ${formatPrice(item.ps_price_sale, item.country?.country_name)}
+Khổ giấy: ${item.ps_type}
+Số lượng: ${item.ps_num}
+          </div>
+        </div>
+        `
+      }
     })
 
     html += `
       <div class="footer">
-        <p>© 2024 Company Name. All rights reserved.</p>
+        <p>${template?.pt_footer || '© 2024 Company Name. All rights reserved.'}</p>
       </div>
     </body>
     </html>
@@ -1131,7 +1198,7 @@ export default function PrintSelectPage() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {printFormats.map((format) => (
+                    {printFormats.map((format: any) => (
                       <SelectItem key={format.id} value={format.id}>
                         <div className="flex items-center space-x-2">
                           <span>{format.icon}</span>
@@ -1163,8 +1230,8 @@ export default function PrintSelectPage() {
                   </SelectTrigger>
                   <SelectContent>
                     {printFormats
-                      .find((f) => f.id === selectedPrintFormat)
-                      ?.quality.map((quality) => (
+                      .find((f: any) => f.id === selectedPrintFormat)
+                      ?.quality.map((quality: any) => (
                         <SelectItem key={quality} value={quality.toLowerCase()}>
                           {quality}
                         </SelectItem>
@@ -1198,7 +1265,7 @@ export default function PrintSelectPage() {
                 <DialogTrigger asChild>
                   <Button variant="outline" className="w-full">
                     <Eye className="mr-2 h-4 w-4" />
-                    Xem trước {selectedPrintFormat.toUpperCase()}
+                    Xem trước {printFormats.find((f: any) => f.id === selectedPrintFormat)?.template ? 'PDF' : selectedPrintFormat.toUpperCase()}
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="max-w-4xl max-h-[80vh]">
@@ -1213,16 +1280,18 @@ export default function PrintSelectPage() {
                   <div className="space-y-4">
                     {/* File Preview */}
                     <div className="border rounded-lg overflow-hidden bg-gray-50">
-                      <div className="bg-white p-4 border-b flex items-center justify-between">
-                        <div className="flex items-center space-x-2">
-                          <Badge className="bg-blue-100 text-blue-800">{selectedPrintFormat.toUpperCase()}</Badge>
-                          <span className="text-sm text-muted-foreground">Chất lượng: {selectedPrintQuality}</span>
-                        </div>
-                        <div className="text-sm text-muted-foreground">
-                          {printCopies} bản × {printingItems.length} sản phẩm = {printCopies * printingItems.length}{" "}
-                          trang
-                        </div>
+                                          <div className="bg-white p-4 border-b flex items-center justify-between">
+                      <div className="flex items-center space-x-2">
+                        <Badge className="bg-blue-100 text-blue-800">
+                          {printFormats.find((f: any) => f.id === selectedPrintFormat)?.template ? 'PDF' : selectedPrintFormat.toUpperCase()}
+                        </Badge>
+                        <span className="text-sm text-muted-foreground">Chất lượng: {selectedPrintQuality}</span>
                       </div>
+                      <div className="text-sm text-muted-foreground">
+                        {printCopies} bản × {printingItems.length} sản phẩm = {printCopies * printingItems.length}{" "}
+                        trang
+                      </div>
+                    </div>
 
                       {/* Preview Content */}
                       <div className="p-6 bg-white min-h-[400px] max-h-[500px] overflow-auto">
@@ -1272,7 +1341,7 @@ export default function PrintSelectPage() {
                                       <div>
                                         <label className="text-sm font-medium text-gray-600">Định dạng:</label>
                                         <p className="text-gray-800">
-                                          {selectedPrintFormat.toUpperCase()} - {selectedPrintQuality}
+                                          {printFormats.find((f: any) => f.id === selectedPrintFormat)?.template ? 'PDF' : selectedPrintFormat.toUpperCase()} - {selectedPrintQuality}
                                         </p>
                                       </div>
                                     </div>
@@ -1306,7 +1375,7 @@ export default function PrintSelectPage() {
                     {/* Format specific info */}
                     <div className="bg-blue-50 p-4 rounded-lg">
                       <h4 className="font-medium text-blue-900 mb-2">
-                        Thông tin file {selectedPrintFormat.toUpperCase()}
+                        Thông tin file {printFormats.find((f: any) => f.id === selectedPrintFormat)?.template ? 'PDF' : selectedPrintFormat.toUpperCase()}
                       </h4>
                       <div className="grid grid-cols-2 gap-4 text-sm">
                         <div>
@@ -1316,7 +1385,7 @@ export default function PrintSelectPage() {
                           <span className="text-blue-700">Ước tính dung lượng:</span>{" "}
                           {(printingItems.length * printCopies * 0.5).toFixed(1)} MB
                         </div>
-                        {selectedPrintFormat === "pdf" && (
+                        {(selectedPrintFormat === "pdf" || printFormats.find((f: any) => f.id === selectedPrintFormat)?.template) && (
                           <>
                             <div>
                               <span className="text-blue-700">Có thể tìm kiếm:</span> Có
@@ -1326,7 +1395,7 @@ export default function PrintSelectPage() {
                             </div>
                           </>
                         )}
-                        {selectedPrintFormat === "png" && (
+                        {selectedPrintFormat === "png" && !printFormats.find((f: any) => f.id === selectedPrintFormat)?.template && (
                           <>
                             <div>
                               <span className="text-blue-700">Độ phân giải:</span> {selectedPrintQuality}
