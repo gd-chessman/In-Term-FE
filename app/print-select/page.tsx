@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { toast } from "sonner"
-import { createPrintSelect, getPrintSelects, getPrintTemplates } from "@/services/PrintService"
+import { createPrintSelect, getPrintSelects, getPrintTemplates, deletePrintSelect, updatePrintSelect } from "@/services/PrintService"
 import { getProducts } from "@/services/ProductService"
 import { getCountries } from "@/services/CountryService"
 import { Button } from "@/components/ui/button"
@@ -30,6 +30,16 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -96,6 +106,21 @@ export default function PrintSelectPage() {
   const [selectedStatus, setSelectedStatus] = useState("all")
 
   const [isPrintDialogOpen, setIsPrintDialogOpen] = useState(false)
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
+  const [itemToDelete, setItemToDelete] = useState<any>(null)
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
+  const [editingItem, setEditingItem] = useState<any>(null)
+  const [editFormData, setEditFormData] = useState({
+    ps_product_id: "",
+    ps_country_id: "",
+    ps_price_sale: "",
+    ps_type: "",
+    ps_status: "active",
+    ps_num: "1",
+    ps_option_1: "",
+    ps_option_2: "",
+    ps_option_3: "",
+  })
   const [printingItems, setPrintingItems] = useState<number[]>([])
   const [printProgress, setPrintProgress] = useState(0)
   const [selectedPrintFormat, setSelectedPrintFormat] = useState("pdf")
@@ -173,6 +198,43 @@ export default function PrintSelectPage() {
     },
     onError: (error: any) => {
       toast.error(error?.response?.data?.message || "Có lỗi xảy ra khi thêm sản phẩm!")
+    },
+  })
+
+  // Delete print selection mutation
+  const deleteMutation = useMutation({
+    mutationFn: deletePrintSelect,
+    onSuccess: () => {
+      toast.success("Đã xóa sản phẩm khỏi danh sách in!")
+      queryClient.invalidateQueries({ queryKey: ["printSelects"] })
+    },
+    onError: (error: any) => {
+      toast.error(error?.response?.data?.message || "Có lỗi xảy ra khi xóa sản phẩm!")
+    },
+  })
+
+  // Update print selection mutation
+  const updateMutation = useMutation({
+    mutationFn: ({ id, item }: { id: number; item: any }) => updatePrintSelect(id, item),
+    onSuccess: () => {
+      toast.success("Đã cập nhật thông tin sản phẩm!")
+      setIsEditDialogOpen(false)
+      setEditingItem(null)
+      setEditFormData({
+        ps_product_id: "",
+        ps_country_id: "",
+        ps_price_sale: "",
+        ps_type: "",
+        ps_status: "active",
+        ps_num: "1",
+        ps_option_1: "",
+        ps_option_2: "",
+        ps_option_3: "",
+      })
+      queryClient.invalidateQueries({ queryKey: ["printSelects"] })
+    },
+    onError: (error: any) => {
+      toast.error(error?.response?.data?.message || "Có lỗi xảy ra khi cập nhật sản phẩm!")
     },
   })
 
@@ -534,6 +596,59 @@ Số lượng: ${item.ps_num}
   const handlePrintAll = () => {
     setPrintingItems(filteredItems.map((item: any) => item.ps_id))
     setIsPrintDialogOpen(true)
+  }
+
+  const handleDeleteItem = (item: any) => {
+    setItemToDelete(item)
+    setIsDeleteDialogOpen(true)
+  }
+
+  const handleDeleteConfirm = () => {
+    if (itemToDelete) {
+      deleteMutation.mutate(itemToDelete.ps_id)
+      setIsDeleteDialogOpen(false)
+      setItemToDelete(null)
+    }
+  }
+
+  const handleEditItem = (item: any) => {
+    setEditingItem(item)
+    // Pre-fill form data
+    setEditFormData({
+      ps_product_id: item.ps_product_id?.toString() || "",
+      ps_country_id: item.ps_country_id?.toString() || "",
+      ps_price_sale: item.ps_price_sale?.toString() || "",
+      ps_type: item.ps_type || "",
+      ps_status: item.ps_status || "active",
+      ps_num: item.ps_num?.toString() || "1",
+      ps_option_1: item.ps_option_1 || "",
+      ps_option_2: item.ps_option_2 || "",
+      ps_option_3: item.ps_option_3 || "",
+    })
+    setIsEditDialogOpen(true)
+  }
+
+  const handleUpdateSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    if (!editingItem) return
+
+    const updateData = {
+      ps_product_id: parseInt(editFormData.ps_product_id),
+      ps_country_id: parseInt(editFormData.ps_country_id),
+      ps_price_sale: editFormData.ps_price_sale ? parseFloat(editFormData.ps_price_sale) : null,
+      ps_type: editFormData.ps_type as "a0" | "a1" | "a2" | "a5" | "a6" | "a7",
+      ps_status: editFormData.ps_status as "active" | "inactive",
+      ps_num: parseInt(editFormData.ps_num),
+      ps_option_1: editFormData.ps_option_1 || null,
+      ps_option_2: editFormData.ps_option_2 || null,
+      ps_option_3: editFormData.ps_option_3 || null,
+    }
+
+    updateMutation.mutate({
+      id: editingItem.ps_id,
+      item: updateData
+    })
   }
 
   const executePrint = async () => {
@@ -953,14 +1068,18 @@ Số lượng: ${item.ps_num}
                         <Printer className="mr-2 h-4 w-4" />
                         In ngay
                       </DropdownMenuItem>
-                      <DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => handleEditItem(item)}>
                         <Edit className="mr-2 h-4 w-4" />
                         Chỉnh sửa
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
-                      <DropdownMenuItem className="text-red-600">
+                      <DropdownMenuItem 
+                        className="text-red-600"
+                        onClick={() => handleDeleteItem(item)}
+                        disabled={deleteMutation.isPending}
+                      >
                         <Trash2 className="mr-2 h-4 w-4" />
-                        Xóa
+                        {deleteMutation.isPending ? "Đang xóa..." : "Xóa"}
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -1133,14 +1252,18 @@ Số lượng: ${item.ps_num}
                             <Printer className="mr-2 h-4 w-4" />
                             In ngay
                           </DropdownMenuItem>
-                          <DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleEditItem(item)}>
                             <Edit className="mr-2 h-4 w-4" />
                             Chỉnh sửa
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
-                          <DropdownMenuItem className="text-red-600">
+                          <DropdownMenuItem 
+                            className="text-red-600"
+                            onClick={() => handleDeleteItem(item)}
+                            disabled={deleteMutation.isPending}
+                          >
                             <Trash2 className="mr-2 h-4 w-4" />
-                            Xóa khỏi danh sách
+                            {deleteMutation.isPending ? "Đang xóa..." : "Xóa khỏi danh sách"}
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -1516,6 +1639,245 @@ Số lượng: ${item.ps_num}
               </Button>
             </div>
           </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <AlertDialogContent className="bg-white/95 backdrop-blur-xl border-slate-200/60 shadow-2xl rounded-2xl">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-xl font-semibold text-slate-900">Xác nhận xóa sản phẩm</AlertDialogTitle>
+            <AlertDialogDescription className="text-slate-600">
+              Bạn có chắc chắn muốn xóa sản phẩm <strong>{itemToDelete?.product?.product_name}</strong> khỏi danh sách in?
+              <br />
+              <span className="text-red-600 font-semibold">⚠️ Hành động này không thể hoàn tác.</span>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          
+          {/* Thông tin sản phẩm */}
+          {itemToDelete && (
+            <div className="flex items-center space-x-3 p-4 bg-slate-50 rounded-lg border border-slate-200">
+              <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center shadow-md">
+                <Package className="h-6 w-6 text-slate-600" />
+              </div>
+              <div>
+                <div className="font-semibold text-slate-800">{itemToDelete.product?.product_name}</div>
+                <div className="text-sm text-slate-600">Mã: <code className="bg-white px-1 rounded text-slate-700">{itemToDelete.product?.product_code}</code></div>
+                <div className="text-sm text-slate-600">Quốc gia: {itemToDelete.country?.country_name}</div>
+                <div className="text-sm text-slate-600">Khổ giấy: {itemToDelete.ps_type}</div>
+              </div>
+            </div>
+          )}
+
+          <AlertDialogFooter className="space-x-2">
+            <AlertDialogCancel 
+              className="rounded-xl"
+              disabled={deleteMutation.isPending}
+              onClick={() => setItemToDelete(null)}
+            >
+              Hủy
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteConfirm}
+              disabled={deleteMutation.isPending}
+              className="bg-red-600 hover:bg-red-700 text-white rounded-xl disabled:bg-red-300 disabled:cursor-not-allowed"
+            >
+              {deleteMutation.isPending ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Đang xóa...
+                </>
+              ) : (
+                <>
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  Xóa sản phẩm
+                </>
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Edit Dialog */}
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent className="sm:max-w-[600px]">
+          <DialogHeader>
+            <DialogTitle className="text-xl bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              Chỉnh sửa thông tin in
+            </DialogTitle>
+            <DialogDescription>Cập nhật thông tin sản phẩm trong danh sách in</DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleUpdateSubmit}>
+            <Tabs defaultValue="basic" className="w-full">
+              <TabsList className="grid w-full grid-cols-3">
+                <TabsTrigger value="basic">Thông tin cơ bản</TabsTrigger>
+                <TabsTrigger value="config">Cấu hình in</TabsTrigger>
+                <TabsTrigger value="preview">Xem trước</TabsTrigger>
+              </TabsList>
+              <TabsContent value="basic" className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="edit_product">Sản phẩm *</Label>
+                    <Select 
+                      value={editFormData.ps_product_id} 
+                      onValueChange={(value) => setEditFormData({...editFormData, ps_product_id: value})}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Chọn sản phẩm" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {products.map((product: any) => (
+                          <SelectItem key={product.product_id} value={product.product_id.toString()}>
+                            <div className="flex items-center space-x-2">
+                              <span>{product.product_name}</span>
+                              <Badge variant="outline" className="text-xs">
+                                {product.category?.category_name}
+                              </Badge>
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="edit_country">Quốc gia *</Label>
+                    <Select 
+                      value={editFormData.ps_country_id} 
+                      onValueChange={(value) => setEditFormData({...editFormData, ps_country_id: value})}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Chọn quốc gia" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {countries.map((country: any) => (
+                          <SelectItem key={country.country_id} value={country.country_id.toString()}>
+                            <div className="flex items-center space-x-2">
+                              <span className="text-lg">{country.country_flag}</span>
+                              <span>{country.country_name}</span>
+                              <Badge variant="outline" className="text-xs">
+                                {country.currency}
+                              </Badge>
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="edit_price_sale">Giá bán (tùy chọn)</Label>
+                  <Input 
+                    id="edit_price_sale" 
+                    type="number" 
+                    placeholder="Nhập giá bán (để trống để dùng giá mặc định)" 
+                    value={editFormData.ps_price_sale}
+                    onChange={(e) => setEditFormData({...editFormData, ps_price_sale: e.target.value})}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="edit_ps_num">Số lượng *</Label>
+                  <Input 
+                    id="edit_ps_num" 
+                    type="number" 
+                    min="1"
+                    max="999999"
+                    placeholder="Nhập số lượng" 
+                    value={editFormData.ps_num}
+                    onChange={(e) => setEditFormData({...editFormData, ps_num: e.target.value})}
+                  />
+                </div>
+              </TabsContent>
+              <TabsContent value="config" className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="edit_type">Khổ giấy *</Label>
+                    <Select 
+                      value={editFormData.ps_type} 
+                      onValueChange={(value) => setEditFormData({...editFormData, ps_type: value})}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Chọn khổ giấy" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="a0">A0 (841×1189mm)</SelectItem>
+                        <SelectItem value="a1">A1 (594×841mm)</SelectItem>
+                        <SelectItem value="a2">A2 (420×594mm)</SelectItem>
+                        <SelectItem value="a5">A5 (148×210mm)</SelectItem>
+                        <SelectItem value="a6">A6 (105×148mm)</SelectItem>
+                        <SelectItem value="a7">A7 (74×105mm)</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="edit_status">Trạng thái *</Label>
+                    <Select 
+                      value={editFormData.ps_status} 
+                      onValueChange={(value) => setEditFormData({...editFormData, ps_status: value})}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Chọn trạng thái" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="active">Hoạt động</SelectItem>
+                        <SelectItem value="inactive">Tạm dừng</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="edit_ps_option_1">Tùy chọn 1 (tùy chọn)</Label>
+                  <Input 
+                    id="edit_ps_option_1" 
+                    placeholder="Nhập tùy chọn 1" 
+                    value={editFormData.ps_option_1}
+                    onChange={(e) => setEditFormData({...editFormData, ps_option_1: e.target.value})}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="edit_ps_option_2">Tùy chọn 2 (tùy chọn)</Label>
+                  <Input 
+                    id="edit_ps_option_2" 
+                    placeholder="Nhập tùy chọn 2" 
+                    value={editFormData.ps_option_2}
+                    onChange={(e) => setEditFormData({...editFormData, ps_option_2: e.target.value})}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="edit_ps_option_3">Tùy chọn 3 (tùy chọn)</Label>
+                  <Input 
+                    id="edit_ps_option_3" 
+                    placeholder="Nhập tùy chọn 3" 
+                    value={editFormData.ps_option_3}
+                    onChange={(e) => setEditFormData({...editFormData, ps_option_3: e.target.value})}
+                  />
+                </div>
+              </TabsContent>
+              <TabsContent value="preview" className="space-y-4">
+                <div className="bg-muted/50 rounded-lg p-4 space-y-2">
+                  <h4 className="font-medium">Xem trước thông tin sản phẩm</h4>
+                  <div className="text-sm text-muted-foreground">
+                    Thông tin sản phẩm sẽ được hiển thị ở đây sau khi bạn điền đầy đủ các trường bên trên.
+                  </div>
+                </div>
+              </TabsContent>
+            </Tabs>
+            <DialogFooter>
+              <Button
+                type="submit"
+                disabled={updateMutation.isPending}
+                className="mt-4 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600"
+              >
+                {updateMutation.isPending ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Đang cập nhật...
+                  </>
+                ) : (
+                  "Cập nhật thông tin"
+                )}
+              </Button>
+            </DialogFooter>
+          </form>
         </DialogContent>
       </Dialog>
     </div>

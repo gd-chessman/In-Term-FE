@@ -54,3 +54,21 @@ export const createPrintSelect = async (item: any) => {
     }
 }
 
+export const updatePrintSelect = async (id: number, item: any) => {
+    try {
+        const temp = await axiosClient.patch(`prints/selects/${id}`, item);
+        return temp.data;
+    } catch (e) {
+        throw e;
+    }
+}
+
+export const deletePrintSelect = async (id: number) => {
+    try {
+        const temp = await axiosClient.delete(`prints/selects/${id}`);
+        return temp.data;
+    } catch (e) {
+        throw e;
+    }
+}
+
