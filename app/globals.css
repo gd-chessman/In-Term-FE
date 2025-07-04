@@ -198,3 +198,10 @@ body {
 .dark ::-webkit-scrollbar-thumb:hover {
   background: hsl(240 5% 74.9%);
 }
+
+
+@media screen and (max-width : 1860px){
+	html{
+		font-size: 12.8px;
+	}
+}
