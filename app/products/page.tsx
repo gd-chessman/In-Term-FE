@@ -39,7 +39,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea"
 import { Checkbox } from "@/components/ui/checkbox"
 import { useToast } from "@/hooks/use-toast"
-import { getProducts, createProduct, updateProduct, deleteProduct } from "@/services/ProductService"
+import { getProducts, createProduct, updateProduct, deleteProduct, updateStatus, deleteProductTags, addProductTags } from "@/services/ProductService"
 import { getCategoriesTree } from "@/services/CategoryService"
 import { getTags } from "@/services/TagService"
 import {
@@ -66,6 +66,11 @@ export default function ProductsPage() {
   const [selectedStatus, setSelectedStatus] = useState("all")
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [productToDelete, setProductToDelete] = useState<any>(null)
+  const [deleteConfirmation, setDeleteConfirmation] = useState("")
+  const [tagsDialogOpen, setTagsDialogOpen] = useState(false)
+  const [selectedProduct, setSelectedProduct] = useState<any>(null)
+  const [selectedTagsToAdd, setSelectedTagsToAdd] = useState<number[]>([])
+  const [selectedTagsToDelete, setSelectedTagsToDelete] = useState<number[]>([])
   const { toast } = useToast()
   const queryClient = useQueryClient()
   const apiUrl = process.env.NEXT_PUBLIC_API_URL
@@ -134,6 +139,66 @@ export default function ProductsPage() {
       toast({
         title: "Lỗi",
         description: error.response?.data?.message || "Có lỗi xảy ra khi cập nhật sản phẩm",
+        variant: "destructive",
+      })
+    },
+  })
+
+  // Update status mutation
+  const updateStatusMutation = useMutation({
+    mutationFn: ({ id, status }: { id: number; status: string }) => updateStatus(id, { productStatus: status }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["products"] })
+      toast({
+        title: "Thành công",
+        description: "Trạng thái sản phẩm đã được cập nhật",
+      })
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Lỗi",
+        description: error.response?.data?.message || "Có lỗi xảy ra khi cập nhật trạng thái sản phẩm",
+        variant: "destructive",
+      })
+    },
+  })
+
+  // Delete product tags mutation
+  const deleteProductTagsMutation = useMutation({
+    mutationFn: ({ id, tagIds }: { id: number; tagIds: number[] }) => deleteProductTags(id, tagIds),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["products"] })
+      toast({
+        title: "Thành công",
+        description: "Tags đã được xóa khỏi sản phẩm",
+      })
+      setTagsDialogOpen(false)
+      setSelectedProduct(null)
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Lỗi",
+        description: error.response?.data?.message || "Có lỗi xảy ra khi xóa tags",
+        variant: "destructive",
+      })
+    },
+  })
+
+  // Add product tags mutation
+  const addProductTagsMutation = useMutation({
+    mutationFn: ({ id, tagIds }: { id: number; tagIds: number[] }) => addProductTags(id, tagIds),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["products"] })
+      toast({
+        title: "Thành công",
+        description: "Tags đã được thêm vào sản phẩm",
+      })
+      setSelectedTagsToAdd([])
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Lỗi",
+        description: error.response?.data?.message || "Có lỗi xảy ra khi thêm tags",
         variant: "destructive",
       })
     },
@@ -253,6 +318,7 @@ export default function ProductsPage() {
 
   const handleDeleteProduct = (product: any) => {
     setProductToDelete(product)
+    setDeleteConfirmation("")
     setDeleteDialogOpen(true)
   }
 
@@ -261,9 +327,72 @@ export default function ProductsPage() {
     setIsEditDialogOpen(true)
   }
 
+  const handleUpdateStatus = (product: any, newStatus: string) => {
+    updateStatusMutation.mutate({
+      id: product.product_id,
+      status: newStatus
+    })
+  }
+
+  const handleManageTags = (product: any) => {
+    setSelectedProduct(product)
+    setSelectedTagsToAdd([])
+    setSelectedTagsToDelete([])
+    setTagsDialogOpen(true)
+  }
+
+  const handleDeleteTags = (tagIds: number[]) => {
+    if (selectedProduct && tagIds.length > 0) {
+      deleteProductTagsMutation.mutate({
+        id: selectedProduct.product_id,
+        tagIds: tagIds
+      })
+    }
+  }
+
+  const handleDeleteSelectedTags = () => {
+    if (selectedProduct && selectedTagsToDelete.length > 0) {
+      deleteProductTagsMutation.mutate({
+        id: selectedProduct.product_id,
+        tagIds: selectedTagsToDelete
+      })
+    }
+  }
+
+  const handleAddTags = () => {
+    if (selectedProduct && selectedTagsToAdd.length > 0) {
+      addProductTagsMutation.mutate({
+        id: selectedProduct.product_id,
+        tagIds: selectedTagsToAdd
+      })
+    }
+  }
+
+  const handleTagSelectionChange = (tagId: number, checked: boolean) => {
+    if (checked) {
+      setSelectedTagsToAdd(prev => [...prev, tagId])
+    } else {
+      setSelectedTagsToAdd(prev => prev.filter(id => id !== tagId))
+    }
+  }
+
+  const handleDeleteTagSelectionChange = (tagId: number, checked: boolean) => {
+    if (checked) {
+      setSelectedTagsToDelete(prev => [...prev, tagId])
+    } else {
+      setSelectedTagsToDelete(prev => prev.filter(id => id !== tagId))
+    }
+  }
+
   const handleDeleteConfirm = () => {
-    if (productToDelete) {
+    if (productToDelete && deleteConfirmation === productToDelete.product_code) {
       deleteProductMutation.mutate(productToDelete.product_id)
+    } else {
+      toast({
+        title: "Lỗi",
+        description: "Mã sản phẩm không khớp. Vui lòng nhập đúng mã sản phẩm để xác nhận xóa.",
+        variant: "destructive",
+      })
     }
   }
 
@@ -562,51 +691,7 @@ export default function ProductsPage() {
                     className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100"
                   />
                 </div>
-                              <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="edit_product_status" className="text-right font-medium text-slate-700">
-                    Trạng thái
-                  </Label>
-                  <Select name="product_status" defaultValue={editingProduct?.product_status || "active"} disabled>
-                    <SelectTrigger className="col-span-3 rounded-xl border-slate-200 bg-slate-50 text-slate-500 cursor-not-allowed">
-                      <SelectValue placeholder="Chọn trạng thái" />
-                    </SelectTrigger>
-                    <SelectContent className="rounded-xl border-slate-200 shadow-xl">
-                      <SelectItem value="active">Hoạt động</SelectItem>
-                      <SelectItem value="inactive">Không hoạt động</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                              <div className="grid grid-cols-4 items-start gap-4">
-                  <Label className="text-right font-medium text-slate-700 pt-2">
-                    Tags
-                  </Label>
-                  <div className="col-span-3 space-y-2 max-h-32 overflow-y-auto border border-slate-200 rounded-xl p-3 bg-slate-50">
-                    {isLoadingTags ? (
-                      <div className="text-sm text-slate-500">Đang tải tags...</div>
-                    ) : tags.length > 0 ? (
-                      tags.map((tag: any) => (
-                        <div key={tag.tag_id} className="flex items-center space-x-2">
-                          <Checkbox
-                            id={`edit-tag-${tag.tag_id}`}
-                            name="tagIds"
-                            value={tag.tag_id}
-                            defaultChecked={editingProduct?.productTags?.some((pt: any) => pt.tag_id === tag.tag_id)}
-                            disabled
-                            className="rounded border-slate-300"
-                          />
-                          <Label
-                            htmlFor={`edit-tag-${tag.tag_id}`}
-                            className="text-sm font-normal text-slate-500 cursor-not-allowed"
-                          >
-                            {tag.tag_name}
-                          </Label>
-                        </div>
-                      ))
-                    ) : (
-                      <div className="text-sm text-slate-500">Không có tags nào</div>
-                    )}
-                  </div>
-                </div>
+                              
                               <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="edit_image" className="text-right font-medium text-slate-700">
                     Ảnh sản phẩm
@@ -634,6 +719,158 @@ export default function ProductsPage() {
         </DialogContent>
       </Dialog>
 
+      {/* Manage Tags Dialog */}
+      <Dialog open={tagsDialogOpen} onOpenChange={setTagsDialogOpen}>
+        <DialogContent className="sm:max-w-[500px] bg-white/95 backdrop-blur-xl border-slate-200/60 shadow-2xl rounded-2xl">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-semibold text-slate-900">Quản lý Tags</DialogTitle>
+            <DialogDescription className="text-slate-600">
+              Quản lý tags cho sản phẩm: <strong>{selectedProduct?.product_name}</strong>
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4">
+            {/* Product Info */}
+            <div className="flex items-center space-x-3 p-3 bg-slate-50 rounded-lg">
+              <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center">
+                <Package className="h-5 w-5 text-slate-600" />
+              </div>
+              <div>
+                <div className="font-semibold text-slate-800">{selectedProduct?.product_name}</div>
+                <div className="text-sm text-slate-600">Mã: <code className="bg-white px-1 rounded">{selectedProduct?.product_code}</code></div>
+              </div>
+            </div>
+
+            {/* Current Tags */}
+            <div>
+              <Label className="text-sm font-medium text-slate-700 mb-2 block">
+                Tags hiện tại ({selectedProduct?.productTags?.length || 0})
+              </Label>
+              {selectedProduct?.productTags && selectedProduct.productTags.length > 0 ? (
+                <div className="space-y-2">
+                  {selectedProduct.productTags.map((tagItem: any, index: number) => {
+                    const tagId = tagItem.tag_id || tagItem.ptg_tag_id || tagItem
+                    return (
+                      <div key={index} className="flex items-center justify-between p-3 bg-blue-50 rounded-lg border border-blue-200">
+                        <div className="flex items-center space-x-2">
+                          <Checkbox
+                            id={`delete-tag-${tagId}`}
+                            checked={selectedTagsToDelete.includes(tagId)}
+                            onCheckedChange={(checked) => handleDeleteTagSelectionChange(tagId, checked as boolean)}
+                            className="rounded border-slate-300"
+                          />
+                          <div className="w-3 h-3 rounded-full bg-blue-500"></div>
+                          <span className="text-sm font-medium text-blue-800">
+                            {tagItem.tag?.tag_name || tagItem}
+                          </span>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              ) : (
+                <div className="text-center py-6 text-slate-500">
+                  <Tags className="h-8 w-8 mx-auto mb-2 text-slate-400" />
+                  <p>Sản phẩm chưa có tags nào</p>
+                </div>
+              )}
+              {selectedTagsToDelete.length > 0 && (
+                <Button
+                  onClick={handleDeleteSelectedTags}
+                  disabled={deleteProductTagsMutation.isPending}
+                  className="mt-3 bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 text-white rounded-lg"
+                >
+                  {deleteProductTagsMutation.isPending ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Đang xóa...
+                    </>
+                  ) : (
+                    <>
+                      <Trash2 className="mr-2 h-4 w-4" />
+                      Xóa {selectedTagsToDelete.length} tag(s)
+                    </>
+                  )}
+                </Button>
+              )}
+            </div>
+
+            {/* Add New Tags */}
+            <div>
+              <Label className="text-sm font-medium text-slate-700 mb-2 block">
+                Thêm tags mới
+              </Label>
+              <div className="space-y-2 max-h-32 overflow-y-auto border border-slate-200 rounded-lg p-3">
+                {isLoadingTags ? (
+                  <div className="text-sm text-slate-500">Đang tải tags...</div>
+                ) : tags.length > 0 ? (
+                  tags
+                    .filter((tag: any) => {
+                      // Kiểm tra xem tag này đã có trong productTags chưa
+                      return !selectedProduct?.productTags?.some((pt: any) => {
+                        // Kiểm tra nhiều trường hợp có thể có của tag_id
+                        const existingTagId = pt.tag_id || pt.ptg_tag_id || pt.tag?.tag_id
+                        return existingTagId === tag.tag_id
+                      })
+                    })
+                    .map((tag: any) => (
+                      <div key={tag.tag_id} className="flex items-center space-x-2 p-2 bg-green-50 rounded-lg border border-green-200">
+                        <Checkbox
+                          id={`add-tag-${tag.tag_id}`}
+                          checked={selectedTagsToAdd.includes(tag.tag_id)}
+                          onCheckedChange={(checked) => handleTagSelectionChange(tag.tag_id, checked as boolean)}
+                          className="rounded border-slate-300"
+                        />
+                        <Label
+                          htmlFor={`add-tag-${tag.tag_id}`}
+                          className="text-sm font-medium text-green-800 cursor-pointer hover:text-green-600"
+                        >
+                          {tag.tag_name}
+                        </Label>
+                      </div>
+                    ))
+                ) : (
+                  <div className="text-center py-4 text-slate-500">
+                    <Tags className="h-6 w-6 mx-auto mb-1 text-slate-400" />
+                    <p className="text-sm">Tất cả tags đã được gán cho sản phẩm này</p>
+                  </div>
+                )}
+              </div>
+              {selectedTagsToAdd.length > 0 && (
+                <Button
+                  onClick={handleAddTags}
+                  disabled={addProductTagsMutation.isPending}
+                  className="mt-3 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white rounded-lg"
+                >
+                  {addProductTagsMutation.isPending ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Đang thêm...
+                    </>
+                  ) : (
+                    <>
+                      <Plus className="mr-2 h-4 w-4" />
+                      Thêm {selectedTagsToAdd.length} tag(s)
+                    </>
+                  )}
+                </Button>
+              )}
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button 
+              variant="outline"
+              onClick={() => setTagsDialogOpen(false)}
+              disabled={deleteProductTagsMutation.isPending}
+              className="rounded-xl"
+            >
+              Đóng
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       {/* Delete Confirmation Dialog */}
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent className="bg-white/95 backdrop-blur-xl border-slate-200/60 shadow-2xl rounded-2xl">
@@ -642,30 +879,66 @@ export default function ProductsPage() {
             <AlertDialogDescription className="text-slate-600">
               Bạn có chắc chắn muốn xóa sản phẩm <strong>{productToDelete?.product_name}</strong> ({productToDelete?.product_code})?
               <br />
-              Hành động này không thể hoàn tác.
+              <span className="text-red-600 font-semibold">⚠️ Hành động này không thể hoàn tác và sẽ xóa vĩnh viễn sản phẩm khỏi hệ thống.</span>
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <div className="flex items-center space-x-3 p-4 bg-red-50 rounded-lg border border-red-200">
-            <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-red-100 to-red-200 flex items-center justify-center shadow-md">
-              <Package className="h-6 w-6 text-red-600" />
-            </div>
-            <div>
-              <div className="font-semibold text-red-800">{productToDelete?.product_name}</div>
-              <div className="text-sm text-red-600">Mã: {productToDelete?.product_code}</div>
-              <div className="text-sm text-red-600">Giá: {productToDelete?.price ? formatPrice(productToDelete.price) : "N/A"}</div>
+          
+          {/* Cảnh báo */}
+          <div className="p-4 bg-red-50 rounded-lg border border-red-200">
+            <div className="flex items-start space-x-3">
+              <div className="h-8 w-8 rounded-lg bg-red-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <span className="text-red-600 text-sm font-bold">⚠️</span>
+              </div>
+              <div className="text-sm text-red-800">
+                <div className="font-semibold mb-1">Cảnh báo quan trọng:</div>
+                <ul className="list-disc list-inside space-y-1 text-xs">
+                  <li>Sản phẩm sẽ bị xóa vĩnh viễn khỏi hệ thống</li>
+                  <li>Tất cả dữ liệu liên quan đến sản phẩm sẽ bị mất</li>
+                  <li>Không thể khôi phục sau khi xóa</li>
+                  <li>Ảnh hưởng đến các báo cáo và thống kê</li>
+                </ul>
+              </div>
             </div>
           </div>
+
+          {/* Thông tin sản phẩm */}
+          <div className="flex items-center space-x-3 p-4 bg-slate-50 rounded-lg border border-slate-200">
+            <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center shadow-md">
+              <Package className="h-6 w-6 text-slate-600" />
+            </div>
+            <div>
+              <div className="font-semibold text-slate-800">{productToDelete?.product_name}</div>
+              <div className="text-sm text-slate-600">Mã: <code className="bg-white px-1 rounded text-slate-700">{productToDelete?.product_code}</code></div>
+              <div className="text-sm text-slate-600">Giá: {productToDelete?.price ? formatPrice(productToDelete.price) : "N/A"}</div>
+            </div>
+          </div>
+
+          {/* Input xác nhận */}
+          <div className="space-y-3">
+            <Label htmlFor="delete-confirmation" className="text-sm font-medium text-slate-700">
+              Để xác nhận xóa, vui lòng nhập mã sản phẩm: <code className="bg-red-100 px-1 rounded text-red-700 font-bold">{productToDelete?.product_code}</code>
+            </Label>
+            <Input
+              id="delete-confirmation"
+              value={deleteConfirmation}
+              onChange={(e) => setDeleteConfirmation(e.target.value)}
+              placeholder="Nhập mã sản phẩm để xác nhận"
+              className="rounded-xl border-slate-200 focus:border-red-300 focus:ring-2 focus:ring-red-100"
+            />
+          </div>
+
           <AlertDialogFooter className="space-x-2">
             <AlertDialogCancel 
               className="rounded-xl"
               disabled={deleteProductMutation.isPending}
+              onClick={() => setDeleteConfirmation("")}
             >
               Hủy
             </AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDeleteConfirm}
-              disabled={deleteProductMutation.isPending}
-              className="bg-red-600 hover:bg-red-700 text-white rounded-xl"
+              disabled={deleteProductMutation.isPending || deleteConfirmation !== productToDelete?.product_code}
+              className="bg-red-600 hover:bg-red-700 text-white rounded-xl disabled:bg-red-300 disabled:cursor-not-allowed"
             >
               {deleteProductMutation.isPending ? (
                 <>
@@ -847,11 +1120,31 @@ export default function ProductsPage() {
                       <Edit className="mr-2 h-4 w-4" />
                       Chỉnh sửa
                     </DropdownMenuItem>
-                    <DropdownMenuItem className="hover:bg-slate-50/80 rounded-lg">
+                    <DropdownMenuItem 
+                      className="hover:bg-slate-50/80 rounded-lg"
+                      onClick={() => handleManageTags(product)}
+                    >
                       <Tags className="mr-2 h-4 w-4" />
                       Quản lý Tags
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
+                    <DropdownMenuItem 
+                      className={product.product_status === "active" ? "text-orange-600 hover:bg-orange-50/80 rounded-lg" : "text-green-600 hover:bg-green-50/80 rounded-lg"}
+                      onClick={() => handleUpdateStatus(product, product.product_status === "active" ? "inactive" : "active")}
+                      disabled={updateStatusMutation.isPending}
+                    >
+                      {product.product_status === "active" ? (
+                        <>
+                          <div className="mr-2 h-4 w-4 rounded-full bg-orange-500"></div>
+                          Tạm ngưng
+                        </>
+                      ) : (
+                        <>
+                          <div className="mr-2 h-4 w-4 rounded-full bg-green-500"></div>
+                          Kích hoạt
+                        </>
+                      )}
+                    </DropdownMenuItem>
                     <DropdownMenuItem 
                       className="text-red-600 hover:bg-red-50/80 rounded-lg"
                       onClick={() => handleDeleteProduct(product)}
@@ -1001,18 +1294,38 @@ export default function ProductsPage() {
                             <Eye className="mr-2 h-4 w-4" />
                             Xem chi tiết
                           </DropdownMenuItem>
-                                              <DropdownMenuItem 
-                      className="hover:bg-slate-50/80 rounded-lg"
-                      onClick={() => handleEditProduct(product)}
-                    >
-                      <Edit className="mr-2 h-4 w-4" />
-                      Chỉnh sửa
-                    </DropdownMenuItem>
-                          <DropdownMenuItem className="hover:bg-slate-50/80 rounded-lg">
+                          <DropdownMenuItem 
+                            className="hover:bg-slate-50/80 rounded-lg"
+                            onClick={() => handleEditProduct(product)}
+                          >
+                            <Edit className="mr-2 h-4 w-4" />
+                            Chỉnh sửa
+                          </DropdownMenuItem>
+                          <DropdownMenuItem 
+                            className="hover:bg-slate-50/80 rounded-lg"
+                            onClick={() => handleManageTags(product)}
+                          >
                             <Tags className="mr-2 h-4 w-4" />
                             Quản lý Tags
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
+                          <DropdownMenuItem 
+                            className={product.product_status === "active" ? "text-orange-600 hover:bg-orange-50/80 rounded-lg" : "text-green-600 hover:bg-green-50/80 rounded-lg"}
+                            onClick={() => handleUpdateStatus(product, product.product_status === "active" ? "inactive" : "active")}
+                            disabled={updateStatusMutation.isPending}
+                          >
+                            {product.product_status === "active" ? (
+                              <>
+                                <div className="mr-2 h-4 w-4 rounded-full bg-orange-500"></div>
+                                Tạm ngưng
+                              </>
+                            ) : (
+                              <>
+                                <div className="mr-2 h-4 w-4 rounded-full bg-green-500"></div>
+                                Kích hoạt
+                              </>
+                            )}
+                          </DropdownMenuItem>
                           <DropdownMenuItem 
                             className="text-red-600 hover:bg-red-50/80 rounded-lg"
                             onClick={() => handleDeleteProduct(product)}
@@ -1034,3 +1347,4 @@ export default function ProductsPage() {
     </div>
   )
 }
+
