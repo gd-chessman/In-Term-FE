@@ -39,7 +39,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea"
 import { Checkbox } from "@/components/ui/checkbox"
 import { useToast } from "@/hooks/use-toast"
-import { getProducts, createProduct, deleteProduct } from "@/services/ProductService"
+import { getProducts, createProduct, updateProduct, deleteProduct } from "@/services/ProductService"
 import { getCategoriesTree } from "@/services/CategoryService"
 import { getTags } from "@/services/TagService"
 import {
@@ -60,6 +60,8 @@ import {
 export default function ProductsPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
+  const [editingProduct, setEditingProduct] = useState<any>(null)
   const [selectedCategory, setSelectedCategory] = useState("all")
   const [selectedStatus, setSelectedStatus] = useState("all")
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
@@ -111,6 +113,27 @@ export default function ProductsPage() {
       toast({
         title: "Lỗi",
         description: error.response?.data?.message || "Có lỗi xảy ra khi tạo sản phẩm",
+        variant: "destructive",
+      })
+    },
+  })
+
+  // Update product mutation
+  const updateProductMutation = useMutation({
+    mutationFn: ({ id, item }: { id: number; item: any }) => updateProduct(id, item),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["products"] })
+      toast({
+        title: "Thành công",
+        description: "Sản phẩm đã được cập nhật thành công",
+      })
+      setIsEditDialogOpen(false)
+      setEditingProduct(null)
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Lỗi",
+        description: error.response?.data?.message || "Có lỗi xảy ra khi cập nhật sản phẩm",
         variant: "destructive",
       })
     },
@@ -193,9 +216,49 @@ export default function ProductsPage() {
     createProductMutation.mutate(productData)
   }
 
+  const handleUpdateProduct = (formData: FormData) => {
+    const productData: any = {}
+    
+    // Chỉ lấy các trường được phép cập nhật theo DTO
+    const product_name = formData.get("product_name") as string
+    const product_description = formData.get("product_description") as string
+    const category_id = Number(formData.get("category_id"))
+    const price = Number(formData.get("price"))
+    
+    // Chỉ thêm vào object nếu có giá trị
+    if (product_name && product_name.trim()) {
+      productData.product_name = product_name.trim()
+    }
+    if (product_description && product_description.trim()) {
+      productData.product_description = product_description.trim()
+    }
+    if (category_id && category_id > 0) {
+      productData.category_id = category_id
+    }
+    if (price && price >= 0) {
+      productData.price = price
+    }
+    
+    // Handle image file
+    const imageFile = formData.get("image") as File
+    if (imageFile && imageFile.size > 0) {
+      productData.image = imageFile
+    }
+    
+    updateProductMutation.mutate({
+      id: editingProduct.product_id,
+      item: productData
+    })
+  }
+
   const handleDeleteProduct = (product: any) => {
     setProductToDelete(product)
     setDeleteDialogOpen(true)
+  }
+
+  const handleEditProduct = (product: any) => {
+    setEditingProduct(product)
+    setIsEditDialogOpen(true)
   }
 
   const handleDeleteConfirm = () => {
@@ -391,7 +454,7 @@ export default function ProductsPage() {
                     name="image"
                     type="file"
                     accept="image/*"
-                    className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100"
+                    className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100 file:mr-4 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100"
                   />
                 </div>
               </div>
@@ -409,6 +472,167 @@ export default function ProductsPage() {
           </DialogContent>
         </Dialog>
       </div>
+
+      {/* Edit Dialog */}
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent className="sm:max-w-[600px] bg-white/95 backdrop-blur-xl border-slate-200/60 shadow-2xl rounded-2xl">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-semibold text-slate-900">Chỉnh sửa Sản phẩm</DialogTitle>
+            <DialogDescription className="text-slate-600">Cập nhật thông tin sản phẩm</DialogDescription>
+          </DialogHeader>
+          <form onSubmit={(e) => {
+            e.preventDefault()
+            handleUpdateProduct(new FormData(e.currentTarget))
+          }}>
+            <div className="grid gap-6 py-4">
+                              <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="edit_product_name" className="text-right font-medium text-slate-700">
+                    Tên sản phẩm
+                  </Label>
+                  <Input
+                    id="edit_product_name"
+                    name="product_name"
+                    defaultValue={editingProduct?.product_name}
+                    minLength={1}
+                    maxLength={200}
+                    placeholder="Nhập tên sản phẩm (1-200 ký tự)"
+                    className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100"
+                  />
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="edit_product_code" className="text-right font-medium text-slate-700">
+                    Mã sản phẩm
+                  </Label>
+                  <Input
+                    id="edit_product_code"
+                    name="product_code"
+                    defaultValue={editingProduct?.product_code}
+                    disabled
+                    minLength={1}
+                    maxLength={100}
+                    placeholder="Nhập mã sản phẩm (1-100 ký tự)"
+                    className="col-span-3 rounded-xl border-slate-200 bg-slate-50 text-slate-500 cursor-not-allowed"
+                  />
+                </div>
+              <div className="grid grid-cols-4 items-start gap-4">
+                <Label htmlFor="edit_product_description" className="text-right font-medium text-slate-700 pt-2">
+                  Mô tả
+                </Label>
+                <Textarea
+                  id="edit_product_description"
+                  name="product_description"
+                  defaultValue={editingProduct?.product_description}
+                  placeholder="Nhập mô tả sản phẩm (tùy chọn)"
+                  className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100 min-h-[80px]"
+                />
+              </div>
+                              <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="edit_category_id" className="text-right font-medium text-slate-700">
+                    Danh mục
+                  </Label>
+                  <Select name="category_id" defaultValue={editingProduct?.category_id?.toString()}>
+                    <SelectTrigger className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100">
+                      <SelectValue placeholder="Chọn danh mục" />
+                    </SelectTrigger>
+                    <SelectContent className="rounded-xl border-slate-200 shadow-xl">
+                      {isLoadingCategories ? (
+                        <SelectItem value="" disabled>Đang tải...</SelectItem>
+                      ) : (
+                        flattenedCategories.map((category: any) => (
+                          <SelectItem key={category.category_id} value={category.category_id.toString()}>
+                            {category.category_name}
+                          </SelectItem>
+                        ))
+                      )}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="edit_price" className="text-right font-medium text-slate-700">
+                    Giá
+                  </Label>
+                  <Input
+                    id="edit_price"
+                    name="price"
+                    type="number"
+                    defaultValue={editingProduct?.price}
+                    min={0}
+                    step={1000}
+                    placeholder="Nhập giá sản phẩm"
+                    className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100"
+                  />
+                </div>
+                              <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="edit_product_status" className="text-right font-medium text-slate-700">
+                    Trạng thái
+                  </Label>
+                  <Select name="product_status" defaultValue={editingProduct?.product_status || "active"} disabled>
+                    <SelectTrigger className="col-span-3 rounded-xl border-slate-200 bg-slate-50 text-slate-500 cursor-not-allowed">
+                      <SelectValue placeholder="Chọn trạng thái" />
+                    </SelectTrigger>
+                    <SelectContent className="rounded-xl border-slate-200 shadow-xl">
+                      <SelectItem value="active">Hoạt động</SelectItem>
+                      <SelectItem value="inactive">Không hoạt động</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                              <div className="grid grid-cols-4 items-start gap-4">
+                  <Label className="text-right font-medium text-slate-700 pt-2">
+                    Tags
+                  </Label>
+                  <div className="col-span-3 space-y-2 max-h-32 overflow-y-auto border border-slate-200 rounded-xl p-3 bg-slate-50">
+                    {isLoadingTags ? (
+                      <div className="text-sm text-slate-500">Đang tải tags...</div>
+                    ) : tags.length > 0 ? (
+                      tags.map((tag: any) => (
+                        <div key={tag.tag_id} className="flex items-center space-x-2">
+                          <Checkbox
+                            id={`edit-tag-${tag.tag_id}`}
+                            name="tagIds"
+                            value={tag.tag_id}
+                            defaultChecked={editingProduct?.productTags?.some((pt: any) => pt.tag_id === tag.tag_id)}
+                            disabled
+                            className="rounded border-slate-300"
+                          />
+                          <Label
+                            htmlFor={`edit-tag-${tag.tag_id}`}
+                            className="text-sm font-normal text-slate-500 cursor-not-allowed"
+                          >
+                            {tag.tag_name}
+                          </Label>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="text-sm text-slate-500">Không có tags nào</div>
+                    )}
+                  </div>
+                </div>
+                              <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="edit_image" className="text-right font-medium text-slate-700">
+                    Ảnh sản phẩm
+                  </Label>
+                  <Input
+                    id="edit_image"
+                    name="image"
+                    type="file"
+                    accept="image/*"
+                    className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100 file:mr-4 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100"
+                  />
+                </div>
+            </div>
+            <DialogFooter>
+              <Button 
+                type="submit" 
+                disabled={updateProductMutation.isPending}
+                className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white rounded-xl"
+              >
+                {updateProductMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Cập nhật Sản phẩm
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
 
       {/* Delete Confirmation Dialog */}
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
@@ -521,7 +745,7 @@ export default function ProductsPage() {
           </CardHeader>
           <CardContent className="relative">
             <div className="text-2xl font-bold text-slate-900">
-              {products.length > 0 ? formatPrice(products.reduce((sum: number, p: any) => sum + p.price, 0) / products.length) : "0 ₫"}
+              {products.length > 0 ? formatPrice(products.reduce((sum: number, p: any) => sum + Number(p.price || 0), 0) / products.length) : "0 ₫"}
             </div>
             <p className="text-xs text-orange-600 mt-1">Giá trung bình</p>
           </CardContent>
@@ -616,7 +840,10 @@ export default function ProductsPage() {
                       <Eye className="mr-2 h-4 w-4" />
                       Xem chi tiết
                     </DropdownMenuItem>
-                    <DropdownMenuItem className="hover:bg-slate-50/80 rounded-lg">
+                    <DropdownMenuItem 
+                      className="hover:bg-slate-50/80 rounded-lg"
+                      onClick={() => handleEditProduct(product)}
+                    >
                       <Edit className="mr-2 h-4 w-4" />
                       Chỉnh sửa
                     </DropdownMenuItem>
@@ -774,10 +1001,13 @@ export default function ProductsPage() {
                             <Eye className="mr-2 h-4 w-4" />
                             Xem chi tiết
                           </DropdownMenuItem>
-                          <DropdownMenuItem className="hover:bg-slate-50/80 rounded-lg">
-                            <Edit className="mr-2 h-4 w-4" />
-                            Chỉnh sửa
-                          </DropdownMenuItem>
+                                              <DropdownMenuItem 
+                      className="hover:bg-slate-50/80 rounded-lg"
+                      onClick={() => handleEditProduct(product)}
+                    >
+                      <Edit className="mr-2 h-4 w-4" />
+                      Chỉnh sửa
+                    </DropdownMenuItem>
                           <DropdownMenuItem className="hover:bg-slate-50/80 rounded-lg">
                             <Tags className="mr-2 h-4 w-4" />
                             Quản lý Tags
