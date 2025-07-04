@@ -13,7 +13,7 @@ import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useToast } from "@/hooks/use-toast"
-import { Loader2, User, Mail, Phone, Calendar, MapPin, Edit, Save, X, Camera, Lock, Eye, EyeOff } from "lucide-react"
+import { Loader2, User, Mail, Phone, Calendar, MapPin, Edit, Save, X, Camera, Lock, Eye, EyeOff, Crown } from "lucide-react"
 
 export default function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false)
@@ -210,9 +210,9 @@ export default function ProfilePage() {
         </p>
       </div>
 
-      <div className="grid gap-8 lg:grid-cols-4">
+      <div className="grid gap-8 lg:grid-cols-3">
         {/* Profile Card */}
-        <Card className="lg:col-span-1 p-6">
+        <Card className="lg:col-span-1 p-6 flex items-center justify-center">
           <CardHeader className="text-center px-0 pt-0">
             <div className="flex justify-center mb-8 relative">
               <div className="relative cursor-pointer group" onClick={handleAvatarClick}>
@@ -254,15 +254,16 @@ export default function ProfilePage() {
             <CardTitle className="text-2xl mb-2">{userMe?.admin_fullname}</CardTitle>
             <CardDescription className="text-base mb-4">{userMe?.admin_email}</CardDescription>
             <div className="flex justify-center">
-              <Badge variant="secondary" className="text-sm px-4 py-2">
-                {userMe?.admin_role || "Admin"}
-              </Badge>
+              <div className="inline-flex items-center gap-2 px-4 py-1 bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-800 rounded-full border border-blue-200/60 shadow-sm hover:shadow-md transition-all duration-200">
+                <Crown className="w-4 h-4 text-blue-400" />
+                <span className="font-semibold text-sm">{userMe?.admin_role || "Admin"}</span>
+              </div>
             </div>
           </CardHeader>
         </Card>
 
         {/* Tabs Content */}
-        <div className="lg:col-span-3">
+        <div className="lg:col-span-2">
           <Tabs defaultValue="profile" className="w-full">
             <TabsList className="grid w-full grid-cols-2 h-12">
               <TabsTrigger value="profile" className="text-base">Thông tin cá nhân</TabsTrigger>
@@ -434,9 +435,9 @@ export default function ProfilePage() {
                           onClick={() => togglePasswordVisibility('current')}
                         >
                           {showPasswords.current ? (
-                            <EyeOff className="h-5 w-5" />
-                          ) : (
                             <Eye className="h-5 w-5" />
+                          ) : (
+                            <EyeOff className="h-5 w-5" />
                           )}
                         </Button>
                       </div>
@@ -464,9 +465,9 @@ export default function ProfilePage() {
                           onClick={() => togglePasswordVisibility('new')}
                         >
                           {showPasswords.new ? (
-                            <EyeOff className="h-5 w-5" />
-                          ) : (
                             <Eye className="h-5 w-5" />
+                          ) : (
+                            <EyeOff className="h-5 w-5" />
                           )}
                         </Button>
                       </div>
@@ -494,9 +495,9 @@ export default function ProfilePage() {
                           onClick={() => togglePasswordVisibility('confirm')}
                         >
                           {showPasswords.confirm ? (
-                            <EyeOff className="h-5 w-5" />
-                          ) : (
                             <Eye className="h-5 w-5" />
+                          ) : (
+                            <EyeOff className="h-5 w-5" />
                           )}
                         </Button>
                       </div>

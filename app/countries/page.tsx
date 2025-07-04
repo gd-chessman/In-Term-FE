@@ -413,8 +413,7 @@ export default function CountriesPage() {
           </CardHeader>
           <CardContent className="relative">
             <div className="text-3xl font-bold text-slate-900">
-              {/* Placeholder for product count - would need API integration */}
-              0
+              {countries.reduce((total: number, country: any) => total + (country.total_product || 0), 0)}
             </div>
             <p className="text-xs text-green-600 mt-1">Trên tất cả quốc gia</p>
           </CardContent>
@@ -430,8 +429,7 @@ export default function CountriesPage() {
           </CardHeader>
           <CardContent className="relative">
             <div className="text-3xl font-bold text-slate-900">
-              {/* Placeholder for template count - would need API integration */}
-              0
+              {countries.reduce((total: number, country: any) => total + (country.total_template || 0), 0)}
             </div>
             <p className="text-xs text-purple-600 mt-1">Tổng template</p>
           </CardContent>
@@ -447,8 +445,7 @@ export default function CountriesPage() {
           </CardHeader>
           <CardContent className="relative">
             <div className="text-3xl font-bold text-slate-900">
-              {/* Placeholder for average product count - would need API integration */}
-              0
+              {countries.length > 0 ? Math.round(countries.reduce((total: number, country: any) => total + (country.total_product || 0), 0) / countries.length * 10) / 10 : 0}
             </div>
             <p className="text-xs text-orange-600 mt-1">Sản phẩm/quốc gia</p>
           </CardContent>
@@ -509,14 +506,12 @@ export default function CountriesPage() {
                     </TableCell>
                     <TableCell>
                       <Badge className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white border-0 shadow-lg">
-                        {/* Placeholder - would need API integration */}
-                        0
+                        {country.total_product || 0}
                       </Badge>
                     </TableCell>
                     <TableCell>
                       <Badge className="bg-gradient-to-r from-green-500 to-emerald-500 text-white border-0 shadow-lg">
-                        {/* Placeholder - would need API integration */}
-                        0
+                        {country.total_template || 0}
                       </Badge>
                     </TableCell>
                     <TableCell>
@@ -625,15 +620,13 @@ export default function CountriesPage() {
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-slate-600">Sản phẩm:</span>
                     <Badge className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white border-0 shadow-lg">
-                      {/* Placeholder - would need API integration */}
-                      0
+                      {country.total_product || 0}
                     </Badge>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-slate-600">Template:</span>
                     <Badge className="bg-gradient-to-r from-green-500 to-emerald-500 text-white border-0 shadow-lg">
-                      {/* Placeholder - would need API integration */}
-                      0
+                      {country.total_template || 0}
                     </Badge>
                   </div>
                   <div className="text-xs text-slate-500 pt-2 border-t border-slate-100">

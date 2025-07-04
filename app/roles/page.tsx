@@ -245,7 +245,7 @@ export default function RolesPage() {
                 <TableHead className="text-slate-600 font-semibold">Số Admin</TableHead>
                 <TableHead className="text-slate-600 font-semibold">Trạng thái</TableHead>
                 <TableHead className="text-slate-600 font-semibold">Ngày tạo</TableHead>
-                <TableHead className="text-right text-slate-600 font-semibold">Thao tác</TableHead>
+                {/* <TableHead className="text-right text-slate-600 font-semibold">Thao tác</TableHead> */}
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -269,7 +269,7 @@ export default function RolesPage() {
                       {new Date(role.created_at).toLocaleDateString("vi-VN")}
                     </div>
                   </TableCell>
-                  <TableCell className="text-right">
+                  {/* <TableCell className="text-right">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-slate-100 rounded-lg">
@@ -303,7 +303,7 @@ export default function RolesPage() {
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
-                  </TableCell>
+                  </TableCell> */}
                 </TableRow>
               ))}
             </TableBody>
