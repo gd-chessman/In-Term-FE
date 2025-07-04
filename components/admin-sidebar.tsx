@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
@@ -94,12 +94,34 @@ interface AdminSidebarProps {
 
 export function AdminSidebar({ onClose }: AdminSidebarProps) {
   const pathname = usePathname()
-  const [expandedItem, setExpandedItem] = useState<string | null>("Quản lý Admin")
   const { settings } = useTheme()
+
+  // Tìm section chứa pathname hiện tại để tự động mở
+  const findActiveSection = () => {
+    for (const item of menuItems) {
+      if (item.children) {
+        const hasActiveChild = item.children.some(child => child.href === pathname)
+        if (hasActiveChild) {
+          return item.title
+        }
+      } else if (item.href === pathname) {
+        return null // Không cần mở section cho item không có children
+      }
+    }
+    return null
+  }
+
+  const [expandedItem, setExpandedItem] = useState<string | null>(() => findActiveSection())
 
   const toggleExpanded = (title: string) => {
     setExpandedItem((prev) => (prev === title ? null : title))
   }
+
+  // Cập nhật expandedItem khi pathname thay đổi
+  useEffect(() => {
+    const activeSection = findActiveSection()
+    setExpandedItem(activeSection)
+  }, [pathname])
 
   const handleLinkClick = () => {
     if (onClose) {
