@@ -37,7 +37,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Plus, Search, MoreHorizontal, Edit, Trash2, Tag, Hash, TrendingUp, Eye, Grid, List } from "lucide-react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { getTags, createTag, deleteTag, updateTag } from "@/services/TagService"
+import { getTags, createTag, deleteTag, updateTag, getTagStatistics } from "@/services/TagService"
 import { toast } from "sonner"
 
 export default function TagsPage() {
@@ -59,6 +59,12 @@ export default function TagsPage() {
   const { data: tags = [], isLoading, error } = useQuery({
     queryKey: ["tags"],
     queryFn: getTags,
+  })
+
+  // Fetch tag statistics
+  const { data: stats, isLoading: isLoadingStats } = useQuery({
+    queryKey: ["tagStats"],
+    queryFn: getTagStatistics,
   })
 
   // Create tag mutation
@@ -168,10 +174,6 @@ export default function TagsPage() {
       deleteTagMutation.mutate(tagToDelete.tag_id)
     }
   }
-
-  // Calculate stats from real data
-  const totalTags = tags.length
-  const avgProductsPerTag = tags.length > 0 ? Math.round(tags.length / tags.length) : 0
 
   if (isLoading) {
     return (
@@ -325,8 +327,8 @@ export default function TagsPage() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-blue-900">{totalTags}</div>
-            <p className="text-xs text-blue-700">Đang hoạt động</p>
+            <div className="text-2xl font-bold text-blue-900">{isLoadingStats ? '...' : stats?.totalTags}</div>
+            <p className="text-xs text-blue-700">Tổng số tag</p>
           </CardContent>
         </Card>
 
@@ -338,8 +340,8 @@ export default function TagsPage() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-900">-</div>
-            <p className="text-xs text-green-700">Chưa có dữ liệu</p>
+            <div className="text-2xl font-bold text-green-900">{isLoadingStats ? '...' : stats?.totalProducts}</div>
+            <p className="text-xs text-green-700">Sản phẩm có tag</p>
           </CardContent>
         </Card>
 
@@ -351,20 +353,20 @@ export default function TagsPage() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-purple-900">-</div>
-            <p className="text-xs text-purple-700">Chưa có dữ liệu</p>
+            <div className="text-2xl font-bold text-purple-900">{isLoadingStats ? '...' : stats?.popularTag}</div>
+            <p className="text-xs text-purple-700">ID tag phổ biến</p>
           </CardContent>
         </Card>
 
         <Card className="bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200 hover:shadow-md transition-all duration-200">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-orange-900">TB sản phẩm</CardTitle>
+            <CardTitle className="text-sm font-medium text-orange-900">TB sản phẩm/tag</CardTitle>
             <div className="h-8 w-8 rounded-lg bg-orange-500 flex items-center justify-center">
               <Hash className="h-4 w-4 text-white" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-orange-900">{avgProductsPerTag}</div>
+            <div className="text-2xl font-bold text-orange-900">{isLoadingStats ? '...' : stats?.avgProductsPerTag}</div>
             <p className="text-xs text-orange-700">Sản phẩm/tag</p>
           </CardContent>
         </Card>

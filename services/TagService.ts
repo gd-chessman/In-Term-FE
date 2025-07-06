@@ -36,3 +36,12 @@ export const deleteTag = async (id: number) => {
         throw e;
     }
 }
+
+export const getTagStatistics = async () => {
+    try {
+        const temp = await axiosClient.get(`tags/statistics`);
+        return temp.data.data;
+    } catch (e) {
+        throw e;
+    }
+}
