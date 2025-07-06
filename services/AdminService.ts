@@ -93,3 +93,24 @@ export const updateLevel = async (id: string, level: string) => {
         throw e;
     }
 }
+
+export const getAllAdminLogs = async (page: number, limit: number) => {
+    try {
+        const params = new URLSearchParams();
+        if (page) params.append('page', page.toString());
+        if (limit) params.append('limit', limit.toString());
+        const temp = await axiosClient.get(`admins/logs?${params.toString()}`);
+        return temp.data;
+    } catch (e) {
+        throw e;
+    }
+}
+
+export const getAdminLogStatistics = async () => {
+    try {
+        const temp = await axiosClient.get(`admins/logs/statistics`);
+        return temp.data.data;
+    } catch (e) {
+        throw e;
+    }
+}

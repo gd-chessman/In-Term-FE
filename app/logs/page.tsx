@@ -21,64 +21,33 @@ import {
   Upload,
   Clock,
   Users,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react"
-
-// Mock data
-const logs = [
-  {
-    log_id: 1,
-    admin_name: "Super Admin",
-    log_action: "login",
-    log_module: "admins",
-    log_description: "Đăng nhập vào hệ thống",
-    log_ip_address: "192.168.1.100",
-    created_at: "2024-01-15 10:30:00",
-    avatar: "/placeholder.svg?height=32&width=32",
-  },
-  {
-    log_id: 2,
-    admin_name: "John Doe",
-    log_action: "create",
-    log_module: "products",
-    log_description: "Tạo sản phẩm mới: iPhone 15 Pro Max",
-    log_ip_address: "192.168.1.101",
-    created_at: "2024-01-15 10:25:00",
-    avatar: "/placeholder.svg?height=32&width=32",
-  },
-  {
-    log_id: 3,
-    admin_name: "Jane Smith",
-    log_action: "update",
-    log_module: "admins",
-    log_description: "Cập nhật thông tin admin: Mike Johnson",
-    log_ip_address: "192.168.1.102",
-    created_at: "2024-01-15 10:20:00",
-    avatar: "/placeholder.svg?height=32&width=32",
-  },
-  {
-    log_id: 4,
-    admin_name: "Mike Johnson",
-    log_action: "delete",
-    log_module: "products",
-    log_description: "Xóa sản phẩm: Old Product",
-    log_ip_address: "192.168.1.103",
-    created_at: "2024-01-15 10:15:00",
-    avatar: "/placeholder.svg?height=32&width=32",
-  },
-  {
-    log_id: 5,
-    admin_name: "Sarah Wilson",
-    log_action: "export",
-    log_module: "products",
-    log_description: "Xuất danh sách sản phẩm",
-    log_ip_address: "192.168.1.104",
-    created_at: "2024-01-15 10:10:00",
-    avatar: "/placeholder.svg?height=32&width=32",
-  },
-]
+import { useQuery } from "@tanstack/react-query"
+import { getAllAdminLogs, getAdminLogStatistics } from "@/services/AdminService"
 
 export default function LogsPage() {
   const [searchTerm, setSearchTerm] = useState("")
+  const [currentPage, setCurrentPage] = useState(1)
+  const [pageSize, setPageSize] = useState(10)
+
+  // Fetch logs from API
+  const { data: logsData, isLoading } = useQuery({
+    queryKey: ["adminLogs", currentPage, pageSize],
+    queryFn: () => getAllAdminLogs(currentPage, pageSize),
+  })
+
+  // Fetch statistics from API
+  const { data: stats, isLoading: isLoadingStats } = useQuery({
+    queryKey: ["adminLogStats"],
+    queryFn: getAdminLogStatistics,
+  })
+
+  const logs = logsData?.data?.data || []
+  const pagination = logsData?.data?.pagination || { page: 1, limit: 10, total: 0, totalPages: 1 }
+
+  // const stats = statsData || { total: 0, today: 0, login24h: 0, actionsToday: 0, uniqueIps: 0 }
 
   const getActionBadge = (action: string) => {
     switch (action) {
@@ -161,6 +130,15 @@ export default function LogsPage() {
     return `${Math.floor(diffInMinutes / 1440)} ngày trước`
   }
 
+  // Lọc logs theo searchTerm
+  const filteredLogs = logs.filter((log: any) => {
+    const adminName = log.admin?.admin_fullname || ""
+    return (
+      adminName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (log.log_description || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (log.log_ip_address || "").toLowerCase().includes(searchTerm.toLowerCase())
+    )
+  })
   return (
     <div className="space-y-8">
       {/* Page Header */}
@@ -190,7 +168,7 @@ export default function LogsPage() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid gap-6 md:grid-cols-5">
+      <div className="grid gap-6 md:grid-cols-4">
         <Card className="relative overflow-hidden bg-gradient-to-br from-orange-50 to-red-50 border-orange-200/50 hover:shadow-xl transition-all duration-300 group hover:-translate-y-1 rounded-xl">
           <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-orange-400/20 to-red-400/20 rounded-full -mr-10 -mt-10"></div>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative">
@@ -200,23 +178,21 @@ export default function LogsPage() {
             </div>
           </CardHeader>
           <CardContent className="relative">
-            <div className="text-3xl font-bold text-slate-900">{logs.length}</div>
-            <p className="text-xs text-orange-600 mt-1">Hôm nay</p>
+            <div className="text-3xl font-bold text-slate-900">{isLoadingStats ? '...' : stats?.total}</div>
+            <p className="text-xs text-orange-600 mt-1">Tổng số</p>
           </CardContent>
         </Card>
 
         <Card className="relative overflow-hidden bg-gradient-to-br from-blue-50 to-cyan-50 border-blue-200/50 hover:shadow-xl transition-all duration-300 group hover:-translate-y-1 rounded-xl">
           <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-blue-400/20 to-cyan-400/20 rounded-full -mr-10 -mt-10"></div>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative">
-            <CardTitle className="text-sm font-medium text-slate-700">Đăng nhập</CardTitle>
+            <CardTitle className="text-sm font-medium text-slate-700">Đăng nhập 24h</CardTitle>
             <div className="h-12 w-12 rounded-xl bg-gradient-to-r from-blue-500 to-cyan-500 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
               <LogIn className="h-6 w-6 text-white" />
             </div>
           </CardHeader>
           <CardContent className="relative">
-            <div className="text-3xl font-bold text-slate-900">
-              {logs.filter((log) => log.log_action === "login").length}
-            </div>
+            <div className="text-3xl font-bold text-slate-900">{isLoadingStats ? '...' : stats?.login24h}</div>
             <p className="text-xs text-blue-600 mt-1">24h qua</p>
           </CardContent>
         </Card>
@@ -224,15 +200,13 @@ export default function LogsPage() {
         <Card className="relative overflow-hidden bg-gradient-to-br from-green-50 to-emerald-50 border-green-200/50 hover:shadow-xl transition-all duration-300 group hover:-translate-y-1 rounded-xl">
           <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-green-400/20 to-emerald-400/20 rounded-full -mr-10 -mt-10"></div>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative">
-            <CardTitle className="text-sm font-medium text-slate-700">Thao tác</CardTitle>
+            <CardTitle className="text-sm font-medium text-slate-700">Thao tác hôm nay</CardTitle>
             <div className="h-12 w-12 rounded-xl bg-gradient-to-r from-green-500 to-emerald-500 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
               <Edit className="h-6 w-6 text-white" />
             </div>
           </CardHeader>
           <CardContent className="relative">
-            <div className="text-3xl font-bold text-slate-900">
-              {logs.filter((log) => ["create", "update", "delete"].includes(log.log_action)).length}
-            </div>
+            <div className="text-3xl font-bold text-slate-900">{isLoadingStats ? '...' : stats?.actionsToday}</div>
             <p className="text-xs text-green-600 mt-1">Hôm nay</p>
           </CardContent>
         </Card>
@@ -246,24 +220,8 @@ export default function LogsPage() {
             </div>
           </CardHeader>
           <CardContent className="relative">
-            <div className="text-3xl font-bold text-slate-900">
-              {new Set(logs.map((log) => log.log_ip_address)).size}
-            </div>
+            <div className="text-3xl font-bold text-slate-900">{isLoadingStats ? '...' : stats?.uniqueIps}</div>
             <p className="text-xs text-purple-600 mt-1">Địa chỉ IP</p>
-          </CardContent>
-        </Card>
-
-        <Card className="relative overflow-hidden bg-gradient-to-br from-gray-50 to-slate-50 border-gray-200/50 hover:shadow-xl transition-all duration-300 group hover:-translate-y-1 rounded-xl">
-          <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-gray-400/20 to-slate-400/20 rounded-full -mr-10 -mt-10"></div>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative">
-            <CardTitle className="text-sm font-medium text-slate-700">Admin hoạt động</CardTitle>
-            <div className="h-12 w-12 rounded-xl bg-gradient-to-r from-gray-500 to-slate-500 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
-              <Users className="h-6 w-6 text-white" />
-            </div>
-          </CardHeader>
-          <CardContent className="relative">
-            <div className="text-3xl font-bold text-slate-900">{new Set(logs.map((log) => log.admin_name)).size}</div>
-            <p className="text-xs text-gray-600 mt-1">Đã hoạt động hôm nay</p>
           </CardContent>
         </Card>
       </div>
@@ -317,62 +275,100 @@ export default function LogsPage() {
       <Card className="bg-white/70 backdrop-blur-sm border-slate-200/60 hover:shadow-xl transition-all duration-300 rounded-xl">
         <CardHeader>
           <CardTitle className="text-slate-900">Lịch sử hoạt động</CardTitle>
-          <CardDescription>Hiển thị {logs.length} hoạt động gần nhất</CardDescription>
+          <CardDescription>Hiển thị {filteredLogs.length} hoạt động gần nhất</CardDescription>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow className="border-slate-100 hover:bg-slate-50/50">
-                <TableHead className="text-slate-600 font-semibold">Thời gian</TableHead>
-                <TableHead className="text-slate-600 font-semibold">Admin</TableHead>
-                <TableHead className="text-slate-600 font-semibold">Hành động</TableHead>
-                <TableHead className="text-slate-600 font-semibold">Module</TableHead>
-                <TableHead className="text-slate-600 font-semibold">Mô tả</TableHead>
-                <TableHead className="text-slate-600 font-semibold">IP Address</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {logs.map((log) => (
-                <TableRow key={log.log_id} className="hover:bg-slate-50/80 transition-colors duration-200">
-                  <TableCell>
-                    <div>
-                      <div className="text-sm font-medium text-slate-900">
-                        {new Date(log.created_at).toLocaleString("vi-VN")}
-                      </div>
-                      <div className="text-xs text-slate-500 flex items-center mt-1">
-                        <Clock className="w-3 h-3 mr-1" />
-                        {getTimeAgo(log.created_at)}
-                      </div>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center space-x-3">
-                      <Avatar className="h-8 w-8 ring-2 ring-slate-200/60 shadow-sm">
-                        <AvatarImage src={log.avatar || "/placeholder.svg"} />
-                        <AvatarFallback className="bg-gradient-to-r from-orange-500 to-red-500 text-white text-xs font-semibold">
-                          {log.admin_name
-                            .split(" ")
-                            .map((n) => n[0])
-                            .join("")}
-                        </AvatarFallback>
-                      </Avatar>
-                      <span className="font-medium text-slate-900">{log.admin_name}</span>
-                    </div>
-                  </TableCell>
-                  <TableCell>{getActionBadge(log.log_action)}</TableCell>
-                  <TableCell>{getModuleBadge(log.log_module)}</TableCell>
-                  <TableCell>
-                    <div className="max-w-xs truncate text-sm text-slate-600">{log.log_description}</div>
-                  </TableCell>
-                  <TableCell>
-                    <code className="text-xs bg-slate-100 px-2 py-1 rounded-lg text-slate-700 font-mono">
-                      {log.log_ip_address}
-                    </code>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+          {isLoading ? (
+            <div className="flex items-center justify-center py-12">
+              <span>Đang tải dữ liệu...</span>
+            </div>
+          ) : (
+            <>
+              <Table>
+                <TableHeader>
+                  <TableRow className="border-slate-100 hover:bg-slate-50/50">
+                    <TableHead className="text-slate-600 font-semibold">Thời gian</TableHead>
+                    <TableHead className="text-slate-600 font-semibold">Quản trị viên</TableHead>
+                    <TableHead className="text-slate-600 font-semibold">Hành động</TableHead>
+                    <TableHead className="text-slate-600 font-semibold">Phân hệ</TableHead>
+                    <TableHead className="text-slate-600 font-semibold">Mô tả</TableHead>
+                    <TableHead className="text-slate-600 font-semibold">Địa chỉ IP</TableHead>
+                    <TableHead className="text-slate-600 font-semibold">Thiết bị/Trình duyệt</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredLogs.map((log: any) => (
+                    <TableRow key={log.log_id} className="hover:bg-slate-50/80 transition-colors duration-200">
+                      <TableCell>
+                        <div>
+                          <div className="text-sm font-medium text-slate-900">
+                            {new Date(log.created_at).toLocaleString("vi-VN")}
+                          </div>
+                          <div className="text-xs text-slate-500 flex items-center mt-1">
+                            <Clock className="w-3 h-3 mr-1" />
+                            {getTimeAgo(log.created_at)}
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center space-x-3">
+                          <Avatar className="h-8 w-8 ring-2 ring-slate-200/60 shadow-sm">
+                            <AvatarImage src={log.admin?.admin_avatar || "/placeholder.svg"} />
+                            <AvatarFallback className="bg-gradient-to-r from-orange-500 to-red-500 text-white text-xs font-semibold">
+                              {log.admin?.admin_fullname
+                                ?.split(" ")
+                                .map((n: string) => n[0])
+                                .join("") || "A"}
+                            </AvatarFallback>
+                          </Avatar>
+                          <span className="font-medium text-slate-900">{log.admin?.admin_fullname || "N/A"}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell>{getActionBadge(log.log_action)}</TableCell>
+                      <TableCell>{getModuleBadge(log.log_module)}</TableCell>
+                      <TableCell>
+                        <div className="max-w-xs truncate text-sm text-slate-600">{log.log_description}</div>
+                      </TableCell>
+                      <TableCell>
+                        <code className="text-xs bg-slate-100 px-2 py-1 rounded-lg text-slate-700 font-mono">
+                          {log.log_ip_address}
+                        </code>
+                      </TableCell>
+                      <TableCell>
+                        <div className="max-w-xs truncate text-xs text-slate-500 font-mono">
+                          {log.log_user_agent || 'N/A'}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+              {/* Pagination */}
+              <div className="flex items-center justify-center mt-6 space-x-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                  className="flex items-center p-2"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </Button>
+                <span className="text-sm text-slate-700 font-semibold px-2">
+                  {pagination.page} / {pagination.totalPages}
+                </span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage((p) => Math.min(pagination.totalPages, p + 1))}
+                  disabled={currentPage === pagination.totalPages}
+                  className="flex items-center p-2"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </Button>
+              </div>
+            </>
+          )}
         </CardContent>
       </Card>
     </div>
