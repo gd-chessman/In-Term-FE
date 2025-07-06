@@ -72,3 +72,20 @@ export const deletePrintSelect = async (id: number) => {
     }
 }
 
+export const runPrintSelect = async (item: any) => {
+    try {
+        const temp = await axiosClient.post(`prints/run`, item);
+        return temp.data;
+    } catch (e) {
+        throw e;
+    }
+}
+
+export const getPrintHistory = async (page: number, limit: number) => {
+    try {
+        const temp = await axiosClient.get(`prints/history?page=${page}&limit=${limit}`);
+        return temp.data.data;
+    } catch (e) {
+        return [];
+    }
+}

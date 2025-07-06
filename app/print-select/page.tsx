@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { toast } from "sonner"
-import { createPrintSelect, getPrintSelects, getPrintTemplates, deletePrintSelect, updatePrintSelect } from "@/services/PrintService"
+import { createPrintSelect, getPrintSelects, getPrintTemplates, deletePrintSelect, updatePrintSelect, runPrintSelect } from "@/services/PrintService"
 import { getProducts } from "@/services/ProductService"
 import { getCountries } from "@/services/CountryService"
 import { Button } from "@/components/ui/button"
@@ -653,6 +653,24 @@ Số lượng: ${item.ps_num}
 
   const executePrint = async () => {
     const itemsToPrint = printSelections.filter((item: any) => printingItems.includes(item.ps_id))
+    
+    // Xác định pId để ghi nhận in
+    let pId: string
+    if (printingItems.length === printSelections.length) {
+      pId = "all"
+    } else if (printingItems.length === 1) {
+      const selectedItem = printSelections.find((item: any) => printingItems.includes(item.ps_id))
+      pId = selectedItem?.ps_id?.toString() || "0"
+    } else {
+      pId = "all"
+    }
+    
+    // Gọi API để ghi nhận in
+    try {
+      await runPrintSelect({ pId })
+    } catch (error) {
+      console.error("Lỗi ghi nhận in:", error)
+    }
     
     const printData = {
       items: itemsToPrint,
