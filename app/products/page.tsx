@@ -1109,10 +1109,10 @@ export default function ProductsPage() {
                     className="bg-white/95 backdrop-blur-xl border-slate-200/60 shadow-xl rounded-xl"
                   >
                     <DropdownMenuLabel>Thao tác</DropdownMenuLabel>
-                    <DropdownMenuItem className="hover:bg-slate-50/80 rounded-lg">
+                    {/* <DropdownMenuItem className="hover:bg-slate-50/80 rounded-lg">
                       <Eye className="mr-2 h-4 w-4" />
                       Xem chi tiết
-                    </DropdownMenuItem>
+                    </DropdownMenuItem> */}
                     <DropdownMenuItem 
                       className="hover:bg-slate-50/80 rounded-lg"
                       onClick={() => handleEditProduct(product)}
@@ -1290,10 +1290,10 @@ export default function ProductsPage() {
                           className="bg-white/95 backdrop-blur-xl border-slate-200/60 shadow-xl rounded-xl"
                         >
                           <DropdownMenuLabel>Thao tác</DropdownMenuLabel>
-                          <DropdownMenuItem className="hover:bg-slate-50/80 rounded-lg">
+                          {/* <DropdownMenuItem className="hover:bg-slate-50/80 rounded-lg">
                             <Eye className="mr-2 h-4 w-4" />
                             Xem chi tiết
-                          </DropdownMenuItem>
+                          </DropdownMenuItem> */}
                           <DropdownMenuItem 
                             className="hover:bg-slate-50/80 rounded-lg"
                             onClick={() => handleEditProduct(product)}

@@ -28,7 +28,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { toast } from "sonner"
 import { Plus, MoreHorizontal, Edit, Trash2, Shield, Users, Crown, UserCheck, Settings, Lock, Loader2 } from "lucide-react"
-import { getRoles } from "@/services/RoleService"
+import { getRoles, getRoleStatistics } from "@/services/RoleService"
 
 
 
@@ -99,6 +99,12 @@ export default function RolesPage() {
   const { data: roles, isLoading, error } = useQuery({
     queryKey: ["roles"],
     queryFn: getRoles,
+  })
+
+  // Fetch role statistics
+  const { data: stats, isLoading: isLoadingStats } = useQuery({
+    queryKey: ["roleStats"],
+    queryFn: getRoleStatistics,
   })
 
 
@@ -178,52 +184,50 @@ export default function RolesPage() {
             </div>
           </CardHeader>
           <CardContent className="relative">
-            <div className="text-3xl font-bold text-slate-900">{roles.length}</div>
-            <p className="text-xs text-blue-600 mt-1">Đang hoạt động</p>
+            <div className="text-3xl font-bold text-slate-900">{isLoadingStats ? '...' : stats?.total}</div>
+            <p className="text-xs text-blue-600 mt-1">Tất cả vai trò</p>
           </CardContent>
         </Card>
 
         <Card className="relative overflow-hidden bg-gradient-to-br from-green-50 to-emerald-50 border-green-200/50 hover:shadow-xl transition-all duration-300 group hover:-translate-y-1 rounded-xl">
           <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-green-400/20 to-emerald-400/20 rounded-full -mr-10 -mt-10"></div>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative">
-            <CardTitle className="text-sm font-medium text-slate-700">Tổng Admin</CardTitle>
+            <CardTitle className="text-sm font-medium text-slate-700">Vai trò hoạt động</CardTitle>
             <div className="h-12 w-12 rounded-xl bg-gradient-to-r from-green-500 to-emerald-500 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
-              <Users className="h-6 w-6 text-white" />
+              <UserCheck className="h-6 w-6 text-white" />
             </div>
           </CardHeader>
           <CardContent className="relative">
-            <div className="text-3xl font-bold text-slate-900">{roles.length}</div>
-            <p className="text-xs text-green-600 mt-1">Tổng vai trò</p>
+            <div className="text-3xl font-bold text-slate-900">{isLoadingStats ? '...' : stats?.active}</div>
+            <p className="text-xs text-green-600 mt-1">Đang hoạt động</p>
           </CardContent>
         </Card>
 
-        <Card className="relative overflow-hidden bg-gradient-to-br from-purple-50 to-violet-50 border-purple-200/50 hover:shadow-xl transition-all duration-300 group hover:-translate-y-1 rounded-xl">
-          <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-purple-400/20 to-violet-400/20 rounded-full -mr-10 -mt-10"></div>
+        <Card className="relative overflow-hidden bg-gradient-to-br from-gray-50 to-slate-50 border-gray-200/50 hover:shadow-xl transition-all duration-300 group hover:-translate-y-1 rounded-xl">
+          <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-gray-400/20 to-slate-400/20 rounded-full -mr-10 -mt-10"></div>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative">
-            <CardTitle className="text-sm font-medium text-slate-700">Quyền hạn</CardTitle>
-            <div className="h-12 w-12 rounded-xl bg-gradient-to-r from-purple-500 to-violet-500 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
+            <CardTitle className="text-sm font-medium text-slate-700">Vai trò không hoạt động</CardTitle>
+            <div className="h-12 w-12 rounded-xl bg-gradient-to-r from-gray-500 to-slate-500 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
               <Lock className="h-6 w-6 text-white" />
             </div>
           </CardHeader>
           <CardContent className="relative">
-            <div className="text-3xl font-bold text-slate-900">{permissions.length}</div>
-            <p className="text-xs text-purple-600 mt-1">Tổng quyền</p>
+            <div className="text-3xl font-bold text-slate-900">{isLoadingStats ? '...' : stats?.inactive}</div>
+            <p className="text-xs text-gray-600 mt-1">Không hoạt động</p>
           </CardContent>
         </Card>
 
         <Card className="relative overflow-hidden bg-gradient-to-br from-orange-50 to-red-50 border-orange-200/50 hover:shadow-xl transition-all duration-300 group hover:-translate-y-1 rounded-xl">
           <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-orange-400/20 to-red-400/20 rounded-full -mr-10 -mt-10"></div>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative">
-            <CardTitle className="text-sm font-medium text-slate-700">TB Admin/Vai trò</CardTitle>
+            <CardTitle className="text-sm font-medium text-slate-700">Tổng người dùng</CardTitle>
             <div className="h-12 w-12 rounded-xl bg-gradient-to-r from-orange-500 to-red-500 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
-              <Settings className="h-6 w-6 text-white" />
+              <Users className="h-6 w-6 text-white" />
             </div>
           </CardHeader>
           <CardContent className="relative">
-            <div className="text-3xl font-bold text-slate-900">
-              {roles.filter((r: any) => r.role_status === "active").length}
-            </div>
-            <p className="text-xs text-orange-600 mt-1">Vai trò hoạt động</p>
+            <div className="text-3xl font-bold text-slate-900">{isLoadingStats ? '...' : stats?.totalAdmins}</div>
+            <p className="text-xs text-orange-600 mt-1">Tổng số người dùng</p>
           </CardContent>
         </Card>
       </div>
