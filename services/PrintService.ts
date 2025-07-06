@@ -81,9 +81,9 @@ export const runPrintSelect = async (item: any) => {
     }
 }
 
-export const getPrintHistory = async (page: number, limit: number) => {
+export const getPrintHistory = async (page: number, limit: number, search: string, from_date: string, to_date: string) => {
     try {
-        const temp = await axiosClient.get(`prints/history?page=${page}&limit=${limit}`);
+        const temp = await axiosClient.get(`prints/history?page=${page}&limit=${limit}&search=${search}&from_date=${from_date}&to_date=${to_date}`);
         return temp.data.data;
     } catch (e) {
         return [];

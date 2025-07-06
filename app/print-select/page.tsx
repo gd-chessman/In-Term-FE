@@ -819,6 +819,7 @@ Số lượng: ${item.ps_num}
                           <SelectItem value="a0">A0 (841×1189mm)</SelectItem>
                           <SelectItem value="a1">A1 (594×841mm)</SelectItem>
                           <SelectItem value="a2">A2 (420×594mm)</SelectItem>
+                          <SelectItem value="a4">A4 (210×297mm)</SelectItem>
                           <SelectItem value="a5">A5 (148×210mm)</SelectItem>
                           <SelectItem value="a6">A6 (105×148mm)</SelectItem>
                           <SelectItem value="a7">A7 (74×105mm)</SelectItem>
@@ -1018,9 +1019,14 @@ Số lượng: ${item.ps_num}
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Tất cả khổ</SelectItem>
-                  <SelectItem value="a4">A4</SelectItem>
-                  <SelectItem value="a3">A3</SelectItem>
-                  <SelectItem value="a5">A5</SelectItem>
+                  <SelectItem value="a0">A0 (841×1189mm)</SelectItem>
+                  <SelectItem value="a1">A1 (594×841mm)</SelectItem>
+                  <SelectItem value="a2">A2 (420×594mm)</SelectItem>
+                  <SelectItem value="a3">A3 (297×420mm)</SelectItem>
+                  <SelectItem value="a4">A4 (210×297mm)</SelectItem>
+                  <SelectItem value="a5">A5 (148×210mm)</SelectItem>
+                  <SelectItem value="a6">A6 (105×148mm)</SelectItem>
+                  <SelectItem value="a7">A7 (74×105mm)</SelectItem>
                 </SelectContent>
               </Select>
               <Select value={selectedStatus} onValueChange={setSelectedStatus}>
@@ -1820,6 +1826,7 @@ Số lượng: ${item.ps_num}
                         <SelectItem value="a0">A0 (841×1189mm)</SelectItem>
                         <SelectItem value="a1">A1 (594×841mm)</SelectItem>
                         <SelectItem value="a2">A2 (420×594mm)</SelectItem>
+                        <SelectItem value="a4">A4 (210×297mm)</SelectItem>
                         <SelectItem value="a5">A5 (148×210mm)</SelectItem>
                         <SelectItem value="a6">A6 (105×148mm)</SelectItem>
                         <SelectItem value="a7">A7 (74×105mm)</SelectItem>
