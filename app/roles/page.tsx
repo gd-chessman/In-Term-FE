@@ -242,7 +242,7 @@ export default function RolesPage() {
               <TableRow className="border-slate-100 hover:bg-slate-50/50">
                 <TableHead className="text-slate-600 font-semibold">Vai trò</TableHead>
                 <TableHead className="text-slate-600 font-semibold">Mô tả</TableHead>
-                <TableHead className="text-slate-600 font-semibold">Số Admin</TableHead>
+                <TableHead className="text-slate-600 font-semibold">Số người dùng</TableHead>
                 <TableHead className="text-slate-600 font-semibold">Trạng thái</TableHead>
                 <TableHead className="text-slate-600 font-semibold">Ngày tạo</TableHead>
                 {/* <TableHead className="text-right text-slate-600 font-semibold">Thao tác</TableHead> */}
@@ -261,7 +261,7 @@ export default function RolesPage() {
                   </TableCell>
                   <TableCell className="text-slate-600">{role.role_description}</TableCell>
                   <TableCell>
-                    <div className="text-sm text-slate-600">-</div>
+                    <div className="text-sm text-slate-600">{role.admin_count}</div>
                   </TableCell>
                   <TableCell>{getStatusBadge(role.role_status)}</TableCell>
                   <TableCell>
