@@ -141,22 +141,8 @@ export default function LoginPage() {
                 </div>
               </div>
 
-              {/* Remember Me & Forgot Password */}
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="remember"
-                    checked={rememberMe}
-                    onCheckedChange={(checked) => setRememberMe(checked as boolean)}
-                    className="rounded border-gray-300 dark:border-gray-600"
-                  />
-                  <Label
-                    htmlFor="remember"
-                    className="text-sm text-gray-600 dark:text-gray-400 cursor-pointer"
-                  >
-                    Ghi nhớ đăng nhập
-                  </Label>
-                </div>
+              {/* Forgot Password */}
+              <div className="flex items-center justify-end">
                 <Link
                   href="/forgot-password"
                   className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors duration-200"

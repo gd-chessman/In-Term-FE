@@ -8,6 +8,9 @@ import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { useTheme } from "@/contexts/theme-context"
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
+import { getUserMe, logout } from "@/services/AdminService"
+import { useRouter } from "next/navigation"
 import {
   LayoutDashboard,
   Users,
@@ -44,7 +47,7 @@ const menuItems = [
     bgColor: "bg-indigo-50 dark:bg-indigo-900/20",
   },
   {
-    title: "Quản lý Admin",
+    title: "Quản lý người dùng",
     icon: Users,
     color: "text-purple-600 dark:text-purple-400",
     bgColor: "bg-purple-50 dark:bg-purple-900/20",
@@ -95,6 +98,42 @@ interface AdminSidebarProps {
 export function AdminSidebar({ onClose }: AdminSidebarProps) {
   const pathname = usePathname()
   const { settings } = useTheme()
+  const router = useRouter()
+  const queryClient = useQueryClient()
+
+  // Fetch user data
+  const { data: userMe } = useQuery({
+    queryKey: ["userMe"],
+    queryFn: getUserMe,
+  })
+
+  // Logout mutation
+  const logoutMutation = useMutation({
+    mutationFn: logout,
+    onSuccess: () => {
+      queryClient.clear()
+      router.push("/login")
+    },
+    onError: (error) => {
+      console.error("Logout error:", error)
+      queryClient.clear()
+      router.push("/login")
+    }
+  })
+
+  const handleLogout = () => {
+    logoutMutation.mutate()
+  }
+
+  // Get initials from admin_fullname
+  const getInitials = (fullname: string) => {
+    return fullname
+      .split(' ')
+      .map(name => name.charAt(0))
+      .join('')
+      .toUpperCase()
+      .slice(0, 2)
+  }
 
   // Tìm section chứa pathname hiện tại để tự động mở
   const findActiveSection = () => {
@@ -275,9 +314,9 @@ export function AdminSidebar({ onClose }: AdminSidebarProps) {
               settings.compactMode && "h-7 w-7",
             )}
           >
-            <AvatarImage src="/placeholder.svg?height=40&width=40" />
+            <AvatarImage src={userMe?.admin_avatar || "/placeholder.svg"} />
             <AvatarFallback className="bg-gradient-to-r from-blue-500 to-blue-700 text-white font-semibold text-xs lg:text-sm">
-              AU
+              {userMe?.admin_fullname ? getInitials(userMe.admin_fullname) : "AU"}
             </AvatarFallback>
           </Avatar>
           <div className="flex-1 min-w-0">
@@ -287,15 +326,17 @@ export function AdminSidebar({ onClose }: AdminSidebarProps) {
                 settings.compactMode && "text-xs",
               )}
             >
-              Admin User
+              {userMe?.admin_fullname || "Admin User"}
             </p>
             <p className={cn("text-xs text-gray-500 dark:text-zinc-400 truncate", settings.compactMode && "text-xs")}>
-              admin@example.com
+              {userMe?.admin_email || "admin@example.com"}
             </p>
           </div>
           <Button
             variant="ghost"
             size="sm"
+            onClick={handleLogout}
+            disabled={logoutMutation.isPending}
             className={cn(
               "text-gray-400 dark:text-zinc-500 hover:text-gray-600 dark:hover:text-zinc-300 hover:bg-gray-100 dark:hover:bg-zinc-800 transition-all duration-200 rounded-lg p-1 lg:p-2",
               settings.compactMode && "p-1",
