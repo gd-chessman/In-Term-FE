@@ -64,7 +64,7 @@ const menuItems = [
     bgColor: "bg-gray-50 dark:bg-gray-900/20",
     children: [
       { title: "Quốc gia", href: "/countries", icon: Globe },
-      { title: "Cài đặt", href: "/settings", icon: Settings },
+      // { title: "Cài đặt", href: "/settings", icon: Setting s },
     ],
   },
   {
