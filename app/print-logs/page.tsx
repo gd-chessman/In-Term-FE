@@ -41,9 +41,12 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react"
+import { format } from "date-fns"
 
 export default function PrintLogsPage() {
   const [searchTerm, setSearchTerm] = useState("")
+  const [fromDate, setFromDate] = useState("")
+  const [toDate, setToDate] = useState("")
   const [viewMode, setViewMode] = useState<"table" | "timeline">("table")
   const [selectedLog, setSelectedLog] = useState<any>(null)
   const [currentPage, setCurrentPage] = useState(1)
@@ -51,8 +54,8 @@ export default function PrintLogsPage() {
 
   // Fetch print history data
   const { data: printHistoryData, isLoading: isLoadingPrintHistory } = useQuery({
-    queryKey: ["printHistory", currentPage, pageSize],
-    queryFn: () => getPrintHistory(currentPage, pageSize),
+    queryKey: ["printHistory", currentPage, pageSize, searchTerm, fromDate, toDate],
+    queryFn: () => getPrintHistory(currentPage, pageSize, searchTerm, fromDate, toDate),
   })
 
   const printLogs = printHistoryData?.data || []
@@ -254,7 +257,7 @@ export default function PrintLogsPage() {
           </div>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center space-x-4">
+          <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-4">
             <div className="relative flex-1">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
@@ -264,30 +267,23 @@ export default function PrintLogsPage() {
                 className="pl-8 bg-white/50 backdrop-blur-sm"
               />
             </div>
-            <Select>
-              <SelectTrigger className="w-[150px] bg-white/50 backdrop-blur-sm">
-                <SelectValue placeholder="Trạng thái" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Tất cả</SelectItem>
-                <SelectItem value="success">Thành công</SelectItem>
-                <SelectItem value="error">Lỗi</SelectItem>
-                <SelectItem value="processing">Đang xử lý</SelectItem>
-                <SelectItem value="cancelled">Đã hủy</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select>
-              <SelectTrigger className="w-[150px] bg-white/50 backdrop-blur-sm">
-                <SelectValue placeholder="Quốc gia" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Tất cả</SelectItem>
-                <SelectItem value="VN">{getCountryFlag("VN")} Việt Nam</SelectItem>
-                <SelectItem value="US">{getCountryFlag("US")} United States</SelectItem>
-                <SelectItem value="JP">{getCountryFlag("JP")} Japan</SelectItem>
-                <SelectItem value="KR">{getCountryFlag("KR")} Korea</SelectItem>
-              </SelectContent>
-            </Select>
+            <Input
+              type="date"
+              value={fromDate}
+              onChange={e => setFromDate(e.target.value)}
+              className="w-[150px] bg-white/50 backdrop-blur-sm"
+              placeholder="Từ ngày"
+              min=""
+              max={toDate || undefined}
+            />
+            <Input
+              type="date"
+              value={toDate}
+              onChange={e => setToDate(e.target.value)}
+              className="w-[150px] bg-white/50 backdrop-blur-sm"
+              placeholder="Đến ngày"
+              min={fromDate || undefined}
+            />
           </div>
         </CardContent>
       </Card>
