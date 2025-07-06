@@ -31,11 +31,13 @@ export default function LogsPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [currentPage, setCurrentPage] = useState(1)
   const [pageSize, setPageSize] = useState(10)
+  const [logAction, setLogAction] = useState<string>("all")
+  const [logModule, setLogModule] = useState<string>("all")
 
   // Fetch logs from API
   const { data: logsData, isLoading } = useQuery({
-    queryKey: ["adminLogs", currentPage, pageSize],
-    queryFn: () => getAllAdminLogs(currentPage, pageSize),
+    queryKey: ["adminLogs", currentPage, pageSize, searchTerm, logAction, logModule],
+    queryFn: () => getAllAdminLogs(currentPage, pageSize, searchTerm, logAction, logModule),
   })
 
   // Fetch statistics from API
@@ -130,15 +132,6 @@ export default function LogsPage() {
     return `${Math.floor(diffInMinutes / 1440)} ngày trước`
   }
 
-  // Lọc logs theo searchTerm
-  const filteredLogs = logs.filter((log: any) => {
-    const adminName = log.admin?.admin_fullname || ""
-    return (
-      adminName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (log.log_description || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (log.log_ip_address || "").toLowerCase().includes(searchTerm.toLowerCase())
-    )
-  })
   return (
     <div className="space-y-8">
       {/* Page Header */}
@@ -148,22 +141,6 @@ export default function LogsPage() {
             Nhật ký hoạt động
           </h1>
           <p className="text-slate-600 mt-2">Theo dõi tất cả hoạt động trong hệ thống</p>
-        </div>
-        <div className="flex items-center space-x-3">
-          <Button
-            variant="outline"
-            className="border-slate-200 hover:bg-slate-50 rounded-xl transition-all duration-300"
-          >
-            <Download className="mr-2 h-4 w-4" />
-            Xuất Excel
-          </Button>
-          <Button
-            variant="outline"
-            className="border-slate-200 hover:bg-slate-50 rounded-xl transition-all duration-300"
-          >
-            <Calendar className="mr-2 h-4 w-4" />
-            Chọn ngày
-          </Button>
         </div>
       </div>
 
@@ -238,33 +215,47 @@ export default function LogsPage() {
               <Input
                 placeholder="Tìm kiếm theo admin, sản phẩm, IP..."
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value)
+                  setCurrentPage(1)
+                }}
                 className="pl-10 rounded-xl border-slate-200 focus:border-orange-300 focus:ring-2 focus:ring-orange-100"
               />
             </div>
-            <Select>
+            <Select value={logAction} onValueChange={v => { setLogAction(v); setCurrentPage(1) }}>
               <SelectTrigger className="w-[150px] rounded-xl border-slate-200 focus:border-orange-300 focus:ring-2 focus:ring-orange-100">
                 <SelectValue placeholder="Hành động" />
               </SelectTrigger>
               <SelectContent className="rounded-xl border-slate-200 shadow-xl">
                 <SelectItem value="all">Tất cả</SelectItem>
                 <SelectItem value="login">Đăng nhập</SelectItem>
+                <SelectItem value="logout">Đăng xuất</SelectItem>
                 <SelectItem value="create">Tạo mới</SelectItem>
                 <SelectItem value="update">Cập nhật</SelectItem>
                 <SelectItem value="delete">Xóa</SelectItem>
+                <SelectItem value="approve">Duyệt</SelectItem>
+                <SelectItem value="reject">Từ chối</SelectItem>
+                <SelectItem value="suspend">Tạm ngưng</SelectItem>
+                <SelectItem value="activate">Kích hoạt</SelectItem>
+                <SelectItem value="view">Xem</SelectItem>
                 <SelectItem value="export">Xuất dữ liệu</SelectItem>
+                <SelectItem value="import">Nhập dữ liệu</SelectItem>
               </SelectContent>
             </Select>
-            <Select>
+            <Select value={logModule} onValueChange={v => { setLogModule(v); setCurrentPage(1) }}>
               <SelectTrigger className="w-[150px] rounded-xl border-slate-200 focus:border-orange-300 focus:ring-2 focus:ring-orange-100">
-                <SelectValue placeholder="Module" />
+                <SelectValue placeholder="Phân hệ" />
               </SelectTrigger>
               <SelectContent className="rounded-xl border-slate-200 shadow-xl">
                 <SelectItem value="all">Tất cả</SelectItem>
                 <SelectItem value="admins">Admin</SelectItem>
-                <SelectItem value="products">Sản phẩm</SelectItem>
                 <SelectItem value="roles">Vai trò</SelectItem>
                 <SelectItem value="countries">Quốc gia</SelectItem>
+                <SelectItem value="categories">Danh mục</SelectItem>
+                <SelectItem value="products">Sản phẩm</SelectItem>
+                <SelectItem value="product_tags">Tag sản phẩm</SelectItem>
+                <SelectItem value="price_printing">In giá</SelectItem>
+                <SelectItem value="settings">Cài đặt</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -275,7 +266,7 @@ export default function LogsPage() {
       <Card className="bg-white/70 backdrop-blur-sm border-slate-200/60 hover:shadow-xl transition-all duration-300 rounded-xl">
         <CardHeader>
           <CardTitle className="text-slate-900">Lịch sử hoạt động</CardTitle>
-          <CardDescription>Hiển thị {filteredLogs.length} hoạt động gần nhất</CardDescription>
+          <CardDescription>Hiển thị {pagination.total} hoạt động gần nhất</CardDescription>
         </CardHeader>
         <CardContent>
           {isLoading ? (
@@ -297,7 +288,7 @@ export default function LogsPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredLogs.map((log: any) => (
+                  {logs.map((log: any) => (
                     <TableRow key={log.log_id} className="hover:bg-slate-50/80 transition-colors duration-200">
                       <TableCell>
                         <div>
