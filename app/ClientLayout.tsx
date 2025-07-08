@@ -36,7 +36,7 @@ export function ClientLayout({ children }: ClientLayoutProps) {
   const isLoginPage =
     pathname === "/login" ||
     pathname === "/forgot-password" ||
-    pathname === "/change-password";
+    pathname === "/reset-password";
 
   const { isAuth } = useAuth();
 

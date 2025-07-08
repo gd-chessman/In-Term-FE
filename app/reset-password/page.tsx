@@ -2,14 +2,17 @@
 
 import { useState } from "react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Eye, EyeOff, Lock, ArrowLeft, CheckCircle, AlertCircle, Sparkles, Shield } from "lucide-react"
+import { resetPassword } from "@/services/AccountService"
 
-export default function ChangePasswordPage() {
+export default function ResetPasswordPage() {
+  const router = useRouter()
   const [showCurrentPassword, setShowCurrentPassword] = useState(false)
   const [showNewPassword, setShowNewPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
@@ -17,9 +20,9 @@ export default function ChangePasswordPage() {
   const [isSuccess, setIsSuccess] = useState(false)
   const [error, setError] = useState("")
   const [formData, setFormData] = useState({
-    verificationCode: "",
-    newPassword: "",
-    confirmPassword: "",
+    reset_code: "",
+    new_password: "",
+    confirm_password: "",
   })
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -52,15 +55,8 @@ export default function ChangePasswordPage() {
     setIsLoading(true)
     setError("")
 
-    // Validate verification code
-    if (formData.verificationCode !== "123456") {
-      setError("Mã xác thực không đúng")
-      setIsLoading(false)
-      return
-    }
-
     // Validate new password
-    const passwordValidation = validatePassword(formData.newPassword)
+    const passwordValidation = validatePassword(formData.new_password)
     if (!passwordValidation.isValid) {
       setError("Mật khẩu mới không đáp ứng yêu cầu bảo mật")
       setIsLoading(false)
@@ -68,24 +64,36 @@ export default function ChangePasswordPage() {
     }
 
     // Validate confirm password
-    if (formData.newPassword !== formData.confirmPassword) {
+    if (formData.new_password !== formData.confirm_password) {
       setError("Mật khẩu xác nhận không khớp")
       setIsLoading(false)
       return
     }
 
-    // Simulate API call
     try {
-      await new Promise(resolve => setTimeout(resolve, 2000))
+      // Call the resetPassword API with correct body format
+      await resetPassword({
+        reset_code: formData.reset_code,
+        new_password: formData.new_password,
+        confirm_password: formData.confirm_password
+      })
+      
       setIsSuccess(true)
-    } catch (err) {
-      setError("Đã xảy ra lỗi. Vui lòng thử lại.")
+    } catch (err: any) {
+      // Handle different types of errors
+      if (err.response?.data?.message) {
+        setError(err.response.data.message)
+      } else if (err.message) {
+        setError(err.message)
+      } else {
+        setError("Đã xảy ra lỗi. Vui lòng thử lại.")
+      }
     } finally {
       setIsLoading(false)
     }
   }
 
-  const passwordValidation = validatePassword(formData.newPassword)
+  const passwordValidation = validatePassword(formData.new_password)
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-900 dark:to-purple-900 p-4">
@@ -116,21 +124,21 @@ export default function ChangePasswordPage() {
           <CardContent className="space-y-4">
             {!isSuccess ? (
               <form onSubmit={handleSubmit} className="space-y-4">
-                {/* Verification Code Field */}
+                {/* Reset Code Field */}
                 <div className="space-y-2">
-                  <Label htmlFor="verificationCode" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <Label htmlFor="reset_code" className="text-sm font-medium text-gray-700 dark:text-gray-300">
                     Nhập mã xác thực
                   </Label>
                   <div className="relative">
                     <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 dark:text-gray-500" />
                     <Input
-                      id="verificationCode"
-                      name="verificationCode"
-                      type={showCurrentPassword ? "text" : "password"}
-                      value={formData.verificationCode}
+                      id="reset_code"
+                      name="reset_code"
+                      type="text"
+                      value={formData.reset_code}
                       onChange={handleInputChange}
                       placeholder="Nhập mã xác thực 6 số"
-                      className="pl-10 pr-10 h-12 rounded-xl border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 transition-all duration-200"
+                      className="pl-10 h-12 rounded-xl border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 transition-all duration-200"
                       required
                     />
                     <Button
@@ -150,16 +158,16 @@ export default function ChangePasswordPage() {
 
                 {/* New Password Field */}
                 <div className="space-y-2">
-                  <Label htmlFor="newPassword" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <Label htmlFor="new_password" className="text-sm font-medium text-gray-700 dark:text-gray-300">
                     Mật khẩu mới
                   </Label>
                   <div className="relative">
                     <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 dark:text-gray-500" />
                     <Input
-                      id="newPassword"
-                      name="newPassword"
+                      id="new_password"
+                      name="new_password"
                       type={showNewPassword ? "text" : "password"}
-                      value={formData.newPassword}
+                      value={formData.new_password}
                       onChange={handleInputChange}
                       placeholder="Nhập mật khẩu mới"
                       className="pl-10 pr-10 h-12 rounded-xl border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 transition-all duration-200"
@@ -177,7 +185,7 @@ export default function ChangePasswordPage() {
                   </div>
                   
                   {/* Password Strength Indicator */}
-                  {formData.newPassword && (
+                  {formData.new_password && (
                     <div className="space-y-2">
                       <div className="flex space-x-1">
                         {[1, 2, 3, 4].map((level) => (
@@ -205,28 +213,28 @@ export default function ChangePasswordPage() {
                   )}
 
                   {/* Password Requirements */}
-                  {formData.newPassword && (
+                  {formData.new_password && (
                     <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-3 space-y-2">
                       <div className="text-xs font-medium text-gray-700 dark:text-gray-300">Yêu cầu mật khẩu:</div>
                       <div className="space-y-1 text-xs">
-                        <div className={`flex items-center space-x-2 ${formData.newPassword.length >= 8 ? 'text-green-600 dark:text-green-400' : 'text-gray-500 dark:text-gray-400'}`}>
-                          <div className={`w-1.5 h-1.5 rounded-full ${formData.newPassword.length >= 8 ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-600'}`} />
+                        <div className={`flex items-center space-x-2 ${formData.new_password.length >= 8 ? 'text-green-600 dark:text-green-400' : 'text-gray-500 dark:text-gray-400'}`}>
+                          <div className={`w-1.5 h-1.5 rounded-full ${formData.new_password.length >= 8 ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-600'}`} />
                           <span>Ít nhất 8 ký tự</span>
                         </div>
-                        <div className={`flex items-center space-x-2 ${/[A-Z]/.test(formData.newPassword) ? 'text-green-600 dark:text-green-400' : 'text-gray-500 dark:text-gray-400'}`}>
-                          <div className={`w-1.5 h-1.5 rounded-full ${/[A-Z]/.test(formData.newPassword) ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-600'}`} />
+                        <div className={`flex items-center space-x-2 ${/[A-Z]/.test(formData.new_password) ? 'text-green-600 dark:text-green-400' : 'text-gray-500 dark:text-gray-400'}`}>
+                          <div className={`w-1.5 h-1.5 rounded-full ${/[A-Z]/.test(formData.new_password) ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-600'}`} />
                           <span>Có chữ hoa</span>
                         </div>
-                        <div className={`flex items-center space-x-2 ${/[a-z]/.test(formData.newPassword) ? 'text-green-600 dark:text-green-400' : 'text-gray-500 dark:text-gray-400'}`}>
-                          <div className={`w-1.5 h-1.5 rounded-full ${/[a-z]/.test(formData.newPassword) ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-600'}`} />
+                        <div className={`flex items-center space-x-2 ${/[a-z]/.test(formData.new_password) ? 'text-green-600 dark:text-green-400' : 'text-gray-500 dark:text-gray-400'}`}>
+                          <div className={`w-1.5 h-1.5 rounded-full ${/[a-z]/.test(formData.new_password) ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-600'}`} />
                           <span>Có chữ thường</span>
                         </div>
-                        <div className={`flex items-center space-x-2 ${/\d/.test(formData.newPassword) ? 'text-green-600 dark:text-green-400' : 'text-gray-500 dark:text-gray-400'}`}>
-                          <div className={`w-1.5 h-1.5 rounded-full ${/\d/.test(formData.newPassword) ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-600'}`} />
+                        <div className={`flex items-center space-x-2 ${/\d/.test(formData.new_password) ? 'text-green-600 dark:text-green-400' : 'text-gray-500 dark:text-gray-400'}`}>
+                          <div className={`w-1.5 h-1.5 rounded-full ${/\d/.test(formData.new_password) ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-600'}`} />
                           <span>Có số</span>
                         </div>
-                        <div className={`flex items-center space-x-2 ${/[!@#$%^&*(),.?":{}|<>]/.test(formData.newPassword) ? 'text-green-600 dark:text-green-400' : 'text-gray-500 dark:text-gray-400'}`}>
-                          <div className={`w-1.5 h-1.5 rounded-full ${/[!@#$%^&*(),.?":{}|<>]/.test(formData.newPassword) ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-600'}`} />
+                        <div className={`flex items-center space-x-2 ${/[!@#$%^&*(),.?":{}|<>]/.test(formData.new_password) ? 'text-green-600 dark:text-green-400' : 'text-gray-500 dark:text-gray-400'}`}>
+                          <div className={`w-1.5 h-1.5 rounded-full ${/[!@#$%^&*(),.?":{}|<>]/.test(formData.new_password) ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-600'}`} />
                           <span>Có ký tự đặc biệt</span>
                         </div>
                       </div>
@@ -236,16 +244,16 @@ export default function ChangePasswordPage() {
 
                 {/* Confirm Password Field */}
                 <div className="space-y-2">
-                  <Label htmlFor="confirmPassword" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <Label htmlFor="confirm_password" className="text-sm font-medium text-gray-700 dark:text-gray-300">
                     Xác nhận mật khẩu mới
                   </Label>
                   <div className="relative">
                     <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 dark:text-gray-500" />
                     <Input
-                      id="confirmPassword"
-                      name="confirmPassword"
+                      id="confirm_password"
+                      name="confirm_password"
                       type={showConfirmPassword ? "text" : "password"}
-                      value={formData.confirmPassword}
+                      value={formData.confirm_password}
                       onChange={handleInputChange}
                       placeholder="Nhập lại mật khẩu mới"
                       className="pl-10 pr-10 h-12 rounded-xl border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 transition-all duration-200"
@@ -263,9 +271,9 @@ export default function ChangePasswordPage() {
                   </div>
                   
                   {/* Password Match Indicator */}
-                  {formData.confirmPassword && (
-                    <div className={`text-xs ${formData.newPassword === formData.confirmPassword ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
-                      {formData.newPassword === formData.confirmPassword ? (
+                  {formData.confirm_password && (
+                    <div className={`text-xs ${formData.new_password === formData.confirm_password ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                      {formData.new_password === formData.confirm_password ? (
                         <span className="flex items-center space-x-1">
                           <CheckCircle className="h-3 w-3" />
                           <span>Mật khẩu khớp</span>
@@ -293,7 +301,7 @@ export default function ChangePasswordPage() {
                 {/* Submit Button */}
                 <Button
                   type="submit"
-                  disabled={isLoading || !passwordValidation.isValid || formData.newPassword !== formData.confirmPassword}
+                  disabled={isLoading || !passwordValidation.isValid || formData.new_password !== formData.confirm_password}
                   className="w-full h-12 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 dark:from-blue-500 dark:to-indigo-500 dark:hover:from-blue-600 dark:hover:to-indigo-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isLoading ? (

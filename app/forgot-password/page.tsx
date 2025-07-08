@@ -2,14 +2,17 @@
 
 import { useState } from "react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Mail, ArrowLeft, CheckCircle, AlertCircle, Sparkles } from "lucide-react"
+import { forgotPassword } from "@/services/AccountService"
 
 export default function ForgotPasswordPage() {
+  const router = useRouter()
   const [email, setEmail] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
@@ -20,18 +23,23 @@ export default function ForgotPasswordPage() {
     setIsLoading(true)
     setError("")
 
-    // Simulate API call
     try {
-      await new Promise(resolve => setTimeout(resolve, 2000))
+      // Call the forgotPassword API with correct body format
+      await forgotPassword({
+        admin_email: email
+      })
       
-      // Mock validation
-      if (email && email.includes("@")) {
-        setIsSuccess(true)
+      // Redirect to reset-password page with email as query parameter
+      router.push(`/reset-password`)
+    } catch (err: any) {
+      // Handle different types of errors
+      if (err.response?.data?.message) {
+        setError(err.response.data.message)
+      } else if (err.message) {
+        setError(err.message)
       } else {
-        setError("Vui lòng nhập email hợp lệ")
+        setError("Đã xảy ra lỗi. Vui lòng thử lại.")
       }
-    } catch (err) {
-      setError("Đã xảy ra lỗi. Vui lòng thử lại.")
     } finally {
       setIsLoading(false)
     }

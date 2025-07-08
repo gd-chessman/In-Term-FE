@@ -38,3 +38,32 @@ export const updatePassword = async (data: any) => {
         throw e;
     }
 }
+
+
+export const forgotPassword = async (data: any) => {
+    try {
+        const temp = await axiosClient.post(`accounts/forgot-password`, data);
+        return temp.data;
+    } catch (e) {
+        throw e;
+    }
+}
+
+
+export const verifyResetCode = async (data: any) => {
+    try {
+        const temp = await axiosClient.post(`accounts/verify-reset-code`, data);
+        return temp.data;
+    } catch (e) {
+        throw e;
+    }
+}
+
+export const resetPassword = async (data: any) => {
+    try {
+        const temp = await axiosClient.post(`accounts/reset-password`, data);
+        return temp.data;
+    } catch (e) {
+        throw e;
+    }
+}

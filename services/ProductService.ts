@@ -66,3 +66,11 @@ export const addProductTags = async (id: number, tagIds: number[]) => {
     }
 }
 
+export const getProductStatistics = async () =>{
+    try {
+        const temp = await axiosClient.get(`products/statistics`);
+        return temp.data;
+    } catch (e) {
+        return {};
+    }
+}
