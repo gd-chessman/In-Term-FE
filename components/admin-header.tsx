@@ -132,13 +132,13 @@ export function AdminHeader() {
 
 
         {/* Settings */}
-        <Button
+        {/* <Button
           variant="ghost"
           size="icon"
           className="hover:bg-gray-100 dark:hover:bg-zinc-800 transition-all duration-200 rounded-xl h-10 w-10"
         >
           <Settings className="h-4 w-4 text-gray-600 dark:text-zinc-400" />
-        </Button>
+        </Button> */}
 
         {/* User Menu */}
         <DropdownMenu>
@@ -178,10 +178,10 @@ export function AdminHeader() {
               <User className="mr-2 h-4 w-4" />
               <span>Hồ sơ</span>
             </DropdownMenuItem>
-            <DropdownMenuItem className="hover:bg-gray-50 dark:hover:bg-zinc-800 rounded-lg m-1 text-gray-700 dark:text-zinc-300">
-              <Settings className="mr-2 h-4 w-4" />
-              <span>Cài đặt</span>
-            </DropdownMenuItem>
+              {/* <DropdownMenuItem className="hover:bg-gray-50 dark:hover:bg-zinc-800 rounded-lg m-1 text-gray-700 dark:text-zinc-300">
+                <Settings className="mr-2 h-4 w-4" />
+                <span>Cài đặt</span>
+              </DropdownMenuItem> */}
             <DropdownMenuSeparator className="bg-gray-200 dark:bg-zinc-800" />
             <DropdownMenuItem 
               onClick={handleLogout}
