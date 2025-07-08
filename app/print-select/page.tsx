@@ -114,9 +114,9 @@ export default function PrintSelectPage() {
     ps_product_id: "",
     ps_country_id: "",
     ps_price_sale: "",
-    ps_type: "",
+    ps_time_sale_start: "",
+    ps_time_sale_end: "",
     ps_status: "active",
-    ps_num: "1",
     ps_option_1: "",
     ps_option_2: "",
     ps_option_3: "",
@@ -132,9 +132,9 @@ export default function PrintSelectPage() {
     ps_product_id: "",
     ps_country_id: "",
     ps_price_sale: "",
-    ps_type: "",
+    ps_time_sale_start: "",
+    ps_time_sale_end: "",
     ps_status: "active",
-    ps_num: "1",
     ps_option_1: "",
     ps_option_2: "",
     ps_option_3: "",
@@ -186,9 +186,9 @@ export default function PrintSelectPage() {
         ps_product_id: "",
         ps_country_id: "",
         ps_price_sale: "",
-        ps_type: "",
+        ps_time_sale_start: "",
+        ps_time_sale_end: "",
         ps_status: "active",
-        ps_num: "1",
         ps_option_1: "",
         ps_option_2: "",
         ps_option_3: "",
@@ -224,9 +224,9 @@ export default function PrintSelectPage() {
         ps_product_id: "",
         ps_country_id: "",
         ps_price_sale: "",
-        ps_type: "",
+        ps_time_sale_start: "",
+        ps_time_sale_end: "",
         ps_status: "active",
-        ps_num: "1",
         ps_option_1: "",
         ps_option_2: "",
         ps_option_3: "",
@@ -296,7 +296,7 @@ export default function PrintSelectPage() {
   const handleCreateSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     
-    if (!formData.ps_product_id || !formData.ps_country_id || !formData.ps_type) {
+    if (!formData.ps_product_id || !formData.ps_country_id) {
       toast.error("Vui lòng điền đầy đủ thông tin bắt buộc!")
       return
     }
@@ -305,9 +305,9 @@ export default function PrintSelectPage() {
       ps_product_id: parseInt(formData.ps_product_id),
       ps_country_id: parseInt(formData.ps_country_id),
       ps_price_sale: formData.ps_price_sale ? parseFloat(formData.ps_price_sale) : null,
-      ps_type: formData.ps_type as "a0" | "a1" | "a2" | "a5" | "a6" | "a7",
+      ps_time_sale_start: formData.ps_time_sale_start || null,
+      ps_time_sale_end: formData.ps_time_sale_end || null,
       ps_status: formData.ps_status as "active" | "inactive",
-      ps_num: parseInt(formData.ps_num),
       ps_option_1: formData.ps_option_1 || null,
       ps_option_2: formData.ps_option_2 || null,
       ps_option_3: formData.ps_option_3 || null,
@@ -572,15 +572,15 @@ Số lượng: ${item.ps_num}
       item.product?.product_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       item.product?.product_code?.toLowerCase().includes(searchTerm.toLowerCase())
     const matchesCountry = selectedCountry === "all" || item.country?.country_name === selectedCountry
-    const matchesType = selectedType === "all" || item.ps_type === selectedType
+    const matchesType = selectedType === "all" || item.ps_status === selectedType
     const matchesStatus = selectedStatus === "all" || item.ps_status === selectedStatus
 
-    return matchesSearch && matchesCountry && matchesType && matchesStatus
+    return matchesSearch && matchesCountry && matchesType
   })
 
-  const totalPrintCount = printSelections.reduce((sum: number, item: any) => sum + (item.ps_num || 0), 0)
+  const totalPrintCount = printSelections.reduce((sum: number, item: any) => sum + (item.print_numbers?.length || 0), 0)
   const activeCount = printSelections.filter((item: any) => item.ps_status === "active").length
-  const a4Count = printSelections.filter((item: any) => item.ps_type === "a4").length
+  const totalItems = printSelections.length
 
   const handlePrintSingle = (item: any) => {
     setPrintingItems([item.ps_id])
@@ -618,9 +618,9 @@ Số lượng: ${item.ps_num}
       ps_product_id: item.ps_product_id?.toString() || "",
       ps_country_id: item.ps_country_id?.toString() || "",
       ps_price_sale: item.ps_price_sale?.toString() || "",
-      ps_type: item.ps_type || "",
+      ps_time_sale_start: item.ps_time_sale_start || "",
+      ps_time_sale_end: item.ps_time_sale_end || "",
       ps_status: item.ps_status || "active",
-      ps_num: item.ps_num?.toString() || "1",
       ps_option_1: item.ps_option_1 || "",
       ps_option_2: item.ps_option_2 || "",
       ps_option_3: item.ps_option_3 || "",
@@ -637,9 +637,9 @@ Số lượng: ${item.ps_num}
       ps_product_id: parseInt(editFormData.ps_product_id),
       ps_country_id: parseInt(editFormData.ps_country_id),
       ps_price_sale: editFormData.ps_price_sale ? parseFloat(editFormData.ps_price_sale) : null,
-      ps_type: editFormData.ps_type as "a0" | "a1" | "a2" | "a5" | "a6" | "a7",
+      ps_time_sale_start: editFormData.ps_time_sale_start || null,
+      ps_time_sale_end: editFormData.ps_time_sale_end || null,
       ps_status: editFormData.ps_status as "active" | "inactive",
-      ps_num: parseInt(editFormData.ps_num),
       ps_option_1: editFormData.ps_option_1 || null,
       ps_option_2: editFormData.ps_option_2 || null,
       ps_option_3: editFormData.ps_option_3 || null,
@@ -794,50 +794,41 @@ Số lượng: ${item.ps_num}
                       onChange={(e) => setFormData({...formData, ps_price_sale: e.target.value})}
                     />
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="ps_num">Số lượng *</Label>
-                    <Input 
-                      id="ps_num" 
-                      type="number" 
-                      min="1"
-                      max="999999"
-                      placeholder="Nhập số lượng" 
-                      value={formData.ps_num}
-                      onChange={(e) => setFormData({...formData, ps_num: e.target.value})}
-                    />
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="ps_time_sale_start">Thời gian bắt đầu bán</Label>
+                      <Input 
+                        id="ps_time_sale_start" 
+                        type="datetime-local"
+                        placeholder="Chọn thời gian bắt đầu" 
+                        value={formData.ps_time_sale_start}
+                        onChange={(e) => setFormData({...formData, ps_time_sale_start: e.target.value})}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="ps_time_sale_end">Thời gian kết thúc bán</Label>
+                      <Input 
+                        id="ps_time_sale_end" 
+                        type="datetime-local"
+                        placeholder="Chọn thời gian kết thúc" 
+                        value={formData.ps_time_sale_end}
+                        onChange={(e) => setFormData({...formData, ps_time_sale_end: e.target.value})}
+                      />
+                    </div>
                   </div>
                 </TabsContent>
                 <TabsContent value="config" className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="type">Khổ giấy *</Label>
-                      <Select value={formData.ps_type} onValueChange={(value) => setFormData({...formData, ps_type: value})}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Chọn khổ giấy" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="a0">A0 (841×1189mm)</SelectItem>
-                          <SelectItem value="a1">A1 (594×841mm)</SelectItem>
-                          <SelectItem value="a2">A2 (420×594mm)</SelectItem>
-                          <SelectItem value="a4">A4 (210×297mm)</SelectItem>
-                          <SelectItem value="a5">A5 (148×210mm)</SelectItem>
-                          <SelectItem value="a6">A6 (105×148mm)</SelectItem>
-                          <SelectItem value="a7">A7 (74×105mm)</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="status">Trạng thái *</Label>
-                      <Select value={formData.ps_status} onValueChange={(value) => setFormData({...formData, ps_status: value})}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Chọn trạng thái" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="active">Hoạt động</SelectItem>
-                          <SelectItem value="inactive">Tạm dừng</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="status">Trạng thái *</Label>
+                    <Select value={formData.ps_status} onValueChange={(value) => setFormData({...formData, ps_status: value})}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Chọn trạng thái" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="active">Hoạt động</SelectItem>
+                        <SelectItem value="inactive">Tạm dừng</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="ps_option_1">Tùy chọn 1 (tùy chọn)</Label>
@@ -959,17 +950,17 @@ Số lượng: ${item.ps_num}
 
         <Card className="bg-gradient-to-br from-orange-50 to-red-50 border-orange-200 hover:shadow-lg transition-all duration-300">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-orange-700">Đã chọn</CardTitle>
+            <CardTitle className="text-sm font-medium text-orange-700">Tổng sản phẩm</CardTitle>
             <div className="h-8 w-8 bg-gradient-to-br from-orange-500 to-red-500 rounded-full flex items-center justify-center">
               <FileText className="h-4 w-4 text-white" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-orange-900">{selectedItems.length}</div>
-            <p className="text-xs text-orange-600">Để in ngay</p>
+            <div className="text-2xl font-bold text-orange-900">{totalItems}</div>
+            <p className="text-xs text-orange-600">Trong hệ thống</p>
             <div className="mt-2">
               <Progress
-                value={selectedItems.length > 0 ? (selectedItems.length / printSelections.length) * 100 : 0}
+                value={totalItems > 0 ? (activeCount / totalItems) * 100 : 0}
                 className="h-1"
               />
             </div>
@@ -1013,20 +1004,14 @@ Số lượng: ${item.ps_num}
                   ))}
                 </SelectContent>
               </Select>
-              <Select value={selectedType} onValueChange={setSelectedType}>
+                            <Select value={selectedType} onValueChange={setSelectedType}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Khổ giấy" />
+                  <SelectValue placeholder="Trạng thái" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">Tất cả khổ</SelectItem>
-                  <SelectItem value="a0">A0 (841×1189mm)</SelectItem>
-                  <SelectItem value="a1">A1 (594×841mm)</SelectItem>
-                  <SelectItem value="a2">A2 (420×594mm)</SelectItem>
-                  <SelectItem value="a3">A3 (297×420mm)</SelectItem>
-                  <SelectItem value="a4">A4 (210×297mm)</SelectItem>
-                  <SelectItem value="a5">A5 (148×210mm)</SelectItem>
-                  <SelectItem value="a6">A6 (105×148mm)</SelectItem>
-                  <SelectItem value="a7">A7 (74×105mm)</SelectItem>
+                  <SelectItem value="all">Tất cả trạng thái</SelectItem>
+                  <SelectItem value="active">Hoạt động</SelectItem>
+                  <SelectItem value="inactive">Tạm dừng</SelectItem>
                 </SelectContent>
               </Select>
               <Select value={selectedStatus} onValueChange={setSelectedStatus}>
@@ -1115,7 +1100,7 @@ Số lượng: ${item.ps_num}
                   <CardDescription className="flex items-center space-x-2 mt-1">
                     <code className="bg-muted px-2 py-1 rounded text-xs">{item.product?.product_code}</code>
                     <Badge variant="outline" className="text-xs">
-                      Số lượng: {item.ps_num}
+                      {item.product?.category?.category_name}
                     </Badge>
                   </CardDescription>
                 </div>
@@ -1136,17 +1121,20 @@ Số lượng: ${item.ps_num}
                       {formatPrice(item.ps_price_sale, item.country?.country_name)}
                     </span>
                   </div>
-                  {getTypeBadge(item.ps_type)}
+                  <div className="text-xs text-muted-foreground">
+                    {item.print_numbers?.length || 0} lượt in
+                  </div>
                 </div>
 
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2">
-                    <FileText className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm font-medium">Tùy chọn:</span>
+                    <Clock className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm font-medium">Thời gian bán:</span>
                   </div>
-                  <Badge variant="secondary" className="text-xs">
-                    {item.templates?.ps_option_1 || "Không có"}
-                  </Badge>
+                  <div className="text-xs text-muted-foreground text-right">
+                    <div>{item.ps_time_sale_start ? new Date(item.ps_time_sale_start).toLocaleDateString("vi-VN") : "Chưa thiết lập"}</div>
+                    <div>→ {item.ps_time_sale_end ? new Date(item.ps_time_sale_end).toLocaleDateString("vi-VN") : "Chưa thiết lập"}</div>
+                  </div>
                 </div>
 
                 <div className="space-y-2">
@@ -1193,9 +1181,9 @@ Số lượng: ${item.ps_num}
                   <TableHead>Sản phẩm</TableHead>
                   <TableHead>Quốc gia</TableHead>
                   <TableHead>Giá bán</TableHead>
-                  <TableHead>Khổ giấy</TableHead>
+                  <TableHead>Thời gian bán</TableHead>
                   <TableHead>Tùy chọn</TableHead>
-                  <TableHead>Số lượng</TableHead>
+                  <TableHead>Lượt in</TableHead>
                   <TableHead>Trạng thái</TableHead>
                   <TableHead>Ngày tạo</TableHead>
                   <TableHead className="text-right">Thao tác</TableHead>
@@ -1219,7 +1207,7 @@ Số lượng: ${item.ps_num}
                         <div className="flex items-center space-x-2">
                           <code className="bg-muted px-2 py-1 rounded text-xs">{item.product?.product_code}</code>
                           <Badge variant="outline" className="text-xs">
-                            Số lượng: {item.ps_num}
+                            {item.product?.category?.category_name}
                           </Badge>
                         </div>
                       </div>
@@ -1233,17 +1221,38 @@ Số lượng: ${item.ps_num}
                     <TableCell className="font-medium text-green-600">
                       {formatPrice(item.ps_price_sale, item.country?.country_name)}
                     </TableCell>
-                    <TableCell>{getTypeBadge(item.ps_type)}</TableCell>
+                    <TableCell>
+                      <div className="space-y-1">
+                        <div className="text-xs text-muted-foreground">
+                          {item.ps_time_sale_start ? new Date(item.ps_time_sale_start).toLocaleDateString("vi-VN") : "Chưa thiết lập"}
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          → {item.ps_time_sale_end ? new Date(item.ps_time_sale_end).toLocaleDateString("vi-VN") : "Chưa thiết lập"}
+                        </div>
+                      </div>
+                    </TableCell>
                     <TableCell>
                       <div className="space-y-1">
                         <Badge variant="secondary" className="text-xs">
                           {item.templates?.ps_option_1 || "Không có"}
                         </Badge>
+                        {item.templates?.ps_option_2 && (
+                          <Badge variant="secondary" className="text-xs">
+                            {item.templates.ps_option_2}
+                          </Badge>
+                        )}
+                        {item.templates?.ps_option_3 && (
+                          <Badge variant="secondary" className="text-xs">
+                            {item.templates.ps_option_3}
+                          </Badge>
+                        )}
                       </div>
                     </TableCell>
                     <TableCell>
                       <div className="space-y-1">
-                        <div className="font-medium">{item.ps_num}</div>
+                        <div className="text-xs text-muted-foreground">
+                          {item.print_numbers?.length || 0} lượt in
+                        </div>
                       </div>
                     </TableCell>
                     <TableCell>{getStatusBadge(item.ps_status)}</TableCell>
@@ -1798,56 +1807,44 @@ Số lượng: ${item.ps_num}
                     onChange={(e) => setEditFormData({...editFormData, ps_price_sale: e.target.value})}
                   />
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="edit_ps_num">Số lượng *</Label>
-                  <Input 
-                    id="edit_ps_num" 
-                    type="number" 
-                    min="1"
-                    max="999999"
-                    placeholder="Nhập số lượng" 
-                    value={editFormData.ps_num}
-                    onChange={(e) => setEditFormData({...editFormData, ps_num: e.target.value})}
-                  />
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="edit_ps_time_sale_start">Thời gian bắt đầu bán</Label>
+                    <Input 
+                      id="edit_ps_time_sale_start" 
+                      type="datetime-local"
+                      placeholder="Chọn thời gian bắt đầu" 
+                      value={editFormData.ps_time_sale_start}
+                      onChange={(e) => setEditFormData({...editFormData, ps_time_sale_start: e.target.value})}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="edit_ps_time_sale_end">Thời gian kết thúc bán</Label>
+                    <Input 
+                      id="edit_ps_time_sale_end" 
+                      type="datetime-local"
+                      placeholder="Chọn thời gian kết thúc" 
+                      value={editFormData.ps_time_sale_end}
+                      onChange={(e) => setEditFormData({...editFormData, ps_time_sale_end: e.target.value})}
+                    />
+                  </div>
                 </div>
               </TabsContent>
               <TabsContent value="config" className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="edit_type">Khổ giấy *</Label>
-                    <Select 
-                      value={editFormData.ps_type} 
-                      onValueChange={(value) => setEditFormData({...editFormData, ps_type: value})}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Chọn khổ giấy" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="a0">A0 (841×1189mm)</SelectItem>
-                        <SelectItem value="a1">A1 (594×841mm)</SelectItem>
-                        <SelectItem value="a2">A2 (420×594mm)</SelectItem>
-                        <SelectItem value="a4">A4 (210×297mm)</SelectItem>
-                        <SelectItem value="a5">A5 (148×210mm)</SelectItem>
-                        <SelectItem value="a6">A6 (105×148mm)</SelectItem>
-                        <SelectItem value="a7">A7 (74×105mm)</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="edit_status">Trạng thái *</Label>
-                    <Select 
-                      value={editFormData.ps_status} 
-                      onValueChange={(value) => setEditFormData({...editFormData, ps_status: value})}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Chọn trạng thái" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="active">Hoạt động</SelectItem>
-                        <SelectItem value="inactive">Tạm dừng</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
+                <div className="space-y-2">
+                  <Label htmlFor="edit_status">Trạng thái *</Label>
+                  <Select 
+                    value={editFormData.ps_status} 
+                    onValueChange={(value) => setEditFormData({...editFormData, ps_status: value})}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Chọn trạng thái" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="active">Hoạt động</SelectItem>
+                      <SelectItem value="inactive">Tạm dừng</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="edit_ps_option_1">Tùy chọn 1 (tùy chọn)</Label>
