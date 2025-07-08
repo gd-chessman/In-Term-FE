@@ -6,6 +6,7 @@ import { toast } from "sonner"
 import { createPrintSelect, getPrintSelects, getPrintTemplates, deletePrintSelect, updatePrintSelect, runPrintSelect } from "@/services/PrintService"
 import { getProducts } from "@/services/ProductService"
 import { getCountries } from "@/services/CountryService"
+import { getTemplate, prepareTemplateData, generateMultipleProductsHTML } from "@/components/templates"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -446,69 +447,9 @@ export default function PrintSelectPage() {
   }
 
   const generatePDFContent = (items: any[], quality: string, copies: number, template?: any) => {
-    let html = `
-    <!DOCTYPE html>
-    <html>
-    <head>
-      <meta charset="UTF-8">
-      <title>${template ? template.pt_title : 'Thông tin in sản phẩm'}</title>
-      <style>
-        body { font-family: Arial, sans-serif; margin: 20px; line-height: 1.6; }
-        .header { text-align: center; border-bottom: 2px solid #333; padding-bottom: 10px; margin-bottom: 20px; }
-        .product { border: 1px solid #ddd; margin: 20px 0; padding: 15px; border-radius: 5px; }
-        .product-title { font-size: 18px; font-weight: bold; color: #333; margin-bottom: 10px; }
-        .template-content { white-space: pre-wrap; }
-        .footer { text-align: center; margin-top: 30px; color: #666; font-size: 12px; }
-      </style>
-    </head>
-    <body>
-    `
-    items.forEach((item, index) => {
-      if (template) {
-        // Thay thế biến từ template
-        let itemContent = template.pt_content
-          .replace(/{product_name}/g, item.product?.product_name || '')
-          .replace(/{product_code}/g, item.product?.product_code || '')
-          .replace(/{price}/g, formatPrice(item.ps_price_sale, item.country?.country_name))
-          .replace(/{category_name}/g, item.product?.category?.category_name || '')
-          .replace(/{print_date}/g, new Date().toLocaleDateString('vi-VN'))
-          .replace(/{country_name}/g, item.country?.country_name || '')
-          .replace(/{ps_num}/g, item.ps_num?.toString() || '')
-          .replace(/{ps_type}/g, item.ps_type || '')
-        
-        html += `
-        <div class="product">
-          <div class="product-title">SẢN PHẨM ${index + 1}</div>
-          <div class="template-content">${itemContent}</div>
-        </div>
-        `
-      } else {
-        // Fallback đơn giản khi không có template
-        html += `
-        <div class="product">
-          <div class="product-title">SẢN PHẨM ${index + 1}</div>
-          <div class="template-content">
-Tên sản phẩm: ${item.product?.product_name}
-Mã sản phẩm: ${item.product?.product_code}
-Quốc gia: ${item.country?.country_name}
-Giá bán: ${formatPrice(item.ps_price_sale, item.country?.country_name)}
-Khổ giấy: ${item.ps_type}
-Số lượng: ${item.ps_num}
-          </div>
-        </div>
-        `
-      }
-    })
-
-    html += `
-      <div class="footer">
-        <p>${template?.pt_footer || '© 2024 Company Name. All rights reserved.'}</p>
-      </div>
-    </body>
-    </html>
-    `
-
-    return html
+    // Sử dụng template system mới
+    const templateData = items.map(item => prepareTemplateData(item, formatPrice))
+    return generateMultipleProductsHTML(selectedPrintSize, templateData)
   }
 
   const exportToPDF = async (htmlContent: string, fileName: string) => {
@@ -681,7 +622,7 @@ Số lượng: ${item.ps_num}
         pl_type: getPlType(),
         pl_time_sale_start: selectedItem?.ps_time_sale_start || new Date().toISOString(),
         pl_time_sale_end: selectedItem?.ps_time_sale_end || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // 30 ngày từ hiện tại
-        pl_log_note: `In ${printCopies} bản với định dạng ${selectedPrintFormat.toUpperCase()} - Khổ ${selectedPrintSize.toUpperCase()} - Chất lượng ${selectedPrintQuality}`
+        pl_log_note: `In ${printCopies} bản với template ${selectedPrintSize.toUpperCase()} - Chất lượng ${selectedPrintQuality}`
       }
       
       await runPrintSelect(printLogData)
@@ -1479,8 +1420,8 @@ Số lượng: ${item.ps_num}
               <div className="space-y-2">
                 <Label>Thông tin in</Label>
                 <div className="text-sm text-muted-foreground">
-                  <div>Định dạng: {selectedPrintFormat.toUpperCase()}</div>
-                  <div>Khổ: {selectedPrintSize.toUpperCase()}</div>
+                  <div>Định dạng: PDF</div>
+                  <div>Template: {selectedPrintSize.toUpperCase()}</div>
                   <div>Chất lượng: {selectedPrintQuality}</div>
                 </div>
               </div>
@@ -1527,113 +1468,34 @@ Số lượng: ${item.ps_num}
                           {printSelections
                             .filter((item: any) => printingItems.includes(item.ps_id))
                             .map((item: any, index: number) => {
-                              // Tìm template cho quốc gia này
-                              const selectedTemplate = printFormats.find((f: any) => f.id === selectedPrintFormat)?.template
+                              // Sử dụng template system mới
+                              const templateData = prepareTemplateData(item, formatPrice)
+                              const template = getTemplate(selectedPrintSize)
+                              const previewHTML = template(templateData)
                               
                               return (
                                 <div
                                   key={item.ps_id}
-                                  className="max-w-2xl mx-auto bg-white shadow-lg border rounded-lg p-8"
+                                  className="max-w-2xl mx-auto bg-white shadow-lg border rounded-lg overflow-hidden"
                                 >
-                                  <div className="space-y-4">
-                                    {selectedTemplate ? (
-                                      // Hiển thị theo template thực tế
-                                      <>
-                                        <div className="text-center border-b pb-4">
-                                          <h2 className="text-2xl font-bold text-gray-800">{selectedTemplate.pt_title}</h2>
-                                          <p className="text-sm text-gray-600 mt-2">
-                                            {item.country?.country_code ? getCountryFlag(item.country.country_code) : "🌍"} {item.country?.country_name}
-                                          </p>
-                                        </div>
-                                        
-                                        <div className="bg-gray-50 p-4 rounded-lg">
-                                          <div className="font-mono text-sm whitespace-pre-wrap">
-                                            {selectedTemplate.pt_content
-                                              .replace(/{product_name}/g, item.product?.product_name || '')
-                                              .replace(/{product_code}/g, item.product?.product_code || '')
-                                              .replace(/{price}/g, formatPrice(item.ps_price_sale, item.country?.country_name))
-                                              .replace(/{category_name}/g, item.product?.category?.category_name || '')
-                                              .replace(/{print_date}/g, new Date().toLocaleDateString('vi-VN'))
-                                              .replace(/{country_name}/g, item.country?.country_name || '')
-                                              .replace(/{ps_num}/g, item.ps_num?.toString() || '')
-                                              .replace(/{ps_type}/g, item.ps_type || '')
-                                            }
-                                          </div>
-                                        </div>
-                                        
-                                        {selectedTemplate.pt_footer && (
-                                          <div className="text-center text-sm text-gray-600 border-t pt-4">
-                                            {selectedTemplate.pt_footer}
-                                          </div>
-                                        )}
-                                      </>
-                                    ) : (
-                                      // Fallback layout khi không có template
-                                      <>
-                                        <div className="text-center border-b pb-4">
-                                          <h2 className="text-2xl font-bold text-gray-800">THÔNG TIN SẢN PHẨM</h2>
-                                          <p className="text-sm text-gray-600 mt-2">
-                                            {item.country?.country_code ? getCountryFlag(item.country.country_code) : "🌍"} {item.country?.country_name}
-                                          </p>
-                                        </div>
-
-                                        <div className="grid grid-cols-2 gap-6">
-                                          <div className="space-y-3">
-                                            <div>
-                                              <label className="text-sm font-medium text-gray-600">Tên sản phẩm:</label>
-                                              <p className="text-lg font-semibold text-gray-800">{item.product?.product_name}</p>
-                                            </div>
-                                            <div>
-                                              <label className="text-sm font-medium text-gray-600">Mã sản phẩm:</label>
-                                              <p className="font-mono text-gray-800">{item.product?.product_code}</p>
-                                            </div>
-                                            <div>
-                                              <label className="text-sm font-medium text-gray-600">Số lượng:</label>
-                                              <p className="text-gray-800">{item.ps_num}</p>
-                                            </div>
-                                          </div>
-
-                                          <div className="space-y-3">
-                                            <div>
-                                              <label className="text-sm font-medium text-gray-600">Giá bán:</label>
-                                              <p className="text-xl font-bold text-green-600">
-                                                {formatPrice(item.ps_price_sale, item.country?.country_name)}
-                                              </p>
-                                            </div>
-                                            <div>
-                                              <label className="text-sm font-medium text-gray-600">Ngày in:</label>
-                                              <p className="text-gray-800">{new Date().toLocaleDateString("vi-VN")}</p>
-                                            </div>
-                                            <div>
-                                              <label className="text-sm font-medium text-gray-600">Định dạng:</label>
-                                              <p className="text-gray-800">
-                                                {selectedPrintFormat.toUpperCase()} - {selectedPrintQuality}
-                                              </p>
-                                            </div>
-                                          </div>
-                                        </div>
-
-                                        <div className="text-center py-6 border-t">
-                                          <div className="inline-block p-4 border-2 border-dashed border-gray-300 rounded">
-                                            <div className="w-24 h-24 bg-gray-200 flex items-center justify-center text-xs text-gray-500">
-                                              QR CODE
-                                            </div>
-                                          </div>
-                                          <p className="text-xs text-gray-500 mt-2">Mã QR sản phẩm</p>
-                                        </div>
-
-                                        <div className="text-center text-xs text-gray-500 border-t pt-4">
-                                          © 2024 Company Name. All rights reserved.
-                                        </div>
-                                      </>
-                                    )}
-                                  </div>
-
-                                  {index < printingItems.length - 1 && (
-                                    <div className="text-center text-xs text-gray-400 mt-4 border-t pt-2">
-                                      Trang {index + 1} / {printingItems.length}
+                                  <div className="bg-gray-100 p-3 border-b">
+                                    <div className="flex items-center justify-between text-sm">
+                                      <span className="font-medium">Template {selectedPrintSize.toUpperCase()}</span>
+                                      <span className="text-gray-500">Trang {index + 1} / {printingItems.length}</span>
                                     </div>
-                                  )}
+                                  </div>
+                                  
+                                  <div 
+                                    className="bg-gray-50 p-4"
+                                    style={{ 
+                                      width: '250%', 
+                                      height: '1000px', 
+                                      overflow: 'auto',
+                                      transform: 'scale(0.4)',
+                                      transformOrigin: 'top left'
+                                    }}
+                                    dangerouslySetInnerHTML={{ __html: previewHTML }}
+                                  />
                                 </div>
                               )
                             })}
@@ -1644,9 +1506,12 @@ Số lượng: ${item.ps_num}
                     {/* Format specific info */}
                     <div className="bg-blue-50 p-4 rounded-lg">
                       <h4 className="font-medium text-blue-900 mb-2">
-                        Thông tin file {printFormats.find((f: any) => f.id === selectedPrintFormat)?.template ? 'PDF' : selectedPrintFormat.toUpperCase()}
+                        Thông tin file PDF - Template {selectedPrintSize.toUpperCase()}
                       </h4>
                       <div className="grid grid-cols-2 gap-4 text-sm">
+                        <div>
+                          <span className="text-blue-700">Template:</span> {selectedPrintSize.toUpperCase()}
+                        </div>
                         <div>
                           <span className="text-blue-700">Chất lượng:</span> {selectedPrintQuality}
                         </div>
@@ -1654,26 +1519,15 @@ Số lượng: ${item.ps_num}
                           <span className="text-blue-700">Ước tính dung lượng:</span>{" "}
                           {(printingItems.length * printCopies * 0.5).toFixed(1)} MB
                         </div>
-                        {(selectedPrintFormat === "pdf" || printFormats.find((f: any) => f.id === selectedPrintFormat)?.template) && (
-                          <>
-                            <div>
-                              <span className="text-blue-700">Có thể tìm kiếm:</span> Có
-                            </div>
-                            <div>
-                              <span className="text-blue-700">Vector graphics:</span> Có
-                            </div>
-                          </>
-                        )}
-                        {selectedPrintFormat === "png" && !printFormats.find((f: any) => f.id === selectedPrintFormat)?.template && (
-                          <>
-                            <div>
-                              <span className="text-blue-700">Độ phân giải:</span> {selectedPrintQuality}
-                            </div>
-                            <div>
-                              <span className="text-blue-700">Nền trong suốt:</span> Có
-                            </div>
-                          </>
-                        )}
+                        <div>
+                          <span className="text-blue-700">Có thể tìm kiếm:</span> Có
+                        </div>
+                        <div>
+                          <span className="text-blue-700">Vector graphics:</span> Có
+                        </div>
+                        <div>
+                          <span className="text-blue-700">Background image:</span> Có
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -1693,7 +1547,7 @@ Số lượng: ${item.ps_num}
             )}
 
             {/* Print Options */}
-            <div className="bg-blue-50 p-4 rounded-lg space-y-3">
+            {/* <div className="bg-blue-50 p-4 rounded-lg space-y-3">
               <h4 className="font-medium text-blue-900">Tùy chọn in nâng cao</h4>
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div className="flex items-center space-x-2">
@@ -1713,7 +1567,7 @@ Số lượng: ${item.ps_num}
                   <Label htmlFor="print-duplex">In 2 mặt</Label>
                 </div>
               </div>
-            </div>
+            </div> */}
           </div>
 
           <DialogFooter className="flex justify-between">
