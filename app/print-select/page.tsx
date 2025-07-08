@@ -125,6 +125,7 @@ export default function PrintSelectPage() {
   const [printProgress, setPrintProgress] = useState(0)
   const [selectedPrintFormat, setSelectedPrintFormat] = useState("pdf")
   const [selectedPrintQuality, setSelectedPrintQuality] = useState("high")
+  const [selectedPrintSize, setSelectedPrintSize] = useState("a4")
   const [printCopies, setPrintCopies] = useState(1)
 
   // Form state for creating print selection
@@ -665,9 +666,25 @@ Số lượng: ${item.ps_num}
       pId = "all"
     }
     
-    // Gọi API để ghi nhận in
+    // Gọi API để ghi nhận in với body mới
     try {
-      await runPrintSelect({ pId })
+      const selectedItem = printSelections.find((item: any) => printingItems.includes(item.ps_id))
+      
+      // Sử dụng khổ in được chọn thay vì map từ định dạng
+      const getPlType = () => {
+        return selectedPrintSize
+      }
+      
+      const printLogData = {
+        pId: pId,
+        pl_num: printCopies,
+        pl_type: getPlType(),
+        pl_time_sale_start: selectedItem?.ps_time_sale_start || new Date().toISOString(),
+        pl_time_sale_end: selectedItem?.ps_time_sale_end || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // 30 ngày từ hiện tại
+        pl_log_note: `In ${printCopies} bản với định dạng ${selectedPrintFormat.toUpperCase()} - Khổ ${selectedPrintSize.toUpperCase()} - Chất lượng ${selectedPrintQuality}`
+      }
+      
+      await runPrintSelect(printLogData)
     } catch (error) {
       console.error("Lỗi ghi nhận in:", error)
     }
@@ -1004,16 +1021,6 @@ Số lượng: ${item.ps_num}
                   ))}
                 </SelectContent>
               </Select>
-                            <Select value={selectedType} onValueChange={setSelectedType}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Trạng thái" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Tất cả trạng thái</SelectItem>
-                  <SelectItem value="active">Hoạt động</SelectItem>
-                  <SelectItem value="inactive">Tạm dừng</SelectItem>
-                </SelectContent>
-              </Select>
               <Select value={selectedStatus} onValueChange={setSelectedStatus}>
                 <SelectTrigger>
                   <SelectValue placeholder="Trạng thái" />
@@ -1069,10 +1076,10 @@ Số lượng: ${item.ps_num}
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                       <DropdownMenuLabel>Thao tác</DropdownMenuLabel>
-                      <DropdownMenuItem>
+                      {/* <DropdownMenuItem>
                         <Eye className="mr-2 h-4 w-4" />
                         Xem chi tiết
-                      </DropdownMenuItem>
+                      </DropdownMenuItem> */}
                       <DropdownMenuItem onClick={() => handlePrintSingle(item)}>
                         <Printer className="mr-2 h-4 w-4" />
                         In ngay
@@ -1277,10 +1284,10 @@ Số lượng: ${item.ps_num}
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           <DropdownMenuLabel>Thao tác</DropdownMenuLabel>
-                          <DropdownMenuItem>
+                          {/* <DropdownMenuItem>
                             <Eye className="mr-2 h-4 w-4" />
                             Xem chi tiết
-                          </DropdownMenuItem>
+                          </DropdownMenuItem> */}
                           <DropdownMenuItem onClick={() => handlePrintSingle(item)}>
                             <Printer className="mr-2 h-4 w-4" />
                             In ngay
@@ -1379,6 +1386,62 @@ Số lượng: ${item.ps_num}
               </div>
 
               <div className="space-y-2">
+                <Label htmlFor="print-size">Khổ in</Label>
+                <Select value={selectedPrintSize} onValueChange={setSelectedPrintSize}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="a4">
+                      <div className="flex items-center space-x-2">
+                        <span>📄</span>
+                        <div>
+                          <div className="font-medium">A4</div>
+                          <div className="text-xs text-muted-foreground">210×297mm</div>
+                        </div>
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="a5">
+                      <div className="flex items-center space-x-2">
+                        <span>📄</span>
+                        <div>
+                          <div className="font-medium">A5</div>
+                          <div className="text-xs text-muted-foreground">148×210mm</div>
+                        </div>
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="v1">
+                      <div className="flex items-center space-x-2">
+                        <span>📋</span>
+                        <div>
+                          <div className="font-medium">V1</div>
+                          <div className="text-xs text-muted-foreground">Khổ tùy chỉnh 1</div>
+                        </div>
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="v2">
+                      <div className="flex items-center space-x-2">
+                        <span>📋</span>
+                        <div>
+                          <div className="font-medium">V2</div>
+                          <div className="text-xs text-muted-foreground">Khổ tùy chỉnh 2</div>
+                        </div>
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="v3">
+                      <div className="flex items-center space-x-2">
+                        <span>📋</span>
+                        <div>
+                          <div className="font-medium">V3</div>
+                          <div className="text-xs text-muted-foreground">Khổ tùy chỉnh 3</div>
+                        </div>
+                      </div>
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
                 <Label htmlFor="print-quality">Chất lượng</Label>
                 <Select value={selectedPrintQuality} onValueChange={setSelectedPrintQuality}>
                   <SelectTrigger>
@@ -1411,6 +1474,15 @@ Số lượng: ${item.ps_num}
               <div className="space-y-2">
                 <Label>Tổng số trang</Label>
                 <div className="text-2xl font-bold text-blue-600">{printingItems.length * printCopies}</div>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Thông tin in</Label>
+                <div className="text-sm text-muted-foreground">
+                  <div>Định dạng: {selectedPrintFormat.toUpperCase()}</div>
+                  <div>Khổ: {selectedPrintSize.toUpperCase()}</div>
+                  <div>Chất lượng: {selectedPrintQuality}</div>
+                </div>
               </div>
             </div>
 
