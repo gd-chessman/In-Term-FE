@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { toast } from "sonner"
-import { createPrintSelect, getPrintSelects, getPrintTemplates, deletePrintSelect, updatePrintSelect, runPrintSelect } from "@/services/PrintService"
+import { createPrintSelect, getPrintSelects, getPrintTemplates, deletePrintSelect, updatePrintSelect, runPrintSelect, getPrintStatistics } from "@/services/PrintService"
 import { getProducts } from "@/services/ProductService"
 import { getCountries } from "@/services/CountryService"
 import { getTemplate, prepareTemplateData, generateMultipleProductsHTML } from "@/components/templates"
@@ -164,6 +164,12 @@ export default function PrintSelectPage() {
   const { data: printTemplates = [] } = useQuery({
     queryKey: ["printTemplates"],
     queryFn: getPrintTemplates,
+  })
+
+
+  const { data: printStatistics, isLoading: printStatsLoading } = useQuery({
+    queryKey: ["print-statistics"],
+    queryFn: getPrintStatistics,
   })
 
   // Combine templates with default formats
@@ -910,7 +916,7 @@ export default function PrintSelectPage() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-purple-900">{totalPrintCount.toLocaleString()}</div>
+            <div className="text-2xl font-bold text-purple-900">{printStatistics?.overview?.totalPrintLogs}</div>
             <p className="text-xs text-purple-600">Lượt in tổng cộng</p>
             <div className="mt-2">
               <Progress value={85} className="h-1" />
@@ -920,19 +926,15 @@ export default function PrintSelectPage() {
 
         <Card className="bg-gradient-to-br from-orange-50 to-red-50 border-orange-200 hover:shadow-lg transition-all duration-300">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-orange-700">Tổng sản phẩm</CardTitle>
+            <CardTitle className="text-sm font-medium text-orange-700">Top sản phẩm</CardTitle>
             <div className="h-8 w-8 bg-gradient-to-br from-orange-500 to-red-500 rounded-full flex items-center justify-center">
               <FileText className="h-4 w-4 text-white" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-orange-900">{totalItems}</div>
-            <p className="text-xs text-orange-600">Trong hệ thống</p>
-            <div className="mt-2">
-              <Progress
-                value={totalItems > 0 ? (activeCount / totalItems) * 100 : 0}
-                className="h-1"
-              />
+            <div className="text-2xl font-bold text-orange-900">{printStatistics?.topProducts?.[0]?.total_prints || 0}</div>
+            <div className="text-xs text-orange-600 mt-1 truncate">
+              {printStatistics?.topProducts?.[0]?.product_name || 'N/A'}
             </div>
           </CardContent>
         </Card>

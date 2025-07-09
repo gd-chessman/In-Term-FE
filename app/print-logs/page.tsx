@@ -122,10 +122,6 @@ export default function PrintLogsPage() {
     return flags[countryCode] || "🏳️"
   }
 
-  // Calculate stats from API data
-  const successRate = printLogs.length > 0 ? Math.round((printLogs.filter((log: any) => log.pl_log_note?.includes("success") || log.pl_log_note?.includes("thành công")).length / printLogs.length) * 100) : 0
-  const totalPrintCount = printLogs.reduce((sum: number, log: any) => sum + (log.pl_num || 0), 0)
-
   return (
     <div className="space-y-6">
       {/* Page Header */}
