@@ -46,7 +46,7 @@ export default function LogsPage() {
     queryFn: getAdminLogStatistics,
   })
 
-  const logs = logsData?.data?.data || []
+  const logs = logsData?.data?.logs || []
   const pagination = logsData?.data?.pagination || { page: 1, limit: 10, total: 0, totalPages: 1 }
 
   // const stats = statsData || { total: 0, today: 0, login24h: 0, actionsToday: 0, uniqueIps: 0 }

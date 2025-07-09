@@ -1,3 +1,4 @@
+"use client"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -13,9 +14,94 @@ import {
   Activity,
   Eye,
   ArrowUpRight,
+  Plus,
+  Edit,
+  Trash2,
 } from "lucide-react"
+import { getAllAdminLogs, getStatistics } from "@/services/AdminService"
+import { useQuery } from "@tanstack/react-query"
+import { getProductStatistics } from "@/services/ProductService"
+import { getCountryStatistics } from "@/services/CountryService"
+import { getPrintStatistics } from "@/services/PrintService"
 
 export default function AdminDashboard() {
+
+  const { data: adminStatistics, isLoading: statsLoading } = useQuery({
+    queryKey: ["admin-statistics"],
+    queryFn: getStatistics,
+  })
+
+
+  const { data: productStatistics, isLoading: productStatsLoading } = useQuery({
+    queryKey: ["product-statistics"],
+    queryFn: getProductStatistics,
+  })
+
+  const { data: countryStatistics, isLoading: countryStatsLoading } = useQuery({
+    queryKey: ["country-statistics"],
+    queryFn: getCountryStatistics,
+  })
+
+  const { data: logsData, isLoading: logsLoading } = useQuery({
+    queryKey: ["adminLogs"],
+    queryFn: () => getAllAdminLogs(1, 10, "", "all", "all"),
+  })
+
+  const { data: printStatistics, isLoading: printStatsLoading } = useQuery({
+    queryKey: ["print-statistics"],
+    queryFn: getPrintStatistics,
+  })
+
+  // Hàm format thời gian tương đối
+  const formatRelativeTime = (dateString: string) => {
+    const now = new Date()
+    const date = new Date(dateString)
+    const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000)
+    
+    if (diffInSeconds < 60) return `${diffInSeconds} giây trước`
+    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} phút trước`
+    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} giờ trước`
+    return `${Math.floor(diffInSeconds / 86400)} ngày trước`
+  }
+
+  // Hàm lấy icon và màu sắc cho từng loại action
+  const getActionIcon = (action: string, module: string) => {
+    switch (action) {
+      case 'login':
+        return { icon: CheckCircle, color: 'from-green-400 to-green-500' }
+      case 'logout':
+        return { icon: AlertCircle, color: 'from-orange-400 to-orange-500' }
+      case 'create':
+        return { icon: Plus, color: 'from-blue-400 to-blue-500' }
+      case 'update':
+        return { icon: Edit, color: 'from-purple-400 to-purple-500' }
+      case 'delete':
+        return { icon: Trash2, color: 'from-red-400 to-red-500' }
+      default:
+        return { icon: Activity, color: 'from-gray-400 to-gray-500' }
+    }
+  }
+
+  // Hàm lấy mô tả hoạt động
+  const getActionDescription = (log: any) => {
+    const adminName = log.admin?.admin_fullname || log.admin?.admin_username || 'Unknown'
+    
+    switch (log.log_action) {
+      case 'login':
+        return `${adminName} đã đăng nhập`
+      case 'logout':
+        return `${adminName} đã đăng xuất`
+      case 'create':
+        return `${adminName} đã tạo mới ${log.log_module}`
+      case 'update':
+        return `${adminName} đã cập nhật ${log.log_module}`
+      case 'delete':
+        return `${adminName} đã xóa ${log.log_module}`
+      default:
+        return log.log_description || `${adminName} thực hiện ${log.log_action}`
+    }
+  }
+
   return (
     <div className="space-y-6 lg:space-y-8">
       {/* Page Header */}
@@ -28,10 +114,6 @@ export default function AdminDashboard() {
             Tổng quan hệ thống quản trị
           </p>
         </div>
-        <Button className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 dark:from-blue-500 dark:to-indigo-500 dark:hover:from-blue-600 dark:hover:to-indigo-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl w-full sm:w-auto">
-          <Eye className="mr-2 h-4 w-4" />
-          Xem báo cáo
-        </Button>
       </div>
 
       {/* Stats Cards */}
@@ -39,16 +121,16 @@ export default function AdminDashboard() {
         <Card className="relative overflow-hidden bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-blue-200/50 dark:border-blue-800/50 hover:shadow-xl transition-all duration-300 group hover:-translate-y-1">
           <div className="absolute top-0 right-0 w-16 h-16 lg:w-20 lg:h-20 bg-gradient-to-br from-blue-400/20 to-indigo-400/20 dark:from-blue-400/10 dark:to-indigo-400/10 rounded-full -mr-8 lg:-mr-10 -mt-8 lg:-mt-10"></div>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative">
-            <CardTitle className="text-sm font-medium text-gray-700 dark:text-gray-300">Tổng Admin</CardTitle>
+            <CardTitle className="text-sm font-medium text-gray-700 dark:text-gray-300">Tổng người dùng</CardTitle>
             <div className="h-10 w-10 lg:h-12 lg:w-12 rounded-xl bg-gradient-to-r from-blue-500 to-indigo-500 dark:from-blue-600 dark:to-indigo-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
               <Users className="h-5 w-5 lg:h-6 lg:w-6 text-white" />
             </div>
           </CardHeader>
           <CardContent className="relative">
-            <div className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-gray-100">24</div>
+            <div className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-gray-100">{adminStatistics?.total}</div>
             <div className="flex items-center text-xs text-green-600 dark:text-green-400 mt-2">
               <TrendingUp className="h-3 w-3 mr-1" />
-              +2 từ tháng trước
+              Hiện tại của hệ thống
             </div>
           </CardContent>
         </Card>
@@ -62,10 +144,10 @@ export default function AdminDashboard() {
             </div>
           </CardHeader>
           <CardContent className="relative">
-            <div className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-gray-100">1,234</div>
+            <div className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-gray-100">{productStatistics?.totalProducts}</div>
             <div className="flex items-center text-xs text-green-600 dark:text-green-400 mt-2">
               <TrendingUp className="h-3 w-3 mr-1" />
-              +15% từ tháng trước
+              Hiện tại của hệ thống
             </div>
           </CardContent>
         </Card>
@@ -79,10 +161,10 @@ export default function AdminDashboard() {
             </div>
           </CardHeader>
           <CardContent className="relative">
-            <div className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-gray-100">45</div>
+            <div className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-gray-100">{countryStatistics?.totalCountries}</div>
             <div className="flex items-center text-xs text-green-600 dark:text-green-400 mt-2">
               <TrendingUp className="h-3 w-3 mr-1" />
-              +3 từ tháng trước
+              Hiện tại của hệ thống
             </div>
           </CardContent>
         </Card>
@@ -96,10 +178,10 @@ export default function AdminDashboard() {
             </div>
           </CardHeader>
           <CardContent className="relative">
-            <div className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-gray-100">89</div>
+            <div className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-gray-100">{printStatistics?.overview?.todayPrints}</div>
             <div className="flex items-center text-xs text-green-600 dark:text-green-400 mt-2">
               <TrendingUp className="h-3 w-3 mr-1" />
-              +12% từ hôm qua
+              Hiện tại của hệ thống
             </div>
           </CardContent>
         </Card>
@@ -127,266 +209,47 @@ export default function AdminDashboard() {
           </CardHeader>
           <CardContent className="p-0">
             <div className="space-y-0">
-              <div className="flex items-center space-x-3 lg:space-x-4 p-3 lg:p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors duration-200 rounded-lg m-2">
-                <div className="flex h-8 w-8 lg:h-10 lg:w-10 items-center justify-center rounded-full bg-gradient-to-r from-green-400 to-green-500 shadow-lg">
-                  <CheckCircle className="h-4 w-4 lg:h-5 lg:w-5 text-white" />
+              {logsLoading ? (
+                <div className="flex items-center justify-center py-8">
+                  <div className="flex items-center space-x-2">
+                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+                    <span className="text-gray-600 dark:text-gray-400">Đang tải hoạt động...</span>
+                  </div>
                 </div>
-                <div className="flex-1 space-y-1">
-                  <p className="text-sm font-medium text-gray-900 dark:text-gray-100">Admin mới được tạo</p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">john.doe@example.com - 2 phút trước</p>
+              ) : logsData?.data?.logs && logsData.data.logs.length > 0 ? (
+                logsData.data.logs.slice(0, 4).map((log: any, index: number) => {
+                  const { icon: IconComponent, color } = getActionIcon(log.log_action, log.log_module)
+                  const description = getActionDescription(log)
+                  const timeAgo = formatRelativeTime(log.created_at)
+                  const adminEmail = log.admin?.admin_email || 'Unknown'
+                  
+                  return (
+                    <div key={log.log_id} className="flex items-center space-x-3 lg:space-x-4 p-3 lg:p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors duration-200 rounded-lg m-2">
+                      <div className={`flex h-8 w-8 lg:h-10 lg:w-10 items-center justify-center rounded-full bg-gradient-to-r ${color} shadow-lg`}>
+                        <IconComponent className="h-4 w-4 lg:h-5 lg:w-5 text-white" />
+                      </div>
+                      <div className="flex-1 space-y-1">
+                        <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{description}</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">{adminEmail} - {timeAgo}</p>
+                      </div>
+                    </div>
+                  )
+                })
+              ) : (
+                <div className="flex items-center justify-center py-8">
+                  <div className="text-center">
+                    <Activity className="h-8 w-8 text-gray-400 mx-auto mb-2" />
+                    <p className="text-gray-600 dark:text-gray-400 text-sm">Không có hoạt động gần đây</p>
+                  </div>
                 </div>
-              </div>
-
-              <div className="flex items-center space-x-3 lg:space-x-4 p-3 lg:p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors duration-200 rounded-lg m-2">
-                <div className="flex h-8 w-8 lg:h-10 lg:w-10 items-center justify-center rounded-full bg-gradient-to-r from-blue-400 to-blue-500 shadow-lg">
-                  <Package className="h-4 w-4 lg:h-5 lg:w-5 text-white" />
-                </div>
-                <div className="flex-1 space-y-1">
-                  <p className="text-sm font-medium text-gray-900 dark:text-gray-100">Sản phẩm được cập nhật</p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Product #1234 - 5 phút trước</p>
-                </div>
-              </div>
-
-              <div className="flex items-center space-x-3 lg:space-x-4 p-3 lg:p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors duration-200 rounded-lg m-2">
-                <div className="flex h-8 w-8 lg:h-10 lg:w-10 items-center justify-center rounded-full bg-gradient-to-r from-orange-400 to-orange-500 shadow-lg">
-                  <AlertCircle className="h-4 w-4 lg:h-5 lg:w-5 text-white" />
-                </div>
-                <div className="flex-1 space-y-1">
-                  <p className="text-sm font-medium text-gray-900 dark:text-gray-100">Template in được sửa</p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Template Vietnam - 10 phút trước</p>
-                </div>
-              </div>
-
-              <div className="flex items-center space-x-3 lg:space-x-4 p-3 lg:p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors duration-200 rounded-lg m-2">
-                <div className="flex h-8 w-8 lg:h-10 lg:w-10 items-center justify-center rounded-full bg-gradient-to-r from-purple-400 to-purple-500 shadow-lg">
-                  <Printer className="h-4 w-4 lg:h-5 lg:w-5 text-white" />
-                </div>
-                <div className="flex-1 space-y-1">
-                  <p className="text-sm font-medium text-gray-900 dark:text-gray-100">Batch in hoàn thành</p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">25 sản phẩm - 15 phút trước</p>
-                </div>
-              </div>
+              )}
             </div>
           </CardContent>
         </Card>
 
-        {/* System Status */}
-        <Card className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:shadow-xl transition-all duration-300 rounded-xl">
-          <CardHeader className="border-b border-gray-100 dark:border-gray-700">
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle className="text-gray-900 dark:text-gray-100 text-lg lg:text-xl">
-                  Trạng thái hệ thống
-                </CardTitle>
-                <CardDescription className="text-sm text-gray-600 dark:text-gray-400">
-                  Tình trạng các module chính
-                </CardDescription>
-              </div>
-              <div className="flex items-center space-x-1">
-                <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse shadow-sm"></div>
-                <span className="text-xs text-green-600 dark:text-green-400 font-medium hidden sm:inline">
-                  Tất cả hoạt động
-                </span>
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-3 lg:space-y-4 pt-4 lg:pt-6">
-            <div className="flex items-center justify-between p-2 lg:p-3 rounded-xl bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border border-green-200/50 dark:border-green-800/50 hover:shadow-md transition-all duration-200">
-              <div className="flex items-center space-x-2 lg:space-x-3">
-                <div className="h-2 w-2 lg:h-3 lg:w-3 rounded-full bg-green-500 shadow-lg"></div>
-                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Database</span>
-              </div>
-              <Badge className="bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 border-green-200 dark:border-green-800 rounded-lg text-xs">
-                Hoạt động
-              </Badge>
-            </div>
 
-            <div className="flex items-center justify-between p-2 lg:p-3 rounded-xl bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border border-green-200/50 dark:border-green-800/50 hover:shadow-md transition-all duration-200">
-              <div className="flex items-center space-x-2 lg:space-x-3">
-                <div className="h-2 w-2 lg:h-3 lg:w-3 rounded-full bg-green-500 shadow-lg"></div>
-                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">API Server</span>
-              </div>
-              <Badge className="bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 border-green-200 dark:border-green-800 rounded-lg text-xs">
-                Hoạt động
-              </Badge>
-            </div>
-
-            <div className="flex items-center justify-between p-2 lg:p-3 rounded-xl bg-gradient-to-r from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 border border-yellow-200/50 dark:border-yellow-800/50 hover:shadow-md transition-all duration-200">
-              <div className="flex items-center space-x-2 lg:space-x-3">
-                <div className="h-2 w-2 lg:h-3 lg:w-3 rounded-full bg-yellow-500 shadow-lg animate-pulse"></div>
-                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Print Service</span>
-              </div>
-              <Badge className="bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300 border-yellow-200 dark:border-yellow-800 rounded-lg text-xs">
-                Cảnh báo
-              </Badge>
-            </div>
-
-            <div className="flex items-center justify-between p-2 lg:p-3 rounded-xl bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border border-green-200/50 dark:border-green-800/50 hover:shadow-md transition-all duration-200">
-              <div className="flex items-center space-x-2 lg:space-x-3">
-                <div className="h-2 w-2 lg:h-3 lg:w-3 rounded-full bg-green-500 shadow-lg"></div>
-                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">File Storage</span>
-              </div>
-              <Badge className="bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 border-green-200 dark:border-green-800 rounded-lg text-xs">
-                Hoạt động
-              </Badge>
-            </div>
-          </CardContent>
-        </Card>
       </div>
 
-      {/* Recent Admin Logins */}
-      <Card className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:shadow-xl transition-all duration-300 rounded-xl">
-        <CardHeader className="border-b border-gray-100 dark:border-gray-700">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div>
-              <CardTitle className="text-gray-900 dark:text-gray-100 text-lg lg:text-xl">Đăng nhập gần đây</CardTitle>
-              <CardDescription className="text-sm text-gray-600 dark:text-gray-400">
-                Danh sách admin đăng nhập trong 24h qua
-              </CardDescription>
-            </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 rounded-lg w-full sm:w-auto"
-            >
-              <Activity className="mr-2 h-4 w-4" />
-              Xem tất cả
-            </Button>
-          </div>
-        </CardHeader>
-        <CardContent className="p-0">
-          {/* Mobile view */}
-          <div className="block lg:hidden">
-            <div className="space-y-3 p-4">
-              {[
-                {
-                  name: "John Doe",
-                  email: "john.doe@example.com",
-                  time: "2 phút trước",
-                  ip: "192.168.1.100",
-                  status: "Online",
-                },
-                {
-                  name: "Jane Smith",
-                  email: "jane.smith@example.com",
-                  time: "15 phút trước",
-                  ip: "192.168.1.101",
-                  status: "Online",
-                },
-                {
-                  name: "Mike Johnson",
-                  email: "mike.johnson@example.com",
-                  time: "1 giờ trước",
-                  ip: "192.168.1.102",
-                  status: "Offline",
-                },
-              ].map((admin, index) => (
-                <div
-                  key={index}
-                  className="p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg border border-gray-100 dark:border-gray-600"
-                >
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="font-semibold text-gray-900 dark:text-gray-100 text-sm">{admin.name}</div>
-                    <Badge
-                      className={
-                        admin.status === "Online"
-                          ? "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 border-green-200 dark:border-green-800"
-                          : "bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300 border-gray-200 dark:border-gray-600"
-                      }
-                    >
-                      {admin.status}
-                    </Badge>
-                  </div>
-                  <div className="text-xs text-gray-600 dark:text-gray-400 space-y-1">
-                    <div>{admin.email}</div>
-                    <div>{admin.time}</div>
-                    <code className="text-xs bg-gray-100 dark:bg-gray-600 px-2 py-1 rounded text-gray-700 dark:text-gray-300 font-mono">
-                      {admin.ip}
-                    </code>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Desktop view */}
-          <div className="hidden lg:block">
-            <Table>
-              <TableHeader>
-                <TableRow className="border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50">
-                  <TableHead className="text-gray-600 dark:text-gray-400 font-semibold">Admin</TableHead>
-                  <TableHead className="text-gray-600 dark:text-gray-400 font-semibold">Email</TableHead>
-                  <TableHead className="text-gray-600 dark:text-gray-400 font-semibold">Thời gian</TableHead>
-                  <TableHead className="text-gray-600 dark:text-gray-400 font-semibold">IP Address</TableHead>
-                  <TableHead className="text-gray-600 dark:text-gray-400 font-semibold">Trạng thái</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                <TableRow className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors duration-200 border-gray-100 dark:border-gray-700">
-                  <TableCell className="font-semibold text-gray-900 dark:text-gray-100">John Doe</TableCell>
-                  <TableCell className="text-gray-600 dark:text-gray-400">john.doe@example.com</TableCell>
-                  <TableCell className="text-gray-600 dark:text-gray-400">2 phút trước</TableCell>
-                  <TableCell>
-                    <code className="text-xs bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-lg text-gray-700 dark:text-gray-300 font-mono">
-                      192.168.1.100
-                    </code>
-                  </TableCell>
-                  <TableCell>
-                    <Badge className="bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 border-green-200 dark:border-green-800 rounded-lg">
-                      Online
-                    </Badge>
-                  </TableCell>
-                </TableRow>
-                <TableRow className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors duration-200 border-gray-100 dark:border-gray-700">
-                  <TableCell className="font-semibold text-gray-900 dark:text-gray-100">Jane Smith</TableCell>
-                  <TableCell className="text-gray-600 dark:text-gray-400">jane.smith@example.com</TableCell>
-                  <TableCell className="text-gray-600 dark:text-gray-400">15 phút trước</TableCell>
-                  <TableCell>
-                    <code className="text-xs bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-lg text-gray-700 dark:text-gray-300 font-mono">
-                      192.168.1.101
-                    </code>
-                  </TableCell>
-                  <TableCell>
-                    <Badge className="bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 border-green-200 dark:border-green-800 rounded-lg">
-                      Online
-                    </Badge>
-                  </TableCell>
-                </TableRow>
-                <TableRow className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors duration-200 border-gray-100 dark:border-gray-700">
-                  <TableCell className="font-semibold text-gray-900 dark:text-gray-100">Mike Johnson</TableCell>
-                  <TableCell className="text-gray-600 dark:text-gray-400">mike.johnson@example.com</TableCell>
-                  <TableCell className="text-gray-600 dark:text-gray-400">1 giờ trước</TableCell>
-                  <TableCell>
-                    <code className="text-xs bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-lg text-gray-700 dark:text-gray-300 font-mono">
-                      192.168.1.102
-                    </code>
-                  </TableCell>
-                  <TableCell>
-                    <Badge className="bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300 border-gray-200 dark:border-gray-600 rounded-lg">
-                      Offline
-                    </Badge>
-                  </TableCell>
-                </TableRow>
-                <TableRow className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors duration-200 border-gray-100 dark:border-gray-700">
-                  <TableCell className="font-semibold text-gray-900 dark:text-gray-100">Sarah Wilson</TableCell>
-                  <TableCell className="text-gray-600 dark:text-gray-400">sarah.wilson@example.com</TableCell>
-                  <TableCell className="text-gray-600 dark:text-gray-400">2 giờ trước</TableCell>
-                  <TableCell>
-                    <code className="text-xs bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-lg text-gray-700 dark:text-gray-300 font-mono">
-                      192.168.1.103
-                    </code>
-                  </TableCell>
-                  <TableCell>
-                    <Badge className="bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300 border-gray-200 dark:border-gray-600 rounded-lg">
-                      Offline
-                    </Badge>
-                  </TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   )
 }

@@ -89,3 +89,12 @@ export const getPrintHistory = async (page: number, limit: number, search: strin
         return [];
     }
 }
+
+export const getPrintStatistics = async () => {
+    try {
+        const temp = await axiosClient.get(`prints/statistics`);
+        return temp.data.data;
+    } catch (e) {
+        return {};
+    }
+}

@@ -35,3 +35,13 @@ export const deleteCountry = async (id: number) => {
         throw e;
     }
 }
+
+
+export const getCountryStatistics = async () => {
+    try {
+        const temp = await axiosClient.get(`countries/statistics`);
+        return temp.data.data;
+    } catch (e) {
+        return {};
+    }
+}
