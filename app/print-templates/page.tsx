@@ -168,10 +168,10 @@ export default function PrintTemplatesPage() {
   })
 
   // Calculate stats from real data
-  const totalUsage = templates.reduce((sum: number, t: any) => sum + (t.usage_count || 0), 0)
+  const totalUsage = templates.reduce((sum: number, t: any) => sum + (t.usage?.totalPrints || 0), 0)
   const mostUsedTemplate = templates.length > 0 ? templates.reduce((prev: any, current: any) =>
-    (prev.usage_count || 0) > (current.usage_count || 0) ? prev : current,
-  ) : { pt_title: "N/A", usage_count: 0 }
+    (prev.usage?.totalPrints || 0) > (current.usage?.totalPrints || 0) ? prev : current,
+  ) : { pt_title: "N/A", usage: { totalPrints: 0 } }
 
   // Handle form submission
   const handleSubmit = (e: React.FormEvent) => {
@@ -269,10 +269,6 @@ export default function PrintTemplatesPage() {
           <p className="text-muted-foreground">Quản lý template in cho từng quốc gia</p>
         </div>
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
-          <Button variant="outline" size="sm" className="w-full sm:w-auto">
-            <Download className="mr-2 h-4 w-4" />
-            Export
-          </Button>
           <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
             <DialogTrigger asChild>
               <Button className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 w-full sm:w-auto">
@@ -445,7 +441,7 @@ export default function PrintTemplatesPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-600">{totalUsage.toLocaleString()}</div>
-            <p className="text-xs text-muted-foreground">+12% so với tháng trước</p>
+            <p className="text-xs text-muted-foreground">Tổng lượt sử dụng</p>
           </CardContent>
         </Card>
 
@@ -458,7 +454,7 @@ export default function PrintTemplatesPage() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-purple-600">{mostUsedTemplate.usage_count}</div>
+            <div className="text-2xl font-bold text-purple-600">{mostUsedTemplate.usage?.totalPrints || 0}</div>
             <p className="text-xs text-muted-foreground truncate">{mostUsedTemplate.pt_title}</p>
           </CardContent>
         </Card>
@@ -615,22 +611,32 @@ export default function PrintTemplatesPage() {
                 <div className="flex items-center justify-between text-sm">
                   <div className="flex items-center gap-2">
                     <Printer className="h-4 w-4 text-muted-foreground" />
-                    <span className="font-medium">{template.usage_count}</span>
+                    <span className="font-medium">{template.usage?.totalPrints || 0}</span>
                     <span className="text-muted-foreground">lượt sử dụng</span>
                   </div>
                   <div className="flex items-center gap-2 text-muted-foreground">
                     <Calendar className="h-4 w-4" />
-                    <span>{new Date(template.last_used).toLocaleDateString("vi-VN")}</span>
+                    <span>{new Date(template.updated_at).toLocaleDateString("vi-VN")}</span>
                   </div>
                 </div>
 
                 <div className="space-y-2">
                   <div className="flex justify-between text-xs text-muted-foreground">
                     <span>Mức độ sử dụng</span>
-                    <span>{Math.round((template.usage_count / totalUsage) * 100)}%</span>
+                    <span>{template.usage?.usagePercentage || 0}%</span>
                   </div>
-                      <Progress value={(template.usage_count / totalUsage) * 100} className="h-2" />
+                  <Progress value={template.usage?.usagePercentage || 0} className="h-2" />
+                  <div className="flex items-center gap-2 text-xs">
+                    <div className={`w-2 h-2 rounded-full ${
+                      template.usage?.usageLevel === 'high' ? 'bg-green-500' : 
+                      template.usage?.usageLevel === 'medium' ? 'bg-yellow-500' : 'bg-gray-400'
+                    }`}></div>
+                    <span className="text-muted-foreground capitalize">
+                      {template.usage?.usageLevel === 'high' ? 'Cao' : 
+                       template.usage?.usageLevel === 'medium' ? 'Trung bình' : 'Thấp'}
+                    </span>
                   </div>
+                </div>
 
                   <div className="flex items-center justify-between text-sm">
                     <div className="flex items-center gap-2">
@@ -692,10 +698,20 @@ export default function PrintTemplatesPage() {
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
-                        <Badge className="bg-blue-100 text-blue-800">{template.usage_count}</Badge>
+                        <Badge className="bg-blue-100 text-blue-800">{template.usage?.totalPrints || 0}</Badge>
                         <div className="w-16">
-                          <Progress value={(template.usage_count / totalUsage) * 100} className="h-1" />
+                          <Progress value={template.usage?.usagePercentage || 0} className="h-1" />
                         </div>
+                      </div>
+                      <div className="flex items-center gap-1 mt-1">
+                        <div className={`w-2 h-2 rounded-full ${
+                          template.usage?.usageLevel === 'high' ? 'bg-green-500' : 
+                          template.usage?.usageLevel === 'medium' ? 'bg-yellow-500' : 'bg-gray-400'
+                        }`}></div>
+                        <span className="text-xs text-muted-foreground capitalize">
+                          {template.usage?.usageLevel === 'high' ? 'Cao' : 
+                           template.usage?.usageLevel === 'medium' ? 'Trung bình' : 'Thấp'}
+                        </span>
                       </div>
                     </TableCell>
                     <TableCell>
@@ -778,12 +794,20 @@ export default function PrintTemplatesPage() {
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div className="space-y-1">
                 <span className="text-muted-foreground">Lượt sử dụng:</span>
-                <div className="font-medium">{selectedTemplate?.usage_count}</div>
+                <div className="font-medium">{selectedTemplate?.usage?.totalPrints || 0}</div>
               </div>
               <div className="space-y-1">
-                <span className="text-muted-foreground">Lần cuối sử dụng:</span>
-                <div className="font-medium">
-                  {selectedTemplate?.last_used && new Date(selectedTemplate.last_used).toLocaleDateString("vi-VN")}
+                <span className="text-muted-foreground">Mức độ sử dụng:</span>
+                <div className="font-medium flex items-center gap-2">
+                  <span>{selectedTemplate?.usage?.usagePercentage || 0}%</span>
+                  <div className={`w-2 h-2 rounded-full ${
+                    selectedTemplate?.usage?.usageLevel === 'high' ? 'bg-green-500' : 
+                    selectedTemplate?.usage?.usageLevel === 'medium' ? 'bg-yellow-500' : 'bg-gray-400'
+                  }`}></div>
+                  <span className="text-xs capitalize">
+                    {selectedTemplate?.usage?.usageLevel === 'high' ? 'Cao' : 
+                     selectedTemplate?.usage?.usageLevel === 'medium' ? 'Trung bình' : 'Thấp'}
+                  </span>
                 </div>
               </div>
             </div>
@@ -903,20 +927,25 @@ export default function PrintTemplatesPage() {
                       <CardTitle className="text-sm">Lượt sử dụng</CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <div className="text-2xl font-bold text-blue-600">{selectedTemplate?.usage_count}</div>
-                      <Progress value={(selectedTemplate?.usage_count / totalUsage) * 100} className="mt-2" />
+                      <div className="text-2xl font-bold text-blue-600">{selectedTemplate?.usage?.totalPrints || 0}</div>
+                      <Progress value={selectedTemplate?.usage?.usagePercentage || 0} className="mt-2" />
                     </CardContent>
                   </Card>
                   <Card>
                     <CardHeader className="pb-2">
-                      <CardTitle className="text-sm">Lần cuối sử dụng</CardTitle>
+                      <CardTitle className="text-sm">Mức độ sử dụng</CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <div className="text-sm font-medium">
-                        {selectedTemplate?.last_used && new Date(selectedTemplate.last_used).toLocaleDateString("vi-VN")}
+                      <div className="text-sm font-medium flex items-center gap-2">
+                        <span>{selectedTemplate?.usage?.usagePercentage || 0}%</span>
+                        <div className={`w-2 h-2 rounded-full ${
+                          selectedTemplate?.usage?.usageLevel === 'high' ? 'bg-green-500' : 
+                          selectedTemplate?.usage?.usageLevel === 'medium' ? 'bg-yellow-500' : 'bg-gray-400'
+                        }`}></div>
                       </div>
-                      <div className="text-xs text-muted-foreground mt-1">
-                        {selectedTemplate?.last_used && new Date(selectedTemplate.last_used).toLocaleTimeString("vi-VN")}
+                      <div className="text-xs text-muted-foreground mt-1 capitalize">
+                        {selectedTemplate?.usage?.usageLevel === 'high' ? 'Cao' : 
+                         selectedTemplate?.usage?.usageLevel === 'medium' ? 'Trung bình' : 'Thấp'}
                       </div>
                     </CardContent>
                   </Card>
@@ -975,7 +1004,7 @@ export default function PrintTemplatesPage() {
                 Quốc gia: {templateToDelete?.country?.country_name} {getCountryFlag(templateToDelete?.country?.country_code)}
               </div>
               <div className="text-sm text-red-600">
-                Lượt sử dụng: {templateToDelete?.usage_count || 0}
+                Lượt sử dụng: {templateToDelete?.usage?.totalPrints || 0} ({templateToDelete?.usage?.usagePercentage || 0}%)
               </div>
             </div>
           </div>
