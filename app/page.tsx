@@ -23,6 +23,7 @@ import { useQuery } from "@tanstack/react-query"
 import { getProductStatistics } from "@/services/ProductService"
 import { getCountryStatistics } from "@/services/CountryService"
 import { getPrintStatistics } from "@/services/PrintService"
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from 'recharts'
 
 export default function AdminDashboard() {
 
@@ -247,6 +248,71 @@ export default function AdminDashboard() {
           </CardContent>
         </Card>
 
+        {/* Print Type Distribution Chart */}
+        <Card className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:shadow-xl transition-all duration-300 rounded-xl">
+          <CardHeader className="border-b border-gray-100 dark:border-gray-700">
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="text-gray-900 dark:text-gray-100 text-lg lg:text-xl">Phân bố loại in</CardTitle>
+                <CardDescription className="text-sm text-gray-600 dark:text-gray-400">
+                  Thống kê theo loại template in
+                </CardDescription>
+              </div>
+              <div className="h-8 w-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
+                <Printer className="h-4 w-4 text-white" />
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="pt-6">
+            {printStatistics?.typeStatistics && printStatistics.typeStatistics.length > 0 ? (
+              <div className="h-[300px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={printStatistics.typeStatistics}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                    <XAxis 
+                      dataKey="type" 
+                      tick={{ fontSize: 12, fill: '#666' }}
+                      tickFormatter={(value) => value || "Không xác định"}
+                    />
+                    <YAxis 
+                      tick={{ fontSize: 12, fill: '#666' }}
+                      tickFormatter={(value) => `${value}`}
+                    />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: 'white',
+                        border: '1px solid #e0e0e0',
+                        borderRadius: '8px',
+                        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+                      }}
+                      formatter={(value: any, name: any) => [`${value} lượt in`, 'Tổng lượt in']}
+                      labelFormatter={(label) => `Loại: ${label || 'Không xác định'}`}
+                    />
+                    <Bar 
+                      dataKey="totalPrints" 
+                      fill="url(#colorGradient)"
+                      radius={[4, 4, 0, 0]}
+                    />
+                    <defs>
+                      <linearGradient id="colorGradient" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.8}/>
+                        <stop offset="95%" stopColor="#1d4ed8" stopOpacity={0.9}/>
+                      </linearGradient>
+                    </defs>
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            ) : (
+              <div className="flex items-center justify-center h-[300px]">
+                <div className="text-center">
+                  <Printer className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                  <p className="text-gray-600 dark:text-gray-400 text-sm">Không có dữ liệu in</p>
+                  <p className="text-gray-500 dark:text-gray-500 text-xs mt-1">Chưa có hoạt động in nào</p>
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
 
       </div>
 
