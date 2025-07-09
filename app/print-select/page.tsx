@@ -555,13 +555,25 @@ export default function PrintSelectPage() {
 
   const handleEditItem = (item: any) => {
     setEditingItem(item)
+    
+    // Hàm chuyển đổi ngày tháng sang định dạng YYYY-MM-DD cho input type="date"
+    const formatDateForInput = (dateString: string) => {
+      if (!dateString) return ""
+      try {
+        const date = new Date(dateString)
+        return date.toISOString().split('T')[0] // Lấy phần YYYY-MM-DD
+      } catch (error) {
+        return ""
+      }
+    }
+    
     // Pre-fill form data
     setEditFormData({
       ps_product_id: item.ps_product_id?.toString() || "",
       ps_country_id: item.ps_country_id?.toString() || "",
       ps_price_sale: item.ps_price_sale?.toString() || "",
-      ps_time_sale_start: item.ps_time_sale_start || "",
-      ps_time_sale_end: item.ps_time_sale_end || "",
+      ps_time_sale_start: formatDateForInput(item.ps_time_sale_start),
+      ps_time_sale_end: formatDateForInput(item.ps_time_sale_end),
       ps_status: item.ps_status || "active",
       ps_option_1: item.ps_option_1 || "",
       ps_option_2: item.ps_option_2 || "",
@@ -757,8 +769,8 @@ export default function PrintSelectPage() {
                       <Label htmlFor="ps_time_sale_start">Thời gian bắt đầu bán</Label>
                       <Input 
                         id="ps_time_sale_start" 
-                        type="datetime-local"
-                        placeholder="Chọn thời gian bắt đầu" 
+                        type="date"
+                        placeholder="dd/mm/yyyy" 
                         value={formData.ps_time_sale_start}
                         onChange={(e) => setFormData({...formData, ps_time_sale_start: e.target.value})}
                       />
@@ -767,8 +779,8 @@ export default function PrintSelectPage() {
                       <Label htmlFor="ps_time_sale_end">Thời gian kết thúc bán</Label>
                       <Input 
                         id="ps_time_sale_end" 
-                        type="datetime-local"
-                        placeholder="Chọn thời gian kết thúc" 
+                        type="date"
+                        placeholder="dd/mm/yyyy" 
                         value={formData.ps_time_sale_end}
                         onChange={(e) => setFormData({...formData, ps_time_sale_end: e.target.value})}
                       />
@@ -1502,34 +1514,6 @@ export default function PrintSelectPage() {
                         </div>
                       </div>
                     </div>
-
-                    {/* Format specific info */}
-                    <div className="bg-blue-50 p-4 rounded-lg">
-                      <h4 className="font-medium text-blue-900 mb-2">
-                        Thông tin file PDF - Template {selectedPrintSize.toUpperCase()}
-                      </h4>
-                      <div className="grid grid-cols-2 gap-4 text-sm">
-                        <div>
-                          <span className="text-blue-700">Template:</span> {selectedPrintSize.toUpperCase()}
-                        </div>
-                        <div>
-                          <span className="text-blue-700">Chất lượng:</span> {selectedPrintQuality}
-                        </div>
-                        <div>
-                          <span className="text-blue-700">Ước tính dung lượng:</span>{" "}
-                          {(printingItems.length * printCopies * 0.5).toFixed(1)} MB
-                        </div>
-                        <div>
-                          <span className="text-blue-700">Có thể tìm kiếm:</span> Có
-                        </div>
-                        <div>
-                          <span className="text-blue-700">Vector graphics:</span> Có
-                        </div>
-                        <div>
-                          <span className="text-blue-700">Background image:</span> Có
-                        </div>
-                      </div>
-                    </div>
                   </div>
                 </DialogContent>
               </Dialog>
@@ -1738,8 +1722,8 @@ export default function PrintSelectPage() {
                     <Label htmlFor="edit_ps_time_sale_start">Thời gian bắt đầu bán</Label>
                     <Input 
                       id="edit_ps_time_sale_start" 
-                      type="datetime-local"
-                      placeholder="Chọn thời gian bắt đầu" 
+                      type="date"
+                      placeholder="dd/mm/yyyy" 
                       value={editFormData.ps_time_sale_start}
                       onChange={(e) => setEditFormData({...editFormData, ps_time_sale_start: e.target.value})}
                     />
@@ -1748,8 +1732,8 @@ export default function PrintSelectPage() {
                     <Label htmlFor="edit_ps_time_sale_end">Thời gian kết thúc bán</Label>
                     <Input 
                       id="edit_ps_time_sale_end" 
-                      type="datetime-local"
-                      placeholder="Chọn thời gian kết thúc" 
+                      type="date"
+                      placeholder="dd/mm/yyyy" 
                       value={editFormData.ps_time_sale_end}
                       onChange={(e) => setEditFormData({...editFormData, ps_time_sale_end: e.target.value})}
                     />
