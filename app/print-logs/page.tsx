@@ -211,7 +211,7 @@ export default function PrintLogsPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-teal-900">
-              {printStatistics?.topProducts?.[0]?.total_prints || 0}
+              {printStatistics?.topProducts?.[0]?.total_prints || 0} <span className="text-xs text-teal-600">lượt in</span>
             </div>
             <div className="text-xs text-teal-600 mt-1 truncate">
               {printStatistics?.topProducts?.[0]?.product_name || 'N/A'}

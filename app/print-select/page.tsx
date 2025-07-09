@@ -932,7 +932,7 @@ export default function PrintSelectPage() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-orange-900">{printStatistics?.topProducts?.[0]?.total_prints || 0}</div>
+            <div className="text-2xl font-bold text-orange-900">{printStatistics?.topProducts?.[0]?.total_prints || 0} <span className="text-xs text-orange-600">lượt in</span></div>
             <div className="text-xs text-orange-600 mt-1 truncate">
               {printStatistics?.topProducts?.[0]?.product_name || 'N/A'}
             </div>
@@ -1084,7 +1084,7 @@ export default function PrintSelectPage() {
                     </span>
                   </div>
                   <div className="text-xs text-muted-foreground">
-                    {item.print_numbers?.length || 0} lượt in
+                    Tổng {item.printCount || 0} lượt in
                   </div>
                 </div>
 
@@ -1213,7 +1213,7 @@ export default function PrintSelectPage() {
                     <TableCell>
                       <div className="space-y-1">
                         <div className="text-xs text-muted-foreground">
-                          {item.print_numbers?.length || 0} lượt in
+                          Tổng {item.printCount || 0} lượt in
                         </div>
                       </div>
                     </TableCell>
