@@ -2,6 +2,7 @@ export const v3Template = (data: {
   product_name: string;
   product_code: string;
   price: string;
+  price_sale: string;
   discount_percentage: string;
   country_name: string;
   print_date: string;
@@ -36,7 +37,7 @@ export const v3Template = (data: {
 <p style="position:absolute;top:117px;left:323px;white-space:nowrap" class="ft13">Běžná cena:</p>
 <p style="position:absolute;top:166px;left:13px;white-space:nowrap" class="ft14">${data.discount_percentage}</p>
 <p style="position:absolute;top:161px;left:355px;white-space:nowrap" class="ft15">${data.price}</p>
-<p style="position:absolute;top:126px;left:628px;white-space:nowrap" class="ft17">${data.print_date}</p>
+<p style="position:absolute;top:126px;left:628px;white-space:nowrap" class="ft17">${data.price_sale}</p>
 <p style="position:absolute;top:243px;left:9px;white-space:nowrap" class="ft110">EAN: ${data.product_code}</p>
 
 </div>

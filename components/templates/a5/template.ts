@@ -2,6 +2,7 @@ export const a5Template = (data: {
   product_name: string;
   product_code: string;
   price: string;
+  price_sale: string;
   discount_percentage: string;
   country_name: string;
   print_date: string;
@@ -37,7 +38,7 @@ export const a5Template = (data: {
 <p style="position:absolute;top:179px;left:472px;white-space:nowrap" class="ft14">Běžná cena:</p>
 <p style="position:absolute;top:227px;left:83px;white-space:nowrap" class="ft15">${data.discount_percentage}</p>
 <p style="position:absolute;top:224px;left:509px;white-space:nowrap" class="ft16">${data.price}</p>
-<p style="position:absolute;top:305px;left:357px;white-space:nowrap" class="ft18">${data.print_date}</p>
+<p style="position:absolute;top:305px;left:357px;white-space:nowrap" class="ft18">${data.price_sale}</p>
 
 </div>
 </body>
