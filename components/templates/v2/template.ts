@@ -4,7 +4,6 @@ export const v2Template = (data: {
   price: string;
   country_name: string;
   print_date: string;
-  price_per_100g: string;
 }) => {
   return `<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
@@ -38,7 +37,7 @@ export const v2Template = (data: {
 <p style="position:absolute;top:68px;left:347px;white-space:nowrap" class="ft14">${data.price}</p>
 <p style="position:absolute;top:51px;left:499px;white-space:nowrap" class="ft16">${data.print_date}</p>
 <p style="position:absolute;top:133px;left:183px;white-space:nowrap" class="ft111">Země původu: ${data.country_name}<br/>EAN: ${data.product_code}</p>
-<p style="position:absolute;top:155px;left:518px;white-space:nowrap" class="ft19">cena za 100g = ${data.price_per_100g} Kč</p>
+
 </div>
 </body>
 </html>`;

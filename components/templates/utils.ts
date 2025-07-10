@@ -42,16 +42,12 @@ export const prepareTemplateData = (
   product: any, 
   formatPrice: (price: number, country: string) => string
 ): TemplateData => {
-  // Tính giá trên 100g (giả sử sản phẩm 200g)
-  const pricePer100g = product.ps_price_sale ? (product.ps_price_sale / 2).toFixed(0) : '0';
-  
   return {
     product_name: product.product?.product_name || '',
     product_code: product.product?.product_code || '',
     price: formatPrice(product.product?.price, product.country?.country_name),
     country_name: product.country?.country_name || '',
-    print_date: new Date().toLocaleDateString('vi-VN'),
-    price_per_100g: pricePer100g
+    print_date: new Date().toLocaleDateString('vi-VN')
   };
 };
 

@@ -16,7 +16,6 @@ export interface TemplateData {
   price: string;
   country_name: string;
   print_date: string;
-  price_per_100g: string;
 }
 
 export const getTemplate = (format: string) => {

@@ -4,7 +4,6 @@ export const a5Template = (data: {
   price: string;
   country_name: string;
   print_date: string;
-  price_per_100g: string;
 }) => {
   return `<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
@@ -38,7 +37,7 @@ export const a5Template = (data: {
 <p style="position:absolute;top:227px;left:83px;white-space:nowrap" class="ft15">-75%</p>
 <p style="position:absolute;top:224px;left:509px;white-space:nowrap" class="ft16">${data.price}</p>
 <p style="position:absolute;top:305px;left:357px;white-space:nowrap" class="ft18">${data.print_date}</p>
-<p style="position:absolute;top:514px;left:302px;white-space:nowrap" class="ft110">cena za 100g = ${data.price_per_100g} Kč</p>
+
 </div>
 </body>
 </html>`;
