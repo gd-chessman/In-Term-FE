@@ -63,39 +63,7 @@ import {
   Loader2,
 } from "lucide-react"
 
-// Default print formats fallback
-const defaultPrintFormats = [
-  {
-    id: "pdf",
-    name: "PDF",
-    icon: "📄",
-    description: "Portable Document Format",
-    quality: ["Standard", "High", "Print"],
-  },
-  {
-    id: "png",
-    name: "PNG",
-    icon: "🖼️",
-    description: "Portable Network Graphics",
-    quality: ["72 DPI", "150 DPI", "300 DPI"],
-  },
-  {
-    id: "jpg",
-    name: "JPG",
-    icon: "📸",
-    description: "JPEG Image Format",
-    quality: ["Low", "Medium", "High", "Maximum"],
-  },
-  { id: "svg", name: "SVG", icon: "🎨", description: "Scalable Vector Graphics", quality: ["Standard", "Optimized"] },
-  { id: "eps", name: "EPS", icon: "📐", description: "Encapsulated PostScript", quality: ["Standard", "High"] },
-  {
-    id: "tiff",
-    name: "TIFF",
-    icon: "🖨️",
-    description: "Tagged Image File Format",
-    quality: ["LZW", "ZIP", "Uncompressed"],
-  },
-]
+
 
 export default function PrintSelectPage() {
   const [searchTerm, setSearchTerm] = useState("")
@@ -172,17 +140,15 @@ export default function PrintSelectPage() {
     queryFn: getPrintStatistics,
   })
 
-  // Combine templates with default formats
-  const printFormats = printTemplates.length > 0 
-    ? printTemplates.map((template: any) => ({
-        id: template.pt_id.toString(),
-        name: template.pt_title,
-        icon: "📄",
-        description: `Template cho ${template.country?.country_name}`,
-        quality: ["Standard", "High", "Print"],
-        template: template
-      }))
-    : defaultPrintFormats
+  // Create print formats from templates
+  const printFormats = printTemplates.map((template: any) => ({
+    id: template.pt_id.toString(),
+    name: template.pt_title,
+    icon: "📄",
+    description: `Template cho ${template.country?.country_name}`,
+    quality: ["Standard", "High", "Print"],
+    template: template
+  }))
 
   // Create print selection mutation
   const createMutation = useMutation({
