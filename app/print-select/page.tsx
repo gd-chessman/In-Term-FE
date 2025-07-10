@@ -212,41 +212,57 @@ export default function PrintSelectPage() {
     },
   })
 
-  // Print mutation
+  // Print mutation - In trực tiếp với máy in
   const printMutation = useMutation({
     mutationFn: async (printData: any) => {
-      // Tạo file thật dựa trên dữ liệu
       const { items, format, quality, copies } = printData
       
       // Tìm template được chọn
       const selectedTemplate = printFormats.find((f: any) => f.id === format)?.template
       
-      // Tạo nội dung file
-      let fileContent = ''
-      let fileName = `print_${new Date().toISOString().split('T')[0]}_${items.length}_items`
+      // Tạo nội dung HTML để in
+      const html = generatePDFContent(items, quality, copies, selectedTemplate);
       
-      // Nếu có template từ API hoặc format là pdf, tạo PDF
-      if (selectedTemplate || format === 'pdf') {
-        const html = generatePDFContent(items, quality, copies, selectedTemplate);
-        fileName += '.pdf';
-        await exportToPDF(html, fileName);
-        return { success: true, fileName };
-      } else {
-        // Các format khác (png, jpg, svg, eps, tiff) - tạo PDF với template mặc định
-        const html = generatePDFContent(items, quality, copies, null);
-        fileName += '.pdf';
-        await exportToPDF(html, fileName);
-        return { success: true, fileName };
+      // Tạo iframe ẩn để in
+      const printFrame = document.createElement('iframe');
+      printFrame.style.position = 'absolute';
+      printFrame.style.left = '-9999px';
+      printFrame.style.top = '-9999px';
+      printFrame.style.width = '0';
+      printFrame.style.height = '0';
+      printFrame.style.border = 'none';
+      
+      document.body.appendChild(printFrame);
+      
+      // Ghi nội dung HTML vào iframe
+      const frameDoc = printFrame.contentDocument || printFrame.contentWindow?.document;
+      if (frameDoc) {
+        frameDoc.open();
+        frameDoc.write(html);
+        frameDoc.close();
+        
+        // Đợi một chút để nội dung load xong
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        // In trực tiếp
+        printFrame.contentWindow?.print();
+        
+        // Xóa iframe sau khi in
+        setTimeout(() => {
+          document.body.removeChild(printFrame);
+        }, 2000);
       }
+      
+      return { success: true, message: 'Đã gửi lệnh in thành công' };
     },
     onSuccess: (data) => {
-      toast.success(`File đã được tạo và tải xuống: ${data.fileName}`)
+      toast.success(`Đã gửi lệnh in thành công! Vui lòng kiểm tra máy in của bạn.`)
       setIsPrintDialogOpen(false)
       setPrintProgress(0)
       setPrintingItems([])
     },
     onError: (error: any) => {
-      toast.error("Có lỗi xảy ra khi tạo file!")
+      toast.error("Có lỗi xảy ra khi gửi lệnh in!")
       setPrintProgress(0)
     },
   })
@@ -1322,21 +1338,21 @@ export default function PrintSelectPage() {
 
             {/* Thêm vào Print Dialog, sau phần Print Settings */}
             <div className="space-y-2">
-              <Label>Xem trước file sẽ tạo</Label>
+              <Label>Xem trước nội dung sẽ in</Label>
               <Dialog>
                 <DialogTrigger asChild>
                   <Button variant="outline" className="w-full">
                     <Eye className="mr-2 h-4 w-4" />
-                    Xem trước {printFormats.find((f: any) => f.id === selectedPrintFormat)?.template ? 'PDF' : selectedPrintFormat.toUpperCase()}
+                    Xem trước nội dung in
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="max-w-4xl max-h-[80vh]">
                   <DialogHeader>
                     <DialogTitle className="flex items-center">
-                      <FileText className="w-5 h-5 mr-2 text-blue-600" />
-                      Xem trước file {selectedPrintFormat.toUpperCase()}
+                      <Printer className="w-5 h-5 mr-2 text-green-600" />
+                      Xem trước nội dung in
                     </DialogTitle>
-                    <DialogDescription>Preview file sẽ được tạo với {printingItems.length} sản phẩm</DialogDescription>
+                    <DialogDescription>Preview nội dung sẽ được in với {printingItems.length} sản phẩm</DialogDescription>
                   </DialogHeader>
 
                   <div className="space-y-4">
@@ -1437,8 +1453,8 @@ export default function PrintSelectPage() {
 
           <DialogFooter className="flex justify-between">
             <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-              <FileText className="h-4 w-4" />
-              <span>Ước tính: {(printingItems.length * printCopies * 0.5).toFixed(1)} MB</span>
+              <Printer className="h-4 w-4" />
+              <span>Tổng: {printingItems.length * printCopies} trang</span>
             </div>
             <div className="flex space-x-2">
               <Button variant="outline" onClick={() => setIsPrintDialogOpen(false)}>
