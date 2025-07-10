@@ -739,7 +739,7 @@ export default function PrintSelectPage() {
                       </Select>
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="country">Quốc gia *</Label>
+                      <Label htmlFor="country">Xuất xứ *</Label>
                       <Select value={formData.ps_country_id} onValueChange={(value) => setFormData({...formData, ps_country_id: value})}>
                         <SelectTrigger>
                           <SelectValue placeholder="Chọn quốc gia" />
@@ -1138,7 +1138,7 @@ export default function PrintSelectPage() {
                     />
                   </TableHead>
                   <TableHead>Sản phẩm</TableHead>
-                  <TableHead>Quốc gia</TableHead>
+                  <TableHead>Xuất xứ</TableHead>
                   <TableHead>Giá gốc</TableHead>
                   <TableHead>Giá khuyến mãi</TableHead>
                   <TableHead>Thời gian bán</TableHead>
@@ -1609,7 +1609,7 @@ export default function PrintSelectPage() {
               <div>
                 <div className="font-semibold text-slate-800">{itemToDelete.product?.product_name}</div>
                 <div className="text-sm text-slate-600">Mã: <code className="bg-white px-1 rounded text-slate-700">{itemToDelete.product?.product_code}</code></div>
-                <div className="text-sm text-slate-600">Quốc gia: {itemToDelete.country?.country_name}</div>
+                <div className="text-sm text-slate-600">Xuất xứ: {itemToDelete.country?.country_name}</div>
                 <div className="text-sm text-slate-600">Khổ giấy: {itemToDelete.ps_type}</div>
               </div>
             </div>
@@ -1686,7 +1686,7 @@ export default function PrintSelectPage() {
                     </Select>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="edit_country">Quốc gia *</Label>
+                    <Label htmlFor="edit_country">Xuất xứ *</Label>
                     <Select 
                       value={editFormData.ps_country_id} 
                       onValueChange={(value) => setEditFormData({...editFormData, ps_country_id: value})}
