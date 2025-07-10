@@ -231,22 +231,6 @@ export default function PrintSelectPage() {
         fileName += '.pdf';
         await exportToPDF(html, fileName);
         return { success: true, fileName };
-      } else if (format === 'txt') {
-        fileContent = generateTextContent(items, quality, copies, selectedTemplate)
-        fileName += '.txt'
-        
-        // Tạo và tải xuống file text
-        const blob = new Blob([fileContent], { type: 'text/plain;charset=utf-8' })
-        const url = window.URL.createObjectURL(blob)
-        const link = document.createElement('a')
-        link.href = url
-        link.download = fileName
-        document.body.appendChild(link)
-        link.click()
-        document.body.removeChild(link)
-        window.URL.revokeObjectURL(url)
-        
-        return { success: true, fileName }
       } else {
         // Các format khác (png, jpg, svg, eps, tiff) - tạo PDF với template mặc định
         const html = generatePDFContent(items, quality, copies, null);
@@ -352,71 +336,7 @@ export default function PrintSelectPage() {
     return String.fromCodePoint(...codePoints);
   }
 
-  const generateTextContent = (items: any[], quality: string, copies: number, template?: any) => {
-    let content = ''
-    
-    if (template) {
-      // Sử dụng template từ API
-      content += `${template.pt_title}\n`
-      content += `Ngày tạo: ${new Date().toLocaleDateString('vi-VN')}\n`
-      content += `Chất lượng: ${quality}\n`
-      content += `Số bản in: ${copies}\n`
-      content += `Tổng số sản phẩm: ${items.length}\n`
-      content += `\n${'='.repeat(50)}\n\n`
 
-      items.forEach((item, index) => {
-        // Thay thế các biến trong template
-        let itemContent = template.pt_content
-          .replace(/{product_name}/g, item.product?.product_name || '')
-          .replace(/{product_code}/g, item.product?.product_code || '')
-          .replace(/{price}/g, formatPrice(item.ps_price_sale, item.country?.country_name))
-          .replace(/{category_name}/g, item.product?.category?.category_name || '')
-          .replace(/{print_date}/g, new Date().toLocaleDateString('vi-VN'))
-          .replace(/{country_name}/g, item.country?.country_name || '')
-          .replace(/{ps_num}/g, item.ps_num?.toString() || '')
-          .replace(/{ps_type}/g, item.ps_type || '')
-        
-        content += `SẢN PHẨM ${index + 1}\n`
-        content += itemContent
-        content += `\n${'-'.repeat(30)}\n\n`
-      })
-
-      if (template.pt_footer) {
-        content += `\n${template.pt_footer}\n`
-      }
-    } else {
-      // Fallback to default format
-      content += `THÔNG TIN IN SẢN PHẨM\n`
-      content += `Ngày tạo: ${new Date().toLocaleDateString('vi-VN')}\n`
-      content += `Chất lượng: ${quality}\n`
-      content += `Số bản in: ${copies}\n`
-      content += `Tổng số sản phẩm: ${items.length}\n`
-      content += `\n${'='.repeat(50)}\n\n`
-
-      items.forEach((item, index) => {
-        content += `SẢN PHẨM ${index + 1}\n`
-        content += `Tên sản phẩm: ${item.product?.product_name}\n`
-        content += `Mã sản phẩm: ${item.product?.product_code}\n`
-        content += `Quốc gia: ${item.country?.country_name}\n`
-        content += `Giá bán: ${formatPrice(item.ps_price_sale, item.country?.country_name)}\n`
-        content += `Khổ giấy: ${item.ps_type}\n`
-        content += `Số lượng: ${item.ps_num}\n`
-        content += `Trạng thái: ${item.ps_status}\n`
-        if (item.templates?.ps_option_1) {
-          content += `Tùy chọn 1: ${item.templates.ps_option_1}\n`
-        }
-        if (item.templates?.ps_option_2) {
-          content += `Tùy chọn 2: ${item.templates.ps_option_2}\n`
-        }
-        if (item.templates?.ps_option_3) {
-          content += `Tùy chọn 3: ${item.templates.ps_option_3}\n`
-        }
-        content += `\n${'-'.repeat(30)}\n\n`
-      })
-    }
-
-    return content
-  }
 
   const generatePDFContent = (items: any[], quality: string, copies: number, template?: any) => {
     // Sử dụng template system mới
@@ -1294,15 +1214,7 @@ export default function PrintSelectPage() {
                         </div>
                       </SelectItem>
                     ))}
-                    <SelectItem value="txt">
-                      <div className="flex items-center space-x-2">
-                        <span>📄</span>
-                        <div>
-                          <div className="font-medium">TXT</div>
-                          <div className="text-xs text-muted-foreground">Plain Text Format</div>
-                        </div>
-                      </div>
-                    </SelectItem>
+
                   </SelectContent>
                 </Select>
               </div>
