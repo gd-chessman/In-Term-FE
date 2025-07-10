@@ -37,10 +37,7 @@ export const a5Template = (data: {
 <p style="position:absolute;top:179px;left:472px;white-space:nowrap" class="ft14">Běžná cena:</p>
 <p style="position:absolute;top:227px;left:83px;white-space:nowrap" class="ft15">-75%</p>
 <p style="position:absolute;top:224px;left:509px;white-space:nowrap" class="ft16">${data.price}</p>
-<p style="position:absolute;top:218px;left:634px;white-space:nowrap" class="ft17">90</p>
 <p style="position:absolute;top:305px;left:357px;white-space:nowrap" class="ft18">${data.print_date}</p>
-<p style="position:absolute;top:305px;left:604px;white-space:nowrap" class="ft19">90</p>
-<p style="position:absolute;top:363px;left:604px;white-space:nowrap" class="ft17">Kč</p>
 <p style="position:absolute;top:514px;left:302px;white-space:nowrap" class="ft110">cena za 100g = ${data.price_per_100g} Kč</p>
 </div>
 </body>

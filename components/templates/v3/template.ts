@@ -36,10 +36,7 @@ export const v3Template = (data: {
 <p style="position:absolute;top:117px;left:323px;white-space:nowrap" class="ft13">Běžná cena:</p>
 <p style="position:absolute;top:166px;left:13px;white-space:nowrap" class="ft14">-75%</p>
 <p style="position:absolute;top:161px;left:355px;white-space:nowrap" class="ft15">${data.price}</p>
-<p style="position:absolute;top:155px;left:468px;white-space:nowrap" class="ft16">90</p>
 <p style="position:absolute;top:126px;left:628px;white-space:nowrap" class="ft17">${data.print_date}</p>
-<p style="position:absolute;top:140px;left:795px;white-space:nowrap" class="ft18">90</p>
-<p style="position:absolute;top:198px;left:795px;white-space:nowrap" class="ft19">Kč</p>
 <p style="position:absolute;top:243px;left:9px;white-space:nowrap" class="ft110">EAN: ${data.product_code}</p>
 <p style="position:absolute;top:244px;left:719px;white-space:nowrap" class="ft110">cena za 100g = ${data.price_per_100g} Kč</p>
 </div>

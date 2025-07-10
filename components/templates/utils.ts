@@ -48,7 +48,7 @@ export const prepareTemplateData = (
   return {
     product_name: product.product?.product_name || '',
     product_code: product.product?.product_code || '',
-    price: formatPrice(product.ps_price_sale, product.country?.country_name),
+    price: formatPrice(product.product?.price, product.country?.country_name),
     country_name: product.country?.country_name || '',
     print_date: new Date().toLocaleDateString('vi-VN'),
     price_per_100g: pricePer100g

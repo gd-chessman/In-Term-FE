@@ -36,10 +36,7 @@ export const v2Template = (data: {
 <p style="position:absolute;top:28px;left:340px;white-space:nowrap" class="ft12">Běžná cena:</p>
 <p style="position:absolute;top:68px;left:177px;white-space:nowrap" class="ft13">-75%</p>
 <p style="position:absolute;top:68px;left:347px;white-space:nowrap" class="ft14">${data.price}</p>
-<p style="position:absolute;top:60px;left:425px;white-space:nowrap" class="ft15">90</p>
 <p style="position:absolute;top:51px;left:499px;white-space:nowrap" class="ft16">${data.print_date}</p>
-<p style="position:absolute;top:60px;left:608px;white-space:nowrap" class="ft17">90</p>
-<p style="position:absolute;top:98px;left:608px;white-space:nowrap" class="ft18">Kč</p>
 <p style="position:absolute;top:133px;left:183px;white-space:nowrap" class="ft111">Země původu: ${data.country_name}<br/>EAN: ${data.product_code}</p>
 <p style="position:absolute;top:155px;left:518px;white-space:nowrap" class="ft19">cena za 100g = ${data.price_per_100g} Kč</p>
 </div>
