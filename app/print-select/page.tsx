@@ -577,7 +577,7 @@ export default function PrintSelectPage() {
     setEditFormData({
       ps_product_id: item.ps_product_id?.toString() || "",
       ps_country_id: item.ps_country_id?.toString() || "",
-      ps_price_sale: item.ps_price_sale?.toString() || "",
+      ps_price_sale: Number(item.ps_price_sale).toString() || "",
       ps_time_sale_start: formatDateForInput(item.ps_time_sale_start),
       ps_time_sale_end: formatDateForInput(item.ps_time_sale_end),
       ps_status: item.ps_status || "active",
@@ -748,11 +748,8 @@ export default function PrintSelectPage() {
                           {countries.map((country: any) => (
                             <SelectItem key={country.country_id} value={country.country_id.toString()}>
                               <div className="flex items-center space-x-2">
-                                <span className="text-lg">{country.country_flag}</span>
+                                <span>{getCountryFlag(country.country_code)}</span>
                                 <span>{country.country_name}</span>
-                                <Badge variant="outline" className="text-xs">
-                                  {country.currency}
-                                </Badge>
                               </div>
                             </SelectItem>
                           ))}
@@ -761,11 +758,11 @@ export default function PrintSelectPage() {
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="price_sale">Giá bán (tùy chọn)</Label>
+                    <Label htmlFor="price_sale">Giá khuyến mãi (tùy chọn)</Label>
                     <Input 
                       id="price_sale" 
                       type="number" 
-                      placeholder="Nhập giá bán (để trống để dùng giá mặc định)" 
+                      placeholder="Nhập giá khuyến mãi (để trống để dùng giá mặc định)" 
                       value={formData.ps_price_sale}
                       onChange={(e) => setFormData({...formData, ps_price_sale: e.target.value})}
                     />
@@ -969,7 +966,7 @@ export default function PrintSelectPage() {
                   {countries.map((country: any) => (
                     <SelectItem key={country.country_id} value={country.country_name}>
                       <div className="flex items-center space-x-2">
-                        <span className="text-lg">{country.country_flag}</span>
+                        <span className="text-lg">{getCountryFlag(country.country_code)}</span>
                         <span>{country.country_name}</span>
                       </div>
                     </SelectItem>
@@ -1142,7 +1139,8 @@ export default function PrintSelectPage() {
                   </TableHead>
                   <TableHead>Sản phẩm</TableHead>
                   <TableHead>Quốc gia</TableHead>
-                  <TableHead>Giá bán</TableHead>
+                  <TableHead>Giá gốc</TableHead>
+                  <TableHead>Giá khuyến mãi</TableHead>
                   <TableHead>Thời gian bán</TableHead>
                   <TableHead>Tùy chọn</TableHead>
                   <TableHead>Lượt in</TableHead>
@@ -1179,6 +1177,9 @@ export default function PrintSelectPage() {
                         <span className="text-xl">{item.country?.country_code ? getCountryFlag(item.country.country_code) : "🌍"}</span>
                         <span>{item.country?.country_name}</span>
                       </div>
+                    </TableCell>
+                    <TableCell className="font-medium text-gray-600">
+                      {formatPrice(item.product?.price, item.country?.country_name)}
                     </TableCell>
                     <TableCell className="font-medium text-green-600">
                       {formatPrice(item.ps_price_sale, item.country?.country_name)}
@@ -1697,11 +1698,8 @@ export default function PrintSelectPage() {
                         {countries.map((country: any) => (
                           <SelectItem key={country.country_id} value={country.country_id.toString()}>
                             <div className="flex items-center space-x-2">
-                              <span className="text-lg">{country.country_flag}</span>
+                              <span className="text-lg">{getCountryFlag(country.country_code)}</span>
                               <span>{country.country_name}</span>
-                              <Badge variant="outline" className="text-xs">
-                                {country.currency}
-                              </Badge>
                             </div>
                           </SelectItem>
                         ))}
@@ -1710,7 +1708,7 @@ export default function PrintSelectPage() {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="edit_price_sale">Giá bán (tùy chọn)</Label>
+                  <Label htmlFor="edit_price_sale">Giá khuyến mãi (tùy chọn)</Label>
                   <Input 
                     id="edit_price_sale" 
                     type="number" 
