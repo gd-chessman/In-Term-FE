@@ -2,6 +2,7 @@ export const a4Template = (data: {
   product_name: string;
   product_code: string;
   price: string;
+  discount_percentage: string;
   country_name: string;
   print_date: string;
 }) => {
@@ -34,7 +35,7 @@ export const a4Template = (data: {
 <p style="position:absolute;top:406px;left:26px;white-space:nowrap" class="ft12">Země původu: ${data.country_name}</p>
 <p style="position:absolute;top:468px;left:26px;white-space:nowrap" class="ft13">EAN: ${data.product_code}</p>
 <p style="position:absolute;top:464px;left:387px;white-space:nowrap" class="ft12">Běžná cena:</p>
-<p style="position:absolute;top:529px;left:33px;white-space:nowrap" class="ft14">-75%</p>
+<p style="position:absolute;top:529px;left:33px;white-space:nowrap" class="ft14">${data.discount_percentage}</p>
 <p style="position:absolute;top:530px;left:478px;white-space:nowrap" class="ft15">${data.price}</p>
 <p style="position:absolute;top:676px;left:260px;white-space:nowrap" class="ft17">${data.print_date}</p>
 

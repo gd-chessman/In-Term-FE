@@ -14,6 +14,8 @@ export interface TemplateData {
   product_name: string;
   product_code: string;
   price: string;
+  price_sale: string;
+  discount_percentage: string;
   country_name: string;
   print_date: string;
 }

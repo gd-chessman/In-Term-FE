@@ -2,6 +2,7 @@ export const v2Template = (data: {
   product_name: string;
   product_code: string;
   price: string;
+  discount_percentage: string;
   country_name: string;
   print_date: string;
 }) => {
@@ -33,7 +34,7 @@ export const v2Template = (data: {
 <p style="position:absolute;top:87px;left:45px;white-space:nowrap" class="ft10">Cena</p>
 <p style="position:absolute;top:0px;left:183px;white-space:nowrap" class="ft11">${data.product_name}</p>
 <p style="position:absolute;top:28px;left:340px;white-space:nowrap" class="ft12">Běžná cena:</p>
-<p style="position:absolute;top:68px;left:177px;white-space:nowrap" class="ft13">-75%</p>
+<p style="position:absolute;top:68px;left:177px;white-space:nowrap" class="ft13">${data.discount_percentage}</p>
 <p style="position:absolute;top:68px;left:347px;white-space:nowrap" class="ft14">${data.price}</p>
 <p style="position:absolute;top:51px;left:499px;white-space:nowrap" class="ft16">${data.print_date}</p>
 <p style="position:absolute;top:133px;left:183px;white-space:nowrap" class="ft111">Země původu: ${data.country_name}<br/>EAN: ${data.product_code}</p>

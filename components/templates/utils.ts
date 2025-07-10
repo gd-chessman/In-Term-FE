@@ -42,10 +42,13 @@ export const prepareTemplateData = (
   product: any, 
   formatPrice: (price: number, country: string) => string
 ): TemplateData => {
+  console.log(product)
   return {
     product_name: product.product?.product_name || '',
     product_code: product.product?.product_code || '',
     price: formatPrice(product.product?.price, product.country?.country_name),
+    price_sale: formatPrice(product?.ps_price_sale, product.country?.country_name),
+    discount_percentage:  product.product?.price && product?.ps_price_sale ? "-" + Math.round(((product.product.price - product.ps_price_sale) / product.product.price) * 100) + '%' : '',
     country_name: product.country?.country_name || '',
     print_date: new Date().toLocaleDateString('vi-VN')
   };
