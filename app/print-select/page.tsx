@@ -1329,7 +1329,6 @@ export default function PrintSelectPage() {
               <div className="space-y-2">
                 <Label>Thông tin in</Label>
                 <div className="text-sm text-muted-foreground">
-                  <div>Định dạng: PDF</div>
                   <div>Template: {selectedPrintSize.toUpperCase()}</div>
                   <div>Chất lượng: {selectedPrintQuality}</div>
                 </div>
