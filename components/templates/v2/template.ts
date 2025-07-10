@@ -5,6 +5,7 @@ export const v2Template = (data: {
   price_sale: string;
   discount_percentage: string;
   country_name: string;
+  country_code: string;
   print_date: string;
 }) => {
   return `<!DOCTYPE html>
@@ -38,7 +39,7 @@ export const v2Template = (data: {
 <p style="position:absolute;top:68px;left:177px;white-space:nowrap" class="ft13">${data.discount_percentage}</p>
 <p style="position:absolute;top:68px;left:347px;white-space:nowrap" class="ft14">${data.price}</p>
 <p style="position:absolute;top:51px;left:499px;white-space:nowrap" class="ft16">${data.price_sale}</p>
-<p style="position:absolute;top:133px;left:183px;white-space:nowrap" class="ft111">Země původu: ${data.country_name}<br/>EAN: ${data.product_code}</p>
+<p style="position:absolute;top:133px;left:183px;white-space:nowrap" class="ft111">Země původu: ${data.country_code} ${data.country_name}<br/>EAN: ${data.product_code}</p>
 
 </div>
 </body>

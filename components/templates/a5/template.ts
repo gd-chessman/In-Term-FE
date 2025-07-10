@@ -5,6 +5,7 @@ export const a5Template = (data: {
   price_sale: string;
   discount_percentage: string;
   country_name: string;
+  country_code: string;
   print_date: string;
 }) => {
   return `<!DOCTYPE html>
@@ -33,7 +34,7 @@ export const a5Template = (data: {
 <img width="892" height="1262" src="/a5.png" alt="background image"/>
 <p style="position:absolute;top:30px;left:275px;white-space:nowrap" class="ft10">Fikko Cena</p>
 <p style="position:absolute;top:111px;left:29px;white-space:nowrap" class="ft11">${data.product_name}</p>
-<p style="position:absolute;top:160px;left:26px;white-space:nowrap" class="ft12">Země původu: ${data.country_name}</p>
+<p style="position:absolute;top:160px;left:26px;white-space:nowrap" class="ft12">Země původu: ${data.country_code} ${data.country_name}</p>
 <p style="position:absolute;top:192px;left:26px;white-space:nowrap" class="ft13">EAN: ${data.product_code}</p>
 <p style="position:absolute;top:179px;left:472px;white-space:nowrap" class="ft14">Běžná cena:</p>
 <p style="position:absolute;top:227px;left:83px;white-space:nowrap" class="ft15">${data.discount_percentage}</p>

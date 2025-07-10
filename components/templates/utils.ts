@@ -50,6 +50,7 @@ export const prepareTemplateData = (
     price_sale: formatPrice(product?.ps_price_sale, product.country?.country_name),
     discount_percentage:  product.product?.price && product?.ps_price_sale ? "-" + Math.round(((product.product.price - product.ps_price_sale) / product.product.price) * 100) + '%' : '',
     country_name: product.country?.country_name || '',
+    country_code: getCountryFlag(product.country?.country_code),
     print_date: new Date().toLocaleDateString('vi-VN')
   };
 };
@@ -88,3 +89,14 @@ export const getFormatInfo = (format: string) => {
   
   return formatInfo[format.toLowerCase()] || formatInfo.a4;
 }; 
+
+const getCountryFlag = (countryCode: string) => {
+  if (!countryCode || typeof countryCode !== 'string') {
+    return "🌍"
+  }
+  const codePoints = countryCode
+    .toUpperCase()
+    .split('')
+    .map(char => 127397 + char.charCodeAt(0));
+  return String.fromCodePoint(...codePoints);
+}

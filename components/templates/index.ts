@@ -17,6 +17,7 @@ export interface TemplateData {
   price_sale: string;
   discount_percentage: string;
   country_name: string;
+  country_code: string;
   print_date: string;
 }
 
