@@ -22,7 +22,7 @@ export function ClientLayout({ children }: ClientLayoutProps) {
       new QueryClient({
         defaultOptions: {
           queries: {
-            refetchOnMount: false,
+            refetchOnMount: true,
           },
         },
       })
