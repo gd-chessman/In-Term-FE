@@ -497,6 +497,12 @@ export default function PrintSelectPage() {
   const totalItems = printSelections.length
 
   const handlePrintSingle = (item: any) => {
+    // Kiểm tra trạng thái sản phẩm
+    if (item.ps_status !== "active") {
+      toast.error(`Không thể in sản phẩm "${item.product?.product_name}" vì trạng thái hiện tại là ${item.ps_status === "inactive" ? "Tạm dừng" : item.ps_status}`)
+      return
+    }
+    
     setPrintingItems([item.ps_id])
     // Lấy số lượng in từ cấu hình theo khổ giấy được chọn
     const printNum = item.printNums?.find((pn: any) => pn.pn_type === selectedPrintSize)?.pn_num || 1
@@ -506,6 +512,17 @@ export default function PrintSelectPage() {
 
   const handlePrintSelected = () => {
     if (selectedItems.length === 0) return
+    
+    // Kiểm tra trạng thái của tất cả sản phẩm được chọn
+    const selectedItemsData = printSelections.filter((item: any) => selectedItems.includes(item.ps_id))
+    const inactiveItems = selectedItemsData.filter((item: any) => item.ps_status !== "active")
+    
+    if (inactiveItems.length > 0) {
+      const inactiveNames = inactiveItems.map((item: any) => item.product?.product_name).join(", ")
+      toast.error(`Không thể in các sản phẩm sau vì trạng thái không hoạt động: ${inactiveNames}`)
+      return
+    }
+    
     setPrintingItems(selectedItems)
     // Lấy số lượng in từ cấu hình của sản phẩm đầu tiên được chọn
     const firstSelectedItem = printSelections.find((item: any) => selectedItems.includes(item.ps_id))
@@ -515,6 +532,16 @@ export default function PrintSelectPage() {
   }
 
   const handlePrintAll = () => {
+    // Kiểm tra trạng thái của tất cả sản phẩm được lọc
+    const activeItems = filteredItems.filter((item: any) => item.ps_status === "active")
+    const inactiveItems = filteredItems.filter((item: any) => item.ps_status !== "active")
+    
+    if (inactiveItems.length > 0) {
+      const inactiveNames = inactiveItems.map((item: any) => item.product?.product_name).join(", ")
+      toast.error(`Không thể in các sản phẩm sau vì trạng thái không hoạt động: ${inactiveNames}`)
+      return
+    }
+    
     setPrintingItems(filteredItems.map((item: any) => item.ps_id))
     // Tính tổng số lượng in thực tế của tất cả sản phẩm
     const totalCopies = filteredItems.reduce((total: number, item: any) => {
@@ -767,10 +794,11 @@ export default function PrintSelectPage() {
           <Button
             variant="outline"
             onClick={handlePrintAll}
-            className="border-green-200 text-green-600 hover:bg-green-50 w-full sm:w-auto"
+            disabled={filteredItems.filter((item: any) => item.ps_status === "active").length === 0}
+            className="border-green-200 text-green-600 hover:bg-green-50 w-full sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Printer className="mr-2 h-4 w-4" />
-            In tất cả ({filteredItems.length})
+            In tất cả ({filteredItems.filter((item: any) => item.ps_status === "active").length}/{filteredItems.length})
           </Button>
           <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
             <DialogTrigger asChild>
@@ -929,10 +957,17 @@ export default function PrintSelectPage() {
           {selectedItems.length > 0 && (
             <Button
               onClick={handlePrintSelected}
-              className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 w-full sm:w-auto"
+              disabled={selectedItems.filter((id: number) => {
+                const item = printSelections.find((item: any) => item.ps_id === id)
+                return item?.ps_status !== "active"
+              }).length > 0}
+              className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 w-full sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Printer className="mr-2 h-4 w-4" />
-              In đã chọn ({selectedItems.length})
+              In đã chọn ({selectedItems.filter((id: number) => {
+                const item = printSelections.find((item: any) => item.ps_id === id)
+                return item?.ps_status === "active"
+              }).length}/{selectedItems.length})
             </Button>
           )}
         </div>
@@ -1099,9 +1134,13 @@ export default function PrintSelectPage() {
                         <Eye className="mr-2 h-4 w-4" />
                         Xem chi tiết
                       </DropdownMenuItem> */}
-                      <DropdownMenuItem onClick={() => handlePrintSingle(item)}>
+                      <DropdownMenuItem 
+                        onClick={() => handlePrintSingle(item)}
+                        disabled={item.ps_status !== "active"}
+                        className={item.ps_status !== "active" ? "opacity-50 cursor-not-allowed" : ""}
+                      >
                         <Printer className="mr-2 h-4 w-4" />
-                        In ngay
+                        {item.ps_status === "active" ? "In ngay" : "Không thể in (Tạm dừng)"}
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => handleEditItem(item)}>
                         <Edit className="mr-2 h-4 w-4" />
@@ -1421,9 +1460,13 @@ export default function PrintSelectPage() {
                             <Eye className="mr-2 h-4 w-4" />
                             Xem chi tiết
                           </DropdownMenuItem> */}
-                          <DropdownMenuItem onClick={() => handlePrintSingle(item)}>
+                          <DropdownMenuItem 
+                            onClick={() => handlePrintSingle(item)}
+                            disabled={item.ps_status !== "active"}
+                            className={item.ps_status !== "active" ? "opacity-50 cursor-not-allowed" : ""}
+                          >
                             <Printer className="mr-2 h-4 w-4" />
-                            In ngay
+                            {item.ps_status === "active" ? "In ngay" : "Không thể in (Tạm dừng)"}
                           </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => handleEditItem(item)}>
                             <Edit className="mr-2 h-4 w-4" />
@@ -1464,6 +1507,28 @@ export default function PrintSelectPage() {
             {/* Print Items Preview */}
             <div className="space-y-3">
               <Label className="text-sm font-medium">Sản phẩm sẽ in:</Label>
+              
+              {/* Warning for inactive items */}
+              {(() => {
+                const itemsToPrint = printSelections.filter((item: any) => printingItems.includes(item.ps_id))
+                const inactiveItems = itemsToPrint.filter((item: any) => item.ps_status !== "active")
+                if (inactiveItems.length > 0) {
+                  return (
+                    <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+                      <div className="flex items-center space-x-2">
+                        <span className="text-yellow-600">⚠️</span>
+                        <span className="text-sm font-medium text-yellow-800">
+                          Cảnh báo: {inactiveItems.length} sản phẩm có trạng thái không hoạt động
+                        </span>
+                      </div>
+                      <div className="text-xs text-yellow-700 mt-1">
+                        Chỉ sản phẩm có trạng thái "Hoạt động" mới được in
+                      </div>
+                    </div>
+                  )
+                }
+                return null
+              })()}
               <div className="max-h-32 overflow-y-auto space-y-2 bg-gray-50 p-3 rounded-lg">
                 {printSelections
                   .filter((item: any) => printingItems.includes(item.ps_id))
@@ -1473,6 +1538,11 @@ export default function PrintSelectPage() {
                         <span className="text-lg">{item.country?.country_code ? getCountryFlag(item.country.country_code) : "🌍"}</span>
                         <span className="font-medium">{item.product?.product_name}</span>
                         <code className="bg-white px-2 py-1 rounded text-xs">{item.product?.product_code}</code>
+                        {item.ps_status !== "active" && (
+                          <Badge variant="destructive" className="text-xs">
+                            Tạm dừng
+                          </Badge>
+                        )}
                       </div>
                       <div className="flex items-center space-x-2">
                         <Badge variant="secondary" className="text-xs">
@@ -1780,7 +1850,10 @@ export default function PrintSelectPage() {
               </Button>
               <Button
                 onClick={executePrint}
-                disabled={printMutation.isPending}
+                disabled={printMutation.isPending || (() => {
+                  const itemsToPrint = printSelections.filter((item: any) => printingItems.includes(item.ps_id))
+                  return itemsToPrint.some((item: any) => item.ps_status !== "active")
+                })()}
                 className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {printMutation.isPending ? (
