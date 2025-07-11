@@ -52,10 +52,10 @@ export const prepareTemplateData = (
     country_name: product.country?.country_name || '',
     country_code: getCountryFlag(product.country?.country_code),
     print_date: new Date().toLocaleDateString('vi-VN'),
-    pt_brand: product.templates?.pt_brand || '',
-    pt_origin_country: product.templates?.pt_origin_country || '',
-    pt_product_code: product.templates?.pt_product_code || '',
-    pt_original_price: product.templates?.pt_original_price || ''
+    pt_brand: product.templates?.pt_brand || 'Fikko Cena',
+    pt_origin_country: product.templates?.pt_origin_country || 'Země původu',
+    pt_product_code: product.templates?.pt_product_code || 'EAN',
+    pt_original_price: product.templates?.pt_original_price || 'Běžná cena'
   };
 };
 
