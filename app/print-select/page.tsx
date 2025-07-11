@@ -1068,9 +1068,6 @@ export default function PrintSelectPage() {
                         <div className="font-medium">{item.product?.product_name}</div>
                         <div className="flex items-center space-x-2">
                           <code className="bg-muted px-2 py-1 rounded text-xs">{item.product?.product_code}</code>
-                          <Badge variant="outline" className="text-xs">
-                            {item.product?.category?.category_name}
-                          </Badge>
                         </div>
                       </div>
                     </TableCell>
