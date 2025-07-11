@@ -397,19 +397,28 @@ export default function PrintSelectPage() {
     console.log('Debug - generatePDFContent copies:', copies)
     console.log('Debug - generatePDFContent items length:', items.length)
     
-    // Sử dụng template system mới
-    const templateData = items.map(item => prepareTemplateData(item, formatPrice))
-    
-    // Tạo nhiều bản in theo số lượng copies
+    // Tạo nội dung HTML với số bản in đúng cho từng sản phẩm
     let htmlContent = ''
-    for (let i = 0; i < copies; i++) {
-      console.log('Debug - generating copy:', i + 1, 'of', copies)
-      htmlContent += generateMultipleProductsHTML(selectedPrintSize, templateData)
-      // Thêm page break giữa các bản in (trừ bản cuối)
-      if (i < copies - 1) {
-        htmlContent += '<div style="page-break-after: always;"></div>'
+    
+    items.forEach((item, itemIndex) => {
+      // Lấy số lượng in cho sản phẩm này
+      const itemCopies = item.printNums?.find((pn: any) => pn.pn_type === selectedPrintSize)?.pn_num || 1
+      console.log(`Debug - item ${itemIndex + 1} has ${itemCopies} copies`)
+      
+      // Tạo template data cho sản phẩm này
+      const templateData = prepareTemplateData(item, formatPrice)
+      
+      // Tạo nhiều bản in cho sản phẩm này
+      for (let copyIndex = 0; copyIndex < itemCopies; copyIndex++) {
+        console.log(`Debug - generating item ${itemIndex + 1}, copy ${copyIndex + 1}/${itemCopies}`)
+        htmlContent += generateMultipleProductsHTML(selectedPrintSize, [templateData])
+        
+        // Thêm page break giữa các bản in (trừ bản cuối của sản phẩm cuối)
+        if (copyIndex < itemCopies - 1 || itemIndex < items.length - 1) {
+          htmlContent += '<div style="page-break-after: always;"></div>'
+        }
       }
-    }
+    })
     
     console.log('Debug - total HTML length:', htmlContent.length)
     return htmlContent
