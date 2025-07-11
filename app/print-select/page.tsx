@@ -760,10 +760,9 @@ export default function PrintSelectPage() {
                 <DialogDescription>Chọn sản phẩm và cấu hình thông tin in ấn</DialogDescription>
               </DialogHeader>
               <Tabs defaultValue="basic" className="w-full">
-                <TabsList className="grid w-full grid-cols-3">
+                <TabsList className="grid w-full grid-cols-2">
                   <TabsTrigger value="basic">Thông tin cơ bản</TabsTrigger>
                   <TabsTrigger value="config">Cấu hình in</TabsTrigger>
-                  <TabsTrigger value="preview">Xem trước</TabsTrigger>
                 </TabsList>
                 <TabsContent value="basic" className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
@@ -878,14 +877,6 @@ export default function PrintSelectPage() {
                       value={formData.ps_option_3}
                       onChange={(e) => setFormData({...formData, ps_option_3: e.target.value})}
                     />
-                  </div>
-                </TabsContent>
-                <TabsContent value="preview" className="space-y-4">
-                  <div className="bg-muted/50 rounded-lg p-4 space-y-2">
-                    <h4 className="font-medium">Xem trước thông tin sản phẩm</h4>
-                    <div className="text-sm text-muted-foreground">
-                      Thông tin sản phẩm sẽ được hiển thị ở đây sau khi bạn điền đầy đủ các trường bên trên.
-                    </div>
                   </div>
                 </TabsContent>
               </Tabs>
@@ -1820,10 +1811,9 @@ export default function PrintSelectPage() {
           </DialogHeader>
           <form onSubmit={handleUpdateSubmit}>
             <Tabs defaultValue="basic" className="w-full">
-              <TabsList className="grid w-full grid-cols-3">
+              <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="basic">Thông tin cơ bản</TabsTrigger>
                 <TabsTrigger value="config">Cấu hình in</TabsTrigger>
-                <TabsTrigger value="preview">Xem trước</TabsTrigger>
               </TabsList>
               <TabsContent value="basic" className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
@@ -1947,14 +1937,6 @@ export default function PrintSelectPage() {
                     value={editFormData.ps_option_3}
                     onChange={(e) => setEditFormData({...editFormData, ps_option_3: e.target.value})}
                   />
-                </div>
-              </TabsContent>
-              <TabsContent value="preview" className="space-y-4">
-                <div className="bg-muted/50 rounded-lg p-4 space-y-2">
-                  <h4 className="font-medium">Xem trước thông tin sản phẩm</h4>
-                  <div className="text-sm text-muted-foreground">
-                    Thông tin sản phẩm sẽ được hiển thị ở đây sau khi bạn điền đầy đủ các trường bên trên.
-                  </div>
                 </div>
               </TabsContent>
             </Tabs>
