@@ -51,7 +51,11 @@ export const prepareTemplateData = (
     discount_percentage:  product.product?.price && product?.ps_price_sale ? "-" + Math.round(((product.product.price - product.ps_price_sale) / product.product.price) * 100) + '%' : '',
     country_name: product.country?.country_name || '',
     country_code: getCountryFlag(product.country?.country_code),
-    print_date: new Date().toLocaleDateString('vi-VN')
+    print_date: new Date().toLocaleDateString('vi-VN'),
+    pt_brand: product.templates?.pt_brand || '',
+    pt_origin_country: product.templates?.pt_origin_country || '',
+    pt_product_code: product.templates?.pt_product_code || '',
+    pt_original_price: product.templates?.pt_original_price || ''
   };
 };
 

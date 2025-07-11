@@ -19,6 +19,10 @@ export interface TemplateData {
   country_name: string;
   country_code: string;
   print_date: string;
+  pt_brand: string;
+  pt_origin_country: string;
+  pt_product_code: string;
+  pt_original_price: string;
 }
 
 export const getTemplate = (format: string) => {

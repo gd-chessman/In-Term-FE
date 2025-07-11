@@ -7,6 +7,10 @@ export const v1Template = (data: {
   country_name: string;
   country_code: string;
   print_date: string;
+  pt_brand: string;
+  pt_origin_country: string;
+  pt_product_code: string;
+  pt_original_price: string;
 }) => {
   return `<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
@@ -32,14 +36,13 @@ export const v1Template = (data: {
 <body bgcolor="#A0A0A0" vlink="blue" link="blue">
 <div id="page1-div" style="position:relative;width:892px;height:1262px;">
 <img width="892" height="1262" src="/v1.png" alt="background image"/>
-<p style="position:absolute;top:11px;left:55px;white-space:nowrap" class="ft10">Fikko</p>
-<p style="position:absolute;top:68px;left:62px;white-space:nowrap" class="ft10">Cena</p>
+<p style="position:absolute;top:11px;left:55px;white-space:nowrap" class="ft10">${data.pt_brand}</p>
 <p style="position:absolute;top:7px;left:268px;white-space:nowrap" class="ft11">${data.product_name}</p>
-<p style="position:absolute;top:31px;left:493px;white-space:nowrap" class="ft12">Běžná cena:</p>
+<p style="position:absolute;top:31px;left:493px;white-space:nowrap" class="ft12">${data.pt_original_price}:</p>
 <p style="position:absolute;top:64px;left:272px;white-space:nowrap" class="ft13">${data.discount_percentage}</p>
 <p style="position:absolute;top:68px;left:497px;white-space:nowrap" class="ft14">${data.price}</p>
 <p style="position:absolute;top:47px;left:704px;white-space:nowrap" class="ft16">${data.price_sale}</p>
-<p style="position:absolute;top:131px;left:268px;white-space:nowrap" class="ft111">Země původu: ${data.country_code} ${data.country_name}<br/>EAN: ${data.product_code}</p>
+<p style="position:absolute;top:131px;left:268px;white-space:nowrap" class="ft111">${data.pt_origin_country}: ${data.country_code} ${data.country_name}<br/>${data.pt_product_code}: ${data.product_code}</p>
 
 </div>
 </body>

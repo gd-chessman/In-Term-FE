@@ -7,6 +7,10 @@ export const a4Template = (data: {
   country_name: string;
   country_code: string;
   print_date: string;
+  pt_brand: string;
+  pt_origin_country: string;
+  pt_product_code: string;
+  pt_original_price: string;
 }) => {
   return `<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
@@ -32,14 +36,14 @@ export const a4Template = (data: {
 <body bgcolor="#A0A0A0" vlink="blue" link="blue">
 <div id="page1-div" style="position:relative;width:892px;height:1262px;">
 <img width="892" height="1262" src="/a4.png" alt="background image"/>
-<p style="position:absolute;top:203px;left:217px;white-space:nowrap" class="ft10">Fikko Cena</p>
+<p style="position:absolute;top:203px;left:217px;white-space:nowrap" class="ft10">${data.pt_brand}</p>
 <p style="position:absolute;top:349px;left:8px;white-space:nowrap" class="ft11">${data.product_name}</p>
-<p style="position:absolute;top:406px;left:26px;white-space:nowrap" class="ft12">Země původu: ${data.country_code} ${data.country_name}</p>
-<p style="position:absolute;top:468px;left:26px;white-space:nowrap" class="ft13">EAN: ${data.product_code}</p>
-<p style="position:absolute;top:464px;left:387px;white-space:nowrap" class="ft12">Běžná cena:</p>
+<p style="position:absolute;top:406px;left:26px;white-space:nowrap" class="ft12">${data.pt_origin_country}: ${data.country_code} ${data.country_name}</p>
+<p style="position:absolute;top:468px;left:26px;white-space:nowrap" class="ft13">${data.pt_product_code} : ${data.product_code}</p>
+<p style="position:absolute;top:464px;left:387px;white-space:nowrap" class="ft12">${data.pt_original_price} : ${data.price}</p>
 <p style="position:absolute;top:529px;left:33px;white-space:nowrap" class="ft14">${data.discount_percentage}</p>
 <p style="position:absolute;top:520px;left:415px;white-space:nowrap" class="ft15">${data.price}</p>
-<p style="position:absolute;top:676px;left:100px;white-space:nowrap" class="ft17">${data.price_sale}</p>
+<p style="position:absolute;top:676px;left:100px;white-space:nowrap" class="ft17">${data.price_sale}</p> 
 
 </div>
 </body>

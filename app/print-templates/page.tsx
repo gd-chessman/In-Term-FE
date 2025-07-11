@@ -85,7 +85,10 @@ export default function PrintTemplatesPage() {
   const [formData, setFormData] = useState({
     pt_country_id: "",
     pt_title: "",
-    pt_content: "",
+    pt_brand: "",
+    pt_origin_country: "",
+    pt_product_code: "",
+    pt_original_price: "",
     pt_footer: ""
   })
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
@@ -93,7 +96,10 @@ export default function PrintTemplatesPage() {
   const [editForm, setEditForm] = useState({
     pt_title: '',
     pt_country_id: '',
-    pt_content: '',
+    pt_brand: '',
+    pt_origin_country: '',
+    pt_product_code: '',
+    pt_original_price: '',
     pt_footer: ''
   })
 
@@ -121,7 +127,10 @@ export default function PrintTemplatesPage() {
       setFormData({
         pt_country_id: "",
         pt_title: "",
-        pt_content: "",
+        pt_brand: "",
+        pt_origin_country: "",
+        pt_product_code: "",
+        pt_original_price: "",
         pt_footer: ""
       })
     },
@@ -176,7 +185,7 @@ export default function PrintTemplatesPage() {
   // Handle form submission
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    if (!formData.pt_country_id || !formData.pt_title || !formData.pt_content) {
+    if (!formData.pt_country_id || !formData.pt_title || !formData.pt_brand || !formData.pt_origin_country || !formData.pt_product_code || !formData.pt_original_price) {
       toast.error("Vui lòng điền đầy đủ thông tin bắt buộc")
       return
     }
@@ -184,7 +193,10 @@ export default function PrintTemplatesPage() {
     const payload = {
       pt_country_id: Number(formData.pt_country_id),
       pt_title: formData.pt_title.trim(),
-      pt_content: formData.pt_content.trim(),
+      pt_brand: formData.pt_brand.trim(),
+      pt_origin_country: formData.pt_origin_country.trim(),
+      pt_product_code: formData.pt_product_code.trim(),
+      pt_original_price: formData.pt_original_price.trim(),
       pt_footer: formData.pt_footer.trim()
     }
     
@@ -210,7 +222,10 @@ export default function PrintTemplatesPage() {
       setEditForm({
         pt_title: selectedTemplate.pt_title || '',
         pt_country_id: selectedTemplate.country?.country_id?.toString() || '',
-        pt_content: selectedTemplate.pt_content || '',
+        pt_brand: selectedTemplate.pt_brand || '',
+        pt_origin_country: selectedTemplate.pt_origin_country || '',
+        pt_product_code: selectedTemplate.pt_product_code || '',
+        pt_original_price: selectedTemplate.pt_original_price || '',
         pt_footer: selectedTemplate.pt_footer || ''
       })
     }
@@ -219,7 +234,7 @@ export default function PrintTemplatesPage() {
   // Xử lý submit cập nhật
   const handleEditSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    if (!editForm.pt_title || !editForm.pt_country_id || !editForm.pt_content) {
+    if (!editForm.pt_title || !editForm.pt_country_id || !editForm.pt_brand || !editForm.pt_origin_country || !editForm.pt_product_code || !editForm.pt_original_price) {
       toast.error("Vui lòng điền đầy đủ thông tin bắt buộc")
       return
     }
@@ -228,7 +243,10 @@ export default function PrintTemplatesPage() {
       item: {
         pt_title: editForm.pt_title.trim(),
         pt_country_id: Number(editForm.pt_country_id),
-        pt_content: editForm.pt_content.trim(),
+        pt_brand: editForm.pt_brand.trim(),
+        pt_origin_country: editForm.pt_origin_country.trim(),
+        pt_product_code: editForm.pt_product_code.trim(),
+        pt_original_price: editForm.pt_original_price.trim(),
         pt_footer: editForm.pt_footer.trim()
       }
     })
@@ -288,7 +306,7 @@ export default function PrintTemplatesPage() {
                 <Tabs defaultValue="basic" className="w-full">
                   <TabsList className="grid w-full grid-cols-3">
                     <TabsTrigger value="basic">Thông tin cơ bản</TabsTrigger>
-                    <TabsTrigger value="content">Nội dung</TabsTrigger>
+                    <TabsTrigger value="content">Từ ngữ sử dụng</TabsTrigger>
                     <TabsTrigger value="preview">Xem trước</TabsTrigger>
                   </TabsList>
                   <TabsContent value="basic" className="space-y-4">
@@ -332,16 +350,49 @@ export default function PrintTemplatesPage() {
                     </div>
                   </TabsContent>
                   <TabsContent value="content" className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="pt_content">Nội dung Template *</Label>
-                      <Textarea
-                        id="pt_content"
-                        value={formData.pt_content}
-                        onChange={(e) => handleInputChange('pt_content', e.target.value)}
-                        className="h-40 font-mono text-sm"
-                        placeholder="Sử dụng {product_name}, {price}, {product_code}, {category_name}, {print_date}"
-                        required
-                      />
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="pt_brand">Từ ngữ cho Thương hiệu *</Label>
+                        <Input
+                          id="pt_brand"
+                          value={formData.pt_brand}
+                          onChange={(e) => handleInputChange('pt_brand', e.target.value)}
+                          placeholder="VD: Thương hiệu, Brand, Nhãn hiệu..."
+                          required
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="pt_origin_country">Từ ngữ cho Xuất xứ *</Label>
+                        <Input
+                          id="pt_origin_country"
+                          value={formData.pt_origin_country}
+                          onChange={(e) => handleInputChange('pt_origin_country', e.target.value)}
+                          placeholder="VD: Xuất xứ, Origin, Nguồn gốc..."
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="pt_product_code">Từ ngữ cho Mã sản phẩm *</Label>
+                        <Input
+                          id="pt_product_code"
+                          value={formData.pt_product_code}
+                          onChange={(e) => handleInputChange('pt_product_code', e.target.value)}
+                          placeholder="VD: Mã SP, Product Code, SKU..."
+                          required
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="pt_original_price">Từ ngữ cho Giá gốc *</Label>
+                        <Input
+                          id="pt_original_price"
+                          value={formData.pt_original_price}
+                          onChange={(e) => handleInputChange('pt_original_price', e.target.value)}
+                          placeholder="VD: Giá gốc, Original Price, MSRP..."
+                          required
+                        />
+                      </div>
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="pt_footer">Footer</Label>
@@ -355,14 +406,25 @@ export default function PrintTemplatesPage() {
                     <div className="p-3 bg-blue-50 rounded-lg">
                       <h4 className="font-medium text-sm mb-2 flex items-center gap-2">
                         <Code className="h-4 w-4" />
-                        Biến có thể sử dụng:
+                        Các từ ngữ sẽ được sử dụng trong template:
                       </h4>
-                      <div className="flex flex-wrap gap-2">
-                        {["product_name", "price", "product_code", "category_name", "print_date"].map((variable) => (
-                          <Badge key={variable} variant="secondary" className="text-xs">
-                            {`{${variable}}`}
-                          </Badge>
-                        ))}
+                      <div className="grid grid-cols-2 gap-2 text-sm">
+                        <div className="flex items-center gap-2">
+                          <Badge variant="secondary" className="text-xs">Thương hiệu:</Badge>
+                          <span className="font-medium">{formData.pt_brand || "Chưa nhập"}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Badge variant="secondary" className="text-xs">Xuất xứ:</Badge>
+                          <span className="font-medium">{formData.pt_origin_country || "Chưa nhập"}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Badge variant="secondary" className="text-xs">Mã SP:</Badge>
+                          <span className="font-medium">{formData.pt_product_code || "Chưa nhập"}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Badge variant="secondary" className="text-xs">Giá gốc:</Badge>
+                          <span className="font-medium">{formData.pt_original_price || "Chưa nhập"}</span>
+                        </div>
                       </div>
                     </div>
                   </TabsContent>
@@ -372,14 +434,36 @@ export default function PrintTemplatesPage() {
                         <Eye className="h-4 w-4" />
                         Xem trước Template:
                       </h4>
-                      <div className="bg-white p-4 rounded border font-mono text-sm whitespace-pre-wrap">
-                        {formData.pt_content || "Template preview sẽ hiển thị ở đây..."}
-                      </div>
-                      {formData.pt_footer && (
-                        <div className="mt-3 p-3 bg-white rounded border text-sm">
-                          <strong>Footer:</strong> {formData.pt_footer}
+                      <div className="bg-white p-4 rounded border text-sm space-y-3">
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <div className="flex items-center gap-2">
+                              <Badge variant="outline" className="text-xs">Thương hiệu:</Badge>
+                              <span className="font-medium">{formData.pt_brand || "Chưa nhập"}</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Badge variant="outline" className="text-xs">Xuất xứ:</Badge>
+                              <span className="font-medium">{formData.pt_origin_country || "Chưa nhập"}</span>
+                            </div>
+                          </div>
+                          <div className="space-y-2">
+                            <div className="flex items-center gap-2">
+                              <Badge variant="outline" className="text-xs">Mã SP:</Badge>
+                              <span className="font-medium">{formData.pt_product_code || "Chưa nhập"}</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Badge variant="outline" className="text-xs">Giá gốc:</Badge>
+                              <span className="font-medium">{formData.pt_original_price || "Chưa nhập"}</span>
+                            </div>
+                          </div>
                         </div>
-                      )}
+                        {formData.pt_footer && (
+                          <div className="pt-3 border-t">
+                            <div className="text-xs text-muted-foreground mb-1">Footer:</div>
+                            <div className="font-medium">{formData.pt_footer}</div>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </TabsContent>
                 </Tabs>
@@ -604,8 +688,25 @@ export default function PrintTemplatesPage() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="bg-gray-50 rounded-lg p-3">
-                  <div className="text-xs text-muted-foreground mb-1">Nội dung template:</div>
-                  <div className="text-sm font-mono text-gray-700 line-clamp-3">{template.pt_content}</div>
+                  <div className="text-xs text-muted-foreground mb-2">Từ ngữ sử dụng:</div>
+                  <div className="grid grid-cols-2 gap-2 text-xs">
+                    <div className="flex items-center gap-1">
+                      <Badge variant="outline" className="text-xs">Thương hiệu:</Badge>
+                      <span className="font-medium truncate">{template.pt_brand || "N/A"}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Badge variant="outline" className="text-xs">Xuất xứ:</Badge>
+                      <span className="font-medium truncate">{template.pt_origin_country || "N/A"}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Badge variant="outline" className="text-xs">Mã SP:</Badge>
+                      <span className="font-medium truncate">{template.pt_product_code || "N/A"}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Badge variant="outline" className="text-xs">Giá gốc:</Badge>
+                      <span className="font-medium truncate">{template.pt_original_price || "N/A"}</span>
+                    </div>
+                  </div>
                 </div>
 
                 <div className="flex items-center justify-between text-sm">
@@ -686,13 +787,23 @@ export default function PrintTemplatesPage() {
                     </TableCell>
                     <TableCell>
                       <div className="max-w-xs">
-                        <div className="text-sm font-mono truncate">{template.pt_content}</div>
-                        <div className="flex gap-1 mt-1">
-                          {(template.variables || []).slice(0, 2).map((variable: any) => (
-                            <Badge key={variable} variant="secondary" className="text-xs">
-                              {`{${variable}}`}
-                            </Badge>
-                          ))}
+                        <div className="grid grid-cols-2 gap-1 text-xs">
+                          <div className="flex items-center gap-1">
+                            <Badge variant="outline" className="text-xs">Thương hiệu:</Badge>
+                            <span className="font-medium truncate">{template.pt_brand || "N/A"}</span>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <Badge variant="outline" className="text-xs">Xuất xứ:</Badge>
+                            <span className="font-medium truncate">{template.pt_origin_country || "N/A"}</span>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <Badge variant="outline" className="text-xs">Mã SP:</Badge>
+                            <span className="font-medium truncate">{template.pt_product_code || "N/A"}</span>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <Badge variant="outline" className="text-xs">Giá gốc:</Badge>
+                            <span className="font-medium truncate">{template.pt_original_price || "N/A"}</span>
+                          </div>
                         </div>
                       </div>
                     </TableCell>
@@ -815,10 +926,31 @@ export default function PrintTemplatesPage() {
             <div className="border rounded-lg p-4 bg-gray-50">
               <h4 className="font-medium mb-3 flex items-center gap-2">
                 <FileText className="h-4 w-4" />
-                Nội dung Template:
+                Từ ngữ sử dụng trong Template:
               </h4>
-              <div className="bg-white p-4 rounded border font-mono text-sm whitespace-pre-wrap">
-                {selectedTemplate?.pt_content}
+              <div className="bg-white p-4 rounded border text-sm space-y-3">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <Badge variant="outline" className="text-xs">Thương hiệu:</Badge>
+                      <span className="font-medium">{selectedTemplate?.pt_brand || "N/A"}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Badge variant="outline" className="text-xs">Xuất xứ:</Badge>
+                      <span className="font-medium">{selectedTemplate?.pt_origin_country || "N/A"}</span>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <Badge variant="outline" className="text-xs">Mã SP:</Badge>
+                      <span className="font-medium">{selectedTemplate?.pt_product_code || "N/A"}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Badge variant="outline" className="text-xs">Giá gốc:</Badge>
+                      <span className="font-medium">{selectedTemplate?.pt_original_price || "N/A"}</span>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -830,14 +962,25 @@ export default function PrintTemplatesPage() {
             <div className="bg-blue-50 p-3 rounded-lg">
               <h4 className="font-medium text-sm mb-2 flex items-center gap-2">
                 <Code className="h-4 w-4" />
-                Biến được sử dụng:
+                Các từ ngữ được sử dụng:
               </h4>
-              <div className="flex flex-wrap gap-2">
-                {selectedTemplate?.variables?.map((variable: string) => (
-                  <Badge key={variable} variant="secondary" className="text-xs">
-                    {`{${variable}}`}
-                  </Badge>
-                ))}
+              <div className="grid grid-cols-2 gap-2 text-sm">
+                <div className="flex items-center gap-2">
+                  <Badge variant="secondary" className="text-xs">Thương hiệu:</Badge>
+                  <span className="font-medium">{selectedTemplate?.pt_brand || "N/A"}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Badge variant="secondary" className="text-xs">Xuất xứ:</Badge>
+                  <span className="font-medium">{selectedTemplate?.pt_origin_country || "N/A"}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Badge variant="secondary" className="text-xs">Mã SP:</Badge>
+                  <span className="font-medium">{selectedTemplate?.pt_product_code || "N/A"}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Badge variant="secondary" className="text-xs">Giá gốc:</Badge>
+                  <span className="font-medium">{selectedTemplate?.pt_original_price || "N/A"}</span>
+                </div>
               </div>
             </div>
           </div>
@@ -876,7 +1019,7 @@ export default function PrintTemplatesPage() {
             <Tabs defaultValue="basic" className="w-full">
               <TabsList className="grid w-full grid-cols-3">
                 <TabsTrigger value="basic">Thông tin cơ bản</TabsTrigger>
-                <TabsTrigger value="content">Nội dung</TabsTrigger>
+                <TabsTrigger value="content">Từ ngữ sử dụng</TabsTrigger>
                 <TabsTrigger value="analytics">Thống kê</TabsTrigger>
               </TabsList>
               <TabsContent value="basic" className="space-y-4">
@@ -906,14 +1049,45 @@ export default function PrintTemplatesPage() {
                 </div>
               </TabsContent>
               <TabsContent value="content" className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="edit_content">Nội dung Template</Label>
-                  <Textarea
-                    id="edit_content"
-                    className="h-40 font-mono text-sm"
-                    value={editForm.pt_content}
-                    onChange={e => setEditForm(f => ({...f, pt_content: e.target.value}))}
-                  />
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="edit_brand">Từ ngữ cho Thương hiệu</Label>
+                    <Input
+                      id="edit_brand"
+                      value={editForm.pt_brand}
+                      onChange={e => setEditForm(f => ({...f, pt_brand: e.target.value}))}
+                      placeholder="VD: Thương hiệu, Brand, Nhãn hiệu..."
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="edit_origin_country">Từ ngữ cho Xuất xứ</Label>
+                    <Input
+                      id="edit_origin_country"
+                      value={editForm.pt_origin_country}
+                      onChange={e => setEditForm(f => ({...f, pt_origin_country: e.target.value}))}
+                      placeholder="VD: Xuất xứ, Origin, Nguồn gốc..."
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="edit_product_code">Từ ngữ cho Mã sản phẩm</Label>
+                    <Input
+                      id="edit_product_code"
+                      value={editForm.pt_product_code}
+                      onChange={e => setEditForm(f => ({...f, pt_product_code: e.target.value}))}
+                      placeholder="VD: Mã SP, Product Code, SKU..."
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="edit_original_price">Từ ngữ cho Giá gốc</Label>
+                    <Input
+                      id="edit_original_price"
+                      value={editForm.pt_original_price}
+                      onChange={e => setEditForm(f => ({...f, pt_original_price: e.target.value}))}
+                      placeholder="VD: Giá gốc, Original Price, MSRP..."
+                    />
+                  </div>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="edit_footer">Footer</Label>
@@ -951,13 +1125,24 @@ export default function PrintTemplatesPage() {
                   </Card>
                 </div>
                 <div className="space-y-2">
-                  <Label>Biến được sử dụng</Label>
-                  <div className="flex flex-wrap gap-2 p-3 bg-gray-50 rounded-lg">
-                    {selectedTemplate?.variables?.map((variable: string) => (
-                      <Badge key={variable} variant="secondary">
-                        {`{${variable}}`}
-                      </Badge>
-                    ))}
+                  <Label>Các từ ngữ được sử dụng</Label>
+                  <div className="grid grid-cols-2 gap-2 p-3 bg-gray-50 rounded-lg text-sm">
+                    <div className="flex items-center gap-2">
+                      <Badge variant="secondary" className="text-xs">Thương hiệu:</Badge>
+                      <span className="font-medium">{selectedTemplate?.pt_brand || "N/A"}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Badge variant="secondary" className="text-xs">Xuất xứ:</Badge>
+                      <span className="font-medium">{selectedTemplate?.pt_origin_country || "N/A"}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Badge variant="secondary" className="text-xs">Mã SP:</Badge>
+                      <span className="font-medium">{selectedTemplate?.pt_product_code || "N/A"}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Badge variant="secondary" className="text-xs">Giá gốc:</Badge>
+                      <span className="font-medium">{selectedTemplate?.pt_original_price || "N/A"}</span>
+                    </div>
                   </div>
                 </div>
               </TabsContent>
