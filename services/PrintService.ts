@@ -98,3 +98,13 @@ export const getPrintStatistics = async () => {
         return {};
     }
 }
+
+
+export const updatePrintSelectNum = async (item: any) => {
+    try {
+        const temp = await axiosClient.post(`prints/nums/initialize`, item);
+        return temp.data;
+    } catch (e) {
+        throw e;
+    }
+}

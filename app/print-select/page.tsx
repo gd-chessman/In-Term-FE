@@ -1,9 +1,9 @@
 "use client"
 
-import { useState } from "react"
+import React, { useState } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { toast } from "sonner"
-import { createPrintSelect, getPrintSelects, getPrintTemplates, deletePrintSelect, updatePrintSelect, runPrintSelect, getPrintStatistics } from "@/services/PrintService"
+import { createPrintSelect, getPrintSelects, getPrintTemplates, deletePrintSelect, updatePrintSelect, runPrintSelect, getPrintStatistics, updatePrintSelectNum } from "@/services/PrintService"
 import { getProducts } from "@/services/ProductService"
 import { getCountries } from "@/services/CountryService"
 import { getTemplate, prepareTemplateData, generateMultipleProductsHTML } from "@/components/templates"
@@ -96,6 +96,22 @@ export default function PrintSelectPage() {
   const [selectedPrintQuality, setSelectedPrintQuality] = useState("high")
   const [selectedPrintSize, setSelectedPrintSize] = useState("a4")
   const [printCopies, setPrintCopies] = useState(1)
+  const [selectedPrintCopies, setSelectedPrintCopies] = useState(1)
+  const [isEditNumDialogOpen, setIsEditNumDialogOpen] = useState(false)
+  const [editingNumData, setEditingNumData] = useState({
+    pn_select_id: 0,
+    pn_type: "",
+    pn_num: 0
+  })
+  const [editingAllNums, setEditingAllNums] = useState({
+    pn_select_id: 0,
+    a4: 1,
+    a5: 1,
+    v1: 1,
+    v2: 1,
+    v3: 1
+  })
+
 
   // Form state for creating print selection
   const [formData, setFormData] = useState({
@@ -212,10 +228,32 @@ export default function PrintSelectPage() {
     },
   })
 
+  // Update print number mutation
+  const updateNumMutation = useMutation({
+    mutationFn: updatePrintSelectNum,
+    onSuccess: () => {
+      toast.success("Đã cập nhật số lượng in thành công!")
+      setIsEditNumDialogOpen(false)
+      setEditingNumData({
+        pn_select_id: 0,
+        pn_type: "",
+        pn_num: 0
+      })
+      queryClient.invalidateQueries({ queryKey: ["printSelects"] })
+    },
+    onError: (error: any) => {
+      toast.error(error?.response?.data?.message || "Có lỗi xảy ra khi cập nhật số lượng in!")
+    },
+  })
+
   // Print mutation - In trực tiếp với máy in
   const printMutation = useMutation({
     mutationFn: async (printData: any) => {
       const { items, format, quality, copies } = printData
+      
+      // Debug log
+      console.log('Debug - mutation copies:', copies)
+      console.log('Debug - mutation items:', items)
       
       // Tìm template được chọn
       const selectedTemplate = printFormats.find((f: any) => f.id === format)?.template
@@ -355,9 +393,26 @@ export default function PrintSelectPage() {
 
 
   const generatePDFContent = (items: any[], quality: string, copies: number, template?: any) => {
+    // Debug log
+    console.log('Debug - generatePDFContent copies:', copies)
+    console.log('Debug - generatePDFContent items length:', items.length)
+    
     // Sử dụng template system mới
     const templateData = items.map(item => prepareTemplateData(item, formatPrice))
-    return generateMultipleProductsHTML(selectedPrintSize, templateData)
+    
+    // Tạo nhiều bản in theo số lượng copies
+    let htmlContent = ''
+    for (let i = 0; i < copies; i++) {
+      console.log('Debug - generating copy:', i + 1, 'of', copies)
+      htmlContent += generateMultipleProductsHTML(selectedPrintSize, templateData)
+      // Thêm page break giữa các bản in (trừ bản cuối)
+      if (i < copies - 1) {
+        htmlContent += '<div style="page-break-after: always;"></div>'
+      }
+    }
+    
+    console.log('Debug - total HTML length:', htmlContent.length)
+    return htmlContent
   }
 
   const exportToPDF = async (htmlContent: string, fileName: string) => {
@@ -434,17 +489,28 @@ export default function PrintSelectPage() {
 
   const handlePrintSingle = (item: any) => {
     setPrintingItems([item.ps_id])
+    // Lấy số lượng in từ cấu hình theo khổ giấy được chọn
+    const printNum = item.printNums?.find((pn: any) => pn.pn_type === selectedPrintSize)?.pn_num || 1
+    setSelectedPrintCopies(printNum)
     setIsPrintDialogOpen(true)
   }
 
   const handlePrintSelected = () => {
     if (selectedItems.length === 0) return
     setPrintingItems(selectedItems)
+    // Lấy số lượng in từ cấu hình của sản phẩm đầu tiên được chọn
+    const firstSelectedItem = printSelections.find((item: any) => selectedItems.includes(item.ps_id))
+    const printNum = firstSelectedItem?.printNums?.find((pn: any) => pn.pn_type === selectedPrintSize)?.pn_num || 1
+    setSelectedPrintCopies(printNum)
     setIsPrintDialogOpen(true)
   }
 
   const handlePrintAll = () => {
     setPrintingItems(filteredItems.map((item: any) => item.ps_id))
+    // Lấy số lượng in từ cấu hình của sản phẩm đầu tiên trong danh sách
+    const firstItem = filteredItems[0]
+    const printNum = firstItem?.printNums?.find((pn: any) => pn.pn_type === selectedPrintSize)?.pn_num || 1
+    setSelectedPrintCopies(printNum)
     setIsPrintDialogOpen(true)
   }
 
@@ -513,8 +579,88 @@ export default function PrintSelectPage() {
     })
   }
 
+  const handleEditNum = (item: any, type: string) => {
+    // Luôn mở dialog với tất cả 5 trường
+    setEditingAllNums({
+      pn_select_id: item.ps_id,
+      a4: item.printNums?.find((pn: any) => pn.pn_type === 'a4')?.pn_num || 1,
+      a5: item.printNums?.find((pn: any) => pn.pn_type === 'a5')?.pn_num || 1,
+      v1: item.printNums?.find((pn: any) => pn.pn_type === 'v1')?.pn_num || 1,
+      v2: item.printNums?.find((pn: any) => pn.pn_type === 'v2')?.pn_num || 1,
+      v3: item.printNums?.find((pn: any) => pn.pn_type === 'v3')?.pn_num || 1
+    })
+    setIsEditNumDialogOpen(true)
+  }
+
+  const handleUpdateNumSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    if (editingNumData.pn_num < 1) {
+      toast.error("Số lượng phải lớn hơn hoặc bằng 1!")
+      return
+    }
+
+    updateNumMutation.mutate(editingNumData)
+  }
+
+  // Effect để tự động cập nhật số lượng in khi thay đổi khổ giấy
+  React.useEffect(() => {
+    if (printingItems.length > 0) {
+      const firstItem = printSelections.find((item: any) => printingItems.includes(item.ps_id))
+      if (firstItem) {
+        const printNum = firstItem.printNums?.find((pn: any) => pn.pn_type === selectedPrintSize)?.pn_num || 1
+        setSelectedPrintCopies(printNum)
+      }
+    }
+  }, [selectedPrintSize, printingItems, printSelections])
+
+  const handleUpdateAllNumsSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    // Validate all numbers
+    const { a4, a5, v1, v2, v3 } = editingAllNums
+    if (a4 < 0 || a5 < 0 || v1 < 0 || v2 < 0 || v3 < 0) {
+      toast.error("Số lượng không được âm!")
+      return
+    }
+
+    // Update each type
+    const updates = []
+    if (a4 > 0) updates.push({ pn_select_id: editingAllNums.pn_select_id, pn_type: 'a4', pn_num: a4 })
+    if (a5 > 0) updates.push({ pn_select_id: editingAllNums.pn_select_id, pn_type: 'a5', pn_num: a5 })
+    if (v1 > 0) updates.push({ pn_select_id: editingAllNums.pn_select_id, pn_type: 'v1', pn_num: v1 })
+    if (v2 > 0) updates.push({ pn_select_id: editingAllNums.pn_select_id, pn_type: 'v2', pn_num: v2 })
+    if (v3 > 0) updates.push({ pn_select_id: editingAllNums.pn_select_id, pn_type: 'v3', pn_num: v3 })
+
+    // Execute all updates
+    Promise.all(updates.map(update => updateNumMutation.mutateAsync(update)))
+      .then(() => {
+        toast.success("Đã cập nhật tất cả số lượng in thành công!")
+        setIsEditNumDialogOpen(false)
+        setEditingAllNums({
+          pn_select_id: 0,
+          a4: 1,
+          a5: 1,
+          v1: 1,
+          v2: 1,
+          v3: 1
+        })
+        queryClient.invalidateQueries({ queryKey: ["printSelects"] })
+      })
+      .catch((error) => {
+        toast.error("Có lỗi xảy ra khi cập nhật số lượng in!")
+      })
+  }
+
+
+
   const executePrint = async () => {
     const itemsToPrint = printSelections.filter((item: any) => printingItems.includes(item.ps_id))
+    
+    // Debug log
+    console.log('Debug - selectedPrintCopies:', selectedPrintCopies)
+    console.log('Debug - printingItems:', printingItems)
+    console.log('Debug - itemsToPrint:', itemsToPrint)
     
     // Xác định pId để ghi nhận in
     let pId: string
@@ -538,11 +684,11 @@ export default function PrintSelectPage() {
       
       const printLogData = {
         pId: pId,
-        pl_num: printCopies,
+        pl_num: selectedPrintCopies,
         pl_type: getPlType(),
         pl_time_sale_start: selectedItem?.ps_time_sale_start || new Date().toISOString(),
         pl_time_sale_end: selectedItem?.ps_time_sale_end || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // 30 ngày từ hiện tại
-        pl_log_note: `In ${printCopies} bản với template ${selectedPrintSize.toUpperCase()} - Chất lượng ${selectedPrintQuality}`
+        pl_log_note: `In ${selectedPrintCopies} bản với template ${selectedPrintSize.toUpperCase()} - Chất lượng ${selectedPrintQuality}`
       }
       
       await runPrintSelect(printLogData)
@@ -554,10 +700,11 @@ export default function PrintSelectPage() {
       items: itemsToPrint,
       format: selectedPrintFormat,
       quality: selectedPrintQuality,
-      copies: printCopies,
-      totalPages: printingItems.length * printCopies
+      copies: selectedPrintCopies,
+      totalPages: printingItems.length * selectedPrintCopies
     }
 
+    console.log('Debug - printData:', printData)
     printMutation.mutate(printData)
   }
 
@@ -982,8 +1129,79 @@ export default function PrintSelectPage() {
                       {formatPrice(item.ps_price_sale, item.country?.country_name)}
                     </span>
                   </div>
-                  <div className="text-xs text-muted-foreground">
-                    Tổng {item.printCount || 0} lượt in
+                </div>
+
+                {/* Print Statistics */}
+                <div className="space-y-2">
+                  <div className="text-xs font-medium text-muted-foreground">Cấu hình số lượng in:</div>
+                  
+                  {/* Small table for print numbers */}
+                  <div className="bg-gray-50 rounded-lg p-2">
+                    <table className="w-full text-xs">
+                      <thead>
+                        <tr className="border-b border-gray-200">
+                          <th className="text-left py-1">Khổ giấy</th>
+                          <th className="text-right py-1">Số lượng</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr className="border-b border-gray-100">
+                          <td className="py-1">
+                            <span className="text-blue-600 font-medium">A4</span>
+                          </td>
+                          <td 
+                            className="text-right py-1 cursor-pointer hover:bg-blue-50 rounded px-1 transition-colors"
+                            onClick={() => handleEditNum(item, 'a4')}
+                          >
+                            {item.printNums?.find((pn: any) => pn.pn_type === 'a4')?.pn_num || 1}
+                          </td>
+                        </tr>
+                        <tr className="border-b border-gray-100">
+                          <td className="py-1">
+                            <span className="text-green-600 font-medium">A5</span>
+                          </td>
+                          <td 
+                            className="text-right py-1 cursor-pointer hover:bg-green-50 rounded px-1 transition-colors"
+                            onClick={() => handleEditNum(item, 'a5')}
+                          >
+                            {item.printNums?.find((pn: any) => pn.pn_type === 'a5')?.pn_num || 1}
+                          </td>
+                        </tr>
+                        <tr className="border-b border-gray-100">
+                          <td className="py-1">
+                            <span className="text-purple-600 font-medium">V1</span>
+                          </td>
+                          <td 
+                            className="text-right py-1 cursor-pointer hover:bg-purple-50 rounded px-1 transition-colors"
+                            onClick={() => handleEditNum(item, 'v1')}
+                          >
+                            {item.printNums?.find((pn: any) => pn.pn_type === 'v1')?.pn_num || 1}
+                          </td>
+                        </tr>
+                        <tr className="border-b border-gray-100">
+                          <td className="py-1">
+                            <span className="text-orange-600 font-medium">V2</span>
+                          </td>
+                          <td 
+                            className="text-right py-1 cursor-pointer hover:bg-orange-50 rounded px-1 transition-colors"
+                            onClick={() => handleEditNum(item, 'v2')}
+                          >
+                            {item.printNums?.find((pn: any) => pn.pn_type === 'v2')?.pn_num || 1}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className="py-1">
+                            <span className="text-red-600 font-medium">V3</span>
+                          </td>
+                          <td 
+                            className="text-right py-1 cursor-pointer hover:bg-red-50 rounded px-1 transition-colors"
+                            onClick={() => handleEditNum(item, 'v3')}
+                          >
+                            {item.printNums?.find((pn: any) => pn.pn_type === 'v3')?.pn_num || 1}
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
                   </div>
                 </div>
 
@@ -1045,7 +1263,7 @@ export default function PrintSelectPage() {
                   <TableHead>Giá khuyến mãi</TableHead>
                   <TableHead>Thời gian bán</TableHead>
                   <TableHead>Tùy chọn</TableHead>
-                  <TableHead>Lượt in</TableHead>
+                  <TableHead>Cấu hình số lượng in</TableHead>
                   <TableHead>Trạng thái</TableHead>
                   <TableHead>Ngày tạo</TableHead>
                   <TableHead className="text-right">Thao tác</TableHead>
@@ -1111,9 +1329,51 @@ export default function PrintSelectPage() {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <div className="space-y-1">
-                        <div className="text-xs text-muted-foreground">
-                          Tổng {item.printCount || 0} lượt in
+                      <div className="grid grid-cols-5 gap-1 text-xs">
+                        <div className="text-center">
+                          <div className="font-medium text-blue-600">A4</div>
+                          <div 
+                            className="text-muted-foreground cursor-pointer hover:bg-blue-50 rounded px-1 py-1 transition-colors"
+                            onClick={() => handleEditNum(item, 'a4')}
+                          >
+                            {item.printNums?.find((pn: any) => pn.pn_type === 'a4')?.pn_num || 1}
+                          </div>
+                        </div>
+                        <div className="text-center">
+                          <div className="font-medium text-green-600">A5</div>
+                          <div 
+                            className="text-muted-foreground cursor-pointer hover:bg-green-50 rounded px-1 py-1 transition-colors"
+                            onClick={() => handleEditNum(item, 'a5')}
+                          >
+                            {item.printNums?.find((pn: any) => pn.pn_type === 'a5')?.pn_num || 1}
+                          </div>
+                        </div>
+                        <div className="text-center">
+                          <div className="font-medium text-purple-600">V1</div>
+                          <div 
+                            className="text-muted-foreground cursor-pointer hover:bg-purple-50 rounded px-1 py-1 transition-colors"
+                            onClick={() => handleEditNum(item, 'v1')}
+                          >
+                            {item.printNums?.find((pn: any) => pn.pn_type === 'v1')?.pn_num || 1}
+                          </div>
+                        </div>
+                        <div className="text-center">
+                          <div className="font-medium text-orange-600">V2</div>
+                          <div 
+                            className="text-muted-foreground cursor-pointer hover:bg-orange-50 rounded px-1 py-1 transition-colors"
+                            onClick={() => handleEditNum(item, 'v2')}
+                          >
+                            {item.printNums?.find((pn: any) => pn.pn_type === 'v2')?.pn_num || 1}
+                          </div>
+                        </div>
+                        <div className="text-center">
+                          <div className="font-medium text-red-600">V3</div>
+                          <div 
+                            className="text-muted-foreground cursor-pointer hover:bg-red-50 rounded px-1 py-1 transition-colors"
+                            onClick={() => handleEditNum(item, 'v3')}
+                          >
+                            {item.printNums?.find((pn: any) => pn.pn_type === 'v3')?.pn_num || 1}
+                          </div>
                         </div>
                       </div>
                     </TableCell>
@@ -1313,14 +1573,17 @@ export default function PrintSelectPage() {
                   type="number"
                   min="1"
                   max="100"
-                  value={printCopies}
-                  onChange={(e) => setPrintCopies(Number.parseInt(e.target.value) || 1)}
+                  value={selectedPrintCopies}
+                  onChange={(e) => setSelectedPrintCopies(Number.parseInt(e.target.value) || 1)}
                 />
+                <p className="text-xs text-muted-foreground">
+                  Số lượng được lấy từ cấu hình in khổ {selectedPrintSize.toUpperCase()}
+                </p>
               </div>
 
               <div className="space-y-2">
                 <Label>Tổng số trang</Label>
-                <div className="text-2xl font-bold text-blue-600">{printingItems.length * printCopies}</div>
+                <div className="text-2xl font-bold text-blue-600">{printingItems.length * selectedPrintCopies}</div>
               </div>
 
               <div className="space-y-2">
@@ -1362,7 +1625,7 @@ export default function PrintSelectPage() {
                         <span className="text-sm text-muted-foreground">Chất lượng: {selectedPrintQuality}</span>
                       </div>
                       <div className="text-sm text-muted-foreground">
-                        {printCopies} bản × {printingItems.length} sản phẩm = {printCopies * printingItems.length}{" "}
+                        {selectedPrintCopies} bản × {printingItems.length} sản phẩm = {selectedPrintCopies * printingItems.length}{" "}
                         trang
                       </div>
                     </div>
@@ -1450,7 +1713,7 @@ export default function PrintSelectPage() {
           <DialogFooter className="flex justify-between">
             <div className="flex items-center space-x-2 text-sm text-muted-foreground">
               <Printer className="h-4 w-4" />
-              <span>Tổng: {printingItems.length * printCopies} trang</span>
+              <span>Tổng: {printingItems.length * selectedPrintCopies} trang</span>
             </div>
             <div className="flex space-x-2">
               <Button variant="outline" onClick={() => setIsPrintDialogOpen(false)}>
@@ -1700,6 +1963,133 @@ export default function PrintSelectPage() {
               </Button>
             </DialogFooter>
           </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Print Number Dialog */}
+      <Dialog open={isEditNumDialogOpen} onOpenChange={setIsEditNumDialogOpen}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Edit className="h-5 w-5 text-blue-500" />
+              Cập nhật cấu hình số lượng in
+            </DialogTitle>
+            <DialogDescription>
+              Chỉnh sửa số lượng cấu hình in cho tất cả các khổ giấy
+            </DialogDescription>
+          </DialogHeader>
+
+          <form onSubmit={handleUpdateAllNumsSubmit} className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="a4_num" className="text-blue-600 font-medium">A4</Label>
+                <Input
+                  id="a4_num"
+                  type="number"
+                  min="0"
+                  value={editingAllNums.a4}
+                  onChange={(e) => setEditingAllNums({
+                    ...editingAllNums,
+                    a4: parseInt(e.target.value) || 0
+                  })}
+                  placeholder="Số lượng A4"
+                  className="border-blue-200 focus:border-blue-500"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="a5_num" className="text-green-600 font-medium">A5</Label>
+                <Input
+                  id="a5_num"
+                  type="number"
+                  min="0"
+                  value={editingAllNums.a5}
+                  onChange={(e) => setEditingAllNums({
+                    ...editingAllNums,
+                    a5: parseInt(e.target.value) || 0
+                  })}
+                  placeholder="Số lượng A5"
+                  className="border-green-200 focus:border-green-500"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="v1_num" className="text-purple-600 font-medium">V1</Label>
+                <Input
+                  id="v1_num"
+                  type="number"
+                  min="0"
+                  value={editingAllNums.v1}
+                  onChange={(e) => setEditingAllNums({
+                    ...editingAllNums,
+                    v1: parseInt(e.target.value) || 0
+                  })}
+                  placeholder="Số lượng V1"
+                  className="border-purple-200 focus:border-purple-500"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="v2_num" className="text-orange-600 font-medium">V2</Label>
+                <Input
+                  id="v2_num"
+                  type="number"
+                  min="0"
+                  value={editingAllNums.v2}
+                  onChange={(e) => setEditingAllNums({
+                    ...editingAllNums,
+                    v2: parseInt(e.target.value) || 0
+                  })}
+                  placeholder="Số lượng V2"
+                  className="border-orange-200 focus:border-orange-500"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="v3_num" className="text-red-600 font-medium">V3</Label>
+                <Input
+                  id="v3_num"
+                  type="number"
+                  min="0"
+                  value={editingAllNums.v3}
+                  onChange={(e) => setEditingAllNums({
+                    ...editingAllNums,
+                    v3: parseInt(e.target.value) || 0
+                  })}
+                  placeholder="Số lượng V3"
+                  className="border-red-200 focus:border-red-500"
+                />
+              </div>
+            </div>
+
+            <div className="bg-blue-50 p-3 rounded-lg">
+              <div className="text-sm text-blue-800">
+                <div><strong>Sản phẩm:</strong> {printSelections.find((item: any) => item.ps_id === editingAllNums.pn_select_id)?.product?.product_name}</div>
+                <div><strong>Xuất xứ:</strong> {printSelections.find((item: any) => item.ps_id === editingAllNums.pn_select_id)?.country?.country_name}</div>
+                <div><strong>Tổng số lượng:</strong> {editingAllNums.a4 + editingAllNums.a5 + editingAllNums.v1 + editingAllNums.v2 + editingAllNums.v3} bản</div>
+              </div>
+            </div>
+          </form>
+
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setIsEditNumDialogOpen(false)}
+              disabled={updateNumMutation.isPending}
+            >
+              Hủy
+            </Button>
+            <Button
+              onClick={handleUpdateAllNumsSubmit}
+              disabled={updateNumMutation.isPending}
+              className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600"
+            >
+              {updateNumMutation.isPending ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Đang cập nhật...
+                </>
+              ) : (
+                "Cập nhật tất cả"
+              )}
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>
