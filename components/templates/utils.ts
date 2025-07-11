@@ -40,14 +40,14 @@ export const generateMultipleProductsHTML = (format: string, products: TemplateD
  */
 export const prepareTemplateData = (
   product: any, 
-  formatPrice: (price: number, country: string) => string
+  formatPrice: (price: number, countryCode: string) => string
 ): TemplateData => {
   console.log(product)
   return {
     product_name: product.product?.product_name || '',
     product_code: product.product?.product_code || '',
-    price: formatPrice(product.product?.price, product.country?.country_name),
-    price_sale: formatPrice(product?.ps_price_sale, product.country?.country_name),
+    price: formatPrice(product.product?.price, product.country?.country_code),
+    price_sale: formatPrice(product?.ps_price_sale, product.country?.country_code),
     discount_percentage:  product.product?.price && product?.ps_price_sale ? "-" + Math.round(((product.product.price - product.ps_price_sale) / product.product.price) * 100) + '%' : '',
     country_name: product.country?.country_name || '',
     country_code: getCountryFlag(product.country?.country_code),
