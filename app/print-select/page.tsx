@@ -92,7 +92,7 @@ export default function PrintSelectPage() {
   })
   const [printingItems, setPrintingItems] = useState<number[]>([])
   const [printProgress, setPrintProgress] = useState(0)
-  const [selectedPrintFormat, setSelectedPrintFormat] = useState("pdf")
+  const [selectedPrintFormat, setSelectedPrintFormat] = useState("")
   const [selectedPrintQuality, setSelectedPrintQuality] = useState("high")
   const [selectedPrintSize, setSelectedPrintSize] = useState("a4")
   const [printCopies, setPrintCopies] = useState(1)
@@ -1473,7 +1473,7 @@ export default function PrintSelectPage() {
                 <Label htmlFor="print-format">Định dạng in</Label>
                 <Select value={selectedPrintFormat} onValueChange={setSelectedPrintFormat}>
                   <SelectTrigger>
-                    <SelectValue />
+                    <SelectValue placeholder="Chọn định dạng in" />
                   </SelectTrigger>
                   <SelectContent>
                     {printFormats.map((format: any) => (
@@ -1600,7 +1600,11 @@ export default function PrintSelectPage() {
               <Label>Xem trước nội dung sẽ in</Label>
               <Dialog>
                 <DialogTrigger asChild>
-                  <Button variant="outline" className="w-full">
+                  <Button 
+                    variant="outline" 
+                    className="w-full disabled:opacity-50 disabled:cursor-not-allowed"
+                    disabled={!selectedPrintFormat}
+                  >
                     <Eye className="mr-2 h-4 w-4" />
                     Xem trước nội dung in
                   </Button>
@@ -1635,37 +1639,45 @@ export default function PrintSelectPage() {
                         <div className="space-y-6">
                           {printSelections
                             .filter((item: any) => printingItems.includes(item.ps_id))
-                            .map((item: any, index: number) => {
+                            .map((item: any, itemIndex: number) => {
                               // Sử dụng template system mới
                               const templateData = prepareTemplateData(item, formatPrice)
                               const template = getTemplate(selectedPrintSize)
                               const previewHTML = template(templateData)
                               
-                              return (
-                                <div
-                                  key={item.ps_id}
-                                  className="max-w-2xl mx-auto bg-white shadow-lg border rounded-lg overflow-hidden"
-                                >
-                                  <div className="bg-gray-100 p-3 border-b">
-                                    <div className="flex items-center justify-between text-sm">
-                                      <span className="font-medium">Template {selectedPrintSize.toUpperCase()}</span>
-                                      <span className="text-gray-500">Trang {index + 1} / {printingItems.length}</span>
+                              // Tạo nhiều bản in theo số lượng copies
+                              const copies = []
+                              for (let copyIndex = 0; copyIndex < selectedPrintCopies; copyIndex++) {
+                                copies.push(
+                                  <div
+                                    key={`${item.ps_id}-copy-${copyIndex}`}
+                                    className="max-w-2xl mx-auto bg-white shadow-lg border rounded-lg overflow-hidden mb-4"
+                                  >
+                                    <div className="bg-gray-100 p-3 border-b">
+                                      <div className="flex items-center justify-between text-sm">
+                                        <span className="font-medium">Template {selectedPrintSize.toUpperCase()}</span>
+                                        <span className="text-gray-500">
+                                          Sản phẩm {itemIndex + 1}/{printingItems.length} - Bản {copyIndex + 1}/{selectedPrintCopies}
+                                        </span>
+                                      </div>
                                     </div>
+                                    
+                                    <div 
+                                      className="bg-gray-50 p-4"
+                                      style={{ 
+                                        width: '250%', 
+                                        height: '1000px', 
+                                        overflow: 'auto',
+                                        transform: 'scale(0.4)',
+                                        transformOrigin: 'top left'
+                                      }}
+                                      dangerouslySetInnerHTML={{ __html: previewHTML }}
+                                    />
                                   </div>
-                                  
-                                  <div 
-                                    className="bg-gray-50 p-4"
-                                    style={{ 
-                                      width: '250%', 
-                                      height: '1000px', 
-                                      overflow: 'auto',
-                                      transform: 'scale(0.4)',
-                                      transformOrigin: 'top left'
-                                    }}
-                                    dangerouslySetInnerHTML={{ __html: previewHTML }}
-                                  />
-                                </div>
-                              )
+                                )
+                              }
+                              
+                              return copies
                             })}
                         </div>
                       </div>
@@ -1721,8 +1733,8 @@ export default function PrintSelectPage() {
               </Button>
               <Button
                 onClick={executePrint}
-                disabled={printMutation.isPending}
-                className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600"
+                disabled={printMutation.isPending || !selectedPrintFormat}
+                className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {printMutation.isPending ? (
                   <>
