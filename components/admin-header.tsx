@@ -1,6 +1,6 @@
 "use client"
 
-import { Bell, Search, Settings, Sun, Moon, Monitor, User } from "lucide-react"
+import { Bell, Search, Settings, Sun, Moon, Monitor, User, LayoutDashboard, Package, Printer, History, Users, Logs } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -171,18 +171,72 @@ export function AdminHeader() {
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator className="bg-gray-200 dark:bg-zinc-800" />
+            
+            {/* Quick Actions */}
             <DropdownMenuItem 
               onClick={() => router.push("/profile")}
               className="hover:bg-gray-50 dark:hover:bg-zinc-800 rounded-lg m-1 text-gray-700 dark:text-zinc-300"
             >
               <User className="mr-2 h-4 w-4" />
-              <span>Hồ sơ</span>
+              <span>Hồ sơ cá nhân</span>
             </DropdownMenuItem>
-              {/* <DropdownMenuItem className="hover:bg-gray-50 dark:hover:bg-zinc-800 rounded-lg m-1 text-gray-700 dark:text-zinc-300">
-                <Settings className="mr-2 h-4 w-4" />
-                <span>Cài đặt</span>
-              </DropdownMenuItem> */}
+            
+            <DropdownMenuItem 
+              onClick={() => router.push("/")}
+              className="hover:bg-gray-50 dark:hover:bg-zinc-800 rounded-lg m-1 text-gray-700 dark:text-zinc-300"
+            >
+              <LayoutDashboard className="mr-2 h-4 w-4" />
+              <span>Dashboard</span>
+            </DropdownMenuItem>
+            
             <DropdownMenuSeparator className="bg-gray-200 dark:bg-zinc-800" />
+            
+            {/* Management Links */}
+            <DropdownMenuItem 
+              onClick={() => router.push("/products")}
+              className="hover:bg-gray-50 dark:hover:bg-zinc-800 rounded-lg m-1 text-gray-700 dark:text-zinc-300"
+            >
+              <Package className="mr-2 h-4 w-4" />
+              <span>Quản lý sản phẩm</span>
+            </DropdownMenuItem>
+            
+            <DropdownMenuItem 
+              onClick={() => router.push("/print-select")}
+              className="hover:bg-gray-50 dark:hover:bg-zinc-800 rounded-lg m-1 text-gray-700 dark:text-zinc-300"
+            >
+              <Printer className="mr-2 h-4 w-4" />
+              <span>Chọn sản phẩm in</span>
+            </DropdownMenuItem>
+            
+            <DropdownMenuItem 
+              onClick={() => router.push("/print-logs")}
+              className="hover:bg-gray-50 dark:hover:bg-zinc-800 rounded-lg m-1 text-gray-700 dark:text-zinc-300"
+            >
+              <History className="mr-2 h-4 w-4" />
+              <span>Lịch sử in</span>
+            </DropdownMenuItem>
+            
+            <DropdownMenuSeparator className="bg-gray-200 dark:bg-zinc-800" />
+            
+            {/* System Links */}
+            <DropdownMenuItem 
+              onClick={() => router.push("/admins")}
+              className="hover:bg-gray-50 dark:hover:bg-zinc-800 rounded-lg m-1 text-gray-700 dark:text-zinc-300"
+            >
+              <Users className="mr-2 h-4 w-4" />
+              <span>Quản lý người dùng</span>
+            </DropdownMenuItem>
+            
+            <DropdownMenuItem 
+              onClick={() => router.push("/logs")}
+              className="hover:bg-gray-50 dark:hover:bg-zinc-800 rounded-lg m-1 text-gray-700 dark:text-zinc-300"
+            >
+              <Logs className="mr-2 h-4 w-4" />
+              <span>Nhật ký hoạt động</span>
+            </DropdownMenuItem>
+            
+            <DropdownMenuSeparator className="bg-gray-200 dark:bg-zinc-800" />
+            
             <DropdownMenuItem 
               onClick={handleLogout}
               disabled={logoutMutation.isPending}
