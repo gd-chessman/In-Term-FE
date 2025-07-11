@@ -507,10 +507,12 @@ export default function PrintSelectPage() {
 
   const handlePrintAll = () => {
     setPrintingItems(filteredItems.map((item: any) => item.ps_id))
-    // Lấy số lượng in từ cấu hình của sản phẩm đầu tiên trong danh sách
-    const firstItem = filteredItems[0]
-    const printNum = firstItem?.printNums?.find((pn: any) => pn.pn_type === selectedPrintSize)?.pn_num || 1
-    setSelectedPrintCopies(printNum)
+    // Tính tổng số lượng in thực tế của tất cả sản phẩm
+    const totalCopies = filteredItems.reduce((total: number, item: any) => {
+      const printNum = item.printNums?.find((pn: any) => pn.pn_type === selectedPrintSize)?.pn_num || 1
+      return total + printNum
+    }, 0)
+    setSelectedPrintCopies(totalCopies)
     setIsPrintDialogOpen(true)
   }
 
@@ -601,6 +603,15 @@ export default function PrintSelectPage() {
     }
 
     updateNumMutation.mutate(editingNumData)
+  }
+
+  // Hàm tính tổng số trang thực tế
+  const calculateTotalPages = () => {
+    const itemsToPrint = printSelections.filter((item: any) => printingItems.includes(item.ps_id))
+    return itemsToPrint.reduce((total: number, item: any) => {
+      const printNum = item.printNums?.find((pn: any) => pn.pn_type === selectedPrintSize)?.pn_num || 1
+      return total + printNum
+    }, 0)
   }
 
   // Effect để tự động cập nhật số lượng in khi thay đổi khổ giấy
@@ -701,7 +712,7 @@ export default function PrintSelectPage() {
       format: selectedPrintFormat,
       quality: selectedPrintQuality,
       copies: selectedPrintCopies,
-      totalPages: printingItems.length * selectedPrintCopies
+      totalPages: calculateTotalPages()
     }
 
     console.log('Debug - printData:', printData)
@@ -1574,7 +1585,7 @@ export default function PrintSelectPage() {
 
               <div className="space-y-2">
                 <Label>Tổng số trang</Label>
-                <div className="text-2xl font-bold text-blue-600">{printingItems.length * selectedPrintCopies}</div>
+                <div className="text-2xl font-bold text-blue-600">{calculateTotalPages()}</div>
               </div>
 
               <div className="space-y-2">
@@ -1620,8 +1631,7 @@ export default function PrintSelectPage() {
                         <span className="text-sm text-muted-foreground">Chất lượng: {selectedPrintQuality}</span>
                       </div>
                       <div className="text-sm text-muted-foreground">
-                        {selectedPrintCopies} bản × {printingItems.length} sản phẩm = {selectedPrintCopies * printingItems.length}{" "}
-                        trang
+                        Tổng cộng {calculateTotalPages()} trang từ {printingItems.length} sản phẩm
                       </div>
                     </div>
 
@@ -1716,7 +1726,7 @@ export default function PrintSelectPage() {
           <DialogFooter className="flex justify-between">
             <div className="flex items-center space-x-2 text-sm text-muted-foreground">
               <Printer className="h-4 w-4" />
-              <span>Tổng: {printingItems.length * selectedPrintCopies} trang</span>
+              <span>Tổng: {calculateTotalPages()} trang</span>
             </div>
             <div className="flex space-x-2">
               <Button variant="outline" onClick={() => setIsPrintDialogOpen(false)}>

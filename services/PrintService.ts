@@ -5,7 +5,7 @@ export const getPrintTemplates = async () => {
         const temp = await axiosClient.get(`prints/templates`);
         return temp.data.data;
     } catch (e) {
-        return {};
+        return [];
     }
 }
 
