@@ -623,16 +623,23 @@ export default function PrintSelectPage() {
     }, 0)
   }
 
-  // Effect để tự động cập nhật số lượng in khi thay đổi khổ giấy
+  // Effect để tự động cập nhật số lượng in và định dạng in khi thay đổi khổ giấy hoặc sản phẩm
   React.useEffect(() => {
     if (printingItems.length > 0) {
       const firstItem = printSelections.find((item: any) => printingItems.includes(item.ps_id))
       if (firstItem) {
+        // Cập nhật số lượng in
         const printNum = firstItem.printNums?.find((pn: any) => pn.pn_type === selectedPrintSize)?.pn_num || 1
         setSelectedPrintCopies(printNum)
+        
+        // Tự động chọn định dạng in dựa trên mẫu in quốc gia của sản phẩm
+        const matchingTemplate = printTemplates.find((template: any) => template.pt_country_id === firstItem.ps_country_id)
+        if (matchingTemplate) {
+          setSelectedPrintFormat(matchingTemplate.pt_id.toString())
+        }
       }
     }
-  }, [selectedPrintSize, printingItems, printSelections])
+  }, [selectedPrintSize, printingItems, printSelections, printTemplates])
 
   const handleUpdateAllNumsSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -807,17 +814,17 @@ export default function PrintSelectPage() {
                       </Select>
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="country">Xuất xứ *</Label>
+                      <Label htmlFor="country">Mẫu in quốc gia *</Label>
                       <Select value={formData.ps_country_id} onValueChange={(value) => setFormData({...formData, ps_country_id: value})}>
                         <SelectTrigger>
-                          <SelectValue placeholder="Chọn quốc gia" />
+                          <SelectValue placeholder="Chọn mẫu in quốc gia" />
                         </SelectTrigger>
                         <SelectContent>
-                          {countries.map((country: any) => (
-                            <SelectItem key={country.country_id} value={country.country_id.toString()}>
+                          {printTemplates.map((template: any) => (
+                            <SelectItem key={template.pt_country_id} value={template.pt_country_id.toString()}>
                               <div className="flex items-center space-x-2">
-                                <span>{getCountryFlag(country.country_code)}</span>
-                                <span>{country.country_name}</span>
+                                <span>{getCountryFlag(template.country?.country_code)}</span>
+                                <span>{template.pt_title}</span>
                               </div>
                             </SelectItem>
                           ))}
@@ -1269,7 +1276,7 @@ export default function PrintSelectPage() {
                     />
                   </TableHead>
                   <TableHead>Sản phẩm</TableHead>
-                  <TableHead>Xuất xứ</TableHead>
+                  <TableHead>Mẫu in quốc gia</TableHead>
                   <TableHead>Giá gốc</TableHead>
                   <TableHead>Giá khuyến mãi</TableHead>
                   <TableHead>Thời gian bán</TableHead>
@@ -1481,26 +1488,57 @@ export default function PrintSelectPage() {
             {/* Print Settings */}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="print-format">Định dạng in</Label>
-                <Select value={selectedPrintFormat} onValueChange={setSelectedPrintFormat}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Chọn định dạng in" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {printFormats.map((format: any) => (
-                      <SelectItem key={format.id} value={format.id}>
-                        <div className="flex items-center space-x-2">
-                          <span>{format.icon}</span>
-                          <div>
-                            <div className="font-medium">{format.name}</div>
-                            <div className="text-xs text-muted-foreground">{format.description}</div>
+                <Label htmlFor="print-format">Mẫu in</Label>
+                <div className="flex items-center space-x-2 h-10 px-3 bg-gray-50 rounded-md border text-sm">
+                  {(() => {
+                    const itemsToPrint = printSelections.filter((item: any) => printingItems.includes(item.ps_id))
+                    
+                    // Kiểm tra xem có bao nhiêu mẫu in khác nhau
+                    const uniqueTemplates = new Set()
+                    itemsToPrint.forEach((item: any) => {
+                      const template = printTemplates.find((t: any) => t.pt_country_id === item.ps_country_id)
+                      if (template) {
+                        uniqueTemplates.add(template.pt_id)
+                      }
+                    })
+                    
+                    if (uniqueTemplates.size === 1) {
+                      // Chỉ có 1 mẫu in duy nhất
+                      const firstItem = itemsToPrint[0]
+                      const matchingTemplate = printTemplates.find((template: any) => template.pt_country_id === firstItem.ps_country_id)
+                      if (matchingTemplate) {
+                        return (
+                          <>
+                            <span className="text-base">{getCountryFlag(matchingTemplate.country?.country_code)}</span>
+                            <div className="truncate">
+                              <div className="font-medium truncate">{matchingTemplate.pt_title}</div>
+                              <div className="text-xs text-muted-foreground truncate">Template cho {matchingTemplate.country?.country_name}</div>
+                            </div>
+                          </>
+                        )
+                      }
+                    } else if (uniqueTemplates.size > 1) {
+                      // Có nhiều mẫu in khác nhau
+                      return (
+                        <>
+                          <span className="text-base">📋</span>
+                          <div className="truncate">
+                            <div className="font-medium truncate">Nhiều mẫu in ({uniqueTemplates.size} mẫu)</div>
+                            <div className="text-xs text-muted-foreground truncate">
+                              {itemsToPrint.length} sản phẩm với {uniqueTemplates.size} mẫu in khác nhau
+                            </div>
                           </div>
-                        </div>
-                      </SelectItem>
-                    ))}
-
-                  </SelectContent>
-                </Select>
+                        </>
+                      )
+                    }
+                    
+                    return (
+                      <div className="text-muted-foreground">
+                        Không tìm thấy mẫu in quốc gia
+                      </div>
+                    )
+                  })()}
+                </div>
               </div>
 
               <div className="space-y-2">
@@ -1613,8 +1651,7 @@ export default function PrintSelectPage() {
                 <DialogTrigger asChild>
                   <Button 
                     variant="outline" 
-                    className="w-full disabled:opacity-50 disabled:cursor-not-allowed"
-                    disabled={!selectedPrintFormat}
+                    className="w-full"
                   >
                     <Eye className="mr-2 h-4 w-4" />
                     Xem trước nội dung in
@@ -1743,7 +1780,7 @@ export default function PrintSelectPage() {
               </Button>
               <Button
                 onClick={executePrint}
-                disabled={printMutation.isPending || !selectedPrintFormat}
+                disabled={printMutation.isPending}
                 className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {printMutation.isPending ? (
@@ -1860,20 +1897,20 @@ export default function PrintSelectPage() {
                     </Select>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="edit_country">Xuất xứ *</Label>
+                    <Label htmlFor="edit_country">Mẫu in quốc gia *</Label>
                     <Select 
                       value={editFormData.ps_country_id} 
                       onValueChange={(value) => setEditFormData({...editFormData, ps_country_id: value})}
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder="Chọn quốc gia" />
+                        <SelectValue placeholder="Chọn mẫu in quốc gia" />
                       </SelectTrigger>
                       <SelectContent>
-                        {countries.map((country: any) => (
-                          <SelectItem key={country.country_id} value={country.country_id.toString()}>
+                        {printTemplates.map((template: any) => (
+                          <SelectItem key={template.pt_country_id} value={template.pt_country_id.toString()}>
                             <div className="flex items-center space-x-2">
-                              <span className="text-lg">{getCountryFlag(country.country_code)}</span>
-                              <span>{country.country_name}</span>
+                              <span className="text-lg">{getCountryFlag(template.country?.country_code)}</span>
+                              <span>{template.pt_title}</span>
                             </div>
                           </SelectItem>
                         ))}
