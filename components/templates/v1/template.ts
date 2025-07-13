@@ -17,20 +17,24 @@ export const v1Template = (data: {
 <head>
 <title></title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sriracha&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style type="text/css">
 	p {margin: 0; padding: 0;}	
-	.ft10{font-size:55px;font-family:Times;color:#000000;}
-	.ft11{font-size:14px;font-family:Times;color:#000000;}
-	.ft12{font-size:13px;font-family:Times;color:#000000;}
-	.ft13{font-size:58px;font-family:Times;color:#ffffff;}
-	.ft14{font-size:61px;font-family:Times;color:#000000;}
-	.ft15{font-size:34px;font-family:Times;color:#000000;}
-	.ft16{font-size:103px;font-family:Times;color:#000000;}
-	.ft17{font-size:37px;font-family:Times;color:#000000;}
-	.ft18{font-size:25px;font-family:Times;color:#000000;}
-	.ft19{font-size:10px;font-family:Times;color:#000000;}
+	.ft10{font-size:55px;font-family:"Sriracha",cursive;color:#000000;}
+	.ft11{font-size:14px;font-family:"Inter",sans-serif;color:#000000;}
+	.ft12{font-size:13px;font-family:"Inter",sans-serif;color:#000000;}
+	.ft13{font-size:58px;font-family:"Sriracha",cursive;color:#ffffff;}
+	.ft14{font-size:61px;font-family:"Sriracha",cursive;color:#000000;}
+	.ft15{font-size:34px;font-family:"Inter",sans-serif;color:#000000;}
+	.ft16{font-size:103px;font-family:"Sriracha",cursive;color:#000000;}
+	.ft17{font-size:37px;font-family:"Inter",sans-serif;color:#000000;}
+	.ft18{font-size:25px;font-family:"Inter",sans-serif;color:#000000;}
+	.ft19{font-size:10px;font-family:"Inter",sans-serif;color:#000000;}
 	.ft110{font-size:-1px;font-family:Helvetica;color:#000000;}
-	.ft111{font-size:10px;line-height:22px;font-family:Times;color:#000000;}
+	.ft111{font-size:10px;line-height:22px;font-family:"Sriracha",cursive;color:#000000;}
+	.ft111-inter{font-size:10px;line-height:22px;font-family:"Inter",sans-serif;color:#000000;}
 </style>
 </head>
 <body bgcolor="#A0A0A0" vlink="blue" link="blue">
@@ -39,10 +43,10 @@ export const v1Template = (data: {
 <p style="position:absolute;top:11px;left:55px;white-space:nowrap" class="ft10">${data.pt_brand}</p>
 <p style="position:absolute;top:7px;left:268px;white-space:nowrap" class="ft11">${data.product_name}</p>
 <p style="position:absolute;top:31px;left:493px;white-space:nowrap" class="ft12">${data.pt_original_price}:</p>
-<p style="position:absolute;top:64px;left:272px;white-space:nowrap" class="ft13">${data.discount_percentage}</p>
-<p style="position:absolute;top:68px;left:497px;white-space:nowrap" class="ft14">${data.price}</p>
+<p style="position:absolute;top:48px;left:272px;white-space:nowrap" class="ft13">${data.discount_percentage}</p>
+<p style="position:absolute;top:48px;left:497px;white-space:nowrap" class="ft14">${data.price}</p>
 <p style="position:absolute;top:47px;left:704px;white-space:nowrap" class="ft16">${data.price_sale}</p>
-<p style="position:absolute;top:131px;left:268px;white-space:nowrap" class="ft111">${data.pt_origin_country}: ${data.country_code} ${data.country_name}<br/>${data.pt_product_code}: ${data.product_code}</p>
+<p style="position:absolute;top:131px;left:268px;white-space:nowrap" class="ft111">${data.pt_origin_country}: ${data.country_code} ${data.country_name}<br/><span class="ft111-inter">${data.pt_product_code}: ${data.product_code}</span></p>
 
 </div>
 </body>
