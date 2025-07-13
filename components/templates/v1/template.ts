@@ -80,7 +80,10 @@ export const v1Template = (data: {
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Sriracha&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style type="text/css">
-	p {margin: 0; padding: 0;}	
+	/* Reset CSS */
+	* { margin: 0; padding: 0; box-sizing: border-box; }
+	
+	/* Font classes với đơn vị rem */
 	.ft10{font-size:3.4375rem;font-family:"Sriracha",cursive;color:#000000;}
 	.ft11{font-size:0.875rem;font-family:"Inter",sans-serif;color:#000000;}
 	.ft12{font-size:0.8125rem;font-family:"Inter",sans-serif;color:#000000;}
@@ -108,14 +111,80 @@ export const v1Template = (data: {
 	.ft17{font-size:2.3125rem;font-family:"Inter",sans-serif;color:#000000;}
 	.ft18{font-size:1.5625rem;font-family:"Inter",sans-serif;color:#000000;}
 	.ft19{font-size:0.625rem;font-family:"Inter",sans-serif;color:#000000;}
-	.ft110{font-size:-1px;font-family:Helvetica;color:#000000;}
+	.ft110{font-size:1px;font-family:Helvetica;color:#000000;}
 	.ft111{font-size:0.625rem;line-height:1.375rem;font-family:"Sriracha",cursive;color:#000000;}
 	.ft111-inter{font-size:0.625rem;line-height:1.375rem;font-family:"Inter",sans-serif;color:#000000;}
+	
+	/* Print media queries để đảm bảo in đúng */
+	@media print {
+		html {
+			font-size: 16px !important; /* Cố định font-size gốc cho rem */
+		}
+		
+		body {
+			margin: 0 !important;
+			padding: 0 !important;
+			-webkit-print-color-adjust: exact !important;
+			color-adjust: exact !important;
+			background: none !important;
+		}
+		
+		#page1-div {
+			page-break-inside: avoid !important;
+			break-inside: avoid !important;
+			width: 55.75rem !important;
+			height: 78.875rem !important;
+			position: relative !important;
+			margin: 0 !important;
+			padding: 0 !important;
+			overflow: hidden !important;
+		}
+		
+		img {
+			width: 100% !important;
+			height: 100% !important;
+			object-fit: cover !important;
+			display: block !important;
+		}
+		
+		/* Đảm bảo tất cả text không bị wrap */
+		p {
+			white-space: nowrap !important;
+			overflow: hidden !important;
+			position: absolute !important;
+		}
+		
+		/* Đảm bảo không có page break */
+		* {
+			page-break-inside: avoid !important;
+			break-inside: avoid !important;
+		}
+	}
+	
+	/* Screen media queries */
+	@media screen {
+		html {
+			font-size: 16px; /* Cố định font-size gốc cho rem */
+		}
+		
+		#page1-div {
+			width: 55.75rem;
+			height: 78.875rem;
+			position: relative;
+			margin: 0 auto;
+		}
+		
+		img {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+		}
+	}
 </style>
 </head>
 <body bgcolor="#A0A0A0" vlink="blue" link="blue">
-<div id="page1-div" style="position:relative;width:55.75rem;height:78.875rem;">
-<img width="100%" height="100%" src="/v1.png" alt="background image"/>
+<div id="page1-div">
+<img src="/v1.png" alt="background image"/>
 <p style="position:absolute;top:0.6875rem;left:3.4375rem;white-space:nowrap" class="ft10">${data.pt_brand}</p>
 <p style="position:absolute;top:0.4375rem;left:16.75rem;white-space:nowrap" class="ft11">${data.product_name}</p>
 <p style="position:absolute;top:1.9375rem;left:30.8125rem;white-space:nowrap" class="ft12">${data.pt_original_price}:</p>
@@ -123,7 +192,6 @@ export const v1Template = (data: {
 <p style="position:absolute;top:${originalPriceTop};left:28.0625rem;white-space:nowrap" class="${originalPriceClass}">${data.price}</p>
 <p style="position:absolute;top:3.3375rem;left:41rem;white-space:nowrap" class="${priceClass}">${data.price_sale}</p>
 <p style="position:absolute;top:8.1875rem;left:16.75rem;white-space:nowrap" class="ft111">${data.pt_origin_country}: ${data.country_code} ${data.country_name}<br/><span class="ft111-inter">${data.pt_product_code}: ${data.product_code}</span></p>
-
 </div>
 </body>
 </html>`;
