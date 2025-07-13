@@ -190,8 +190,8 @@ export const a5Template = (data: {
 <p style="position:absolute;top:12rem;left:1.625rem;white-space:nowrap" class="ft13">${data.pt_product_code}: ${data.product_code}</p>
 <p style="position:absolute;top:11.1875rem;left:29.5rem;white-space:nowrap" class="ft14">${data.pt_original_price}:</p>
 <p style="position:absolute;top:12.5rem;left:5.1875rem;white-space:nowrap" class="ft15">${data.discount_percentage}</p>
-<p style="position:absolute;top:${originalPriceTop};left:28.8125rem;white-space:nowrap" class="${originalPriceClass}">${data.price}</p>
-<p style="position:absolute;top:19.0625rem;left:12rem;white-space:nowrap" class="${priceClass}">${data.price_sale}</p>
+<p style="position:absolute;top:${originalPriceTop};left:28.8125rem;white-space:nowrap" class="${originalPriceClass}">${data.price} &nbsp;</p>
+<p style="position:absolute;top:19.0625rem;left:12rem;white-space:nowrap" class="${priceClass}">${data.price_sale} &nbsp;</p>
 </div>
 </body>
 </html>`;

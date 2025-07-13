@@ -189,8 +189,8 @@ export const v3Template = (data: {
 <p style="position:absolute;top:5.9375rem;left:0.5625rem;white-space:nowrap" class="ft12">${data.pt_origin_country}: ${data.country_code} ${data.country_name}</p>
 <p style="position:absolute;top:7.3125rem;left:20.1875rem;white-space:nowrap" class="ft13">${data.pt_original_price}:</p>
 <p style="position:absolute;top:9.25rem;left:0.8125rem;white-space:nowrap" class="ft14">${data.discount_percentage}</p>
-<p style="position:absolute;top:${originalPriceTop};left:22.1875rem;white-space:nowrap" class="${originalPriceClass}">${data.price}</p>
-<p style="position:absolute;top:8.75rem;left:33.5rem;white-space:nowrap" class="${priceClass}">${data.price_sale}</p>
+<p style="position:absolute;top:${originalPriceTop};left:22.1875rem;white-space:nowrap" class="${originalPriceClass}">${data.price} &nbsp;</p>
+<p style="position:absolute;top:8.75rem;left:33.5rem;white-space:nowrap" class="${priceClass}">${data.price_sale} &nbsp;</p>
 <p style="position:absolute;top:15.1875rem;left:0.5625rem;white-space:nowrap" class="ft110">${data.pt_product_code}: ${data.product_code}</p>
 </div>
 </body>

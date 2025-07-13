@@ -189,8 +189,8 @@ export const v2Template = (data: {
 <p style="position:absolute;top:0.1rem;left:11.4375rem;white-space:nowrap" class="ft11">${data.product_name}</p>
 <p style="position:absolute;top:1.75rem;left:21.25rem;white-space:nowrap" class="ft12">${data.pt_original_price}:</p>
 <p style="position:absolute;top:3.5rem;left:11.0625rem;white-space:nowrap" class="ft13">${data.discount_percentage}</p>
-<p style="position:absolute;top:${originalPriceTop};left:21.6875rem;white-space:nowrap" class="${originalPriceClass}">${data.price}</p>
-<p style="position:absolute;top:3.1875rem;left:29.1875rem;white-space:nowrap" class="${priceClass}">${data.price_sale}</p>
+<p style="position:absolute;top:${originalPriceTop};left:21.6875rem;white-space:nowrap" class="${originalPriceClass}">${data.price} &nbsp;</p>
+<p style="position:absolute;top:3.1875rem;left:29.1875rem;white-space:nowrap" class="${priceClass}">${data.price_sale} &nbsp;</p>
 <p style="position:absolute;top:8.3125rem;left:11.4375rem;white-space:nowrap" class="ft111">${data.pt_origin_country}: ${data.country_code} ${data.country_name}<br/><span class="ft111-inter">${data.pt_product_code}: ${data.product_code}</span></p>
 </div>
 </body>

@@ -191,8 +191,8 @@ export const a4Template = (data: {
 <p style="position:absolute;top:29.25rem;left:1.625rem;white-space:nowrap" class="ft13">${data.pt_product_code} : ${data.product_code}</p>
 <p style="position:absolute;top:29rem;left:24.1875rem;white-space:nowrap" class="ft12-inter">${data.pt_original_price} : </p>
 <p style="position:absolute;top:30rem;left:2.0625rem;white-space:nowrap" class="ft14">${data.discount_percentage}</p>
-<p style="position:absolute;top:${originalPriceTop};left:25.9375rem;white-space:nowrap" class="${originalPriceClass}">${data.price}</p>
-<p style="position:absolute;top:42.25rem;left:6.25rem;white-space:nowrap" class="${priceClass}">${data.price_sale}</p> 
+<p style="position:absolute;top:${originalPriceTop};left:25.9375rem;white-space:nowrap" class="${originalPriceClass}">${data.price} &nbsp;</p>
+<p style="position:absolute;top:42.25rem;left:6.25rem;white-space:nowrap" class="${priceClass}">${data.price_sale} &nbsp;</p> 
 </div>
 </body>
 </html>`;
