@@ -60,6 +60,7 @@ import {
   ChevronDown,
   ChevronUp,
 } from "lucide-react"
+import { getCountries } from "@/services/CountryService"
 
 export default function ProductsPage() {
   const [searchTerm, setSearchTerm] = useState("")
@@ -95,6 +96,11 @@ export default function ProductsPage() {
   const { data: productStatistics, isLoading: productStatsLoading } = useQuery({
     queryKey: ["product-statistics"],
     queryFn: getProductStatistics,
+  })
+
+  const { data: countries = [], isLoading, error, refetch } = useQuery({
+    queryKey: ['countries'],
+    queryFn: getCountries,
   })
 
   // Fetch products
@@ -294,6 +300,17 @@ export default function ProductsPage() {
     }).format(price)
   }
 
+  const getCountryFlag = (countryCode: string) => {
+    if (!countryCode || typeof countryCode !== 'string') {
+      return "🌍"
+    }
+    const codePoints = countryCode
+      .toUpperCase()
+      .split('')
+      .map(char => 127397 + char.charCodeAt(0));
+    return String.fromCodePoint(...codePoints);
+  }
+
   const handleCreateProduct = (formData: FormData) => {
     const productData: any = {
       product_name: formData.get("product_name") as string,
@@ -301,6 +318,7 @@ export default function ProductsPage() {
       product_description: formData.get("product_description") as string,
       category_id: Number(formData.get("category_id")),
       price: Number(formData.get("price")),
+      origin_country_id: Number(formData.get("origin_country_id")),
       product_status: formData.get("product_status") as string || "active",
       tagIds: formData.getAll("tagIds").map(id => Number(id)),
     }
@@ -322,6 +340,7 @@ export default function ProductsPage() {
     const product_description = formData.get("product_description") as string
     const category_id = Number(formData.get("category_id"))
     const price = Number(formData.get("price"))
+    const origin_country_id = Number(formData.get("origin_country_id"))
     
     // Chỉ thêm vào object nếu có giá trị
     if (product_name && product_name.trim()) {
@@ -335,6 +354,9 @@ export default function ProductsPage() {
     }
     if (price && price >= 0) {
       productData.price = price
+    }
+    if (origin_country_id && origin_country_id > 0) {
+      productData.origin_country_id = origin_country_id
     }
     
     // Handle image file
@@ -583,6 +605,30 @@ export default function ProductsPage() {
                   />
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="origin_country_id" className="text-right font-medium text-slate-700">
+                    Xuất xứ *
+                  </Label>
+                  <Select name="origin_country_id" required>
+                    <SelectTrigger className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100">
+                      <SelectValue placeholder="Chọn quốc gia xuất xứ" />
+                    </SelectTrigger>
+                    <SelectContent className="rounded-xl border-slate-200 shadow-xl">
+                      {isLoading ? (
+                        <SelectItem value="" disabled>Đang tải...</SelectItem>
+                      ) : (
+                        countries.map((country: any) => (
+                          <SelectItem key={country.country_id} value={country.country_id.toString()}>
+                            <div className="flex items-center space-x-2">
+                              <span className="text-lg">{getCountryFlag(country.country_code)}</span>
+                              <span>{country.country_name}</span>
+                            </div>
+                          </SelectItem>
+                        ))
+                      )}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="product_status" className="text-right font-medium text-slate-700">
                     Trạng thái
                   </Label>
@@ -741,6 +787,30 @@ export default function ProductsPage() {
                     placeholder="Nhập giá sản phẩm"
                     className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100"
                   />
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="edit_origin_country_id" className="text-right font-medium text-slate-700">
+                    Xuất xứ
+                  </Label>
+                  <Select name="origin_country_id" defaultValue={editingProduct?.origin?.country_id?.toString()}>
+                    <SelectTrigger className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100">
+                      <SelectValue placeholder="Chọn quốc gia xuất xứ" />
+                    </SelectTrigger>
+                    <SelectContent className="rounded-xl border-slate-200 shadow-xl">
+                      {isLoading ? (
+                        <SelectItem value="" disabled>Đang tải...</SelectItem>
+                      ) : (
+                        countries.map((country: any) => (
+                          <SelectItem key={country.country_id} value={country.country_id.toString()}>
+                            <div className="flex items-center space-x-2">
+                              <span className="text-lg">{getCountryFlag(country.country_code)}</span>
+                              <span>{country.country_name}</span>
+                            </div>
+                          </SelectItem>
+                        ))
+                      )}
+                    </SelectContent>
+                  </Select>
                 </div>
                               
                               <div className="grid grid-cols-4 items-center gap-4">
@@ -1402,6 +1472,15 @@ export default function ProductsPage() {
                   </Badge>
                 </div>
                 <div className="flex items-center justify-between">
+                  <span className="text-sm text-slate-600">Xuất xứ:</span>
+                  <div className="flex items-center space-x-2">
+                    <span className="text-lg">{getCountryFlag(product.origin?.country_code)}</span>
+                    <span className="text-sm font-medium text-slate-700">
+                      {product.origin?.country_name || "N/A"}
+                    </span>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between">
                   <span className="text-sm text-slate-600">Giá:</span>
                   <span className="font-semibold text-slate-900">{formatPrice(product.price)}</span>
                 </div>
@@ -1463,6 +1542,7 @@ export default function ProductsPage() {
                   <TableHead className="text-slate-600 font-semibold">Sản phẩm</TableHead>
                   <TableHead className="text-slate-600 font-semibold">Mã SP</TableHead>
                   <TableHead className="text-slate-600 font-semibold">Danh mục</TableHead>
+                  <TableHead className="text-slate-600 font-semibold">Xuất xứ</TableHead>
                   <TableHead className="text-slate-600 font-semibold">Giá</TableHead>
                   <TableHead className="text-slate-600 font-semibold">Tags</TableHead>
                   <TableHead className="text-slate-600 font-semibold">Trạng thái</TableHead>
@@ -1499,6 +1579,14 @@ export default function ProductsPage() {
                       <Badge variant="outline" className="border-slate-300 text-slate-700 rounded-lg">
                         {product.category?.category_name || "N/A"}
                       </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center space-x-2">
+                        <span className="text-lg">{getCountryFlag(product.origin?.country_code)}</span>
+                        <span className="text-sm font-medium text-slate-700">
+                          {product.origin?.country_name || "N/A"}
+                        </span>
+                      </div>
                     </TableCell>
                     <TableCell className="font-semibold text-slate-900">{formatPrice(product.price)}</TableCell>
                     <TableCell>
