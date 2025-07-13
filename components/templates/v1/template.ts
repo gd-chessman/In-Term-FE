@@ -22,31 +22,31 @@ export const v1Template = (data: {
 <link href="https://fonts.googleapis.com/css2?family=Sriracha&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style type="text/css">
 	p {margin: 0; padding: 0;}	
-	.ft10{font-size:55px;font-family:"Sriracha",cursive;color:#000000;}
-	.ft11{font-size:14px;font-family:"Inter",sans-serif;color:#000000;}
-	.ft12{font-size:13px;font-family:"Inter",sans-serif;color:#000000;}
-	.ft13{font-size:58px;font-family:"Sriracha",cursive;color:#ffffff;}
-	.ft14{font-size:61px;font-family:"Sriracha",cursive;color:#000000;}
-	.ft15{font-size:34px;font-family:"Inter",sans-serif;color:#000000;}
-	.ft16{font-size:103px;font-family:"Sriracha",cursive;color:#000000;}
-	.ft17{font-size:37px;font-family:"Inter",sans-serif;color:#000000;}
-	.ft18{font-size:25px;font-family:"Inter",sans-serif;color:#000000;}
-	.ft19{font-size:10px;font-family:"Inter",sans-serif;color:#000000;}
+	.ft10{font-size:3.4375rem;font-family:"Sriracha",cursive;color:#000000;}
+	.ft11{font-size:0.875rem;font-family:"Inter",sans-serif;color:#000000;}
+	.ft12{font-size:0.8125rem;font-family:"Inter",sans-serif;color:#000000;}
+	.ft13{font-size:3.625rem;font-family:"Sriracha",cursive;color:#ffffff;}
+	.ft14{font-size:3.8125rem;font-family:"Sriracha",cursive;color:#000000;}
+	.ft15{font-size:2.125rem;font-family:"Inter",sans-serif;color:#000000;}
+	.ft16{font-size:6.4375rem;font-family:"Sriracha",cursive;color:#000000;}
+	.ft17{font-size:2.3125rem;font-family:"Inter",sans-serif;color:#000000;}
+	.ft18{font-size:1.5625rem;font-family:"Inter",sans-serif;color:#000000;}
+	.ft19{font-size:0.625rem;font-family:"Inter",sans-serif;color:#000000;}
 	.ft110{font-size:-1px;font-family:Helvetica;color:#000000;}
-	.ft111{font-size:10px;line-height:22px;font-family:"Sriracha",cursive;color:#000000;}
-	.ft111-inter{font-size:10px;line-height:22px;font-family:"Inter",sans-serif;color:#000000;}
+	.ft111{font-size:0.625rem;line-height:1.375rem;font-family:"Sriracha",cursive;color:#000000;}
+	.ft111-inter{font-size:0.625rem;line-height:1.375rem;font-family:"Inter",sans-serif;color:#000000;}
 </style>
 </head>
 <body bgcolor="#A0A0A0" vlink="blue" link="blue">
-<div id="page1-div" style="position:relative;width:892px;height:1262px;">
-<img width="892" height="1262" src="/v1.png" alt="background image"/>
-<p style="position:absolute;top:11px;left:55px;white-space:nowrap" class="ft10">${data.pt_brand}</p>
-<p style="position:absolute;top:7px;left:268px;white-space:nowrap" class="ft11">${data.product_name}</p>
-<p style="position:absolute;top:31px;left:493px;white-space:nowrap" class="ft12">${data.pt_original_price}:</p>
-<p style="position:absolute;top:48px;left:272px;white-space:nowrap" class="ft13">${data.discount_percentage}</p>
-<p style="position:absolute;top:48px;left:497px;white-space:nowrap" class="ft14">${data.price}</p>
-<p style="position:absolute;top:47px;left:704px;white-space:nowrap" class="ft16">${data.price_sale}</p>
-<p style="position:absolute;top:131px;left:268px;white-space:nowrap" class="ft111">${data.pt_origin_country}: ${data.country_code} ${data.country_name}<br/><span class="ft111-inter">${data.pt_product_code}: ${data.product_code}</span></p>
+<div id="page1-div" style="position:relative;width:55.75rem;height:78.875rem;">
+<img width="100%" height="100%" src="/v1.png" alt="background image"/>
+<p style="position:absolute;top:0.6875rem;left:3.4375rem;white-space:nowrap" class="ft10">${data.pt_brand}</p>
+<p style="position:absolute;top:0.4375rem;left:16.75rem;white-space:nowrap" class="ft11">${data.product_name}</p>
+<p style="position:absolute;top:1.9375rem;left:30.8125rem;white-space:nowrap" class="ft12">${data.pt_original_price}:</p>
+<p style="position:absolute;top:3rem;left:17rem;white-space:nowrap" class="ft13">${data.discount_percentage}</p>
+<p style="position:absolute;top:3rem;left:31.0625rem;white-space:nowrap" class="ft14">${data.price}</p>
+<p style="position:absolute;top:2.9375rem;left:44rem;white-space:nowrap" class="ft16">${data.price_sale}</p>
+<p style="position:absolute;top:8.1875rem;left:16.75rem;white-space:nowrap" class="ft111">${data.pt_origin_country}: ${data.country_code} ${data.country_name}<br/><span class="ft111-inter">${data.pt_product_code}: ${data.product_code}</span></p>
 
 </div>
 </body>

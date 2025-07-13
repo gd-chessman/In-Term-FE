@@ -22,31 +22,31 @@ export const v3Template = (data: {
 <link href="https://fonts.googleapis.com/css2?family=Sriracha&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style type="text/css">
 	p {margin: 0; padding: 0;}	
-	.ft10{font-size:52px;font-family:"Sriracha",cursive;color:#ffffff;}
-	.ft11{font-size:22px;font-family:"Inter",sans-serif;color:#000000;}
-	.ft12{font-size:10px;font-family:"Sriracha",cursive;color:#000000;}
-	.ft13{font-size:16px;font-family:"Inter",sans-serif;color:#000000;}
-	.ft14{font-size:64px;font-family:"Sriracha",cursive;color:#ffffff;}
-	.ft15{font-size:79px;font-family:"Sriracha",cursive;color:#000000;}
-	.ft16{font-size:28px;font-family:"Inter",sans-serif;color:#000000;}
-	.ft17{font-size:140px;font-family:"Sriracha",cursive;color:#000000;}
-	.ft18{font-size:50px;font-family:"Inter",sans-serif;color:#000000;}
-	.ft19{font-size:31px;font-family:"Inter",sans-serif;color:#000000;}
-	.ft110{font-size:13px;font-family:"Inter",sans-serif;color:#000000;}
+	.ft10{font-size:3.25rem;font-family:"Sriracha",cursive;color:#ffffff;}
+	.ft11{font-size:1.375rem;font-family:"Inter",sans-serif;color:#000000;}
+	.ft12{font-size:0.625rem;font-family:"Sriracha",cursive;color:#000000;}
+	.ft13{font-size:1rem;font-family:"Inter",sans-serif;color:#000000;}
+	.ft14{font-size:4rem;font-family:"Sriracha",cursive;color:#ffffff;}
+	.ft15{font-size:4.9375rem;font-family:"Sriracha",cursive;color:#000000;}
+	.ft16{font-size:1.75rem;font-family:"Inter",sans-serif;color:#000000;}
+	.ft17{font-size:8.75rem;font-family:"Sriracha",cursive;color:#000000;}
+	.ft18{font-size:3.125rem;font-family:"Inter",sans-serif;color:#000000;}
+	.ft19{font-size:1.9375rem;font-family:"Inter",sans-serif;color:#000000;}
+	.ft110{font-size:0.8125rem;font-family:"Inter",sans-serif;color:#000000;}
 	.ft111{font-size:-1px;font-family:Helvetica;color:#000000;}
 </style>
 </head>
 <body bgcolor="#A0A0A0" vlink="blue" link="blue">
-<div id="page1-div" style="position:relative;width:892px;height:1262px;">
-<img width="892" height="1262" src="/v3.png" alt="background image"/>
-<p style="position:absolute;top:0px;left:294px;white-space:nowrap" class="ft10">${data.pt_brand}</p>
-<p style="position:absolute;top:64px;left:112px;white-space:nowrap" class="ft11">${data.product_name}</p>
-<p style="position:absolute;top:95px;left:9px;white-space:nowrap" class="ft12">${data.pt_origin_country}: ${data.country_code} ${data.country_name}</p>
-<p style="position:absolute;top:117px;left:323px;white-space:nowrap" class="ft13">${data.pt_original_price}:</p>
-<p style="position:absolute;top:148px;left:13px;white-space:nowrap" class="ft14">${data.discount_percentage}</p>
-<p style="position:absolute;top:148px;left:355px;white-space:nowrap" class="ft15">${data.price}</p>
-<p style="position:absolute;top:126px;left:628px;white-space:nowrap" class="ft17">${data.price_sale}</p>
-<p style="position:absolute;top:243px;left:9px;white-space:nowrap" class="ft110">${data.pt_product_code}: ${data.product_code}</p>
+<div id="page1-div" style="position:relative;width:55.75rem;height:78.875rem;">
+<img width="100%" height="100%" src="/v3.png" alt="background image"/>
+<p style="position:absolute;top:0rem;left:18.375rem;white-space:nowrap" class="ft10">${data.pt_brand}</p>
+<p style="position:absolute;top:4rem;left:7rem;white-space:nowrap" class="ft11">${data.product_name}</p>
+<p style="position:absolute;top:5.9375rem;left:0.5625rem;white-space:nowrap" class="ft12">${data.pt_origin_country}: ${data.country_code} ${data.country_name}</p>
+<p style="position:absolute;top:7.3125rem;left:20.1875rem;white-space:nowrap" class="ft13">${data.pt_original_price}:</p>
+<p style="position:absolute;top:9.25rem;left:0.8125rem;white-space:nowrap" class="ft14">${data.discount_percentage}</p>
+<p style="position:absolute;top:9.25rem;left:22.1875rem;white-space:nowrap" class="ft15">${data.price}</p>
+<p style="position:absolute;top:7.875rem;left:39.25rem;white-space:nowrap" class="ft17">${data.price_sale}</p>
+<p style="position:absolute;top:15.1875rem;left:0.5625rem;white-space:nowrap" class="ft110">${data.pt_product_code}: ${data.product_code}</p>
 
 </div>
 </body>
