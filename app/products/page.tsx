@@ -39,7 +39,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea"
 import { Checkbox } from "@/components/ui/checkbox"
 import { useToast } from "@/hooks/use-toast"
-import { getProducts, createProduct, updateProduct, deleteProduct, updateStatus, deleteProductTags, addProductTags } from "@/services/ProductService"
+import { getProducts, createProduct, updateProduct, deleteProduct, updateStatus, deleteProductTags, addProductTags, getProductStatistics } from "@/services/ProductService"
 import { getCategoriesTree } from "@/services/CategoryService"
 import { getTags } from "@/services/TagService"
 import {
@@ -55,10 +55,16 @@ import {
   ShoppingCart,
   Star,
   Loader2,
+  Filter,
+  X,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react"
 
 export default function ProductsPage() {
   const [searchTerm, setSearchTerm] = useState("")
+  const [currentPage, setCurrentPage] = useState(1)
+  const [pageSize, setPageSize] = useState(10)
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
   const [editingProduct, setEditingProduct] = useState<any>(null)
@@ -71,19 +77,53 @@ export default function ProductsPage() {
   const [selectedProduct, setSelectedProduct] = useState<any>(null)
   const [selectedTagsToAdd, setSelectedTagsToAdd] = useState<number[]>([])
   const [selectedTagsToDelete, setSelectedTagsToDelete] = useState<number[]>([])
+  
+  // Advanced filters
+  const [productName, setProductName] = useState("")
+  const [productCode, setProductCode] = useState("")
+  const [productDescription, setProductDescription] = useState("")
+  const [minPrice, setMinPrice] = useState("")
+  const [maxPrice, setMaxPrice] = useState("")
+  const [selectedTags, setSelectedTags] = useState<number[]>([])
+  const [sortBy, setSortBy] = useState("created_at")
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc")
+  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false)
   const { toast } = useToast()
   const queryClient = useQueryClient()
   const apiUrl = process.env.NEXT_PUBLIC_API_URL
 
+  const { data: productStatistics, isLoading: productStatsLoading } = useQuery({
+    queryKey: ["product-statistics"],
+    queryFn: getProductStatistics,
+  })
+
   // Fetch products
   const {
-    data: products = [],
+    data: productsData = { products: [], pagination: { total: 0, page: 1, limit: 10, totalPages: 0 } },
     isLoading: isLoadingProducts,
     error: productsError,
+    isFetching: isFetchingProducts,
   } = useQuery({
-    queryKey: ["products"],
-    queryFn: getProducts,
+    queryKey: ["products", currentPage, pageSize, searchTerm, selectedCategory, selectedStatus, productName, productCode, productDescription, minPrice, maxPrice, selectedTags, sortBy, sortOrder],
+    queryFn: () => getProducts({
+      page: currentPage,
+      limit: pageSize,
+      search: searchTerm || undefined,
+      category_id: selectedCategory !== "all" ? Number(selectedCategory) : undefined,
+      product_status: selectedStatus !== "all" ? selectedStatus : undefined,
+      product_name: productName || undefined,
+      product_code: productCode || undefined,
+      product_description: productDescription || undefined,
+      min_price: minPrice ? Number(minPrice) : undefined,
+      max_price: maxPrice ? Number(maxPrice) : undefined,
+      tag_ids: selectedTags.length > 0 ? selectedTags : undefined,
+      sort_by: sortBy,
+      sort_order: sortOrder
+    }),
   })
+
+  const products = productsData.products || []
+  const pagination = productsData.pagination || { total: 0, page: 1, limit: 10, totalPages: 0 }
 
   // Fetch categories for form and filter
   const {
@@ -225,15 +265,8 @@ export default function ProductsPage() {
     },
   })
 
-  // Filter products based on search and filters
-  const filteredProducts = products.filter((product: any) => {
-    const matchesSearch = product.product_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         product.product_code.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesCategory = selectedCategory === "all" || product.category_id?.toString() === selectedCategory
-    const matchesStatus = selectedStatus === "all" || product.product_status === selectedStatus
-    
-    return matchesSearch && matchesCategory && matchesStatus
-  })
+  // Use products directly from API (server-side filtering)
+  const filteredProducts = products
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -396,6 +429,33 @@ export default function ProductsPage() {
     }
   }
 
+  const handleClearFilters = () => {
+    setSearchTerm("")
+    setSelectedCategory("all")
+    setSelectedStatus("all")
+    setProductName("")
+    setProductCode("")
+    setProductDescription("")
+    setMinPrice("")
+    setMaxPrice("")
+    setSelectedTags([])
+    setSortBy("created_at")
+    setSortOrder("desc")
+    setCurrentPage(1)
+  }
+
+  const handleFilterTagSelectionChange = (tagId: number, checked: boolean) => {
+    if (checked) {
+      setSelectedTags(prev => [...prev, tagId])
+    } else {
+      setSelectedTags(prev => prev.filter(id => id !== tagId))
+    }
+  }
+
+  const hasActiveFilters = searchTerm || selectedCategory !== "all" || selectedStatus !== "all" || 
+    productName || productCode || productDescription || minPrice || maxPrice || 
+    selectedTags.length > 0 || sortBy !== "created_at" || sortOrder !== "desc"
+
   // Flatten categories for select options
   const flattenedCategories = categories.reduce((acc: any[], category: any) => {
     acc.push(category)
@@ -405,16 +465,7 @@ export default function ProductsPage() {
     return acc
   }, [])
 
-  if (isLoadingProducts) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="flex items-center space-x-2">
-          <Loader2 className="h-6 w-6 animate-spin" />
-          <span>Đang tải danh sách sản phẩm...</span>
-        </div>
-      </div>
-    )
-  }
+
 
   if (productsError) {
     return (
@@ -967,10 +1018,16 @@ export default function ProductsPage() {
             </div>
           </CardHeader>
           <CardContent className="relative">
-            <div className="text-3xl font-bold text-slate-900">{products.length}</div>
+            <div className="text-3xl font-bold text-slate-900">
+              {productStatsLoading ? (
+                <div className="h-8 w-16 bg-slate-200 rounded animate-pulse"></div>
+              ) : (
+                productStatistics?.totalProducts || 0
+              )}
+            </div>
             <div className="flex items-center text-xs text-green-600 mt-2">
               <TrendingUp className="h-3 w-3 mr-1" />
-              +2 từ tuần trước
+              {pagination.totalPages > 1 ? `Trang ${pagination.page}/${pagination.totalPages}` : 'Tất cả sản phẩm'}
             </div>
           </CardContent>
         </Card>
@@ -985,11 +1042,20 @@ export default function ProductsPage() {
           </CardHeader>
           <CardContent className="relative">
             <div className="text-3xl font-bold text-slate-900">
-              {products.filter((p: any) => p.product_status === "active").length}
+              {productStatsLoading ? (
+                <div className="h-8 w-16 bg-slate-200 rounded animate-pulse"></div>
+              ) : (
+                productStatistics?.activeProducts || 0
+              )}
             </div>
             <p className="text-xs text-blue-600 mt-1">
-              {products.length > 0 ? Math.round((products.filter((p: any) => p.product_status === "active").length / products.length) * 100) : 0}% tổng
-              số
+              {productStatsLoading ? (
+                <div className="h-3 w-12 bg-slate-200 rounded animate-pulse"></div>
+              ) : (
+                productStatistics?.totalProducts > 0 
+                  ? Math.round((productStatistics.activeProducts / productStatistics.totalProducts) * 100) 
+                  : 0
+              )}% tổng số
             </p>
           </CardContent>
         </Card>
@@ -997,14 +1063,28 @@ export default function ProductsPage() {
         <Card className="relative overflow-hidden bg-gradient-to-br from-purple-50 to-violet-50 border-purple-200/50 hover:shadow-xl transition-all duration-300 group hover:-translate-y-1 rounded-xl">
           <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-purple-400/20 to-violet-400/20 rounded-full -mr-10 -mt-10"></div>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative">
-            <CardTitle className="text-sm font-medium text-slate-700">Danh mục</CardTitle>
+            <CardTitle className="text-sm font-medium text-slate-700">Không hoạt động</CardTitle>
             <div className="h-12 w-12 rounded-xl bg-gradient-to-r from-purple-500 to-violet-500 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
               <Tags className="h-6 w-6 text-white" />
             </div>
           </CardHeader>
           <CardContent className="relative">
-            <div className="text-3xl font-bold text-slate-900">{flattenedCategories.length}</div>
-            <p className="text-xs text-purple-600 mt-1">Tổng danh mục</p>
+            <div className="text-3xl font-bold text-slate-900">
+              {productStatsLoading ? (
+                <div className="h-8 w-16 bg-slate-200 rounded animate-pulse"></div>
+              ) : (
+                productStatistics?.inactiveProducts || 0
+              )}
+            </div>
+            <p className="text-xs text-purple-600 mt-1">
+              {productStatsLoading ? (
+                <div className="h-3 w-12 bg-slate-200 rounded animate-pulse"></div>
+              ) : (
+                productStatistics?.totalProducts > 0 
+                  ? Math.round((productStatistics.inactiveProducts / productStatistics.totalProducts) * 100) 
+                  : 0
+              )}% tổng số
+            </p>
           </CardContent>
         </Card>
 
@@ -1018,9 +1098,21 @@ export default function ProductsPage() {
           </CardHeader>
           <CardContent className="relative">
             <div className="text-2xl font-bold text-slate-900">
-              {products.length > 0 ? formatPrice(products.reduce((sum: number, p: any) => sum + Number(p.price || 0), 0) / products.length) : "0 ₫"}
+              {productStatsLoading ? (
+                <div className="h-8 w-16 bg-slate-200 rounded animate-pulse"></div>
+              ) : (
+                productStatistics?.averagePrice ? formatPrice(productStatistics.averagePrice) : "0 ₫"
+              )}
             </div>
-            <p className="text-xs text-orange-600 mt-1">Giá trung bình</p>
+            <p className="text-xs text-orange-600 mt-1">
+              {productStatsLoading ? (
+                <div className="h-3 w-20 bg-slate-200 rounded animate-pulse"></div>
+              ) : (
+                productStatistics?.minPrice && productStatistics?.maxPrice 
+                  ? `${formatPrice(productStatistics.minPrice)} - ${formatPrice(productStatistics.maxPrice)}`
+                  : "Giá trung bình"
+              )}
+            </p>
           </CardContent>
         </Card>
       </div>
@@ -1028,48 +1120,193 @@ export default function ProductsPage() {
       {/* Search and Filters */}
       <Card className="bg-white/70 backdrop-blur-sm border-slate-200/60 hover:shadow-xl transition-all duration-300 rounded-xl">
         <CardHeader>
-          <CardTitle className="text-slate-900">Tìm kiếm & Lọc</CardTitle>
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-slate-900">Tìm kiếm & Lọc</CardTitle>
+            <div className="flex items-center space-x-2">
+              {hasActiveFilters && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleClearFilters}
+                  className="rounded-lg"
+                >
+                  <X className="mr-2 h-4 w-4" />
+                  Xóa bộ lọc
+                </Button>
+              )}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
+                className="rounded-lg"
+              >
+                <Filter className="mr-2 h-4 w-4" />
+                Bộ lọc nâng cao
+                {showAdvancedFilters ? <ChevronUp className="ml-2 h-4 w-4" /> : <ChevronDown className="ml-2 h-4 w-4" />}
+              </Button>
+            </div>
+          </div>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center space-x-4">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-              <Input
-                placeholder="Tìm kiếm theo tên, mã sản phẩm..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100"
-              />
+          <div className="space-y-4">
+            {/* Basic Filters */}
+            <div className="flex items-center space-x-4">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                <Input
+                  placeholder="Tìm kiếm theo tên, mã sản phẩm..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100"
+                />
+              </div>
+              <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                <SelectTrigger className="w-[180px] rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100">
+                  <SelectValue placeholder="Danh mục" />
+                </SelectTrigger>
+                <SelectContent className="rounded-xl border-slate-200 shadow-xl">
+                  <SelectItem value="all">Tất cả</SelectItem>
+                  {flattenedCategories.map((category: any, index: number) => (
+                    <SelectItem key={index} value={category.category_id.toString()}>
+                      {category.category_name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Select value={selectedStatus} onValueChange={setSelectedStatus}>
+                <SelectTrigger className="w-[180px] rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100">
+                  <SelectValue placeholder="Trạng thái" />
+                </SelectTrigger>
+                <SelectContent className="rounded-xl border-slate-200 shadow-xl">
+                  <SelectItem value="all">Tất cả</SelectItem>
+                  <SelectItem value="active">Hoạt động</SelectItem>
+                  <SelectItem value="inactive">Không hoạt động</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
-            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-              <SelectTrigger className="w-[180px] rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100">
-                <SelectValue placeholder="Danh mục" />
-              </SelectTrigger>
-              <SelectContent className="rounded-xl border-slate-200 shadow-xl">
-                <SelectItem value="all">Tất cả</SelectItem>
-                {flattenedCategories.map((category: any, index: number) => (
-                  <SelectItem key={index} value={category.category_id.toString()}>
-                    {category.category_name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Select value={selectedStatus} onValueChange={setSelectedStatus}>
-              <SelectTrigger className="w-[180px] rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100">
-                <SelectValue placeholder="Trạng thái" />
-              </SelectTrigger>
-              <SelectContent className="rounded-xl border-slate-200 shadow-xl">
-                <SelectItem value="all">Tất cả</SelectItem>
-                <SelectItem value="active">Hoạt động</SelectItem>
-                <SelectItem value="inactive">Không hoạt động</SelectItem>
-              </SelectContent>
-            </Select>
+
+            {/* Advanced Filters */}
+            {showAdvancedFilters && (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-4 border-t border-slate-200">
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium text-slate-700">Tên sản phẩm</Label>
+                  <Input
+                    placeholder="Nhập tên sản phẩm..."
+                    value={productName}
+                    onChange={(e) => setProductName(e.target.value)}
+                    className="rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium text-slate-700">Mã sản phẩm</Label>
+                  <Input
+                    placeholder="Nhập mã sản phẩm..."
+                    value={productCode}
+                    onChange={(e) => setProductCode(e.target.value)}
+                    className="rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium text-slate-700">Mô tả</Label>
+                  <Input
+                    placeholder="Nhập từ khóa mô tả..."
+                    value={productDescription}
+                    onChange={(e) => setProductDescription(e.target.value)}
+                    className="rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium text-slate-700">Giá tối thiểu</Label>
+                  <Input
+                    type="number"
+                    placeholder="0"
+                    value={minPrice}
+                    onChange={(e) => setMinPrice(e.target.value)}
+                    className="rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium text-slate-700">Giá tối đa</Label>
+                  <Input
+                    type="number"
+                    placeholder="999999999"
+                    value={maxPrice}
+                    onChange={(e) => setMaxPrice(e.target.value)}
+                    className="rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium text-slate-700">Sắp xếp theo</Label>
+                  <Select value={sortBy} onValueChange={setSortBy}>
+                    <SelectTrigger className="rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="rounded-xl border-slate-200 shadow-xl">
+                      <SelectItem value="created_at">Ngày tạo</SelectItem>
+                      <SelectItem value="product_name">Tên sản phẩm</SelectItem>
+                      <SelectItem value="product_code">Mã sản phẩm</SelectItem>
+                      <SelectItem value="price">Giá</SelectItem>
+                      <SelectItem value="product_status">Trạng thái</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium text-slate-700">Thứ tự</Label>
+                  <Select value={sortOrder} onValueChange={(value: "asc" | "desc") => setSortOrder(value)}>
+                    <SelectTrigger className="rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="rounded-xl border-slate-200 shadow-xl">
+                      <SelectItem value="desc">Giảm dần</SelectItem>
+                      <SelectItem value="asc">Tăng dần</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2 md:col-span-2 lg:col-span-3">
+                  <Label className="text-sm font-medium text-slate-700">Tags</Label>
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 max-h-32 overflow-y-auto border border-slate-200 rounded-xl p-3">
+                    {isLoadingTags ? (
+                      <div className="text-sm text-slate-500">Đang tải tags...</div>
+                    ) : tags.length > 0 ? (
+                      tags.map((tag: any) => (
+                        <div key={tag.tag_id} className="flex items-center space-x-2">
+                          <Checkbox
+                            id={`filter-tag-${tag.tag_id}`}
+                            checked={selectedTags.includes(tag.tag_id)}
+                            onCheckedChange={(checked) => handleFilterTagSelectionChange(tag.tag_id, checked as boolean)}
+                            className="rounded border-slate-300"
+                          />
+                          <Label
+                            htmlFor={`filter-tag-${tag.tag_id}`}
+                            className="text-sm font-normal cursor-pointer hover:text-green-600"
+                          >
+                            {tag.tag_name}
+                          </Label>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="text-sm text-slate-500">Không có tags nào</div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
 
       {/* Mobile Cards View */}
       <div className="lg:hidden space-y-4">
+        {(isFetchingProducts || isLoadingProducts) && (
+          <div className="flex items-center justify-center py-8">
+            <div className="flex items-center space-x-2">
+              <Loader2 className="h-5 w-5 animate-spin text-green-600" />
+              <span className="text-sm text-slate-600">
+                {isLoadingProducts ? "Đang tải dữ liệu..." : "Đang cập nhật dữ liệu..."}
+              </span>
+            </div>
+          </div>
+        )}
         {filteredProducts.map((product: any) => (
           <Card
             key={product.product_id}
@@ -1207,9 +1444,19 @@ export default function ProductsPage() {
         <Card className="bg-white/70 backdrop-blur-sm border-slate-200/60 hover:shadow-xl transition-all duration-300 rounded-xl">
           <CardHeader>
             <CardTitle className="text-slate-900">Danh sách Sản phẩm</CardTitle>
-            <CardDescription>Tổng cộng {filteredProducts.length} sản phẩm trong hệ thống</CardDescription>
+            <CardDescription>Tổng cộng {pagination.total} sản phẩm trong hệ thống</CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="relative">
+            {(isFetchingProducts || isLoadingProducts) && (
+              <div className="absolute inset-0 bg-white/80 backdrop-blur-sm z-10 flex items-center justify-center rounded-lg">
+                <div className="flex items-center space-x-2">
+                  <Loader2 className="h-6 w-6 animate-spin text-green-600" />
+                  <span className="text-sm text-slate-600">
+                    {isLoadingProducts ? "Đang tải dữ liệu..." : "Đang cập nhật dữ liệu..."}
+                  </span>
+                </div>
+              </div>
+            )}
             <Table>
               <TableHeader>
                 <TableRow className="border-slate-100 hover:bg-slate-50/50">
@@ -1344,6 +1591,64 @@ export default function ProductsPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Pagination Controls */}
+      {pagination.totalPages > 1 && (
+        <Card className="bg-white/70 backdrop-blur-sm border-slate-200/60 hover:shadow-xl transition-all duration-300 rounded-xl">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div className="text-sm text-slate-600">
+                Hiển thị {((currentPage - 1) * pageSize) + 1} - {Math.min(currentPage * pageSize, pagination.total)} trong tổng số {pagination.total} sản phẩm
+              </div>
+              <div className="flex items-center space-x-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                  disabled={currentPage === 1}
+                  className="rounded-lg"
+                >
+                  Trước
+                </Button>
+                <div className="flex items-center space-x-1">
+                  {Array.from({ length: Math.min(5, pagination.totalPages) }, (_, i) => {
+                    let pageNum = i + 1
+                    if (pagination.totalPages > 5) {
+                      if (currentPage <= 3) {
+                        pageNum = i + 1
+                      } else if (currentPage >= pagination.totalPages - 2) {
+                        pageNum = pagination.totalPages - 4 + i
+                      } else {
+                        pageNum = currentPage - 2 + i
+                      }
+                    }
+                    return (
+                      <Button
+                        key={pageNum}
+                        variant={currentPage === pageNum ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => setCurrentPage(pageNum)}
+                        className="rounded-lg min-w-[40px]"
+                      >
+                        {pageNum}
+                      </Button>
+                    )
+                  })}
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage(prev => Math.min(pagination.totalPages, prev + 1))}
+                  disabled={currentPage === pagination.totalPages}
+                  className="rounded-lg"
+                >
+                  Sau
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </div>
   )
 }
