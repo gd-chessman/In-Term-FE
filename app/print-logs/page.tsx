@@ -194,7 +194,7 @@ export default function PrintLogsPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-indigo-900">
-              {printStatistics?.topAdmins?.[0]?.total_prints || 0}
+              {printStatistics?.topAdmins?.[0]?.total_prints || 0} <span className="text-xs text-indigo-600">lượt in</span>
             </div>
             <div className="text-xs text-indigo-600 mt-1 truncate">
               {printStatistics?.topAdmins?.[0]?.admin_fullname || 'N/A'}
@@ -496,6 +496,64 @@ export default function PrintLogsPage() {
                   </div>
                 </div>
               ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Pagination Controls */}
+      {pagination.totalPages > 1 && (
+        <Card className="bg-white/70 backdrop-blur-sm border-slate-200/60 hover:shadow-xl transition-all duration-300 rounded-xl">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div className="text-sm text-slate-600">
+                Hiển thị {((currentPage - 1) * pageSize) + 1} - {Math.min(currentPage * pageSize, pagination.total)} trong tổng số {pagination.total} bản ghi
+              </div>
+              <div className="flex items-center space-x-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                  disabled={currentPage === 1}
+                  className="rounded-lg"
+                >
+                  Trước
+                </Button>
+                <div className="flex items-center space-x-1">
+                  {Array.from({ length: Math.min(5, pagination.totalPages) }, (_, i) => {
+                    let pageNum = i + 1
+                    if (pagination.totalPages > 5) {
+                      if (currentPage <= 3) {
+                        pageNum = i + 1
+                      } else if (currentPage >= pagination.totalPages - 2) {
+                        pageNum = pagination.totalPages - 4 + i
+                      } else {
+                        pageNum = currentPage - 2 + i
+                      }
+                    }
+                    return (
+                      <Button
+                        key={pageNum}
+                        variant={currentPage === pageNum ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => setCurrentPage(pageNum)}
+                        className="rounded-lg min-w-[40px]"
+                      >
+                        {pageNum}
+                      </Button>
+                    )
+                  })}
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage(prev => Math.min(pagination.totalPages, prev + 1))}
+                  disabled={currentPage === pagination.totalPages}
+                  className="rounded-lg"
+                >
+                  Sau
+                </Button>
+              </div>
             </div>
           </CardContent>
         </Card>
