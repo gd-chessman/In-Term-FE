@@ -43,7 +43,7 @@ export const createProduct = async (item: any) => {
 
 export const updateProduct = async ( id: any, item: any) => {
     try {
-        const temp = await axiosClient.patch(`products/${id}`, item);
+        const temp = await axiosClient.patch(`products/${id}`, item, { headers : {'Content-Type': 'multipart/form-data',}});
         return temp.data;
     } catch (e) {
         throw e;

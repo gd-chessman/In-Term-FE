@@ -91,7 +91,6 @@ export default function ProductsPage() {
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false)
   const { toast } = useToast()
   const queryClient = useQueryClient()
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL
 
   const { data: productStatistics, isLoading: productStatsLoading } = useQuery({
     queryKey: ["product-statistics"],
@@ -1387,7 +1386,7 @@ export default function ProductsPage() {
                 <div className="flex items-center space-x-3">
                   <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center shadow-md overflow-hidden">
                     <img 
-                      src={apiUrl + product.product_image} 
+                      src={product.product_image || ""} 
                       alt={"product_image"}
                       className="h-full w-full object-cover"
                       onError={(e) => {
@@ -1555,9 +1554,9 @@ export default function ProductsPage() {
                   <TableRow key={product.product_id} className="hover:bg-slate-50/80 transition-colors duration-200">
                     <TableCell>
                       <div className="flex items-center space-x-3">
-                        <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center shadow-md overflow-hidden">
+                        <div className="h-12 w-12 rounded-xl flex items-center justify-center overflow-hidden">
                           <img 
-                            src={apiUrl + product.product_image} 
+                            src={product.product_image || ""} 
                             alt={product.product_name}
                             className="h-full w-full object-cover"
                             onError={(e) => {
