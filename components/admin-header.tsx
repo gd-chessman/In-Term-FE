@@ -148,7 +148,7 @@ export function AdminHeader() {
               className="relative h-10 w-10 rounded-full hover:bg-gray-100 dark:hover:bg-zinc-800 transition-all duration-200"
             >
               <Avatar className="h-9 w-9 ring-2 ring-gray-200 dark:ring-zinc-700 shadow-md">
-                <AvatarImage src="" alt="" />
+                <AvatarImage src={userMe?.admin_avatar || ""} alt="" />
                 <AvatarFallback className="bg-gradient-to-r from-blue-500 to-blue-700 text-white text-sm font-semibold">
                   {userMe?.admin_fullname ? getInitials(userMe.admin_fullname) : ""}
                 </AvatarFallback>

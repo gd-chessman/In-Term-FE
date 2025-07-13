@@ -217,7 +217,7 @@ export default function ProfilePage() {
             <div className="flex justify-center mb-8 relative">
               <div className="relative cursor-pointer group" onClick={handleAvatarClick}>
                 <Avatar className="h-48 w-48 ring-4 ring-gray-200 dark:ring-zinc-700">
-                  <AvatarImage src={avatarPreview || userMe?.avatar || ""} alt="" />
+                  <AvatarImage src={avatarPreview || userMe?.admin_avatar || ""} alt="" />
                   <AvatarFallback className="bg-gradient-to-r from-blue-500 to-blue-700 text-white text-5xl font-semibold">
                     {userMe?.admin_fullname ? getInitials(userMe.admin_fullname) : ""}
                   </AvatarFallback>
