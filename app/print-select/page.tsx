@@ -134,10 +134,12 @@ export default function PrintSelectPage() {
     queryFn: getPrintSelects,
   })
 
-  const { data: products = [] } = useQuery({
+  const { data: productsData = { products: [], pagination: { total: 0, page: 1, limit: 10, totalPages: 0 } } } = useQuery({
     queryKey: ["products"],
-    queryFn: getProducts,
+    queryFn: () => getProducts({limit: 100}),
   })
+
+  const products = productsData.products || []
 
   const { data: countries = [] } = useQuery({
     queryKey: ["countries"],
