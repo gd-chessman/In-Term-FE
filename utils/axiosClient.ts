@@ -1,3 +1,4 @@
+import { useAuth } from "@/hooks/useAuth";
 import axios from "axios"
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
@@ -18,9 +19,23 @@ axiosClient.interceptors.response.use(
   (response) => {
     return response
   },
-  (error) => {
-    if (error.response && error.response.status === 401) {
-      console.warn("Lỗi 401: Unauthorized")
+  async (error) => {
+    const originalRequest = error.config;
+    
+    if (error.response && error.response.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+      
+      try {
+        // Gọi API refresh token với withCredentials
+        await axios.post(`${apiUrl}/api/v1/admins/refresh`, {}, {
+          withCredentials: true,
+        });   
+        // Retry request gốc
+        return axiosClient(originalRequest);
+      } catch (refreshError) {
+        console.warn("Refresh token failed:", refreshError);
+        useAuth.getState().logout();
+      }
     } else if (error.code === "ERR_NETWORK") {
       console.warn("Máy chủ đang gặp sự cố !")
     }

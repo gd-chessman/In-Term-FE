@@ -27,14 +27,9 @@ export const getUserMe = async () => {
         useAuth.getState().login();
         return temp.data.data;
     } catch (e) {
-        try {
-            const refresh = await axiosClient.post(`admins/refresh`);
-            window.location.reload();
-            useAuth.getState().login();
-        } catch (e) {
-            useAuth.getState().logout();
-            return {};
-        }
+        useAuth.getState().logout();
+        return {};
+
     }
 }
 
