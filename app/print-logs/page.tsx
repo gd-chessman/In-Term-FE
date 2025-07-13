@@ -303,7 +303,7 @@ export default function PrintLogsPage() {
               <TableHeader>
                 <TableRow>
                   <TableHead>Thời gian</TableHead>
-                  <TableHead>Admin</TableHead>
+                  <TableHead>Người thực hiện</TableHead>
                   <TableHead>Sản phẩm</TableHead>
                   <TableHead>Template</TableHead>
                   <TableHead>Trạng thái</TableHead>
