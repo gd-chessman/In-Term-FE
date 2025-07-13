@@ -16,15 +16,15 @@ export const v1Template = (data: {
   const getPriceClass = (price: string) => {
     if (!price) return 'ft16';
     const length = price.length;
-    if (length <= 3) return 'ft16'; // 5.5rem - giảm từ 6.4375rem
-    if (length <= 4) return 'ft16-small'; // 4.4rem
-    if (length <= 5) return 'ft16-medium'; // 4.2rem
-    if (length <= 6) return 'ft16-large'; // 4rem
-    if (length <= 7) return 'ft16-xlarge'; // 3.8rem
-    if (length <= 8) return 'ft16-xxlarge'; // 3.6rem
-    if (length <= 9) return 'ft16-xxxlarge'; // 3.4rem
-    if (length <= 10) return 'ft16-mini'; // 3.2rem
-    return 'ft16-tiny'; // 3rem - cho trường hợp vượt quá 10
+    if (length <= 3) return 'ft16'; // 5.3rem (giảm từ 5.5rem)
+    if (length <= 4) return 'ft16-small'; // 4.2rem (giảm từ 4.4rem)
+    if (length <= 5) return 'ft16-medium'; // 4rem (giảm từ 4.2rem)
+    if (length <= 6) return 'ft16-large'; // 3.8rem (giảm từ 4rem)
+    if (length <= 7) return 'ft16-xlarge'; // 3.6rem (giảm từ 3.8rem)
+    if (length <= 8) return 'ft16-xxlarge'; // 3rem (giảm từ 3.2rem)
+    if (length <= 9) return 'ft16-xxxlarge'; // 2.8rem (giảm từ 3rem)
+    if (length <= 10) return 'ft16-mini'; // 2.6rem (giảm từ 2.8rem)
+    return 'ft16-tiny'; // 2.4rem (giảm từ 2.6rem) - cho trường hợp vượt quá 10
   };
 
   // Hàm chọn class cho giá gốc (nhỏ hơn 0.6 lần)
@@ -36,10 +36,10 @@ export const v1Template = (data: {
     if (length <= 5) return 'ft14-original-medium'; // 2.7rem (3.25 * 0.84)
     if (length <= 6) return 'ft14-original-large'; // 2.6rem (3.25 * 0.82)
     if (length <= 7) return 'ft14-original-xlarge'; // 2.5rem (3.25 * 0.8)
-    if (length <= 8) return 'ft14-original-xxlarge'; // 2.4rem (3.25 * 0.78)
-    if (length <= 9) return 'ft14-original-xxxlarge'; // 2.3rem (3.25 * 0.76)
-    if (length <= 10) return 'ft14-original-mini'; // 2.2rem (3.25 * 0.74)
-    return 'ft14-original-tiny'; // 2.1rem (3.25 * 0.72) - cho trường hợp vượt quá 10
+    if (length <= 8) return 'ft14-original-xxlarge'; // 2rem (giảm từ 2.2rem)
+    if (length <= 9) return 'ft14-original-xxxlarge'; // 1.9rem (giảm từ 2.1rem)
+    if (length <= 10) return 'ft14-original-mini'; // 1.8rem (giảm từ 2rem)
+    return 'ft14-original-tiny'; // 1.7rem (giảm từ 1.9rem) - cho trường hợp vượt quá 10
   };
 
   // Hàm tính toán top position cho giá gốc dựa trên độ dài
@@ -55,10 +55,10 @@ export const v1Template = (data: {
     else if (length <= 5) fontSize = 2.7;
     else if (length <= 6) fontSize = 2.6;
     else if (length <= 7) fontSize = 2.5;
-    else if (length <= 8) fontSize = 2.4;
-    else if (length <= 9) fontSize = 2.3;
-    else if (length <= 10) fontSize = 2.2;
-    else fontSize = 2.1;
+    else if (length <= 8) fontSize = 2;
+    else if (length <= 9) fontSize = 1.9;
+    else if (length <= 10) fontSize = 1.8;
+    else fontSize = 1.7;
 
     // Tính toán sự khác biệt về chiều cao và điều chỉnh top
     const heightDiff = (baseFontSize - fontSize) / 2;
@@ -94,20 +94,20 @@ export const v1Template = (data: {
 	.ft14-original-medium{font-size:2.7rem;font-family:"Sriracha",cursive;color:#000000;}
 	.ft14-original-large{font-size:2.6rem;font-family:"Sriracha",cursive;color:#000000;}
 	.ft14-original-xlarge{font-size:2.5rem;font-family:"Sriracha",cursive;color:#000000;}
-	.ft14-original-xxlarge{font-size:2.4rem;font-family:"Sriracha",cursive;color:#000000;}
-	.ft14-original-xxxlarge{font-size:2.3rem;font-family:"Sriracha",cursive;color:#000000;}
-	.ft14-original-mini{font-size:2.2rem;font-family:"Sriracha",cursive;color:#000000;}
-	.ft14-original-tiny{font-size:2.1rem;font-family:"Sriracha",cursive;color:#000000;}
+	.ft14-original-xxlarge{font-size:2rem;font-family:"Sriracha",cursive;color:#000000;}
+	.ft14-original-xxxlarge{font-size:1.9rem;font-family:"Sriracha",cursive;color:#000000;}
+	.ft14-original-mini{font-size:1.8rem;font-family:"Sriracha",cursive;color:#000000;}
+	.ft14-original-tiny{font-size:1.7rem;font-family:"Sriracha",cursive;color:#000000;}
 	.ft15{font-size:2.125rem;font-family:"Inter",sans-serif;color:#000000;}
-	.ft16{font-size:5.5rem;font-family:"Sriracha",cursive;color:#000000;}
-	.ft16-small{font-size:4.4rem;font-family:"Sriracha",cursive;color:#000000;}
-	.ft16-medium{font-size:4.2rem;font-family:"Sriracha",cursive;color:#000000;}
-	.ft16-large{font-size:4rem;font-family:"Sriracha",cursive;color:#000000;}
-	.ft16-xlarge{font-size:3.8rem;font-family:"Sriracha",cursive;color:#000000;}
-	.ft16-xxlarge{font-size:3.6rem;font-family:"Sriracha",cursive;color:#000000;}
-	.ft16-xxxlarge{font-size:3.4rem;font-family:"Sriracha",cursive;color:#000000;}
-	.ft16-mini{font-size:3.2rem;font-family:"Sriracha",cursive;color:#000000;}
-	.ft16-tiny{font-size:3rem;font-family:"Sriracha",cursive;color:#000000;}
+	.ft16{font-size:5.3rem;font-family:"Sriracha",cursive;color:#000000;}
+	.ft16-small{font-size:4.2rem;font-family:"Sriracha",cursive;color:#000000;}
+	.ft16-medium{font-size:4rem;font-family:"Sriracha",cursive;color:#000000;}
+	.ft16-large{font-size:3.8rem;font-family:"Sriracha",cursive;color:#000000;}
+	.ft16-xlarge{font-size:3.6rem;font-family:"Sriracha",cursive;color:#000000;}
+	.ft16-xxlarge{font-size:3rem;font-family:"Sriracha",cursive;color:#000000;}
+	.ft16-xxxlarge{font-size:2.8rem;font-family:"Sriracha",cursive;color:#000000;}
+	.ft16-mini{font-size:2.6rem;font-family:"Sriracha",cursive;color:#000000;}
+	.ft16-tiny{font-size:2.4rem;font-family:"Sriracha",cursive;color:#000000;}
 	.ft17{font-size:2.3125rem;font-family:"Inter",sans-serif;color:#000000;}
 	.ft18{font-size:1.5625rem;font-family:"Inter",sans-serif;color:#000000;}
 	.ft19{font-size:0.625rem;font-family:"Inter",sans-serif;color:#000000;}
@@ -189,8 +189,8 @@ export const v1Template = (data: {
 <p style="position:absolute;top:0.4375rem;left:16.75rem;white-space:nowrap" class="ft11">${data.product_name}</p>
 <p style="position:absolute;top:1.9375rem;left:30.8125rem;white-space:nowrap" class="ft12">${data.pt_original_price}:</p>
 <p style="position:absolute;top:3rem;left:17rem;white-space:nowrap" class="ft13">${data.discount_percentage}</p>
-<p style="position:absolute;top:${originalPriceTop};left:28.0625rem;white-space:nowrap" class="${originalPriceClass}">${data.price} &nbsp;</p>
-<p style="position:absolute;top:3.3375rem;left:41rem;white-space:nowrap" class="${priceClass}">${data.price_sale} &nbsp;</p>
+<p style="position:absolute;top:${originalPriceTop};left:29.0625rem;white-space:nowrap" class="${originalPriceClass}">${data.price} &nbsp;</p>
+<p style="position:absolute;top:3.3375rem;left:40.2rem;white-space:nowrap" class="${priceClass}">${data.price_sale} &nbsp;</p>
 <p style="position:absolute;top:8.1875rem;left:16.75rem;white-space:nowrap" class="ft111">${data.pt_origin_country}: ${data.country_code} ${data.country_name}<br/><span class="ft111-inter">${data.pt_product_code}: ${data.product_code}</span></p>
 </div>
 </body>
