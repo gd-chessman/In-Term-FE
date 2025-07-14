@@ -61,7 +61,6 @@ import {
   ChevronUp,
 } from "lucide-react"
 import { getCountries } from "@/services/CountryService"
-import { formatPrice } from "@/utils/common"
 
 export default function ProductsPage() {
   const [searchTerm, setSearchTerm] = useState("")
@@ -1024,7 +1023,7 @@ export default function ProductsPage() {
             <div>
               <div className="font-semibold text-slate-800">{productToDelete?.product_name}</div>
               <div className="text-sm text-slate-600">Mã: <code className="bg-white px-1 rounded text-slate-700">{productToDelete?.product_code}</code></div>
-              <div className="text-sm text-slate-600">Giá: {productToDelete?.price ? formatPrice(productToDelete.price, productToDelete.origin?.country_code) : "N/A"}</div>
+              <div className="text-sm text-slate-600">Giá: {productToDelete?.price ? productToDelete.price : "N/A"}</div>
             </div>
           </div>
 
@@ -1476,7 +1475,7 @@ export default function ProductsPage() {
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-slate-600">Giá:</span>
-                  <span className="font-semibold text-slate-900">{formatPrice(product.price, product.origin?.country_code)}</span>
+                  <span className="font-semibold text-slate-900">{product.price}</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-slate-600">Tags:</span>
@@ -1582,7 +1581,7 @@ export default function ProductsPage() {
                         </span>
                       </div>
                     </TableCell>
-                    <TableCell className="font-semibold text-slate-900">{formatPrice(product.price, product.origin?.country_code)}</TableCell>
+                    <TableCell className="font-semibold text-slate-900">{product.price}</TableCell>
                     <TableCell>
                       <div className="flex flex-wrap gap-1">
                         {product.productTags?.slice(0, 2).map((tag: any, index: number) => (
