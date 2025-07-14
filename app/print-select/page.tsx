@@ -94,10 +94,11 @@ export default function PrintSelectPage() {
   const [printingItems, setPrintingItems] = useState<number[]>([])
   const [printProgress, setPrintProgress] = useState(0)
   const [selectedPrintFormat, setSelectedPrintFormat] = useState("")
-  const [selectedPrintQuality, setSelectedPrintQuality] = useState("high")
+
   const [selectedPrintSize, setSelectedPrintSize] = useState("a4")
   const [printCopies, setPrintCopies] = useState(1)
   const [selectedPrintCopies, setSelectedPrintCopies] = useState(1)
+  const [printNote, setPrintNote] = useState("")
   const [isEditNumDialogOpen, setIsEditNumDialogOpen] = useState(false)
   const [editingNumData, setEditingNumData] = useState({
     pn_select_id: 0,
@@ -165,7 +166,6 @@ export default function PrintSelectPage() {
     name: template.pt_title,
     icon: "📄",
     description: `Template cho ${template.country?.country_name}`,
-    quality: ["Standard", "High", "Print"],
     template: template
   }))
 
@@ -490,6 +490,7 @@ export default function PrintSelectPage() {
     // Lấy số lượng in từ cấu hình theo khổ giấy được chọn
     const printNum = item.printNums?.find((pn: any) => pn.pn_type === selectedPrintSize)?.pn_num || 1
     setSelectedPrintCopies(printNum)
+    setPrintNote("") // Reset ghi chú
     setIsPrintDialogOpen(true)
   }
 
@@ -511,6 +512,7 @@ export default function PrintSelectPage() {
     const firstSelectedItem = printSelections.find((item: any) => selectedItems.includes(item.ps_id))
     const printNum = firstSelectedItem?.printNums?.find((pn: any) => pn.pn_type === selectedPrintSize)?.pn_num || 1
     setSelectedPrintCopies(printNum)
+    setPrintNote("") // Reset ghi chú
     setIsPrintDialogOpen(true)
   }
 
@@ -532,6 +534,7 @@ export default function PrintSelectPage() {
       return total + printNum
     }, 0)
     setSelectedPrintCopies(totalCopies)
+    setPrintNote("") // Reset ghi chú
     setIsPrintDialogOpen(true)
   }
 
@@ -725,7 +728,7 @@ export default function PrintSelectPage() {
         pl_type: getPlType(),
         pl_time_sale_start: selectedItem?.ps_time_sale_start || new Date().toISOString(),
         pl_time_sale_end: selectedItem?.ps_time_sale_end || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // 30 ngày từ hiện tại
-        pl_log_note: `In ${selectedPrintCopies} bản với template ${selectedPrintSize.toUpperCase()} - Chất lượng ${selectedPrintQuality}`
+        pl_log_note: `In ${selectedPrintCopies} bản với template ${selectedPrintSize.toUpperCase()}${printNote ? ` - Ghi chú: ${printNote}` : ''}`
       }
       
       await runPrintSelect(printLogData)
@@ -736,7 +739,6 @@ export default function PrintSelectPage() {
     const printData = {
       items: itemsToPrint,
       format: selectedPrintFormat,
-      quality: selectedPrintQuality,
       copies: selectedPrintCopies,
       totalPages: calculateTotalPages()
     }
@@ -1650,23 +1652,7 @@ export default function PrintSelectPage() {
                 </Select>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="print-quality">Chất lượng</Label>
-                <Select value={selectedPrintQuality} onValueChange={setSelectedPrintQuality}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {printFormats
-                      .find((f: any) => f.id === selectedPrintFormat)
-                      ?.quality.map((quality: any) => (
-                        <SelectItem key={quality} value={quality.toLowerCase()}>
-                          {quality}
-                        </SelectItem>
-                      )) || []}
-                  </SelectContent>
-                </Select>
-              </div>
+
 
               <div className="space-y-2">
                 <Label htmlFor="print-copies">Số bản in</Label>
@@ -1682,18 +1668,26 @@ export default function PrintSelectPage() {
                   Số lượng được lấy từ cấu hình in khổ {selectedPrintSize.toUpperCase()}
                 </p>
               </div>
-
-              <div className="space-y-2">
-                <Label>Tổng số trang</Label>
-                <div className="text-2xl font-bold text-blue-600">{calculateTotalPages()}</div>
-              </div>
-
               <div className="space-y-2">
                 <Label>Thông tin in</Label>
                 <div className="text-sm text-muted-foreground">
                   <div>Template: {selectedPrintSize.toUpperCase()}</div>
-                  <div>Chất lượng: {selectedPrintQuality}</div>
+                  <div>Tổng số trang: {calculateTotalPages()}</div>
                 </div>
+              </div>
+
+              <div className="space-y-2 col-span-2">
+                <Label htmlFor="print-note">Ghi chú in (tùy chọn)</Label>
+                <Input
+                  id="print-note"
+                  placeholder="Nhập ghi chú cho lần in này..."
+                  value={printNote}
+                  onChange={(e) => setPrintNote(e.target.value)}
+                  className="w-full"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Ghi chú sẽ được lưu vào lịch sử in
+                </p>
               </div>
             </div>
 
@@ -1727,7 +1721,7 @@ export default function PrintSelectPage() {
                         <Badge className="bg-blue-100 text-blue-800">
                           {printFormats.find((f: any) => f.id === selectedPrintFormat)?.template ? 'PDF' : selectedPrintFormat.toUpperCase()}
                         </Badge>
-                        <span className="text-sm text-muted-foreground">Chất lượng: {selectedPrintQuality}</span>
+
                       </div>
                       <div className="text-sm text-muted-foreground">
                         Tổng cộng {calculateTotalPages()} trang từ {printingItems.length} sản phẩm
