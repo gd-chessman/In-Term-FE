@@ -3,7 +3,7 @@ import axiosClient from "@/utils/axiosClient";
 // Types for search functionality
 export interface SearchParams {
   query: string;
-  type?: 'all' | 'products' | 'categories' | 'tags' | 'countries' | 'admins' | 'print_templates';
+  type?: 'all' | 'products' | 'categories' | 'tags' | 'countries' | 'admins' | 'print_templates' | 'print_selects';
   types?: string[];
   limit?: number;
   offset?: number;
@@ -54,6 +54,7 @@ export interface QuickSearchResult {
   countries: SearchResult[];
   admins: SearchResult[];
   print_templates: SearchResult[];
+  print_selects: SearchResult[];
 }
 
 // Main search function
@@ -154,7 +155,8 @@ export const quickSearch = async (query: string): Promise<QuickSearchResult> => 
         tags: [],
         countries: [],
         admins: [],
-        print_templates: []
+        print_templates: [],
+        print_selects: []
       };
     }
     
@@ -168,7 +170,8 @@ export const quickSearch = async (query: string): Promise<QuickSearchResult> => 
       tags: [],
       countries: [],
       admins: [],
-      print_templates: []
+      print_templates: [],
+      print_selects: []
     };
   }
 }; 

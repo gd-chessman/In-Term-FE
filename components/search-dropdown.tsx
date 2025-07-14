@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react"
 import { useQuery } from "@tanstack/react-query"
 import { useRouter } from "next/navigation"
-import { Search, Package, Tag, Globe, Users, FileText, Clock, ArrowRight } from "lucide-react"
+import { Search, Package, Tag, Globe, Users, FileText, Clock, ArrowRight, Printer } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -30,6 +30,10 @@ const getTypeIcon = (type: string) => {
       return <Users className="h-4 w-4" />
     case 'print_template':
       return <FileText className="h-4 w-4" />
+    case 'tag':
+      return <Tag className="h-4 w-4" />
+    case 'print_select':
+      return <Printer className="h-4 w-4" />
     default:
       return <Search className="h-4 w-4" />
   }
@@ -47,6 +51,10 @@ const getTypeLabel = (type: string) => {
       return 'Người dùng'
     case 'print_template':
       return 'Mẫu in'
+    case 'tag':
+      return 'Tag'
+    case 'print_select':
+      return 'Chọn in'
     default:
       return type
   }
@@ -64,6 +72,10 @@ const getTypeColor = (type: string) => {
       return 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200'
     case 'print_template':
       return 'bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-200'
+    case 'tag':
+      return 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200'
+    case 'print_select':
+      return 'bg-teal-100 text-teal-800 dark:bg-teal-900 dark:text-teal-200'
     default:
       return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200'
   }
@@ -136,6 +148,9 @@ export function SearchDropdown({ isOpen, onClose, searchQuery, onSearchQueryChan
       case 'tag':
         url = `/tags?search=${encodeURIComponent(result.title)}`
         break
+      case 'print_select':
+        url = `/print-select?search=${encodeURIComponent(result.title)}`
+        break
       default:
         url = `/products?search=${encodeURIComponent(result.title)}`
     }
@@ -151,7 +166,8 @@ export function SearchDropdown({ isOpen, onClose, searchQuery, onSearchQueryChan
     ...(searchResults?.tags || []),
     ...(searchResults?.countries || []),
     ...(searchResults?.admins || []),
-    ...(searchResults?.print_templates || [])
+    ...(searchResults?.print_templates || []),
+    ...(searchResults?.print_selects || [])
   ]
 
   const hasResults = allResults.length > 0

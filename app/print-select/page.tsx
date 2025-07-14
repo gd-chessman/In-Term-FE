@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useEffect } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
+import { useSearchParams } from "next/navigation"
 import { toast } from "sonner"
 import { createPrintSelect, getPrintSelects, getPrintTemplates, deletePrintSelect, updatePrintSelect, runPrintSelect, getPrintStatistics, updatePrintSelectNum } from "@/services/PrintService"
 import { getProducts } from "@/services/ProductService"
@@ -67,6 +68,7 @@ import { formatPrice } from "@/utils/common"
 
 
 export default function PrintSelectPage() {
+  const searchParams = useSearchParams()
   const [searchTerm, setSearchTerm] = useState("")
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
   const [selectedItems, setSelectedItems] = useState<number[]>([])
@@ -137,6 +139,14 @@ export default function PrintSelectPage() {
   })
 
   const queryClient = useQueryClient()
+
+  // Đọc search parameter từ URL khi component mount
+  useEffect(() => {
+    const searchFromUrl = searchParams.get('search')
+    if (searchFromUrl) {
+      setSearchTerm(searchFromUrl)
+    }
+  }, [searchParams])
 
   // Fetch print selections, products and countries
   const { data: printSelections = [], isLoading: isLoadingPrintSelections } = useQuery({
