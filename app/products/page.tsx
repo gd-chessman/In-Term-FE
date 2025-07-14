@@ -61,6 +61,7 @@ import {
   ChevronUp,
 } from "lucide-react"
 import { getCountries } from "@/services/CountryService"
+import { formatPrice } from "@/utils/common"
 
 export default function ProductsPage() {
   const [searchTerm, setSearchTerm] = useState("")
@@ -292,12 +293,6 @@ export default function ProductsPage() {
     }
   }
 
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("vi-VN", {
-      style: "currency",
-      currency: "VND",
-    }).format(price)
-  }
 
   const getCountryFlag = (countryCode: string) => {
     if (!countryCode || typeof countryCode !== 'string') {
@@ -710,7 +705,7 @@ export default function ProductsPage() {
             handleUpdateProduct(new FormData(e.currentTarget))
           }}>
             <div className="grid gap-6 py-4">
-                              <div className="grid grid-cols-4 items-center gap-4">
+                  <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="edit_product_name" className="text-right font-medium text-slate-700">
                     Tên sản phẩm
                   </Label>
@@ -751,7 +746,7 @@ export default function ProductsPage() {
                   className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100 min-h-[80px]"
                 />
               </div>
-                              <div className="grid grid-cols-4 items-center gap-4">
+                  <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="edit_category_id" className="text-right font-medium text-slate-700">
                     Danh mục
                   </Label>
@@ -1029,7 +1024,7 @@ export default function ProductsPage() {
             <div>
               <div className="font-semibold text-slate-800">{productToDelete?.product_name}</div>
               <div className="text-sm text-slate-600">Mã: <code className="bg-white px-1 rounded text-slate-700">{productToDelete?.product_code}</code></div>
-              <div className="text-sm text-slate-600">Giá: {productToDelete?.price ? formatPrice(productToDelete.price) : "N/A"}</div>
+              <div className="text-sm text-slate-600">Giá: {productToDelete?.price ? formatPrice(productToDelete.price, productToDelete.origin?.country_code) : "N/A"}</div>
             </div>
           </div>
 
@@ -1170,7 +1165,7 @@ export default function ProductsPage() {
               {productStatsLoading ? (
                 <div className="h-8 w-16 bg-slate-200 rounded animate-pulse"></div>
               ) : (
-                productStatistics?.averagePrice ? formatPrice(productStatistics.averagePrice) : "0 ₫"
+                productStatistics?.averagePrice ? (productStatistics.averagePrice.toFixed(2)) : "0"
               )}
             </div>
             <p className="text-xs text-orange-600 mt-1">
@@ -1178,7 +1173,7 @@ export default function ProductsPage() {
                 <div className="h-3 w-20 bg-slate-200 rounded animate-pulse"></div>
               ) : (
                 productStatistics?.minPrice && productStatistics?.maxPrice 
-                  ? `${formatPrice(productStatistics.minPrice)} - ${formatPrice(productStatistics.maxPrice)}`
+                  ? `${(productStatistics.minPrice)} - ${(productStatistics.maxPrice)}`
                   : "Giá trung bình"
               )}
             </p>
@@ -1481,7 +1476,7 @@ export default function ProductsPage() {
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-slate-600">Giá:</span>
-                  <span className="font-semibold text-slate-900">{formatPrice(product.price)}</span>
+                  <span className="font-semibold text-slate-900">{formatPrice(product.price, product.origin?.country_code)}</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-slate-600">Tags:</span>
@@ -1587,7 +1582,7 @@ export default function ProductsPage() {
                         </span>
                       </div>
                     </TableCell>
-                    <TableCell className="font-semibold text-slate-900">{formatPrice(product.price)}</TableCell>
+                    <TableCell className="font-semibold text-slate-900">{formatPrice(product.price, product.origin?.country_code)}</TableCell>
                     <TableCell>
                       <div className="flex flex-wrap gap-1">
                         {product.productTags?.slice(0, 2).map((tag: any, index: number) => (
