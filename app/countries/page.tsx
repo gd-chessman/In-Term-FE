@@ -1,7 +1,8 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
+import { useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -39,6 +40,7 @@ const getFlagEmoji = (countryCode: string) => {
 }
 
 export default function CountriesPage() {
+  const searchParams = useSearchParams()
   const [searchTerm, setSearchTerm] = useState("")
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
@@ -52,6 +54,14 @@ export default function CountriesPage() {
   })
 
   const queryClient = useQueryClient()
+
+  // Đọc search parameter từ URL khi component mount
+  useEffect(() => {
+    const searchFromUrl = searchParams.get('search')
+    if (searchFromUrl) {
+      setSearchTerm(searchFromUrl)
+    }
+  }, [searchParams])
 
   // Fetch countries data
   const { data: countries = [], isLoading, error, refetch } = useQuery({

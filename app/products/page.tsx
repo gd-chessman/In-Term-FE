@@ -1,7 +1,8 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
+import { useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -63,6 +64,7 @@ import {
 import { getCountries } from "@/services/CountryService"
 
 export default function ProductsPage() {
+  const searchParams = useSearchParams()
   const [searchTerm, setSearchTerm] = useState("")
   const [currentPage, setCurrentPage] = useState(1)
   const [pageSize, setPageSize] = useState(10)
@@ -91,6 +93,14 @@ export default function ProductsPage() {
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false)
   const { toast } = useToast()
   const queryClient = useQueryClient()
+
+  // Đọc search parameter từ URL khi component mount
+  useEffect(() => {
+    const searchFromUrl = searchParams.get('search')
+    if (searchFromUrl) {
+      setSearchTerm(searchFromUrl)
+    }
+  }, [searchParams])
 
   const { data: productStatistics, isLoading: productStatsLoading } = useQuery({
     queryKey: ["product-statistics"],

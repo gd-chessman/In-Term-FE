@@ -1,5 +1,6 @@
 "use client"
 
+import { useState, useRef, useEffect } from "react"
 import { Bell, Search, Settings, Sun, Moon, Monitor, User, LayoutDashboard, Package, Printer, History, Users, Logs } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -17,8 +18,13 @@ import { useTheme } from "@/contexts/theme-context"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { getUserMe, logout } from "@/services/AdminService"
 import { useRouter } from "next/navigation"
+import { SearchDropdown } from "@/components/search-dropdown"
 
 export function AdminHeader() {
+  const [searchQuery, setSearchQuery] = useState("")
+  const [isSearchOpen, setIsSearchOpen] = useState(false)
+  const searchInputRef = useRef<HTMLInputElement>(null)
+  
   const { data: userMe } = useQuery({
     queryKey: ["userMe"],
     queryFn: getUserMe,
@@ -47,6 +53,29 @@ export function AdminHeader() {
 
   const handleLogout = () => {
     logoutMutation.mutate()
+  }
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const query = e.target.value
+    setSearchQuery(query)
+    setIsSearchOpen(query.length >= 2)
+  }
+
+  const handleSearchFocus = () => {
+    if (searchQuery.length >= 2) {
+      setIsSearchOpen(true)
+    }
+  }
+
+  const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Escape') {
+      setIsSearchOpen(false)
+      searchInputRef.current?.blur()
+    }
+  }
+
+  const closeSearch = () => {
+    setIsSearchOpen(false)
   }
 
   const getThemeIcon = () => {
@@ -80,9 +109,20 @@ export function AdminHeader() {
         <div className="relative max-w-md w-full">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 dark:text-zinc-500" />
           <Input
+            ref={searchInputRef}
             type="search"
-            placeholder="Tìm kiếm..."
+            placeholder="Tìm kiếm sản phẩm, danh mục, quốc gia..."
+            value={searchQuery}
+            onChange={handleSearchChange}
+            onFocus={handleSearchFocus}
+            onKeyDown={handleSearchKeyDown}
             className="w-full pl-10 rounded-full bg-gray-50 dark:bg-zinc-800 border-gray-200 dark:border-zinc-700 focus:bg-white dark:focus:bg-zinc-700 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 transition-all duration-200 text-sm text-gray-900 dark:text-zinc-100 placeholder-gray-500 dark:placeholder-zinc-400"
+          />
+          <SearchDropdown
+            isOpen={isSearchOpen}
+            onClose={closeSearch}
+            searchQuery={searchQuery}
+            onSearchQueryChange={setSearchQuery}
           />
         </div>
       </div>

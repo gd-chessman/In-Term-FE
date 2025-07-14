@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -52,6 +53,7 @@ import { getCategoriesTree, createCategory, updateCategory, deleteCategory } fro
 import { toast } from "sonner"
 
 export default function CategoriesPage() {
+  const searchParams = useSearchParams()
   const [searchTerm, setSearchTerm] = useState("")
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
@@ -65,6 +67,14 @@ export default function CategoriesPage() {
   const [deletingCategory, setDeletingCategory] = useState<any>(null)
 
   const queryClient = useQueryClient()
+
+  // Đọc search parameter từ URL khi component mount
+  useEffect(() => {
+    const searchFromUrl = searchParams.get('search')
+    if (searchFromUrl) {
+      setSearchTerm(searchFromUrl)
+    }
+  }, [searchParams])
 
   // Fetch categories data
   const { data: categoriesTree = [], isLoading, error } = useQuery({

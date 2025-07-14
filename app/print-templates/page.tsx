@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
+import { useSearchParams } from "next/navigation"
 import { toast } from "sonner"
 import { createPrintTemplate, getPrintTemplates, deletePrintTemplate, updatePrintTemplate } from "@/services/PrintService"
 import { getCountries } from "@/services/CountryService"
@@ -75,6 +76,7 @@ const getCountryFlag = (countryCode: string) => {
 }
 
 export default function PrintTemplatesPage() {
+  const searchParams = useSearchParams()
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedCountry, setSelectedCountry] = useState("all")
   const [viewMode, setViewMode] = useState<"cards" | "table">("cards")
@@ -105,6 +107,14 @@ export default function PrintTemplatesPage() {
   })
 
   const queryClient = useQueryClient()
+
+  // Đọc search parameter từ URL khi component mount
+  useEffect(() => {
+    const searchFromUrl = searchParams.get('search')
+    if (searchFromUrl) {
+      setSearchTerm(searchFromUrl)
+    }
+  }, [searchParams])
 
   // Fetch print templates
   const { data: templates = [], isLoading, error } = useQuery({

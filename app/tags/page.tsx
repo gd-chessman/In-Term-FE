@@ -1,6 +1,7 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -41,6 +42,7 @@ import { getTags, createTag, deleteTag, updateTag, getTagStatistics } from "@/se
 import { toast } from "sonner"
 
 export default function TagsPage() {
+  const searchParams = useSearchParams()
   const [searchTerm, setSearchTerm] = useState("")
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
@@ -54,6 +56,14 @@ export default function TagsPage() {
   const [tagToDelete, setTagToDelete] = useState<any>(null)
 
   const queryClient = useQueryClient()
+
+  // Đọc search parameter từ URL khi component mount
+  useEffect(() => {
+    const searchFromUrl = searchParams.get('search')
+    if (searchFromUrl) {
+      setSearchTerm(searchFromUrl)
+    }
+  }, [searchParams])
 
   // Fetch tags data
   const { data: tags = [], isLoading, error } = useQuery({
@@ -174,6 +184,12 @@ export default function TagsPage() {
       deleteTagMutation.mutate(tagToDelete.tag_id)
     }
   }
+
+  // Filter tags based on search term
+  const filteredTags = tags.filter((tag: any) =>
+    tag.tag_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    tag.tag_description.toLowerCase().includes(searchTerm.toLowerCase())
+  )
 
   if (isLoading) {
     return (
@@ -397,7 +413,7 @@ export default function TagsPage() {
       {viewMode === "cards" ? (
         /* Enhanced Tags Grid */
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {tags.map((tag: any) => (
+          {filteredTags.map((tag: any) => (
             <Card
               key={tag.tag_id}
               className="hover:shadow-lg transition-all duration-200 bg-gradient-to-br from-white to-gray-50 border-gray-200"
@@ -467,7 +483,7 @@ export default function TagsPage() {
         <Card className="bg-gradient-to-r from-white to-gray-50">
           <CardHeader>
             <CardTitle>Danh sách Tags</CardTitle>
-            <CardDescription>Tổng cộng {tags.length} tags trong hệ thống</CardDescription>
+            <CardDescription>Tổng cộng {filteredTags.length} tags trong hệ thống</CardDescription>
           </CardHeader>
           <CardContent>
             <Table>
@@ -482,7 +498,7 @@ export default function TagsPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {tags.map((tag: any) => (
+                {filteredTags.map((tag: any) => (
                   <TableRow key={tag.tag_id} className="hover:bg-blue-50/50 transition-colors">
                     <TableCell>
                       <Badge className="bg-blue-100 text-blue-800 border-blue-200 font-medium">{tag.tag_name}</Badge>

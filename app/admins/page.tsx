@@ -1,7 +1,8 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
+import { useSearchParams } from "next/navigation"
 import { createAdmin, getAdmins, getStatistics, updateStatus, updateLevel, getUserMe } from "@/services/AdminService"
 import { getRoles } from "@/services/RoleService"
 import { Button } from "@/components/ui/button"
@@ -49,6 +50,7 @@ const ADMIN_STATUSES = [
 
 
 export default function AdminsPage() {
+  const searchParams = useSearchParams()
   const [searchTerm, setSearchTerm] = useState("")
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
   const [isUpdateLevelDialogOpen, setIsUpdateLevelDialogOpen] = useState(false)
@@ -66,6 +68,14 @@ export default function AdminsPage() {
     admin_role_id: ""
   })
   const queryClient = useQueryClient()
+
+  // Đọc search parameter từ URL khi component mount
+  useEffect(() => {
+    const searchFromUrl = searchParams.get('search')
+    if (searchFromUrl) {
+      setSearchTerm(searchFromUrl)
+    }
+  }, [searchParams])
 
   const { data: userMe, isLoading: userMeLoading, error: userMeError } = useQuery({
     queryKey: ["userMe"],
