@@ -76,7 +76,7 @@ export function AdminHeader() {
       <div className="flex-1" />
 
       {/* Center - Search */}
-      <div className="flex items-center justify-center flex-1">
+      <div className="flex items-center justify-center flex-1 min-w-80">
         <div className="relative max-w-md w-full">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 dark:text-zinc-500" />
           <Input
