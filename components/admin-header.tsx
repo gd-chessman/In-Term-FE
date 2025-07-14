@@ -111,7 +111,7 @@ export function AdminHeader() {
           <Input
             ref={searchInputRef}
             type="search"
-            placeholder="Tìm kiếm sản phẩm, danh mục, quốc gia..."
+            placeholder="Tìm kiếm sản phẩm, mẫu in, quốc gia..."
             value={searchQuery}
             onChange={handleSearchChange}
             onFocus={handleSearchFocus}
