@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from "react"
+import React, { useState, useRef, useEffect } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { toast } from "sonner"
 import { createPrintSelect, getPrintSelects, getPrintTemplates, deletePrintSelect, updatePrintSelect, runPrintSelect, getPrintStatistics, updatePrintSelectNum } from "@/services/PrintService"
@@ -114,6 +114,13 @@ export default function PrintSelectPage() {
     v3: 1
   })
   const [productSearchTerm, setProductSearchTerm] = useState("")
+  const [focusCountryField, setFocusCountryField] = useState(false)
+  const [focusPriceField, setFocusPriceField] = useState(false)
+  const [focusTimeField, setFocusTimeField] = useState(false)
+  const [focusOptionField, setFocusOptionField] = useState(false)
+  const [isCountrySelectOpen, setIsCountrySelectOpen] = useState(false)
+  const [activeEditTab, setActiveEditTab] = useState("basic")
+  const countrySelectRef = useRef<HTMLButtonElement>(null)
 
 
   // Form state for creating print selection
@@ -585,6 +592,130 @@ export default function PrintSelectPage() {
     setIsEditDialogOpen(true)
   }
 
+  const handleEditItemFromCountry = (item: any) => {
+    setEditingItem(item)
+    
+    // Hàm chuyển đổi ngày tháng sang định dạng YYYY-MM-DD cho input type="date"
+    const formatDateForInput = (dateString: string) => {
+      if (!dateString) return ""
+      try {
+        const date = new Date(dateString)
+        return date.toISOString().split('T')[0] // Lấy phần YYYY-MM-DD
+      } catch (error) {
+        return ""
+      }
+    }
+    
+    // Pre-fill form data
+    setEditFormData({
+      ps_product_id: item.ps_product_id?.toString() || "",
+      ps_country_id: item.ps_country_id?.toString() || "",
+      ps_price_sale: Number(item.ps_price_sale).toString() || "",
+      ps_time_sale_start: formatDateForInput(item.ps_time_sale_start),
+      ps_time_sale_end: formatDateForInput(item.ps_time_sale_end),
+      ps_status: item.ps_status || "active",
+      ps_option_1: item.ps_option_1 || "",
+      ps_option_2: item.ps_option_2 || "",
+      ps_option_3: item.ps_option_3 || "",
+    })
+    setFocusCountryField(true)
+    setActiveEditTab("basic")
+    setIsEditDialogOpen(true)
+  }
+
+  const handleEditItemFromPrice = (item: any) => {
+    setEditingItem(item)
+    
+    // Hàm chuyển đổi ngày tháng sang định dạng YYYY-MM-DD cho input type="date"
+    const formatDateForInput = (dateString: string) => {
+      if (!dateString) return ""
+      try {
+        const date = new Date(dateString)
+        return date.toISOString().split('T')[0] // Lấy phần YYYY-MM-DD
+      } catch (error) {
+        return ""
+      }
+    }
+    
+    // Pre-fill form data
+    setEditFormData({
+      ps_product_id: item.ps_product_id?.toString() || "",
+      ps_country_id: item.ps_country_id?.toString() || "",
+      ps_price_sale: Number(item.ps_price_sale).toString() || "",
+      ps_time_sale_start: formatDateForInput(item.ps_time_sale_start),
+      ps_time_sale_end: formatDateForInput(item.ps_time_sale_end),
+      ps_status: item.ps_status || "active",
+      ps_option_1: item.ps_option_1 || "",
+      ps_option_2: item.ps_option_2 || "",
+      ps_option_3: item.ps_option_3 || "",
+    })
+    setFocusPriceField(true)
+    setActiveEditTab("basic")
+    setIsEditDialogOpen(true)
+  }
+
+  const handleEditItemFromTime = (item: any) => {
+    setEditingItem(item)
+    
+    // Hàm chuyển đổi ngày tháng sang định dạng YYYY-MM-DD cho input type="date"
+    const formatDateForInput = (dateString: string) => {
+      if (!dateString) return ""
+      try {
+        const date = new Date(dateString)
+        return date.toISOString().split('T')[0] // Lấy phần YYYY-MM-DD
+      } catch (error) {
+        return ""
+      }
+    }
+    
+    // Pre-fill form data
+    setEditFormData({
+      ps_product_id: item.ps_product_id?.toString() || "",
+      ps_country_id: item.ps_country_id?.toString() || "",
+      ps_price_sale: Number(item.ps_price_sale).toString() || "",
+      ps_time_sale_start: formatDateForInput(item.ps_time_sale_start),
+      ps_time_sale_end: formatDateForInput(item.ps_time_sale_end),
+      ps_status: item.ps_status || "active",
+      ps_option_1: item.ps_option_1 || "",
+      ps_option_2: item.ps_option_2 || "",
+      ps_option_3: item.ps_option_3 || "",
+    })
+    setFocusTimeField(true)
+    setActiveEditTab("basic")
+    setIsEditDialogOpen(true)
+  }
+
+  const handleEditItemFromOption = (item: any) => {
+    setEditingItem(item)
+    
+    // Hàm chuyển đổi ngày tháng sang định dạng YYYY-MM-DD cho input type="date"
+    const formatDateForInput = (dateString: string) => {
+      if (!dateString) return ""
+      try {
+        const date = new Date(dateString)
+        return date.toISOString().split('T')[0] // Lấy phần YYYY-MM-DD
+      } catch (error) {
+        return ""
+      }
+    }
+    
+    // Pre-fill form data
+    setEditFormData({
+      ps_product_id: item.ps_product_id?.toString() || "",
+      ps_country_id: item.ps_country_id?.toString() || "",
+      ps_price_sale: Number(item.ps_price_sale).toString() || "",
+      ps_time_sale_start: formatDateForInput(item.ps_time_sale_start),
+      ps_time_sale_end: formatDateForInput(item.ps_time_sale_end),
+      ps_status: item.ps_status || "active",
+      ps_option_1: item.ps_option_1 || "",
+      ps_option_2: item.ps_option_2 || "",
+      ps_option_3: item.ps_option_3 || "",
+    })
+    setFocusOptionField(true)
+    setActiveEditTab("config")
+    setIsEditDialogOpen(true)
+  }
+
   const handleUpdateSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     
@@ -658,6 +789,58 @@ export default function PrintSelectPage() {
       }
     }
   }, [selectedPrintSize, printingItems, printSelections, printTemplates])
+
+  // Effect để focus vào trường Mẫu in quốc gia khi mở dialog từ click vào cột quốc gia
+  useEffect(() => {
+    if (isEditDialogOpen && focusCountryField) {
+      setTimeout(() => {
+        setIsCountrySelectOpen(true)
+        setFocusCountryField(false)
+      }, 300)
+    }
+  }, [isEditDialogOpen, focusCountryField])
+
+  // Effect để focus vào trường Giá khuyến mãi
+  useEffect(() => {
+    if (isEditDialogOpen && focusPriceField) {
+      setTimeout(() => {
+        const priceInput = document.getElementById('edit_price_sale') as HTMLInputElement
+        if (priceInput) {
+          priceInput.focus()
+          priceInput.select()
+        }
+        setFocusPriceField(false)
+      }, 300)
+    }
+  }, [isEditDialogOpen, focusPriceField])
+
+  // Effect để focus vào trường Thời gian bán
+  useEffect(() => {
+    if (isEditDialogOpen && focusTimeField) {
+      setTimeout(() => {
+        const timeInput = document.getElementById('edit_ps_time_sale_start') as HTMLInputElement
+        if (timeInput) {
+          timeInput.focus()
+        }
+        setFocusTimeField(false)
+      }, 300)
+    }
+  }, [isEditDialogOpen, focusTimeField])
+
+  // Effect để focus vào trường Tùy chọn
+  useEffect(() => {
+    if (isEditDialogOpen && focusOptionField) {
+      setTimeout(() => {
+        // Đợi tab config được render xong
+        const optionInput = document.getElementById('edit_ps_option_1') as HTMLInputElement
+        if (optionInput) {
+          optionInput.focus()
+          optionInput.select()
+        }
+        setFocusOptionField(false)
+      }, 600)
+    }
+  }, [isEditDialogOpen, focusOptionField, activeEditTab])
 
   const handleUpdateAllNumsSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -1355,7 +1538,10 @@ export default function PrintSelectPage() {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <div className="flex items-center space-x-2">
+                      <div 
+                        className="flex items-center space-x-2 cursor-pointer hover:bg-blue-50 rounded px-2 py-1 transition-colors"
+                        onClick={() => handleEditItemFromCountry(item)}
+                      >
                         <span className="text-xl">{item.country?.country_code ? getCountryFlag(item.country.country_code) : "🌍"}</span>
                         <span>{item.country?.country_name}</span>
                       </div>
@@ -1364,10 +1550,18 @@ export default function PrintSelectPage() {
                       {formatPrice(item.product?.price, item.country?.country_code)}
                     </TableCell>
                     <TableCell className="font-medium text-green-600">
-                      {formatPrice(item.ps_price_sale, item.country?.country_code)}
+                      <div 
+                        className="cursor-pointer hover:bg-green-50 rounded px-2 py-1 transition-colors"
+                        onClick={() => handleEditItemFromPrice(item)}
+                      >
+                        {formatPrice(item.ps_price_sale, item.country?.country_code)}
+                      </div>
                     </TableCell>
                     <TableCell>
-                      <div className="space-y-1">
+                      <div 
+                        className="space-y-1 cursor-pointer hover:bg-blue-50 rounded px-2 py-1 transition-colors"
+                        onClick={() => handleEditItemFromTime(item)}
+                      >
                         <div className="text-xs text-muted-foreground">
                           {item.ps_time_sale_start ? new Date(item.ps_time_sale_start).toLocaleDateString("vi-VN") : "Chưa thiết lập"}
                         </div>
@@ -1377,7 +1571,10 @@ export default function PrintSelectPage() {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <div className="space-y-1">
+                      <div 
+                        className="space-y-1 cursor-pointer hover:bg-purple-50 rounded px-2 py-1 transition-colors"
+                        onClick={() => handleEditItemFromOption(item)}
+                      >
                         <Badge variant="secondary" className="text-xs">
                           {item.templates?.ps_option_1 || "Không có"}
                         </Badge>
@@ -1930,7 +2127,12 @@ export default function PrintSelectPage() {
       </AlertDialog>
 
       {/* Edit Dialog */}
-      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+      <Dialog open={isEditDialogOpen} onOpenChange={(open) => {
+        setIsEditDialogOpen(open)
+        if (!open) {
+          setActiveEditTab("basic")
+        }
+      }}>
         <DialogContent className="sm:max-w-[600px]">
           <DialogHeader>
             <DialogTitle className="text-xl bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
@@ -1939,7 +2141,7 @@ export default function PrintSelectPage() {
             <DialogDescription>Cập nhật thông tin sản phẩm trong danh sách in</DialogDescription>
           </DialogHeader>
           <form onSubmit={handleUpdateSubmit}>
-            <Tabs defaultValue="basic" className="w-full">
+            <Tabs value={activeEditTab} onValueChange={setActiveEditTab} className="w-full">
               <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="basic">Thông tin cơ bản</TabsTrigger>
                 <TabsTrigger value="config">Cấu hình in</TabsTrigger>
@@ -1974,8 +2176,10 @@ export default function PrintSelectPage() {
                     <Select 
                       value={editFormData.ps_country_id} 
                       onValueChange={(value) => setEditFormData({...editFormData, ps_country_id: value})}
+                      open={isCountrySelectOpen}
+                      onOpenChange={setIsCountrySelectOpen}
                     >
-                      <SelectTrigger>
+                      <SelectTrigger ref={countrySelectRef} id="edit-country-select">
                         <SelectValue placeholder="Chọn mẫu in quốc gia" />
                       </SelectTrigger>
                       <SelectContent>
