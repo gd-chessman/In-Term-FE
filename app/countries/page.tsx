@@ -69,7 +69,11 @@ export default function CountriesPage() {
       setFormData({ country_name: "", country_code: "" })
     },
     onError: (error: any) => {
-      toast.error(error?.response?.data?.message || "Có lỗi xảy ra khi thêm quốc gia")
+      if (error?.status === 409) {
+        toast.error("Quốc gia đã tồn tại, bị trùng tên hoặc mã quốc gia")
+      } else {
+      toast.error("Có lỗi xảy ra khi thêm quốc gia")
+      }
     }
   })
 
