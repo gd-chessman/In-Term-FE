@@ -184,7 +184,7 @@ export const v1Template = (data: {
 </head>
 <body bgcolor="#A0A0A0" vlink="blue" link="blue">
 <div id="page1-div">
-<img src="/v1.png" alt="background image"/>
+<img src="/v1s.png" alt="background image"/>
 <p style="position:absolute;top:0.9rem;left:3.4375rem;white-space:normal;text-align:left;max-width:15rem;line-height:0.9;" class="ft10">${data.pt_brand}</p>
 <p style="position:absolute;top:0.4375rem;left:16.75rem;white-space:nowrap" class="ft11">${data.product_name}</p>
 <p style="position:absolute;top:1.9375rem;left:30.8125rem;white-space:nowrap" class="ft12">${data.pt_original_price}:</p>

@@ -183,7 +183,7 @@ export const v3Template = (data: {
 </head>
 <body bgcolor="#A0A0A0" vlink="blue" link="blue">
 <div id="page1-div">
-<img src="/v3.png" alt="background image"/>
+<img src="/v3s.png" alt="background image"/>
 <p style="position:absolute;top:-0.2rem;left:50%;transform:translateX(-50%);white-space:nowrap" class="ft10">${data.pt_brand}</p>
 <p style="position:absolute;top:4rem;left:7rem;white-space:nowrap" class="ft11">${data.product_name}</p>
 <p style="position:absolute;top:5.9375rem;left:0.5625rem;white-space:nowrap" class="ft12">${data.pt_origin_country}: ${data.country_code} ${data.country_name}</p>
