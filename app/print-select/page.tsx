@@ -113,6 +113,7 @@ export default function PrintSelectPage() {
     v2: 1,
     v3: 1
   })
+  const [productSearchTerm, setProductSearchTerm] = useState("")
 
 
   // Form state for creating print selection
@@ -137,8 +138,11 @@ export default function PrintSelectPage() {
   })
 
   const { data: productsData = { products: [], pagination: { total: 0, page: 1, limit: 10, totalPages: 0 } } } = useQuery({
-    queryKey: ["products"],
-    queryFn: () => getProducts({limit: 100}),
+    queryKey: ["products", productSearchTerm],
+    queryFn: () => getProducts({
+      limit: 100,
+      search: productSearchTerm || undefined
+    }),
   })
 
   const products = productsData.products || []
@@ -186,6 +190,7 @@ export default function PrintSelectPage() {
         ps_option_2: "",
         ps_option_3: "",
       })
+      setProductSearchTerm("")
       // Refresh data if needed
       queryClient.invalidateQueries({ queryKey: ["printSelects"] })
     },
@@ -813,16 +818,34 @@ export default function PrintSelectPage() {
                           <SelectValue placeholder="Chọn sản phẩm" />
                         </SelectTrigger>
                         <SelectContent>
-                          {products.map((product: any) => (
-                            <SelectItem key={product.product_id} value={product.product_id.toString()}>
-                              <div className="flex items-center space-x-2">
-                                <span>{product.product_name}</span>
-                                <Badge variant="outline" className="text-xs">
-                                  {product.category?.category_name}
-                                </Badge>
-                              </div>
-                            </SelectItem>
-                          ))}
+                          <div className="p-2">
+                            <div className="relative">
+                              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                              <Input
+                                placeholder="Tìm kiếm sản phẩm..."
+                                value={productSearchTerm}
+                                onChange={(e) => setProductSearchTerm(e.target.value)}
+                                className="pl-8 h-8 text-sm"
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter') {
+                                    e.preventDefault()
+                                  }
+                                }}
+                              />
+                            </div>
+                          </div>
+                          <div className="max-h-[200px] overflow-y-auto">
+                            {products.map((product: any) => (
+                                <SelectItem key={product.product_id} value={product.product_id.toString()}>
+                                  <div className="flex items-center space-x-2">
+                                    <span>{product.product_name}</span>
+                                    <Badge variant="outline" className="text-xs">
+                                      {product.category?.category_name}
+                                    </Badge>
+                                  </div>
+                                </SelectItem>
+                              ))}
+                          </div>
                         </SelectContent>
                       </Select>
                     </div>
