@@ -35,19 +35,37 @@ export const generateMultipleProductsHTML = (format: string, products: TemplateD
 /**
  * Chuẩn bị dữ liệu template từ dữ liệu sản phẩm
  * @param product - Dữ liệu sản phẩm từ API
- * @param formatPrice - Function format giá
+ * @param currencySymbol - Ký hiệu tiền tệ từ template (VD: $, €, ¥, ₫)
  * @returns TemplateData
  */
 export const prepareTemplateData = (
   product: any, 
-  formatPrice: (price: number, countryCode: string) => string
+  currencySymbol: string = '$'
 ): TemplateData => {
   console.log(product)
+  
+  // Hàm format giá với currency symbol từ template
+  const formatPrice = (price: number) => {
+    if (!price) return '0'
+    
+    // Danh sách các currency symbol đặt trước giá (chỉ những symbol thực sự đặt trước)
+    const prefixCurrencies = ['$', '€', '£', '¥', '₩', '₽', '₹', '₪', '₦', '₨', '₱', '₴', '₸', '₺', '₼', '₾', '₿']
+    
+    const formattedPrice = price.toLocaleString('en-US')
+    
+    // Kiểm tra xem currency symbol có nên đặt trước hay sau giá
+    if (prefixCurrencies.includes(currencySymbol)) {
+      return `${currencySymbol}${formattedPrice}`
+    } else {
+      return `${formattedPrice}${currencySymbol}`
+    }
+  }
+  
   return {
     product_name: product.product?.product_name || '',
     product_code: product.product?.product_code || '',
-    price: formatPrice(product.product?.price, product.country?.country_code),
-    price_sale: formatPrice(product?.ps_price_sale, product.country?.country_code),
+    price: formatPrice(product.product?.price),
+    price_sale: formatPrice(product?.ps_price_sale),
     discount_percentage:  product.product?.price && product?.ps_price_sale ? "-" + Math.round(((product.product.price - product.ps_price_sale) / product.product.price) * 100) + '%' : '',
     country_name: product.product?.origin?.country_name || '',
     country_code: getCountryFlag(product.product?.origin?.country_code),

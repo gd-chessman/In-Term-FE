@@ -63,7 +63,7 @@ import {
   Globe,
   Loader2,
 } from "lucide-react"
-import { formatPrice } from "@/utils/common"
+// import { formatPrice } from "@/utils/common"
 
 
 
@@ -415,6 +415,23 @@ export default function PrintSelectPage() {
     return String.fromCodePoint(...codePoints);
   }
 
+  // Hàm format giá với currency symbol đúng vị trí
+  const formatPriceWithCurrency = (price: number, currencySymbol: string = '$') => {
+    if (!price) return '0'
+    
+    // Danh sách các currency symbol đặt trước giá
+    const prefixCurrencies = ['$', '€', '£', '¥', '₩', '₽', '₹', '₪', '₦', '₨', '₱', '₴', '₸', '₺', '₼', '₾', '₿', '¢', '₡', '₢', '₣', '₤', '₥', '₧', '₭', '₮', '₯', '₰', '₲', '₳', '₵', '₶', '₷', '₻']
+    
+    const formattedPrice = price.toLocaleString('en-US')
+    
+    // Kiểm tra xem currency symbol có nên đặt trước hay sau giá
+    if (prefixCurrencies.includes(currencySymbol)) {
+      return `${currencySymbol}${formattedPrice}` // VD: $1,234.56, €1,234.56
+    } else {
+      return `${formattedPrice} ${currencySymbol}` // VD: 1,234.56 VND, 1,234.56 CZK
+    }
+  }
+
 
 
   const generatePDFContent = (items: any[], quality: string, copies: number, template?: any) => {
@@ -431,7 +448,7 @@ export default function PrintSelectPage() {
       console.log(`Debug - item ${itemIndex + 1} has ${itemCopies} copies`)
       
       // Tạo template data cho sản phẩm này
-      const templateData = prepareTemplateData(item, formatPrice)
+      const templateData = prepareTemplateData(item, template?.pt_currency || '$')
       
       // Tạo nhiều bản in cho sản phẩm này
       for (let copyIndex = 0; copyIndex < itemCopies; copyIndex++) {
@@ -1382,9 +1399,8 @@ export default function PrintSelectPage() {
 
                 <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">
-                      <DollarSign className="h-4 w-4 text-muted-foreground" />
                       <span className="text-lg font-bold text-green-600">
-                        {formatPrice(item.ps_price_sale, item.country?.country_code)}
+                        {formatPriceWithCurrency(item.ps_price_sale, item.templates?.pt_currency)}
                       </span>
                       </div>
                 </div>
@@ -1557,14 +1573,14 @@ export default function PrintSelectPage() {
                       </div>
                     </TableCell>
                     <TableCell className="font-medium text-gray-600">
-                      {formatPrice(item.product?.price, item.country?.country_code)}
+                      {formatPriceWithCurrency(item.product?.price, item.templates?.pt_currency)}
                     </TableCell>
                     <TableCell className="font-medium text-green-600">
                       <div 
                         className="cursor-pointer hover:bg-green-50 rounded px-2 py-1 transition-colors"
                         onClick={() => handleEditItemFromPrice(item)}
                       >
-                        {formatPrice(item.ps_price_sale, item.country?.country_code)}
+                        {formatPriceWithCurrency(item.ps_price_sale, item.templates?.pt_currency)}
                       </div>
                     </TableCell>
                     <TableCell>
@@ -1965,7 +1981,8 @@ export default function PrintSelectPage() {
                             .filter((item: any) => printingItems.includes(item.ps_id))
                             .map((item: any, itemIndex: number) => {
                               // Sử dụng template system mới
-                              const templateData = prepareTemplateData(item, formatPrice)
+                              const selectedTemplate = printFormats.find((f: any) => f.id === selectedPrintFormat)?.template
+                              const templateData = prepareTemplateData(item, selectedTemplate?.pt_currency || '$')
                               const template = getTemplate(selectedPrintSize)
                               const previewHTML = template(templateData)
                               

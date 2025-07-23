@@ -42,6 +42,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+
 import { Progress } from "@/components/ui/progress"
 import {
   Plus,
@@ -91,6 +92,7 @@ export default function PrintTemplatesPage() {
     pt_origin_country: "",
     pt_product_code: "",
     pt_original_price: "",
+    pt_currency: "",
     pt_footer: "",
     pt_content: ""
   })
@@ -103,8 +105,11 @@ export default function PrintTemplatesPage() {
     pt_origin_country: '',
     pt_product_code: '',
     pt_original_price: '',
+    pt_currency: '',
     pt_footer: ''
   })
+  const [isCurrencyDropdownOpen, setIsCurrencyDropdownOpen] = useState(false)
+  const [isEditCurrencyDropdownOpen, setIsEditCurrencyDropdownOpen] = useState(false)
 
   const queryClient = useQueryClient()
 
@@ -115,6 +120,22 @@ export default function PrintTemplatesPage() {
       setSearchTerm(searchFromUrl)
     }
   }, [searchParams])
+
+  // Đóng dropdown khi click ra ngoài
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Element
+      if (!target.closest('.currency-dropdown')) {
+        setIsCurrencyDropdownOpen(false)
+        setIsEditCurrencyDropdownOpen(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [])
 
   // Fetch print templates
   const { data: templates = [], isLoading, error } = useQuery({
@@ -127,6 +148,15 @@ export default function PrintTemplatesPage() {
     queryKey: ['countries'],
     queryFn: getCountries,
   })
+
+  // Currencies array - Đầy đủ các biểu tượng tiền tệ phổ biến
+  const currencies = [
+    // Các ký hiệu tiền tệ phổ biến nhất
+    "$", "€", "¥", "£", "₫", "₩", "₹", "₽", "₪", "₦", "₨", "₺", "₼", "₾", "₿",
+    // Các ký hiệu tiền tệ khác
+    "؋", "L", "دج", "₡", "₢", "₣", "₤", "₥", "₧", "₭", "₮", "₯", "₰", "₱", "₲", "₳", "₴", "₵", "₶", "₷",
+    "₸", "₻", "₼", "₽", "₾", "₿"
+  ]
 
   // Create template mutation
   const createTemplateMutation = useMutation({
@@ -143,6 +173,7 @@ export default function PrintTemplatesPage() {
         pt_origin_country: "",
         pt_product_code: "",
         pt_original_price: "",
+        pt_currency: "",
         pt_footer: "",
       })
     },
@@ -197,7 +228,7 @@ export default function PrintTemplatesPage() {
   // Handle form submission
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    if (!formData.pt_country_id || !formData.pt_title || !formData.pt_brand || !formData.pt_origin_country || !formData.pt_product_code || !formData.pt_original_price) {
+    if (!formData.pt_country_id || !formData.pt_title || !formData.pt_brand || !formData.pt_origin_country || !formData.pt_product_code || !formData.pt_original_price || !formData.pt_currency) {
       toast.error("Vui lòng điền đầy đủ thông tin bắt buộc")
       return
     }
@@ -209,6 +240,7 @@ export default function PrintTemplatesPage() {
       pt_origin_country: formData.pt_origin_country.trim(),
       pt_product_code: formData.pt_product_code.trim(),
       pt_original_price: formData.pt_original_price.trim(),
+      pt_currency: formData.pt_currency.trim(),
       pt_footer: formData.pt_footer.trim(),
       pt_content: formData.pt_content.trim()
     }
@@ -239,6 +271,7 @@ export default function PrintTemplatesPage() {
         pt_origin_country: selectedTemplate.pt_origin_country || '',
         pt_product_code: selectedTemplate.pt_product_code || '',
         pt_original_price: selectedTemplate.pt_original_price || '',
+        pt_currency: selectedTemplate.pt_currency || '',
         pt_footer: selectedTemplate.pt_footer || ''
       })
     }
@@ -247,7 +280,7 @@ export default function PrintTemplatesPage() {
   // Xử lý submit cập nhật
   const handleEditSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    if (!editForm.pt_title || !editForm.pt_country_id || !editForm.pt_brand || !editForm.pt_origin_country || !editForm.pt_product_code || !editForm.pt_original_price) {
+    if (!editForm.pt_title || !editForm.pt_country_id || !editForm.pt_brand || !editForm.pt_origin_country || !editForm.pt_product_code || !editForm.pt_original_price || !editForm.pt_currency) {
       toast.error("Vui lòng điền đầy đủ thông tin bắt buộc")
       return
     }
@@ -260,6 +293,7 @@ export default function PrintTemplatesPage() {
         pt_origin_country: editForm.pt_origin_country.trim(),
         pt_product_code: editForm.pt_product_code.trim(),
         pt_original_price: editForm.pt_original_price.trim(),
+        pt_currency: editForm.pt_currency.trim(),
         pt_footer: editForm.pt_footer.trim()
       }
     })
@@ -406,6 +440,35 @@ export default function PrintTemplatesPage() {
                           required
                         />
                       </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="pt_currency">Ký hiệu tiền tệ *</Label>
+                        <div className="relative currency-dropdown">
+                          <Input
+                            id="pt_currency"
+                            value={formData.pt_currency}
+                            onChange={(e) => handleInputChange('pt_currency', e.target.value)}
+                            onFocus={() => setIsCurrencyDropdownOpen(true)}
+                            placeholder="VD: $, €, ¥, ₫..."
+                            required
+                          />
+                          {isCurrencyDropdownOpen && (
+                            <div className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-[200px] overflow-y-auto">
+                             {currencies.map((currency: string, index: number) => (
+                            <div
+                              key={index}
+                              className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm"
+                              onClick={() => {
+                                handleInputChange('pt_currency', currency)
+                                setIsCurrencyDropdownOpen(false)
+                              }}
+                            >
+                              <span>{currency}</span>
+                            </div>
+                          ))}
+                            </div>
+                          )}
+                        </div>
+                      </div>
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="pt_footer">Footer</Label>
@@ -438,6 +501,10 @@ export default function PrintTemplatesPage() {
                           <Badge variant="secondary" className="text-xs">Giá gốc:</Badge>
                           <span className="font-medium">{formData.pt_original_price || "Chưa nhập"}</span>
                         </div>
+                        <div className="flex items-center gap-2">
+                          <Badge variant="secondary" className="text-xs">Tiền tệ:</Badge>
+                          <span className="font-medium">{formData.pt_currency || "Chưa chọn"}</span>
+                        </div>
                       </div>
                     </div>
                   </TabsContent>
@@ -467,6 +534,10 @@ export default function PrintTemplatesPage() {
                             <div className="flex items-center gap-2">
                               <Badge variant="outline" className="text-xs">Giá gốc:</Badge>
                               <span className="font-medium">{formData.pt_original_price || "Chưa nhập"}</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Badge variant="outline" className="text-xs">Tiền tệ:</Badge>
+                              <span className="font-medium">{formData.pt_currency || "Chưa chọn"}</span>
                             </div>
                           </div>
                         </div>
@@ -719,6 +790,10 @@ export default function PrintTemplatesPage() {
                       <Badge variant="outline" className="text-xs">Giá gốc:</Badge>
                       <span className="font-medium truncate">{template.pt_original_price || "N/A"}</span>
                     </div>
+                    <div className="flex items-center gap-1">
+                      <Badge variant="outline" className="text-xs">Tiền tệ:</Badge>
+                      <span className="font-medium truncate">{template.pt_currency || "N/A"}</span>
+                    </div>
                   </div>
                 </div>
 
@@ -816,6 +891,10 @@ export default function PrintTemplatesPage() {
                           <div className="flex items-center gap-1">
                             <Badge variant="outline" className="text-xs">Giá gốc:</Badge>
                             <span className="font-medium truncate">{template.pt_original_price || "N/A"}</span>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <Badge variant="outline" className="text-xs">Tiền tệ:</Badge>
+                            <span className="font-medium truncate">{template.pt_currency || "N/A"}</span>
                           </div>
                         </div>
                       </div>
@@ -962,6 +1041,10 @@ export default function PrintTemplatesPage() {
                       <Badge variant="outline" className="text-xs">Giá gốc:</Badge>
                       <span className="font-medium">{selectedTemplate?.pt_original_price || "N/A"}</span>
                     </div>
+                    <div className="flex items-center gap-2">
+                      <Badge variant="outline" className="text-xs">Tiền tệ:</Badge>
+                      <span className="font-medium">{selectedTemplate?.pt_currency || "N/A"}</span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -993,6 +1076,10 @@ export default function PrintTemplatesPage() {
                 <div className="flex items-center gap-2">
                   <Badge variant="secondary" className="text-xs">Giá gốc:</Badge>
                   <span className="font-medium">{selectedTemplate?.pt_original_price || "N/A"}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Badge variant="secondary" className="text-xs">Tiền tệ:</Badge>
+                  <span className="font-medium">{selectedTemplate?.pt_currency || "N/A"}</span>
                 </div>
               </div>
             </div>
@@ -1101,6 +1188,34 @@ export default function PrintTemplatesPage() {
                       placeholder="VD: Giá gốc, Original Price, MSRP..."
                     />
                   </div>
+                                    <div className="space-y-2">
+                    <Label htmlFor="edit_currency">Ký hiệu tiền tệ</Label>
+                    <div className="relative currency-dropdown">
+                      <Input
+                        id="edit_currency"
+                        value={editForm.pt_currency}
+                        onChange={e => setEditForm(f => ({...f, pt_currency: e.target.value}))}
+                        onFocus={() => setIsEditCurrencyDropdownOpen(true)}
+                        placeholder="VD: $, €, ¥, ₫..."
+                      />
+                      {isEditCurrencyDropdownOpen && (
+                        <div className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-[200px] overflow-y-auto">
+                          {currencies.map((currency: string, index: number) => (
+                            <div
+                              key={index}
+                              className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm"
+                              onClick={() => {
+                                setEditForm(f => ({...f, pt_currency: currency}))
+                                setIsEditCurrencyDropdownOpen(false)
+                              }}
+                            >
+                              <span>{currency}</span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="edit_footer">Footer</Label>
@@ -1155,6 +1270,10 @@ export default function PrintTemplatesPage() {
                     <div className="flex items-center gap-2">
                       <Badge variant="secondary" className="text-xs">Giá gốc:</Badge>
                       <span className="font-medium">{selectedTemplate?.pt_original_price || "N/A"}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Badge variant="secondary" className="text-xs">Tiền tệ:</Badge>
+                      <span className="font-medium">{selectedTemplate?.pt_currency || "N/A"}</span>
                     </div>
                   </div>
                 </div>
