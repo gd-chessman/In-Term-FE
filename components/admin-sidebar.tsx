@@ -29,6 +29,7 @@ import {
   History,
   Sparkles,
   X,
+  Building2,
 } from "lucide-react"
 
 const menuItems = [
@@ -63,6 +64,7 @@ const menuItems = [
     color: "text-gray-600 dark:text-gray-400",
     bgColor: "bg-gray-50 dark:bg-gray-900/20",
     children: [
+      { title: "Chi nhánh", href: "/branches", icon: Building2 },
       { title: "Quốc gia", href: "/countries", icon: Globe },
       // { title: "Cài đặt", href: "/settings", icon: Setting s },
     ],
