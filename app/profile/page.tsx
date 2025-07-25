@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { getUserMe } from "@/services/AdminService"
 import { updateProfile, updateAvatar, updatePassword } from "@/services/AccountService"
+import { getActiveBranches } from "@/services/BranchService"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -12,6 +13,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useToast } from "@/hooks/use-toast"
 import { Loader2, User, Mail, Phone, Calendar, MapPin, Edit, Save, X, Camera, Lock, Eye, EyeOff, Crown } from "lucide-react"
 
@@ -19,7 +21,10 @@ export default function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false)
   const [formData, setFormData] = useState({
     admin_fullname: "",
-    admin_phone: ""
+    admin_phone: "",
+    admin_email: "",
+    admin_address: "",
+    admin_branch_id: ""
   })
   const [passwordData, setPasswordData] = useState({
     current_password: "",
@@ -42,19 +47,32 @@ export default function ProfilePage() {
     queryFn: getUserMe,
   })
 
+  // Fetch active branches data
+  const { data: branches, isLoading: branchesLoading } = useQuery({
+    queryKey: ["active-branches"],
+    queryFn: getActiveBranches,
+  })
+
   // Update form data when user data is loaded
   useEffect(() => {
     if (userMe) {
       setFormData({
         admin_fullname: userMe.admin_fullname || "",
-        admin_phone: userMe.admin_phone || ""
+        admin_phone: userMe.admin_phone || "",
+        admin_email: userMe.admin_email || "",
+        admin_address: userMe.admin_address || "",
+        admin_branch_id: userMe.branch?.branch_id?.toString() || "none"
       })
     }
   }, [userMe])
 
   const updateProfileMutation = useMutation({
     mutationFn: async (data: typeof formData) => {
-      return updateProfile(data)
+      const payload = {
+        ...data,
+        admin_branch_id: data.admin_branch_id === "none" ? null : parseInt(data.admin_branch_id)
+      }
+      return updateProfile(payload)
     },
     onSuccess: () => {
       toast({
@@ -128,7 +146,10 @@ export default function ProfilePage() {
   const handleCancel = () => {
     setFormData({
       admin_fullname: userMe?.admin_fullname || "",
-      admin_phone: userMe?.admin_phone || ""
+      admin_phone: userMe?.admin_phone || "",
+      admin_email: userMe?.admin_email || "",
+      admin_address: userMe?.admin_address || "",
+      admin_branch_id: userMe?.branch?.branch_id?.toString() || "none"
     })
     setIsEditing(false)
   }
@@ -253,11 +274,17 @@ export default function ProfilePage() {
             )}
             <CardTitle className="text-2xl mb-2">{userMe?.admin_fullname}</CardTitle>
             <CardDescription className="text-base mb-4">{userMe?.admin_email}</CardDescription>
-            <div className="flex justify-center">
+            <div className="flex flex-col gap-2 items-center">
               <div className="inline-flex items-center gap-2 px-4 py-1 bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-800 rounded-full border border-blue-200/60 shadow-sm hover:shadow-md transition-all duration-200">
                 <Crown className="w-4 h-4 text-blue-400" />
-                <span className="font-semibold text-sm">{userMe?.admin_role || "Admin"}</span>
+                <span className="font-semibold text-sm">{userMe?.role?.role_name || "Admin"}</span>
               </div>
+              {userMe?.branch && (
+                <div className="inline-flex items-center gap-2 px-4 py-1 bg-gradient-to-r from-green-100 to-emerald-100 text-green-800 rounded-full border border-green-200/60 shadow-sm hover:shadow-md transition-all duration-200">
+                  <MapPin className="w-4 h-4 text-green-400" />
+                  <span className="font-semibold text-sm">{userMe.branch.branch_name}</span>
+                </div>
+              )}
             </div>
           </CardHeader>
         </Card>
@@ -346,9 +373,19 @@ export default function ProfilePage() {
                         <Mail className="h-5 w-5" />
                         Email
                       </Label>
-                      <p className="text-base text-gray-600 dark:text-zinc-400 py-3 px-3 bg-gray-50 dark:bg-zinc-800 rounded-md">
-                        {userMe?.admin_email || "Chưa cập nhật"}
-                      </p>
+                      {isEditing ? (
+                        <Input
+                          id="email"
+                          value={formData.admin_email}
+                          onChange={(e) => setFormData(prev => ({ ...prev, admin_email: e.target.value }))}
+                          placeholder="Nhập email"
+                          className="h-12 text-base"
+                        />
+                      ) : (
+                        <p className="text-base text-gray-600 dark:text-zinc-400 py-3 px-3 bg-gray-50 dark:bg-zinc-800 rounded-md">
+                          {userMe?.admin_email || "Chưa cập nhật"}
+                        </p>
+                      )}
                     </div>
 
                     <div className="space-y-3">
@@ -376,22 +413,63 @@ export default function ProfilePage() {
                         <MapPin className="h-5 w-5" />
                         Địa chỉ
                       </Label>
+                      {isEditing ? (
+                        <Input
+                          id="address"
+                          value={formData.admin_address}
+                          onChange={(e) => setFormData(prev => ({ ...prev, admin_address: e.target.value }))}
+                          placeholder="Nhập địa chỉ"
+                          className="h-12 text-base"
+                        />
+                      ) : (
+                        <p className="text-base text-gray-600 dark:text-zinc-400 py-3 px-3 bg-gray-50 dark:bg-zinc-800 rounded-md">
+                          {userMe?.admin_address || "Chưa cập nhật"}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="space-y-3">
+                      <Label htmlFor="branch" className="flex items-center gap-2 text-base">
+                        <MapPin className="h-5 w-5" />
+                        Chi nhánh
+                      </Label>
+                      {isEditing ? (
+                        <Select value={formData.admin_branch_id} onValueChange={(value) => setFormData(prev => ({ ...prev, admin_branch_id: value }))}>
+                          <SelectTrigger className="h-12 text-base">
+                            <SelectValue placeholder="Chọn chi nhánh" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="none">Không phân bổ</SelectItem>
+                            {branchesLoading ? (
+                              <div className="flex items-center justify-center p-2">
+                                <Loader2 className="h-4 w-4 animate-spin" />
+                                <span className="ml-2 text-sm">Đang tải...</span>
+                              </div>
+                            ) : (
+                              branches?.map((branch: any) => (
+                                <SelectItem key={branch.branch_id} value={branch.branch_id.toString()}>
+                                  {branch.branch_name}
+                                </SelectItem>
+                              ))
+                            )}
+                          </SelectContent>
+                        </Select>
+                      ) : (
+                        <p className="text-base text-gray-600 dark:text-zinc-400 py-3 px-3 bg-gray-50 dark:bg-zinc-800 rounded-md">
+                          {userMe?.branch?.branch_name || "Chưa phân bổ"}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="space-y-3">
+                      <Label className="flex items-center gap-2 text-base">
+                        <Calendar className="h-5 w-5" />
+                        Ngày tạo tài khoản
+                      </Label>
                       <p className="text-base text-gray-600 dark:text-zinc-400 py-3 px-3 bg-gray-50 dark:bg-zinc-800 rounded-md">
-                        {userMe?.admin_address || "Chưa cập nhật"}
+                        {userMe?.created_at ? new Date(userMe.created_at).toLocaleDateString('vi-VN') : "Chưa có thông tin"}
                       </p>
                     </div>
-                  </div>
-
-                  <Separator />
-
-                  <div className="space-y-3">
-                    <Label className="flex items-center gap-2 text-base">
-                      <Calendar className="h-5 w-5" />
-                      Ngày tạo tài khoản
-                    </Label>
-                    <p className="text-base text-gray-600 dark:text-zinc-400 py-3 px-3 bg-gray-50 dark:bg-zinc-800 rounded-md">
-                      {userMe?.created_at ? new Date(userMe.created_at).toLocaleDateString('vi-VN') : "Chưa có thông tin"}
-                    </p>
                   </div>
                 </CardContent>
               </Card>

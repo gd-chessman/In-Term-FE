@@ -3,8 +3,9 @@
 import { useState, useEffect } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { useSearchParams } from "next/navigation"
-import { createAdmin, getAdmins, getStatistics, updateStatus, updateLevel, getUserMe } from "@/services/AdminService"
+import { createAdmin, getAdmins, getStatistics, updateStatus, updateLevel, getUserMe, updateAdminBranch } from "@/services/AdminService"
 import { getRoles } from "@/services/RoleService"
+import { getActiveBranches } from "@/services/BranchService"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -31,7 +32,7 @@ import {
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { toast } from "sonner"
-import { Plus, Search, MoreHorizontal, Edit, Trash2, Shield, Eye, Users, UserCheck, UserX, Crown, Loader2 } from "lucide-react"
+import { Plus, Search, MoreHorizontal, Edit, Trash2, Shield, Eye, Users, UserCheck, UserX, Crown, Loader2, Building2 } from "lucide-react"
 
 // Admin levels constants
 const ADMIN_LEVELS = [
@@ -54,8 +55,10 @@ export default function AdminsPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
   const [isUpdateLevelDialogOpen, setIsUpdateLevelDialogOpen] = useState(false)
+  const [isUpdateBranchDialogOpen, setIsUpdateBranchDialogOpen] = useState(false)
   const [selectedAdmin, setSelectedAdmin] = useState<any>(null)
   const [selectedNewLevel, setSelectedNewLevel] = useState("")
+  const [selectedNewBranch, setSelectedNewBranch] = useState("")
   const [currentPage, setCurrentPage] = useState(1)
   const [selectedLevel, setSelectedLevel] = useState("all")
   const [selectedStatus, setSelectedStatus] = useState("all")
@@ -65,7 +68,8 @@ export default function AdminsPage() {
     admin_password: "",
     admin_fullname: "",
     admin_level: "",
-    admin_role_id: ""
+    admin_role_id: "",
+    admin_branch_id: ""
   })
   const queryClient = useQueryClient()
 
@@ -94,6 +98,12 @@ export default function AdminsPage() {
     queryFn: getRoles,
   })
 
+  // Fetch active branches data
+  const { data: branches, isLoading: branchesLoading } = useQuery({
+    queryKey: ["active-branches"],
+    queryFn: getActiveBranches,
+  })
+
   // Fetch statistics data
   const { data: statistics, isLoading: statsLoading } = useQuery({
     queryKey: ["admin-statistics"],
@@ -114,7 +124,8 @@ export default function AdminsPage() {
         admin_password: "",
         admin_fullname: "",
         admin_level: "",
-        admin_role_id: ""
+        admin_role_id: "",
+        admin_branch_id: ""
       })
       // Refresh admin list
       queryClient.invalidateQueries({ queryKey: ["admins"] })
@@ -153,6 +164,22 @@ export default function AdminsPage() {
     }
   })
 
+  const updateBranchMutation = useMutation({
+    mutationFn: ({ id, branch_id }: { id: string, branch_id: string }) => updateAdminBranch(id, branch_id),
+    onSuccess: () => {
+      toast.success("Cập nhật chi nhánh thành công")
+      setIsUpdateBranchDialogOpen(false)
+      setSelectedAdmin(null)
+      setSelectedNewBranch("")
+      // Refresh admin list and statistics
+      queryClient.invalidateQueries({ queryKey: ["admins"] })
+      queryClient.invalidateQueries({ queryKey: ["admin-statistics"] })
+    },
+    onError: (error: any) => {
+      toast.error(error?.response?.data?.message || "Không thể cập nhật chi nhánh")
+    }
+  })
+
   const handleStatusUpdate = (adminId: string, newStatus: string) => {
     updateStatusMutation.mutate({ id: adminId, status: newStatus })
   }
@@ -163,22 +190,36 @@ export default function AdminsPage() {
     setIsUpdateLevelDialogOpen(true)
   }
 
+  const handleBranchUpdate = (admin: any) => {
+    setSelectedAdmin(admin)
+    setSelectedNewBranch(admin.branch?.branch_id?.toString() || "none")
+    setIsUpdateBranchDialogOpen(true)
+  }
+
   const handleConfirmLevelUpdate = () => {
     if (selectedAdmin && selectedNewLevel) {
       updateLevelMutation.mutate({ id: selectedAdmin.admin_id.toString(), level: selectedNewLevel })
     }
   }
 
+  const handleConfirmBranchUpdate = () => {
+    if (selectedAdmin && selectedNewBranch) {
+      const branchId = selectedNewBranch === "none" ? "" : selectedNewBranch
+      updateBranchMutation.mutate({ id: selectedAdmin.admin_id.toString(), branch_id: branchId })
+    }
+  }
+
   const handleCreateAdmin = () => {
     if (!formData.admin_username || !formData.admin_email || !formData.admin_password || 
-        !formData.admin_fullname || !formData.admin_level || !formData.admin_role_id) {
+        !formData.admin_fullname || !formData.admin_level || !formData.admin_role_id || !formData.admin_branch_id) {
       toast.error("Vui lòng điền đầy đủ thông tin")
       return
     }
 
     const payload = {
       ...formData,
-      admin_role_id: parseInt(formData.admin_role_id)
+      admin_role_id: parseInt(formData.admin_role_id),
+      admin_branch_id: parseInt(formData.admin_branch_id)
     }
 
     createAdminMutation.mutate(payload)
@@ -358,6 +399,30 @@ export default function AdminsPage() {
                       roles.map((role: any) => (
                         <SelectItem key={role.role_id} value={role.role_id.toString()}>
                           {role.role_name}
+                        </SelectItem>
+                      ))
+                    )}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="branch" className="text-right font-medium text-gray-700 dark:text-gray-300">
+                  Chi nhánh
+                </Label>
+                <Select value={formData.admin_branch_id} onValueChange={(value) => handleInputChange("admin_branch_id", value)}>
+                  <SelectTrigger className="col-span-3 rounded-xl border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:border-purple-300 dark:focus:border-purple-500 focus:ring-2 focus:ring-purple-100 dark:focus:ring-purple-900">
+                    <SelectValue placeholder="Chọn chi nhánh" />
+                  </SelectTrigger>
+                  <SelectContent className="rounded-xl border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 shadow-xl">
+                    {branchesLoading ? (
+                      <div className="flex items-center justify-center p-2">
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        <span className="ml-2 text-sm">Đang tải...</span>
+                      </div>
+                    ) : (
+                      branches?.map((branch: any) => (
+                        <SelectItem key={branch.branch_id} value={branch.branch_id.toString()}>
+                          {branch.branch_name}
                         </SelectItem>
                       ))
                     )}
@@ -562,8 +627,7 @@ export default function AdminsPage() {
                         <div className="text-sm text-gray-600 dark:text-gray-300">{admin.admin_email}</div>
                       </div>
                     </div>
-                    {admin.admin_id !== userMe?.admin_id && (
-                      <DropdownMenu>
+                    <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Button
                             variant="ghost"
@@ -589,6 +653,15 @@ export default function AdminsPage() {
                             >
                               <Shield className="mr-2 h-4 w-4" />
                               Phân quyền
+                            </DropdownMenuItem>
+                          )}
+                          {admin.admin_id === userMe?.admin_id && (
+                            <DropdownMenuItem 
+                              onClick={() => handleBranchUpdate(admin)}
+                              className="hover:bg-gray-50/80 dark:hover:bg-gray-700/80 rounded-lg"
+                            >
+                              <Building2 className="mr-2 h-4 w-4" />
+                              Thay đổi chi nhánh
                             </DropdownMenuItem>
                           )}
                           <DropdownMenuSeparator />
@@ -627,7 +700,6 @@ export default function AdminsPage() {
                           )}
                         </DropdownMenuContent>
                       </DropdownMenu>
-                    )}
                   </div>
 
                   <div className="space-y-2">
@@ -645,6 +717,12 @@ export default function AdminsPage() {
                       <span className="text-sm text-gray-600 dark:text-gray-400">Vai trò:</span>
                       <div className="text-sm text-gray-600 dark:text-gray-300">
                         {admin.role?.role_name || "Chưa phân quyền"}
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-600 dark:text-gray-400">Chi nhánh:</span>
+                      <div className="text-sm text-gray-600 dark:text-gray-300">
+                        {admin.branch?.branch_name || "Chưa phân bổ"}
                       </div>
                     </div>
                     <div className="flex items-center justify-between">
@@ -678,6 +756,7 @@ export default function AdminsPage() {
                       <TableHead className="text-gray-600 dark:text-gray-400 font-semibold">Email</TableHead>
                       <TableHead className="text-gray-600 dark:text-gray-400 font-semibold">Cấp độ</TableHead>
                       <TableHead className="text-gray-600 dark:text-gray-400 font-semibold">Vai trò</TableHead>
+                      <TableHead className="text-gray-600 dark:text-gray-400 font-semibold">Chi nhánh</TableHead>
                       <TableHead className="text-gray-600 dark:text-gray-400 font-semibold">Trạng thái</TableHead>
                       <TableHead className="text-gray-600 dark:text-gray-400 font-semibold">Đăng nhập cuối</TableHead>
                       <TableHead className="text-right text-gray-600 dark:text-gray-400 font-semibold">Thao tác</TableHead>
@@ -717,6 +796,11 @@ export default function AdminsPage() {
                         {admin.role?.role_name || "Chưa phân quyền"}
                       </div>
                     </TableCell>
+                    <TableCell>
+                      <div className="text-sm text-gray-600 dark:text-gray-300">
+                        {admin.branch?.branch_name || "Chưa phân bổ"}
+                      </div>
+                    </TableCell>
                     <TableCell>{getStatusBadge(admin.admin_status)}</TableCell>
                     <TableCell>
                       <div className="text-sm text-gray-600 dark:text-gray-300">
@@ -724,8 +808,7 @@ export default function AdminsPage() {
                       </div>
                     </TableCell>
                     <TableCell className="text-right">
-                      {admin.admin_id !== userMe?.admin_id && (
-                        <DropdownMenu>
+                      <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button
                               variant="ghost"
@@ -751,6 +834,15 @@ export default function AdminsPage() {
                               >
                                 <Shield className="mr-2 h-4 w-4" />
                                 Phân quyền
+                              </DropdownMenuItem>
+                            )}
+                            {admin.admin_id === userMe?.admin_id && (
+                              <DropdownMenuItem 
+                                onClick={() => handleBranchUpdate(admin)}
+                                className="hover:bg-gray-50/80 dark:hover:bg-gray-700/80 rounded-lg"
+                              >
+                                <Building2 className="mr-2 h-4 w-4" />
+                                Thay đổi chi nhánh
                               </DropdownMenuItem>
                             )}
                             <DropdownMenuSeparator />
@@ -789,7 +881,6 @@ export default function AdminsPage() {
                             )}
                           </DropdownMenuContent>
                         </DropdownMenu>
-                      )}
                     </TableCell>
                   </TableRow>
                 ))}
@@ -852,6 +943,73 @@ export default function AdminsPage() {
                 </>
               ) : (
                 "Cập nhật cấp độ"
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Update Branch Dialog */}
+      <Dialog open={isUpdateBranchDialogOpen} onOpenChange={setIsUpdateBranchDialogOpen}>
+        <DialogContent className="sm:max-w-[500px] bg-white dark:bg-gray-800 backdrop-blur-xl border-gray-200 dark:border-gray-700 shadow-2xl rounded-2xl">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+              Cập nhật chi nhánh
+            </DialogTitle>
+            <DialogDescription className="text-gray-600 dark:text-gray-400">
+              Thay đổi chi nhánh cho admin: {selectedAdmin?.admin_fullname}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-6 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="current-branch" className="text-right font-medium text-gray-700 dark:text-gray-300">
+                Chi nhánh hiện tại
+              </Label>
+              <div className="col-span-3">
+                <div className="text-sm text-gray-600 dark:text-gray-300">
+                  {selectedAdmin?.branch?.branch_name || "Chưa phân bổ"}
+                </div>
+              </div>
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="new-branch" className="text-right font-medium text-gray-700 dark:text-gray-300">
+                Chi nhánh mới
+              </Label>
+              <Select value={selectedNewBranch} onValueChange={setSelectedNewBranch}>
+                <SelectTrigger className="col-span-3 rounded-xl border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:border-purple-300 dark:focus:border-purple-500 focus:ring-2 focus:ring-purple-100 dark:focus:ring-purple-900">
+                  <SelectValue placeholder="Chọn chi nhánh mới" />
+                </SelectTrigger>
+                <SelectContent className="rounded-xl border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 shadow-xl">
+                  <SelectItem value="none">Không phân bổ</SelectItem>
+                  {branchesLoading ? (
+                    <div className="flex items-center justify-center p-2">
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      <span className="ml-2 text-sm">Đang tải...</span>
+                    </div>
+                  ) : (
+                    branches?.map((branch: any) => (
+                      <SelectItem key={branch.branch_id} value={branch.branch_id.toString()}>
+                        {branch.branch_name}
+                      </SelectItem>
+                    ))
+                  )}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button 
+              onClick={handleConfirmBranchUpdate}
+              disabled={updateBranchMutation.isPending || selectedNewBranch === (selectedAdmin?.branch?.branch_id?.toString() || "none")}
+              className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 dark:from-purple-500 dark:to-indigo-500 dark:hover:from-purple-600 dark:hover:to-indigo-600 text-white rounded-xl"
+            >
+              {updateBranchMutation.isPending ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Đang cập nhật...
+                </>
+              ) : (
+                "Cập nhật chi nhánh"
               )}
             </Button>
           </DialogFooter>

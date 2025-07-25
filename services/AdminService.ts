@@ -112,3 +112,13 @@ export const getAdminLogStatistics = async () => {
         throw e;
     }
 }
+
+export const updateAdminBranch = async (id: string, branch_id: string) => {
+    try {
+        const payload = branch_id === "" ? { admin_branch_id: null } : { admin_branch_id: parseInt(branch_id) }
+        const temp = await axiosClient.patch(`admins/${id}/branch`, payload);
+        return temp.data;
+    } catch (e) {
+        throw e;
+    }
+}
