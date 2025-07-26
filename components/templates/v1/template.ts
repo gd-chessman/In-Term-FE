@@ -3,6 +3,8 @@ export const v1Template = (data: {
   product_code: string;
   price: string;
   price_sale: string;
+  price_decimal: string;
+  price_sale_decimal: string;
   discount_percentage: string;
   country_name: string;
   country_code: string;
@@ -115,6 +117,35 @@ export const v1Template = (data: {
 	.ft111{font-size:0.625rem;line-height:1.375rem;font-family:"Sriracha",cursive;color:#000000;}
 	.ft111-inter{font-size:0.625rem;line-height:1.375rem;font-family:"Inter",sans-serif;color:#000000;}
 	
+	/* CSS cho phần thập phân (số mũ) */
+	.decimal-superscript {
+		font-size: 0.4em;
+		vertical-align: super;
+		line-height: 1;
+		font-family: "Sriracha", cursive;
+		color: #000000;
+		position: relative;
+		top: -0.2em;
+	}
+	.decimal-superscript-small {
+		font-size: 0.35em;
+		vertical-align: super;
+		line-height: 1;
+		font-family: "Sriracha", cursive;
+		color: #000000;
+		position: relative;
+		top: -0.2em;
+	}
+	.decimal-superscript-medium {
+		font-size: 0.3em;
+		vertical-align: super;
+		line-height: 1;
+		font-family: "Sriracha", cursive;
+		color: #000000;
+		position: relative;
+		top: -0.2em;
+	}
+	
 	/* Print media queries để đảm bảo in đúng */
 	@media print {
 		html {
@@ -189,8 +220,8 @@ export const v1Template = (data: {
 <p style="position:absolute;top:0.4375rem;left:16.75rem;white-space:nowrap" class="ft11">${data.product_name}</p>
 <p style="position:absolute;top:1.9375rem;left:30.8125rem;white-space:nowrap" class="ft12">${data.pt_original_price}:</p>
 <p style="position:absolute;top:3rem;left:17rem;white-space:nowrap" class="ft13">${data.discount_percentage}</p>
-<p style="position:absolute;top:${originalPriceTop};left:29.0625rem;white-space:nowrap" class="${originalPriceClass}">${data.price} &nbsp;</p>
-<p style="position:absolute;top:3.3375rem;left:40.2rem;white-space:nowrap" class="${priceClass}">${data.price_sale} &nbsp;</p>
+<p style="position:absolute;top:${originalPriceTop};left:29.0625rem;white-space:nowrap" class="${originalPriceClass}">${data.price.replace(/(\d+)(\s*[^\d\s]+)$/, '$1')}${data.price_decimal ? `<span class="decimal-superscript">${data.price_decimal}</span>` : ''}${data.price.match(/(\s*[^\d\s]+)$/)?.[1] || ''} &nbsp;</p>
+<p style="position:absolute;top:3.3375rem;left:40.2rem;white-space:nowrap" class="${priceClass}">${data.price_sale.replace(/(\d+)(\s*[^\d\s]+)$/, '$1')}${data.price_sale_decimal ? `<span class="decimal-superscript">${data.price_sale_decimal}</span>` : ''}${data.price_sale.match(/(\s*[^\d\s]+)$/)?.[1] || ''} &nbsp;</p>
 <p style="position:absolute;top:8.1875rem;left:16.75rem;white-space:nowrap" class="ft111">${data.pt_origin_country}: ${data.country_code} ${data.country_name}<br/><span class="ft111-inter">${data.pt_product_code}: ${data.product_code}</span></p>
 </div>
 </body>

@@ -15,6 +15,9 @@ export interface TemplateData {
   product_code: string;
   price: string;
   price_sale: string;
+  // Các trường mới cho số thập phân
+  price_decimal: string;
+  price_sale_decimal: string;
   discount_percentage: string;
   country_name: string;
   country_code: string;

@@ -43,28 +43,65 @@ export const prepareTemplateData = (
   currencySymbol: string = '$'
 ): TemplateData => {
   
-  // Hàm format giá với currency symbol từ template
+  // Hàm format giá với currency symbol từ template (chỉ phần nguyên)
   const formatPrice = (price: number) => {
     if (!price) return '0'
     
     // Danh sách các currency symbol đặt trước giá (chỉ những symbol thực sự đặt trước)
     const prefixCurrencies = ['$', '€', '£', '¥', '₩', '₽', '₹', '₪', '₦', '₨', '₱', '₴', '₸', '₺', '₼', '₾', '₿']
     
-    const formattedPrice = price.toLocaleString('en-US')
+    // Chỉ lấy phần nguyên
+    const wholePart = Math.floor(price)
+    const formattedPrice = wholePart.toLocaleString('en-US')
     
     // Kiểm tra xem currency symbol có nên đặt trước hay sau giá
     if (prefixCurrencies.includes(currencySymbol)) {
       return `${currencySymbol}${formattedPrice}`
     } else {
-      return `${formattedPrice}${currencySymbol}`
+      return `${formattedPrice} ${currencySymbol}`
+    }
+  }
+
+  // Hàm kiểm tra và tách số thập phân
+  const splitDecimal = (price: number) => {
+    if (!price) return { whole: '0', decimal: '' }
+    
+    const priceStr = price.toString()
+    const parts = priceStr.split('.')
+    
+    if (parts.length === 1) {
+      // Không có phần thập phân
+      return { 
+        whole: parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ','), 
+        decimal: '' 
+      }
+    } else {
+      // Có phần thập phân
+      const wholePart = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+      const decimalPart = parts[1]
+      return { 
+        whole: wholePart, 
+        decimal: decimalPart 
+      }
     }
   }
   
+  // Lấy phần thập phân cho price và price_sale
+  const getDecimalPart = (price: number) => {
+    if (!price) return ''
+    const priceStr = price.toString()
+    const parts = priceStr.split('.')
+    return parts.length > 1 ? parts[1] : ''
+  }
+
   return {
     product_name: product.product?.product_name || '',
     product_code: product.product?.product_code || '',
     price: formatPrice(product.product?.price),
     price_sale: formatPrice(product?.ps_price_sale),
+    // Các trường mới cho số thập phân
+    price_decimal: getDecimalPart(product.product?.price || 0),
+    price_sale_decimal: getDecimalPart(product?.ps_price_sale || 0),
     discount_percentage:  product.product?.price && product?.ps_price_sale ? "-" + Math.round(((product.product.price - product.ps_price_sale) / product.product.price) * 100) + '%' : '',
     country_name: product.product?.origin?.country_name || '',
     country_code: getCountryFlag(product.product?.origin?.country_code),

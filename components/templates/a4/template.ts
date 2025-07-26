@@ -3,6 +3,8 @@ export const a4Template = (data: {
   product_code: string;
   price: string;
   price_sale: string;
+  price_decimal: string;
+  price_sale_decimal: string;
   discount_percentage: string;
   country_name: string;
   country_code: string;
@@ -115,6 +117,35 @@ export const a4Template = (data: {
 	.ft110{font-size:1.5625rem;font-family:"Inter",sans-serif;color:#000000;}
 	.ft111{font-size:1px;font-family:Helvetica;color:#000000;}
 	
+	/* CSS cho phần thập phân (số mũ) */
+	.decimal-superscript {
+		font-size: 0.4em;
+		vertical-align: super;
+		line-height: 1;
+		font-family: "Sriracha", cursive;
+		color: #000000;
+		position: relative;
+		top: -0.2em;
+	}
+	.decimal-superscript-small {
+		font-size: 0.35em;
+		vertical-align: super;
+		line-height: 1;
+		font-family: "Sriracha", cursive;
+		color: #000000;
+		position: relative;
+		top: -0.2em;
+	}
+	.decimal-superscript-medium {
+		font-size: 0.3em;
+		vertical-align: super;
+		line-height: 1;
+		font-family: "Sriracha", cursive;
+		color: #000000;
+		position: relative;
+		top: -0.2em;
+	}
+	
 	/* Print media queries để đảm bảo in đúng */
 	@media print {
 		html {
@@ -191,8 +222,8 @@ export const a4Template = (data: {
 <p style="position:absolute;top:29.25rem;left:1.625rem;white-space:nowrap" class="ft13">${data.pt_product_code} : ${data.product_code}</p>
 <p style="position:absolute;top:29rem;left:24.1875rem;white-space:nowrap" class="ft12-inter">${data.pt_original_price} : </p>
 <p style="position:absolute;top:30rem;left:2.0625rem;white-space:nowrap" class="ft14">${data.discount_percentage}</p>
-<p style="position:absolute;top:${originalPriceTop};left:25.9375rem;white-space:nowrap" class="${originalPriceClass}">${data.price} &nbsp;</p>
-<p style="position:absolute;top:42.25rem;left:6.25rem;white-space:nowrap" class="${priceClass}">${data.price_sale} &nbsp;</p> 
+<p style="position:absolute;top:${originalPriceTop};left:25.9375rem;white-space:nowrap" class="${originalPriceClass}">${data.price.replace(/(\d+)(\s*[^\d\s]+)$/, '$1')}${data.price_decimal ? `<span class="decimal-superscript">${data.price_decimal}</span>` : ''}${data.price.match(/(\s*[^\d\s]+)$/)?.[1] || ''} &nbsp;</p>
+<p style="position:absolute;top:42.25rem;left:6.25rem;white-space:nowrap" class="${priceClass}">${data.price_sale.replace(/(\d+)(\s*[^\d\s]+)$/, '$1')}${data.price_sale_decimal ? `<span class="decimal-superscript">${data.price_sale_decimal}</span>` : ''}${data.price_sale.match(/(\s*[^\d\s]+)$/)?.[1] || ''}&nbsp;</p> 
 </div>
 </body>
 </html>`;

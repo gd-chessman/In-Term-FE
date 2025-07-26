@@ -600,9 +600,9 @@ export default function ProductsPage() {
                     id="price"
                     name="price"
                     type="number"
+                    step="0.01"
                     required
                     min={0}
-                    step={1000}
                     placeholder="Nhập giá sản phẩm"
                     className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100"
                   />
@@ -784,9 +784,9 @@ export default function ProductsPage() {
                     id="edit_price"
                     name="price"
                     type="number"
+                    step="0.01"
                     defaultValue={editingProduct?.price}
                     min={0}
-                    step={1000}
                     placeholder="Nhập giá sản phẩm"
                     className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100"
                   />

@@ -1083,8 +1083,9 @@ export default function PrintSelectPage() {
                     <Input 
                       id="price_sale" 
                       type="number" 
-                      placeholder="Nhập giá khuyến mãi (để trống để dùng giá mặc định)" 
+                      placeholder="Nhập giá khuyến mãi" 
                       value={formData.ps_price_sale}
+                      step="0.01"
                       onChange={(e) => setFormData({...formData, ps_price_sale: e.target.value})}
                     />
                   </div>
@@ -2227,8 +2228,9 @@ export default function PrintSelectPage() {
                   <Input 
                     id="edit_price_sale" 
                     type="number" 
-                    placeholder="Nhập giá bán (để trống để dùng giá mặc định)" 
+                    placeholder="Nhập giá bán khuyến mãi" 
                     value={editFormData.ps_price_sale}
+                    step="0.01"
                     onChange={(e) => setEditFormData({...editFormData, ps_price_sale: e.target.value})}
                   />
                 </div>
