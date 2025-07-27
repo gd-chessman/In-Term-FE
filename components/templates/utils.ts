@@ -42,6 +42,7 @@ export const prepareTemplateData = (
   product: any, 
   currencySymbol: string = '$'
 ): TemplateData => {
+  console.log(product)
   
   // Hàm format giá với currency symbol từ template (chỉ phần nguyên)
   const formatPrice = (price: number) => {
