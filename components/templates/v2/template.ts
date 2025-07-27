@@ -33,15 +33,15 @@ export const v2Template = (data: {
   const getOriginalPriceClass = (price: string) => {
     if (!price) return 'ft14-original';
     const length = price.length;
-    if (length <= 3) return 'ft14-original'; // 2.0625rem (3.4375 * 0.6)
-    if (length <= 4) return 'ft14-original-small'; // 1.65rem (2.75 * 0.6)
-    if (length <= 5) return 'ft14-original-medium'; // 1.575rem (2.625 * 0.6)
-    if (length <= 6) return 'ft14-original-large'; // 1.5rem (2.5 * 0.6)
-    if (length <= 7) return 'ft14-original-xlarge'; // 1.425rem (2.375 * 0.6)
-    if (length <= 8) return 'ft14-original-xxlarge'; // 1.35rem (2.25 * 0.6)
-    if (length <= 9) return 'ft14-original-xxxlarge'; // 1.275rem (2.125 * 0.6)
-    if (length <= 10) return 'ft14-original-mini'; // 1.2rem (2 * 0.6)
-    return 'ft14-original-tiny'; // 1.125rem (1.875 * 0.6) - cho trường hợp vượt quá 10
+    if (length <= 3) return 'ft14-original'; // 2.6rem
+    if (length <= 4) return 'ft14-original-small'; // 2.1rem
+    if (length <= 5) return 'ft14-original-medium'; // 2rem
+    if (length <= 6) return 'ft14-original-large'; // 1.9rem
+    if (length <= 7) return 'ft14-original-xlarge'; // 1.8rem
+    if (length <= 8) return 'ft14-original-xxlarge'; // 1.7rem
+    if (length <= 9) return 'ft14-original-xxxlarge'; // 1.6rem
+    if (length <= 10) return 'ft14-original-mini'; // 1.5rem
+    return 'ft14-original-tiny'; // 1.4rem - cho trường hợp vượt quá 10
   };
 
   // Hàm tính toán top position cho giá gốc dựa trên độ dài
@@ -52,15 +52,15 @@ export const v2Template = (data: {
     const baseFontSize = 3.4375; // font-size gốc của ft14
     
     let fontSize;
-    if (length <= 3) fontSize = 2.0625;
-    else if (length <= 4) fontSize = 1.65;
-    else if (length <= 5) fontSize = 1.575;
-    else if (length <= 6) fontSize = 1.5;
-    else if (length <= 7) fontSize = 1.425;
-    else if (length <= 8) fontSize = 1.35;
-    else if (length <= 9) fontSize = 1.275;
-    else if (length <= 10) fontSize = 1.2;
-    else fontSize = 1.125;
+    if (length <= 3) fontSize = 2.6;
+    else if (length <= 4) fontSize = 2.1;
+    else if (length <= 5) fontSize = 2;
+    else if (length <= 6) fontSize = 1.9;
+    else if (length <= 7) fontSize = 1.8;
+    else if (length <= 8) fontSize = 1.7;
+    else if (length <= 9) fontSize = 1.6;
+    else if (length <= 10) fontSize = 1.5;
+    else fontSize = 1.4;
 
     // Tính toán sự khác biệt về chiều cao và điều chỉnh top
     const heightDiff = (baseFontSize - fontSize) / 2;
@@ -91,15 +91,15 @@ export const v2Template = (data: {
 	.ft12{font-size:0.6875rem;font-family:"Inter",sans-serif;color:#000000;}
 	.ft13{font-size:3.0625rem;font-family:"Sriracha",cursive;color:#ffffff;}
 	.ft14{font-size:3.4375rem;font-family:"Sriracha",cursive;color:#000000;}
-	.ft14-original{font-size:2.0625rem;font-family:"Sriracha",cursive;color:#000000;}
-	.ft14-original-small{font-size:1.65rem;font-family:"Sriracha",cursive;color:#000000;}
-	.ft14-original-medium{font-size:1.575rem;font-family:"Sriracha",cursive;color:#000000;}
-	.ft14-original-large{font-size:1.5rem;font-family:"Sriracha",cursive;color:#000000;}
-	.ft14-original-xlarge{font-size:1.425rem;font-family:"Sriracha",cursive;color:#000000;}
-	.ft14-original-xxlarge{font-size:1.35rem;font-family:"Sriracha",cursive;color:#000000;}
-	.ft14-original-xxxlarge{font-size:1.275rem;font-family:"Sriracha",cursive;color:#000000;}
-	.ft14-original-mini{font-size:1.2rem;font-family:"Sriracha",cursive;color:#000000;}
-	.ft14-original-tiny{font-size:1.125rem;font-family:"Sriracha",cursive;color:#000000;}
+	.ft14-original{font-size:2.6rem;font-family:"Sriracha",cursive;color:#000000;}
+	.ft14-original-small{font-size:2.1rem;font-family:"Sriracha",cursive;color:#000000;}
+	.ft14-original-medium{font-size:2rem;font-family:"Sriracha",cursive;color:#000000;}
+	.ft14-original-large{font-size:1.9rem;font-family:"Sriracha",cursive;color:#000000;}
+	.ft14-original-xlarge{font-size:1.8rem;font-family:"Sriracha",cursive;color:#000000;}
+	.ft14-original-xxlarge{font-size:1.7rem;font-family:"Sriracha",cursive;color:#000000;}
+	.ft14-original-xxxlarge{font-size:1.6rem;font-family:"Sriracha",cursive;color:#000000;}
+	.ft14-original-mini{font-size:1.5rem;font-family:"Sriracha",cursive;color:#000000;}
+	.ft14-original-tiny{font-size:1.4rem;font-family:"Sriracha",cursive;color:#000000;}
 	.ft15{font-size:1.1875rem;font-family:"Inter",sans-serif;color:#000000;}
 	.ft16{font-size:4.3rem;font-family:"Sriracha",cursive;color:#000000;}
 	.ft16-small{font-size:3.4rem;font-family:"Sriracha",cursive;color:#000000;}
@@ -119,7 +119,7 @@ export const v2Template = (data: {
 	
 	/* CSS cho phần thập phân (số mũ) */
 	.decimal-superscript {
-		font-size: 0.4em;
+		font-size: 0.6em;
 		vertical-align: super;
 		line-height: 1;
 		font-family: "Sriracha", cursive;
@@ -220,8 +220,8 @@ export const v2Template = (data: {
 <p style="position:absolute;top:0.1rem;left:11.4375rem;white-space:nowrap" class="ft11">${data.product_name}</p>
 <p style="position:absolute;top:1.75rem;left:21.25rem;white-space:nowrap" class="ft12">${data.pt_original_price}:</p>
 <p style="position:absolute;top:3.5rem;left:11.0625rem;white-space:nowrap" class="ft13">${data.discount_percentage}</p>
-<p style="position:absolute;top:${originalPriceTop};left:21.6875rem;white-space:nowrap" class="${originalPriceClass}">${data.price.replace(/(\d+)(\s*[^\d\s]+)$/, '$1')}${data.price_decimal ? `<span class="decimal-superscript">${data.price_decimal}</span>` : ''}${data.price.match(/(\s*[^\d\s]+)$/)?.[1] || ''} &nbsp;</p>
-<p style="position:absolute;top:3.5875rem;left:28.75rem;white-space:nowrap" class="${priceClass}">${data.price_sale.replace(/(\d+)(\s*[^\d\s]+)$/, '$1')}${data.price_sale_decimal ? `<span class="decimal-superscript">${data.price_sale_decimal}</span>` : ''}${data.price_sale.match(/(\s*[^\d\s]+)$/)?.[1] || ''} &nbsp;</p>
+<p style="position:absolute;top:${originalPriceTop};left:21.6875rem;white-space:nowrap" class="${originalPriceClass}">${data.price.replace(/(\d+)(\s*[^\d\s]+)$/, '$1')}${data.price_decimal ? `<span class="decimal-superscript">${data.price_decimal}</span>` : ''}</p>
+<p style="position:absolute;top:3.5875rem;right:15.3rem;white-space:nowrap" class="${priceClass}">${data.price_sale.replace(/(\d+)(\s*[^\d\s]+)$/, '$1')}<span style="display:inline-block;vertical-align:top;line-height:0.8;margin-top:0.4em;"><span style="display:block;font-size:0.4em;margin:0;">${data.price_sale_decimal || ''}</span><span style="display:block;font-size:0.35em;margin:0;">${data.price_sale.match(/(\s*[^\d\s]+)$/)?.[1] || ''}</span></span></p>
 <p style="position:absolute;top:8.3125rem;left:11.4375rem;white-space:nowrap" class="ft111">${data.pt_origin_country}: ${data.country_code} ${data.country_name}<br/><span class="ft111-inter">${data.pt_product_code}: ${data.product_code}</span></p>
 </div>
 </body>
