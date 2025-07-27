@@ -81,6 +81,8 @@ export default function ProductsPage() {
   const [selectedProduct, setSelectedProduct] = useState<any>(null)
   const [selectedTagsToAdd, setSelectedTagsToAdd] = useState<number[]>([])
   const [selectedTagsToDelete, setSelectedTagsToDelete] = useState<number[]>([])
+  const [detailDialogOpen, setDetailDialogOpen] = useState(false)
+  const [selectedProductDetail, setSelectedProductDetail] = useState<any>(null)
   
   // Advanced filters
   const [productName, setProductName] = useState("")
@@ -415,6 +417,11 @@ export default function ProductsPage() {
     setSelectedTagsToAdd([])
     setSelectedTagsToDelete([])
     setTagsDialogOpen(true)
+  }
+
+  const handleViewDetail = (product: any) => {
+    setSelectedProductDetail(product)
+    setDetailDialogOpen(true)
   }
 
   const handleDeleteTags = (tagIds: number[]) => {
@@ -1079,6 +1086,174 @@ export default function ProductsPage() {
         </DialogContent>
       </Dialog>
 
+      {/* Product Detail Dialog */}
+      <Dialog open={detailDialogOpen} onOpenChange={setDetailDialogOpen}>
+        <DialogContent className="sm:max-w-[700px] bg-white/95 backdrop-blur-xl border-slate-200/60 shadow-2xl rounded-2xl">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-semibold text-slate-900">Chi tiết Sản phẩm</DialogTitle>
+            <DialogDescription className="text-slate-600">
+              Thông tin chi tiết về sản phẩm
+            </DialogDescription>
+          </DialogHeader>
+          
+          {selectedProductDetail && (
+            <div className="space-y-6 py-4">
+              {/* Product Header */}
+              <div className="flex items-start space-x-4 p-4 bg-gradient-to-r from-slate-50 to-green-50 rounded-xl border border-slate-200">
+                <div className="h-20 w-20 rounded-xl bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center shadow-md overflow-hidden">
+                  <img 
+                    src={selectedProductDetail.product_image || ""} 
+                    alt={selectedProductDetail.product_name}
+                    className="h-full w-full object-cover"
+                    onError={(e) => {
+                      e.currentTarget.style.display = 'none'
+                      e.currentTarget.nextElementSibling?.classList.remove('hidden')
+                    }}
+                  />
+                  <Package className="h-8 w-8 text-slate-600 hidden" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-xl font-bold text-slate-900 mb-1">{selectedProductDetail.product_name}</h3>
+                  <div className="flex items-center space-x-2 mb-2">
+                    <code className="text-sm bg-slate-100 px-2 py-1 rounded-lg text-slate-700 font-mono">
+                      {selectedProductDetail.product_code}
+                    </code>
+                    {getStatusBadge(selectedProductDetail.product_status)}
+                  </div>
+                  <p className="text-slate-600 text-sm">
+                    {selectedProductDetail.product_description || "Không có mô tả"}
+                  </p>
+                </div>
+              </div>
+
+              {/* Product Details Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Basic Information */}
+                <div className="space-y-4">
+                  <h4 className="text-lg font-semibold text-slate-800 border-b border-slate-200 pb-2">
+                    Thông tin cơ bản
+                  </h4>
+                  
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm font-medium text-slate-600">Danh mục:</span>
+                      <Badge variant="outline" className="border-slate-300 text-slate-700 rounded-lg">
+                        {selectedProductDetail.category?.category_name || "N/A"}
+                      </Badge>
+                    </div>
+                    
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm font-medium text-slate-600">Xuất xứ:</span>
+                      <div className="flex items-center space-x-2">
+                        <span className="text-lg">{getCountryFlag(selectedProductDetail.origin?.country_code)}</span>
+                        <span className="text-sm font-medium text-slate-700">
+                          {selectedProductDetail.origin?.country_name || "N/A"}
+                        </span>
+                      </div>
+                    </div>
+                    
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm font-medium text-slate-600">Giá:</span>
+                      <span className="font-semibold text-lg text-slate-900">
+                        {selectedProductDetail.price}
+                      </span>
+                    </div>
+                    
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm font-medium text-slate-600">Ngày tạo:</span>
+                      <span className="text-sm text-slate-600">
+                        {new Date(selectedProductDetail.created_at).toLocaleDateString("vi-VN")}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Tags and Branches */}
+                <div className="space-y-4">
+                  <h4 className="text-lg font-semibold text-slate-800 border-b border-slate-200 pb-2">
+                    Phân loại
+                  </h4>
+                  
+                  <div className="space-y-4">
+                    {/* Tags */}
+                    <div>
+                      <span className="text-sm font-medium text-slate-600 block mb-2">Tags:</span>
+                      {selectedProductDetail.productTags && selectedProductDetail.productTags.length > 0 ? (
+                        <div className="flex flex-wrap gap-1">
+                          {selectedProductDetail.productTags.map((tag: any, index: number) => (
+                            <Badge
+                              key={index}
+                              className="bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-700 border-0 text-xs rounded-lg"
+                            >
+                              {tag.tag?.tag_name || tag}
+                            </Badge>
+                          ))}
+                        </div>
+                      ) : (
+                        <span className="text-sm text-slate-500">Chưa có tags</span>
+                      )}
+                    </div>
+
+                    {/* Branches */}
+                    <div>
+                      <span className="text-sm font-medium text-slate-600 block mb-2">Chi nhánh:</span>
+                      {selectedProductDetail.productBranches && selectedProductDetail.productBranches.length > 0 ? (
+                        <div className="flex flex-wrap gap-1">
+                          {selectedProductDetail.productBranches.map((branchItem: any, index: number) => (
+                            <Badge
+                              key={index}
+                              className="bg-gradient-to-r from-green-100 to-emerald-100 text-green-700 border-0 text-xs rounded-lg"
+                            >
+                              {branchItem.branch?.branch_name || branchItem}
+                            </Badge>
+                          ))}
+                        </div>
+                      ) : (
+                        <span className="text-sm text-slate-500">Chưa phân bổ</span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Additional Information */}
+              {selectedProductDetail.product_description && (
+                <div className="space-y-3">
+                  <h4 className="text-lg font-semibold text-slate-800 border-b border-slate-200 pb-2">
+                    Mô tả chi tiết
+                  </h4>
+                  <div className="p-4 bg-slate-50 rounded-lg border border-slate-200">
+                    <p className="text-slate-700 leading-relaxed">
+                      {selectedProductDetail.product_description}
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          <DialogFooter>
+            <Button 
+              variant="outline"
+              onClick={() => setDetailDialogOpen(false)}
+              className="rounded-xl"
+            >
+              Đóng
+            </Button>
+            <Button 
+              onClick={() => {
+                setDetailDialogOpen(false)
+                handleEditProduct(selectedProductDetail)
+              }}
+              className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white rounded-xl"
+            >
+              <Edit className="mr-2 h-4 w-4" />
+              Chỉnh sửa
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       {/* Delete Confirmation Dialog */}
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent className="bg-white/95 backdrop-blur-xl border-slate-200/60 shadow-2xl rounded-2xl">
@@ -1552,10 +1727,13 @@ export default function ProductsPage() {
                     className="bg-white/95 backdrop-blur-xl border-slate-200/60 shadow-xl rounded-xl"
                   >
                     <DropdownMenuLabel>Thao tác</DropdownMenuLabel>
-                    {/* <DropdownMenuItem className="hover:bg-slate-50/80 rounded-lg">
+                    <DropdownMenuItem 
+                      className="hover:bg-slate-50/80 rounded-lg"
+                      onClick={() => handleViewDetail(product)}
+                    >
                       <Eye className="mr-2 h-4 w-4" />
                       Xem chi tiết
-                    </DropdownMenuItem> */}
+                    </DropdownMenuItem>
                     <DropdownMenuItem 
                       className="hover:bg-slate-50/80 rounded-lg"
                       onClick={() => handleEditProduct(product)}
@@ -1803,10 +1981,13 @@ export default function ProductsPage() {
                           className="bg-white/95 backdrop-blur-xl border-slate-200/60 shadow-xl rounded-xl"
                         >
                           <DropdownMenuLabel>Thao tác</DropdownMenuLabel>
-                          {/* <DropdownMenuItem className="hover:bg-slate-50/80 rounded-lg">
+                          <DropdownMenuItem 
+                            className="hover:bg-slate-50/80 rounded-lg"
+                            onClick={() => handleViewDetail(product)}
+                          >
                             <Eye className="mr-2 h-4 w-4" />
                             Xem chi tiết
-                          </DropdownMenuItem> */}
+                          </DropdownMenuItem>
                           <DropdownMenuItem 
                             className="hover:bg-slate-50/80 rounded-lg"
                             onClick={() => handleEditProduct(product)}
