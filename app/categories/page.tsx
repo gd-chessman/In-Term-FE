@@ -529,12 +529,6 @@ export default function CategoriesPage() {
                           <Edit className="mr-2 h-4 w-4" />
                           Chỉnh sửa
                         </DropdownMenuItem>
-                        {category.level === 0 && (
-                          <DropdownMenuItem className="hover:bg-slate-50/80 rounded-lg">
-                            <Plus className="mr-2 h-4 w-4" />
-                            Thêm danh mục con
-                          </DropdownMenuItem>
-                        )}
                         <DropdownMenuSeparator />
                         <DropdownMenuItem 
                           className="text-red-600 hover:bg-red-50/80 rounded-lg"

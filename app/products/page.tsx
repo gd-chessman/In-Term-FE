@@ -62,6 +62,7 @@ import {
   ChevronUp,
 } from "lucide-react"
 import { getCountries } from "@/services/CountryService"
+import { getActiveBranches } from "@/services/BranchService"
 
 export default function ProductsPage() {
   const searchParams = useSearchParams()
@@ -88,6 +89,8 @@ export default function ProductsPage() {
   const [minPrice, setMinPrice] = useState("")
   const [maxPrice, setMaxPrice] = useState("")
   const [selectedTags, setSelectedTags] = useState<number[]>([])
+  const [selectedBranches, setSelectedBranches] = useState<number[]>([])
+  const [selectedFilterBranches, setSelectedFilterBranches] = useState<number[]>([])
   const [sortBy, setSortBy] = useState("created_at")
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc")
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false)
@@ -119,7 +122,7 @@ export default function ProductsPage() {
     error: productsError,
     isFetching: isFetchingProducts,
   } = useQuery({
-    queryKey: ["products", currentPage, pageSize, searchTerm, selectedCategory, selectedStatus, productName, productCode, productDescription, minPrice, maxPrice, selectedTags, sortBy, sortOrder],
+    queryKey: ["products", currentPage, pageSize, searchTerm, selectedCategory, selectedStatus, productName, productCode, productDescription, minPrice, maxPrice, selectedTags, selectedFilterBranches, sortBy, sortOrder],
     queryFn: () => getProducts({
       page: currentPage,
       limit: pageSize,
@@ -132,6 +135,7 @@ export default function ProductsPage() {
       min_price: minPrice ? Number(minPrice) : undefined,
       max_price: maxPrice ? Number(maxPrice) : undefined,
       tag_ids: selectedTags.length > 0 ? selectedTags : undefined,
+      branch_ids: selectedFilterBranches.length > 0 ? selectedFilterBranches : undefined,
       sort_by: sortBy,
       sort_order: sortOrder
     }),
@@ -156,6 +160,15 @@ export default function ProductsPage() {
   } = useQuery({
     queryKey: ["tags"],
     queryFn: getTags,
+  })
+
+  // Fetch active branches for branch selection
+  const {
+    data: branches = [],
+    isLoading: isLoadingBranches,
+  } = useQuery({
+    queryKey: ["active-branches"],
+    queryFn: getActiveBranches,
   })
 
   // Create product mutation
@@ -322,8 +335,9 @@ export default function ProductsPage() {
       category_id: Number(formData.get("category_id")),
       price: Number(formData.get("price")),
       origin_country_id: Number(formData.get("origin_country_id")),
-      product_status: formData.get("product_status") as string || "active",
+      product_status: "active", // Mặc định là Hoạt động
       tagIds: formData.getAll("tagIds").map(id => Number(id)),
+      branchIds: formData.getAll("branchIds").map(id => Number(id)),
     }
     
     // Handle image file
@@ -344,6 +358,7 @@ export default function ProductsPage() {
     const category_id = Number(formData.get("category_id"))
     const price = Number(formData.get("price"))
     const origin_country_id = Number(formData.get("origin_country_id"))
+    const branchIds = formData.getAll("branchIds").map(id => Number(id))
     
     // Chỉ thêm vào object nếu có giá trị
     if (product_name && product_name.trim()) {
@@ -360,6 +375,9 @@ export default function ProductsPage() {
     }
     if (origin_country_id && origin_country_id > 0) {
       productData.origin_country_id = origin_country_id
+    }
+    if (branchIds.length > 0) {
+      productData.branchIds = branchIds
     }
     
     // Handle image file
@@ -464,6 +482,8 @@ export default function ProductsPage() {
     setMinPrice("")
     setMaxPrice("")
     setSelectedTags([])
+    setSelectedBranches([])
+    setSelectedFilterBranches([])
     setSortBy("created_at")
     setSortOrder("desc")
     setCurrentPage(1)
@@ -477,9 +497,25 @@ export default function ProductsPage() {
     }
   }
 
+  const handleBranchSelectionChange = (branchId: number, checked: boolean) => {
+    if (checked) {
+      setSelectedBranches(prev => [...prev, branchId])
+    } else {
+      setSelectedBranches(prev => prev.filter(id => id !== branchId))
+    }
+  }
+
+  const handleFilterBranchSelectionChange = (branchId: number, checked: boolean) => {
+    if (checked) {
+      setSelectedFilterBranches(prev => [...prev, branchId])
+    } else {
+      setSelectedFilterBranches(prev => prev.filter(id => id !== branchId))
+    }
+  }
+
   const hasActiveFilters = searchTerm || selectedCategory !== "all" || selectedStatus !== "all" || 
     productName || productCode || productDescription || minPrice || maxPrice || 
-    selectedTags.length > 0 || sortBy !== "created_at" || sortOrder !== "desc"
+    selectedTags.length > 0 || selectedFilterBranches.length > 0 || sortBy !== "created_at" || sortOrder !== "desc"
 
   // Flatten categories for select options
   const flattenedCategories = categories.reduce((acc: any[], category: any) => {
@@ -631,20 +667,7 @@ export default function ProductsPage() {
                     </SelectContent>
                   </Select>
                 </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="product_status" className="text-right font-medium text-slate-700">
-                    Trạng thái
-                  </Label>
-                  <Select name="product_status" defaultValue="active">
-                    <SelectTrigger className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100">
-                      <SelectValue placeholder="Chọn trạng thái" />
-                    </SelectTrigger>
-                    <SelectContent className="rounded-xl border-slate-200 shadow-xl">
-                      <SelectItem value="active">Hoạt động</SelectItem>
-                      <SelectItem value="inactive">Không hoạt động</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+
                 <div className="grid grid-cols-4 items-start gap-4">
                   <Label className="text-right font-medium text-slate-700 pt-2">
                     Tags
@@ -671,6 +694,35 @@ export default function ProductsPage() {
                       ))
                     ) : (
                       <div className="text-sm text-slate-500">Không có tags nào</div>
+                    )}
+                  </div>
+                </div>
+                <div className="grid grid-cols-4 items-start gap-4">
+                  <Label className="text-right font-medium text-slate-700 pt-2">
+                    Chi nhánh
+                  </Label>
+                  <div className="col-span-3 space-y-2 max-h-32 overflow-y-auto border border-slate-200 rounded-xl p-3 flex flex-wrap gap-2">
+                    {isLoadingBranches ? (
+                      <div className="text-sm text-slate-500">Đang tải chi nhánh...</div>
+                    ) : branches.length > 0 ? (
+                      branches.map((branch: any) => (
+                        <div key={branch.branch_id} className="flex items-center space-x-2 !my-0">
+                          <Checkbox
+                            id={`branch-${branch.branch_id}`}
+                            name="branchIds"
+                            value={branch.branch_id}
+                            className="rounded border-slate-300"
+                          />
+                          <Label
+                            htmlFor={`branch-${branch.branch_id}`}
+                            className="text-sm font-normal cursor-pointer hover:text-green-600"
+                          >
+                            {branch.branch_name}
+                          </Label>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="text-sm text-slate-500">Không có chi nhánh nào</div>
                     )}
                   </div>
                 </div>
@@ -814,6 +866,38 @@ export default function ProductsPage() {
                       )}
                     </SelectContent>
                   </Select>
+                </div>
+                <div className="grid grid-cols-4 items-start gap-4">
+                  <Label className="text-right font-medium text-slate-700 pt-2">
+                    Chi nhánh
+                  </Label>
+                  <div className="col-span-3 space-y-2 max-h-32 overflow-y-auto border border-slate-200 rounded-xl p-3 flex flex-wrap gap-2">
+                    {isLoadingBranches ? (
+                      <div className="text-sm text-slate-500">Đang tải chi nhánh...</div>
+                    ) : branches.length > 0 ? (
+                      branches.map((branch: any) => (
+                        <div key={branch.branch_id} className="flex items-center space-x-2 !my-0">
+                          <Checkbox
+                            id={`edit-branch-${branch.branch_id}`}
+                            name="branchIds"
+                            value={branch.branch_id}
+                            defaultChecked={editingProduct?.productBranches?.some((pb: any) => 
+                              (pb.branch_id || pb.pbg_branch_id) === branch.branch_id
+                            )}
+                            className="rounded border-slate-300"
+                          />
+                          <Label
+                            htmlFor={`edit-branch-${branch.branch_id}`}
+                            className="text-sm font-normal cursor-pointer hover:text-green-600"
+                          >
+                            {branch.branch_name}
+                          </Label>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="text-sm text-slate-500">Không có chi nhánh nào</div>
+                    )}
+                  </div>
                 </div>
                               
                               <div className="grid grid-cols-4 items-center gap-4">
@@ -1227,7 +1311,7 @@ export default function ProductsPage() {
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
                 <Input
-                  placeholder="Tìm kiếm theo tên, mã sản phẩm..."
+                  placeholder="Tìm kiếm theo tên, mã sản phẩm, chi nhánh..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100"
@@ -1238,7 +1322,7 @@ export default function ProductsPage() {
                   <SelectValue placeholder="Danh mục" />
                 </SelectTrigger>
                 <SelectContent className="rounded-xl border-slate-200 shadow-xl">
-                  <SelectItem value="all">Tất cả</SelectItem>
+                  <SelectItem value="all">Tất cả danh mục</SelectItem>
                   {flattenedCategories.map((category: any, index: number) => (
                     <SelectItem key={index} value={category.category_id.toString()}>
                       {category.category_name}
@@ -1251,9 +1335,31 @@ export default function ProductsPage() {
                   <SelectValue placeholder="Trạng thái" />
                 </SelectTrigger>
                 <SelectContent className="rounded-xl border-slate-200 shadow-xl">
-                  <SelectItem value="all">Tất cả</SelectItem>
+                  <SelectItem value="all">Tất cả trạng thái</SelectItem>
                   <SelectItem value="active">Hoạt động</SelectItem>
                   <SelectItem value="inactive">Không hoạt động</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select 
+                value={selectedFilterBranches.length > 0 ? selectedFilterBranches.join(',') : "all"} 
+                onValueChange={(value) => {
+                  if (value === "all") {
+                    setSelectedFilterBranches([])
+                  } else {
+                    setSelectedFilterBranches(value.split(',').map(id => Number(id)))
+                  }
+                }}
+              >
+                <SelectTrigger className="w-[180px] rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100">
+                  <SelectValue placeholder="Chi nhánh" />
+                </SelectTrigger>
+                <SelectContent className="rounded-xl border-slate-200 shadow-xl">
+                  <SelectItem value="all">Tất cả chi nhánh</SelectItem>
+                  {branches.map((branch: any) => (
+                    <SelectItem key={branch.branch_id} value={branch.branch_id.toString()}>
+                      {branch.branch_name}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -1359,6 +1465,33 @@ export default function ProductsPage() {
                       ))
                     ) : (
                       <div className="text-sm text-slate-500">Không có tags nào</div>
+                    )}
+                  </div>
+                </div>
+                <div className="space-y-2 md:col-span-2 lg:col-span-3">
+                  <Label className="text-sm font-medium text-slate-700">Chi nhánh</Label>
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 max-h-32 overflow-y-auto border border-slate-200 rounded-xl p-3">
+                    {isLoadingBranches ? (
+                      <div className="text-sm text-slate-500">Đang tải chi nhánh...</div>
+                    ) : branches.length > 0 ? (
+                      branches.map((branch: any) => (
+                        <div key={branch.branch_id} className="flex items-center space-x-2">
+                          <Checkbox
+                            id={`filter-branch-${branch.branch_id}`}
+                            checked={selectedFilterBranches.includes(branch.branch_id)}
+                            onCheckedChange={(checked) => handleFilterBranchSelectionChange(branch.branch_id, checked as boolean)}
+                            className="rounded border-slate-300"
+                          />
+                          <Label
+                            htmlFor={`filter-branch-${branch.branch_id}`}
+                            className="text-sm font-normal cursor-pointer hover:text-green-600"
+                          >
+                            {branch.branch_name}
+                          </Label>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="text-sm text-slate-500">Không có chi nhánh nào</div>
                     )}
                   </div>
                 </div>
@@ -1488,6 +1621,27 @@ export default function ProductsPage() {
                   <span className="font-semibold text-slate-900">{product.price}</span>
                 </div>
                 <div className="flex items-center justify-between">
+                  <span className="text-sm text-slate-600">Chi nhánh:</span>
+                  <div className="flex flex-wrap gap-1">
+                    {product.productBranches?.slice(0, 2).map((branchItem: any, index: number) => (
+                      <Badge
+                        key={index}
+                        className="bg-gradient-to-r from-green-100 to-emerald-100 text-green-700 border-0 text-xs rounded-lg"
+                      >
+                        {branchItem.branch?.branch_name || branchItem}
+                      </Badge>
+                    ))}
+                    {product.productBranches && product.productBranches.length > 2 && (
+                      <Badge className="bg-gradient-to-r from-gray-100 to-slate-100 text-gray-700 border-0 text-xs rounded-lg">
+                        +{product.productBranches.length - 2}
+                      </Badge>
+                    )}
+                    {(!product.productBranches || product.productBranches.length === 0) && (
+                      <span className="text-xs text-slate-500">Chưa phân bổ</span>
+                    )}
+                  </div>
+                </div>
+                <div className="flex items-center justify-between">
                   <span className="text-sm text-slate-600">Tags:</span>
                   <div className="flex flex-wrap gap-1">
                     {product.productTags?.slice(0, 2).map((tag: any, index: number) => (
@@ -1547,6 +1701,7 @@ export default function ProductsPage() {
                   <TableHead className="text-slate-600 font-semibold">Danh mục</TableHead>
                   <TableHead className="text-slate-600 font-semibold">Xuất xứ</TableHead>
                   <TableHead className="text-slate-600 font-semibold">Giá</TableHead>
+                  <TableHead className="text-slate-600 font-semibold">Chi nhánh</TableHead>
                   <TableHead className="text-slate-600 font-semibold">Tags</TableHead>
                   <TableHead className="text-slate-600 font-semibold">Trạng thái</TableHead>
                   <TableHead className="text-slate-600 font-semibold">Ngày tạo</TableHead>
@@ -1592,6 +1747,26 @@ export default function ProductsPage() {
                       </div>
                     </TableCell>
                     <TableCell className="font-semibold text-slate-900">{product.price}</TableCell>
+                    <TableCell>
+                      <div className="flex flex-wrap gap-1">
+                        {product.productBranches?.slice(0, 2).map((branchItem: any, index: number) => (
+                          <Badge
+                            key={index}
+                            className="bg-gradient-to-r from-green-100 to-emerald-100 text-green-700 border-0 text-xs rounded-lg"
+                          >
+                            {branchItem.branch?.branch_name || branchItem}
+                          </Badge>
+                        ))}
+                        {product.productBranches && product.productBranches.length > 2 && (
+                          <Badge className="bg-gradient-to-r from-gray-100 to-slate-100 text-gray-700 border-0 text-xs rounded-lg">
+                            +{product.productBranches.length - 2}
+                          </Badge>
+                        )}
+                        {(!product.productBranches || product.productBranches.length === 0) && (
+                          <span className="text-xs text-slate-500">Chưa phân bổ</span>
+                        )}
+                      </div>
+                    </TableCell>
                     <TableCell>
                       <div className="flex flex-wrap gap-1">
                         {product.productTags?.slice(0, 2).map((tag: any, index: number) => (
