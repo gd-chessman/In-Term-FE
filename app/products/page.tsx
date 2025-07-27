@@ -580,7 +580,7 @@ export default function ProductsPage() {
               Thêm Sản phẩm
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[600px] bg-white/95 backdrop-blur-xl border-slate-200/60 shadow-2xl rounded-2xl">
+          <DialogContent className="sm:max-w-[900px] lg:max-w-[1124px] bg-white/95 backdrop-blur-xl border-slate-200/60 shadow-2xl rounded-2xl">
             <DialogHeader>
               <DialogTitle className="text-xl font-semibold text-slate-900">Thêm Sản phẩm mới</DialogTitle>
               <DialogDescription className="text-slate-600">Tạo sản phẩm mới trong hệ thống</DialogDescription>
@@ -590,6 +590,10 @@ export default function ProductsPage() {
               handleCreateProduct(new FormData(e.currentTarget))
             }}>
               <div className="grid gap-6 py-4">
+                {/* Layout 2 cột cho desktop */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                  {/* Cột trái */}
+                  <div className="space-y-6">
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="product_name" className="text-right font-medium text-slate-700">
                     Tên sản phẩm *
@@ -689,6 +693,10 @@ export default function ProductsPage() {
                     </SelectContent>
                   </Select>
                 </div>
+                  </div>
+                  
+                  {/* Cột phải */}
+                  <div className="space-y-6">
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="unit_name" className="text-right font-medium text-slate-700">
                     Đơn vị tính *
@@ -731,12 +739,11 @@ export default function ProductsPage() {
                     className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100"
                   />
                 </div>
-
                 <div className="grid grid-cols-4 items-start gap-4">
                   <Label className="text-right font-medium text-slate-700 pt-2">
                     Tags
                   </Label>
-                  <div className="col-span-3 space-y-2 max-h-32 overflow-y-auto border border-slate-200 rounded-xl p-3 flex flex-wrap gap-2">
+                  <div className="col-span-3 space-y-2 max-h-48 overflow-y-auto border border-slate-200 rounded-xl p-3 flex flex-wrap gap-2">
                     {isLoadingTags ? (
                       <div className="text-sm text-slate-500">Đang tải tags...</div>
                     ) : tags.length > 0 ? (
@@ -765,7 +772,7 @@ export default function ProductsPage() {
                   <Label className="text-right font-medium text-slate-700 pt-2">
                     Chi nhánh
                   </Label>
-                  <div className="col-span-3 space-y-2 max-h-32 overflow-y-auto border border-slate-200 rounded-xl p-3 flex flex-wrap gap-2">
+                  <div className="col-span-3 space-y-2 max-h-48 overflow-y-auto border border-slate-200 rounded-xl p-3 flex flex-wrap gap-2">
                     {isLoadingBranches ? (
                       <div className="text-sm text-slate-500">Đang tải chi nhánh...</div>
                     ) : branches.length > 0 ? (
@@ -802,6 +809,8 @@ export default function ProductsPage() {
                     className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100 file:mr-4 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100"
                   />
                 </div>
+                  </div>
+                </div>
               </div>
               <DialogFooter>
                 <Button 
@@ -820,7 +829,7 @@ export default function ProductsPage() {
 
       {/* Edit Dialog */}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent className="sm:max-w-[600px] bg-white/95 backdrop-blur-xl border-slate-200/60 shadow-2xl rounded-2xl">
+        <DialogContent className="sm:max-w-[900px] lg:max-w-[1124px] bg-white/95 backdrop-blur-xl border-slate-200/60 shadow-2xl rounded-2xl">
           <DialogHeader>
             <DialogTitle className="text-xl font-semibold text-slate-900">Chỉnh sửa Sản phẩm</DialogTitle>
             <DialogDescription className="text-slate-600">Cập nhật thông tin sản phẩm</DialogDescription>
@@ -830,6 +839,10 @@ export default function ProductsPage() {
             handleUpdateProduct(new FormData(e.currentTarget))
           }}>
             <div className="grid gap-6 py-4">
+              {/* Layout 2 cột cho desktop */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                {/* Cột trái */}
+                <div className="space-y-6">
                   <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="edit_product_name" className="text-right font-medium text-slate-700">
                     Tên sản phẩm
@@ -907,6 +920,10 @@ export default function ProductsPage() {
                     className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100"
                   />
                 </div>
+                  </div>
+                  
+                  {/* Cột phải */}
+                  <div className="space-y-6">
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="edit_origin_country_id" className="text-right font-medium text-slate-700">
                     Xuất xứ
@@ -977,7 +994,7 @@ export default function ProductsPage() {
                   <Label className="text-right font-medium text-slate-700 pt-2">
                     Chi nhánh
                   </Label>
-                  <div className="col-span-3 space-y-2 max-h-32 overflow-y-auto border border-slate-200 rounded-xl p-3 flex flex-wrap gap-2">
+                  <div className="col-span-3 space-y-2 max-h-48 overflow-y-auto border border-slate-200 rounded-xl p-3 flex flex-wrap gap-2">
                     {isLoadingBranches ? (
                       <div className="text-sm text-slate-500">Đang tải chi nhánh...</div>
                     ) : branches.length > 0 ? (
@@ -1018,7 +1035,9 @@ export default function ProductsPage() {
                     className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100 file:mr-4 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100"
                   />
                 </div>
-            </div>
+                  </div>
+                </div>
+              </div>
             <DialogFooter>
               <Button 
                 type="submit" 
