@@ -53,15 +53,16 @@ export const a4Template = (data: {
     const baseFontSize = 7.5; // font-size gốc của ft15
     
     let fontSize;
-    if (length <= 3) fontSize = 8.25;
-    else if (length <= 4) fontSize = 6.6;
-    else if (length <= 5) fontSize = 6.3;
-    else if (length <= 6) fontSize = 6;
-    else if (length <= 7) fontSize = 5.7;
-    else if (length <= 8) fontSize = 5.4;
-    else if (length <= 9) fontSize = 5.1;
-    else if (length <= 10) fontSize = 4.8;
-    else fontSize = 4.5;
+	if (length <= 3) fontSize = 8.5;
+	else if (length <= 4) fontSize = 6.85;
+	else if (length <= 5) fontSize = 6.55;
+	else if (length <= 6) fontSize = 6.25;
+	else if (length <= 7) fontSize = 5.95;
+	else if (length <= 8) fontSize = 5.65;
+	else if (length <= 9) fontSize = 5.35;
+	else if (length <= 10) fontSize = 5.05;
+	else fontSize = 4.75;
+	
 
     // Tính toán sự khác biệt về chiều cao và điều chỉnh top (tăng thêm 1rem)
     const heightDiff = (baseFontSize - fontSize) / 2;
@@ -223,7 +224,7 @@ export const a4Template = (data: {
 <p style="position:absolute;top:29.25rem;left:1.625rem;white-space:nowrap" class="ft13">${data.pt_product_code} : ${data.product_code}</p>
 <p style="position:absolute;top:29rem;left:24.1875rem;white-space:nowrap" class="ft12-inter">${data.pt_original_price} : </p>
 <p style="position:absolute;top:30rem;left:2.0625rem;white-space:nowrap" class="ft14">${data.discount_percentage}</p>
-<p style="position:absolute;top:${originalPriceTop};left:27.9375rem;white-space:nowrap" class="${originalPriceClass}">${data.price.replace(/(\d+)(\s*[^\d\s]+)$/, '$1')}${data.price_decimal ? `<span class="decimal-superscript">${data.price_decimal}</span>` : ''}</p>
+<p style="position:absolute;top:${originalPriceTop};left:28rem;white-space:nowrap" class="${originalPriceClass}">${data.price.replace(/(\d+)(\s*[^\d\s]+)$/, '$1')}${data.price_decimal ? `<span class="decimal-superscript">${data.price_decimal}</span>` : ''}</p>
 <p style="position:absolute;top:39.25rem;left:50%;transform:translateX(-50%);white-space:nowrap;" class="${priceClass}">${data.price_sale.replace(/(\d+)(\s*[^\d\s]+)$/, '$1')}<span style="display:inline-block;vertical-align:top;line-height:0.8;margin-top:0.4em;"><span style="display:block;font-size:0.4em;margin:0;">${data.price_sale_decimal || '&nbsp;'}</span><span style="display:block;font-size:0.35em;margin:0;">${data.price_sale.match(/(\s*[^\d\s]+)$/)?.[1] || '&nbsp;'}</span></span></p>
 <p style="position:absolute;top:52.4rem;left:50%;transform:translateX(-50%);white-space:nowrap;font-weight:600;font-size:1.5rem;font-family:'Sriracha',cursive;" class="ft12">${data.unit_price_info}</p>
 </div>
