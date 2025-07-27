@@ -649,12 +649,12 @@ export default function ProductsPage() {
                   <Label className="text-right font-medium text-slate-700 pt-2">
                     Tags
                   </Label>
-                  <div className="col-span-3 space-y-2 max-h-32 overflow-y-auto border border-slate-200 rounded-xl p-3">
+                  <div className="col-span-3 space-y-2 max-h-32 overflow-y-auto border border-slate-200 rounded-xl p-3 flex flex-wrap gap-2">
                     {isLoadingTags ? (
                       <div className="text-sm text-slate-500">Đang tải tags...</div>
                     ) : tags.length > 0 ? (
                       tags.map((tag: any) => (
-                        <div key={tag.tag_id} className="flex items-center space-x-2">
+                        <div key={tag.tag_id} className="flex items-center space-x-2 !my-0">
                           <Checkbox
                             id={`tag-${tag.tag_id}`}
                             name="tagIds"
