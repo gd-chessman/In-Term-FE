@@ -118,7 +118,7 @@ export const a5Template = (data: {
 	  
 	  /* CSS cho phần thập phân (số mũ) */
 	  .decimal-superscript {
-		  font-size: 0.4em;
+		  font-size: 0.5em;
 		  vertical-align: super;
 		  line-height: 1;
 		  font-family: "Sriracha", cursive;
@@ -221,8 +221,8 @@ export const a5Template = (data: {
   <p style="position:absolute;top:12rem;left:1.625rem;white-space:nowrap" class="ft13">${data.pt_product_code}: ${data.product_code}</p>
   <p style="position:absolute;top:11.1875rem;left:29.5rem;white-space:nowrap" class="ft14">${data.pt_original_price}:</p>
   <p style="position:absolute;top:12.5rem;left:5.1875rem;white-space:nowrap" class="ft15">${data.discount_percentage}</p>
-  <p style="position:absolute;top:${originalPriceTop};left:28.8125rem;white-space:nowrap" class="${originalPriceClass}">${data.price.replace(/(\d+)(\s*[^\d\s]+)$/, '$1')}${data.price_decimal ? `<span class="decimal-superscript">${data.price_decimal}</span>` : ''}${data.price.match(/(\s*[^\d\s]+)$/)?.[1] || ''} &nbsp;</p>
-  <p style="position:absolute;top:19.0625rem;left:12rem;white-space:nowrap" class="${priceClass}">${data.price_sale.replace(/(\d+)(\s*[^\d\s]+)$/, '$1')}${data.price_sale_decimal ? `<span class="decimal-superscript">${data.price_sale_decimal}</span>` : ''}${data.price_sale.match(/(\s*[^\d\s]+)$/)?.[1] || ''} &nbsp;</p>
+  <p style="position:absolute;top:${originalPriceTop};left:29rem;white-space:nowrap" class="${originalPriceClass}">${data.price.replace(/(\d+)(\s*[^\d\s]+)$/, '$1')}${data.price_decimal ? `<span class="decimal-superscript">${data.price_decimal}</span>` : ''}</p>
+  <p style="position:absolute;top:18.0625rem;left:50%;transform:translateX(-50%);white-space:nowrap" class="${priceClass}">${data.price_sale.replace(/(\d+)(\s*[^\d\s]+)$/, '$1')}<span style="display:inline-block;vertical-align:top;line-height:0.8;margin-top:0.4em;"><span style="display:block;font-size:0.4em;margin:0;">${data.price_sale_decimal || ''}</span><span style="display:block;font-size:0.35em;margin:0;">${data.price_sale.match(/(\s*[^\d\s]+)$/)?.[1] || ''}</span></span></p>
   </div>
   </body>
   </html>`;
