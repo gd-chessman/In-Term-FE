@@ -26,6 +26,8 @@ export interface TemplateData {
   pt_origin_country: string;
   pt_product_code: string;
   pt_original_price: string;
+  // Thông tin đơn vị giá
+  unit_price_info: string;
 }
 
 export const getTemplate = (format: string) => {

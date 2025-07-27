@@ -63,6 +63,26 @@ export const prepareTemplateData = (
     }
   }
 
+  // Hàm tính giá đơn vị
+  const calculateUnitPrice = () => {
+    const unitTotal = product.product?.unit_total || 0
+    const unitStep = product.product?.unit_step || 0
+    const salePrice = product?.ps_price_sale || 0
+    
+    if (!unitTotal || !unitStep || !salePrice) return ''
+    
+    // Tính giá cho 1 đơn vị nhỏ nhất
+    const unitPrice = (salePrice / unitTotal) * unitStep
+    
+    // Format giá đơn vị
+    const unitPriceFormatted = formatPrice(unitPrice)
+    
+    // Lấy từ ngữ cho giá đơn vị từ template
+    const unitPriceLabel = product.templates?.pt_unit_price || ''
+    
+    return `${unitPriceLabel} ${unitStep}${product.product?.unit_name || 'g'} = ${unitPriceFormatted}`
+  }
+
   // Hàm kiểm tra và tách số thập phân
   const splitDecimal = (price: number) => {
     if (!price) return { whole: '0', decimal: '' }
@@ -110,7 +130,9 @@ export const prepareTemplateData = (
     pt_brand: product.templates?.pt_brand || 'Fikko Cena',
     pt_origin_country: product.templates?.pt_origin_country || 'Země původu',
     pt_product_code: product.templates?.pt_product_code || 'EAN',
-    pt_original_price: product.templates?.pt_original_price || 'Běžná cena'
+    pt_original_price: product.templates?.pt_original_price || 'Běžná cena',
+    // Thông tin đơn vị giá
+    unit_price_info: calculateUnitPrice()
   };
 };
 
