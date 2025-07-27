@@ -13,6 +13,7 @@ export const a5Template = (data: {
 	pt_origin_country: string;
 	pt_product_code: string;
 	pt_original_price: string;
+	unit_price_info: string;
   }) => {
 	// Hàm chọn class dựa trên độ dài giá (cho giá khuyến mãi)
 	const getPriceClass = (price: string) => {
@@ -221,8 +222,9 @@ export const a5Template = (data: {
   <p style="position:absolute;top:12rem;left:1.625rem;white-space:nowrap" class="ft13">${data.pt_product_code}: ${data.product_code}</p>
   <p style="position:absolute;top:11.1875rem;left:29.5rem;white-space:nowrap" class="ft14">${data.pt_original_price}:</p>
   <p style="position:absolute;top:12.5rem;left:5.1875rem;white-space:nowrap" class="ft15">${data.discount_percentage}</p>
-  <p style="position:absolute;top:${originalPriceTop};left:29rem;white-space:nowrap" class="${originalPriceClass}">${data.price.replace(/(\d+)(\s*[^\d\s]+)$/, '$1')}${data.price_decimal ? `<span class="decimal-superscript">${data.price_decimal}</span>` : ''}</p>
-  <p style="position:absolute;top:18.0625rem;left:50%;transform:translateX(-50%);white-space:nowrap" class="${priceClass}">${data.price_sale.replace(/(\d+)(\s*[^\d\s]+)$/, '$1')}<span style="display:inline-block;vertical-align:top;line-height:0.8;margin-top:0.4em;"><span style="display:block;font-size:0.4em;margin:0;">${data.price_sale_decimal || ''}</span><span style="display:block;font-size:0.35em;margin:0;">${data.price_sale.match(/(\s*[^\d\s]+)$/)?.[1] || ''}</span></span></p>
+  <p style="position:absolute;top:${originalPriceTop};left:30.25rem;white-space:nowrap" class="${originalPriceClass}">${data.price.replace(/(\d+)(\s*[^\d\s]+)$/, '$1')}${data.price_decimal ? `<span class="decimal-superscript">${data.price_decimal}</span>` : ''}</p>
+  <p style="position:absolute;top:18.0625rem;left:50%;transform:translateX(-50%);white-space:nowrap" class="${priceClass}">${data.price_sale.replace(/(\d+)(\s*[^\d\s]+)$/, '$1')}<span style="display:inline-block;vertical-align:top;line-height:0.8;margin-top:0.4em;"><span style="display:block;font-size:0.4em;margin:0;">${data.price_sale_decimal || '&nbsp;'}</span><span style="display:block;font-size:0.35em;margin:0;">${data.price_sale.match(/(\s*[^\d\s]+)$/)?.[1] || '&nbsp;'}</span></span></p>
+  <p style="position:absolute;top:29rem;left:50%;transform:translateX(-50%);white-space:nowrap;font-weight:600;font-size:1.25rem;font-family:'Sriracha',cursive;" class="ft12">${data.unit_price_info}</p>
   </div>
   </body>
   </html>`;
