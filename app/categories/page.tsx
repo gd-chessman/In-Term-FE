@@ -132,7 +132,7 @@ export default function CategoriesPage() {
     },
     onError: (error: any) => {
       if (error.response?.status === 409) {
-        toast.error("Danh mục đang được sử dụng bởi sản phẩm. Vui lòng xóa danh mục khỏi sản phẩm trước khi xóa danh mục.")
+        toast.error("Danh mục đang được sử dụng bởi sản phẩm hoặc có danh mục con.")
       } else {
         toast.error(error.response?.data?.message || "Có lỗi xảy ra khi xóa danh mục")
       }
