@@ -47,9 +47,9 @@ export const v2Template = (data: {
 
   // Hàm tính toán top position cho giá gốc dựa trên độ dài
   const getOriginalPriceTop = (price: string) => {
-    if (!price) return '3.5rem';
+    if (!price) return '3.2rem';
     const length = price.length;
-    const baseTop = 3.5; // vị trí gốc
+    const baseTop = 3.2; // vị trí gốc
     const baseFontSize = 3.4375; // font-size gốc của ft14
     
     let fontSize;

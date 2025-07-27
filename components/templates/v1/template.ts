@@ -53,15 +53,15 @@ export const v1Template = (data: {
     const baseFontSize = 3.8125; // font-size gốc của ft14
     
     let fontSize;
-    if (length <= 3) fontSize = 3.5;
-    else if (length <= 4) fontSize = 3;
-    else if (length <= 5) fontSize = 2.9;
-    else if (length <= 6) fontSize = 2.8;
-    else if (length <= 7) fontSize = 2.7;
-    else if (length <= 8) fontSize = 2.2;
-    else if (length <= 9) fontSize = 2.1;
-    else if (length <= 10) fontSize = 2;
-    else fontSize = 1.9;
+    if (length <= 3) fontSize = 4.0;
+    else if (length <= 4) fontSize = 3.8;
+    else if (length <= 5) fontSize = 3.7;
+    else if (length <= 6) fontSize = 3.6;
+    else if (length <= 7) fontSize = 3.3;
+    else if (length <= 8) fontSize = 3.0;
+    else if (length <= 9) fontSize = 2.8;
+    else if (length <= 10) fontSize = 2.4;
+    else fontSize = 2.2;
 
     // Tính toán sự khác biệt về chiều cao và điều chỉnh top
     const heightDiff = (baseFontSize - fontSize) / 2;
