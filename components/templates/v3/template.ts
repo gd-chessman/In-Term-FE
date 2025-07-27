@@ -13,6 +13,7 @@ export const v3Template = (data: {
   pt_origin_country: string;
   pt_product_code: string;
   pt_original_price: string;
+  unit_price_info: string;
 }) => {
   // Hàm chọn class dựa trên độ dài giá (cho giá khuyến mãi)
   const getPriceClass = (price: string) => {
@@ -110,7 +111,7 @@ export const v3Template = (data: {
 	.ft17-xxlarge{font-size:4.2rem;font-family:"Sriracha",cursive;color:#000000;}
 	.ft17-xxxlarge{font-size:3.9rem;font-family:"Sriracha",cursive;color:#000000;}
 	.ft17-mini{font-size:3.6rem;font-family:"Sriracha",cursive;color:#000000;}
-	.ft17-tiny{font-size:3.3rem;font-family:"Sriracha",cursive;color:#000000;}
+	.ft17-tiny { font-size: 3.3rem; font-family: "Sriracha", cursive; color: #000000; margin-top: 1.5rem; }
 	.ft18{font-size:3.125rem;font-family:"Inter",sans-serif;color:#000000;}
 	.ft19{font-size:1.9375rem;font-family:"Inter",sans-serif;color:#000000;}
 	.ft110{font-size:0.8125rem;font-family:"Inter",sans-serif;color:#000000;}
@@ -221,7 +222,8 @@ export const v3Template = (data: {
 <p style="position:absolute;top:7.3125rem;left:20.1875rem;white-space:nowrap" class="ft13">${data.pt_original_price}:</p>
 <p style="position:absolute;top:9.25rem;left:0.8125rem;white-space:nowrap" class="ft14">${data.discount_percentage}</p>
 <p style="position:absolute;top:${originalPriceTop};left:22rem;white-space:nowrap" class="${originalPriceClass}">${data.price.replace(/(\d+)(\s*[^\d\s]+)$/, '$1')}${data.price_decimal ? `<span class="decimal-superscript">${data.price_decimal}</span>` : ''}</p>
-<p style="position:absolute;top:8rem;right:2rem;white-space:nowrap" class="${priceClass}">${data.price_sale.replace(/(\d+)(\s*[^\d\s]+)$/, '$1')}<span style="display:inline-block;vertical-align:top;line-height:0.8;margin-top:0.4em;"><span style="display:block;font-size:0.4em;margin:0;">${data.price_sale_decimal || ''}</span><span style="display:block;font-size:0.35em;margin:0;">${data.price_sale.match(/(\s*[^\d\s]+)$/)?.[1] || ''}</span></span></p>
+<p style="position:absolute;top:8rem;right:2rem;white-space:nowrap" class="${priceClass}">${data.price_sale.replace(/(\d+)(\s*[^\d\s]+)$/, '$1')}<span style="display:inline-block;vertical-align:top;line-height:0.8;margin-top:0.4em;"><span style="display:block;font-size:0.4em;margin:0;">${data.price_sale_decimal || '&nbsp;'}</span><span style="display:block;font-size:0.35em;margin:0;">${data.price_sale.match(/(\s*[^\d\s]+)$/)?.[1] || '&nbsp;'}</span></span></p>
+<p style="position:absolute;top:15.1875rem;right:2rem;white-space:nowrap;font-weight:600;font-size:1rem;font-family:'Sriracha',cursive;" class="ft13">${data.unit_price_info}</p>
 <p style="position:absolute;top:15.1875rem;left:0.5625rem;white-space:nowrap" class="ft110">${data.pt_product_code}: ${data.product_code}</p>
 </div>
 </body>
