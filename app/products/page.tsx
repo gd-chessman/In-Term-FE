@@ -337,6 +337,9 @@ export default function ProductsPage() {
       category_id: Number(formData.get("category_id")),
       price: Number(formData.get("price")),
       origin_country_id: Number(formData.get("origin_country_id")),
+      unit_name: formData.get("unit_name") as string,
+      unit_total: Number(formData.get("unit_total")),
+      unit_step: Number(formData.get("unit_step")),
       product_status: "active", // Mặc định là Hoạt động
       tagIds: formData.getAll("tagIds").map(id => Number(id)),
       branchIds: formData.getAll("branchIds").map(id => Number(id)),
@@ -360,6 +363,9 @@ export default function ProductsPage() {
     const category_id = Number(formData.get("category_id"))
     const price = Number(formData.get("price"))
     const origin_country_id = Number(formData.get("origin_country_id"))
+    const unit_name = formData.get("unit_name") as string
+    const unit_total = Number(formData.get("unit_total"))
+    const unit_step = Number(formData.get("unit_step"))
     const branchIds = formData.getAll("branchIds").map(id => Number(id))
     
     // Chỉ thêm vào object nếu có giá trị
@@ -377,6 +383,15 @@ export default function ProductsPage() {
     }
     if (origin_country_id && origin_country_id > 0) {
       productData.origin_country_id = origin_country_id
+    }
+    if (unit_name && unit_name.trim()) {
+      productData.unit_name = unit_name.trim()
+    }
+    if (unit_total && unit_total > 0) {
+      productData.unit_total = unit_total
+    }
+    if (unit_step && unit_step > 0) {
+      productData.unit_step = unit_step
     }
     if (branchIds.length > 0) {
       productData.branchIds = branchIds
@@ -674,6 +689,48 @@ export default function ProductsPage() {
                     </SelectContent>
                   </Select>
                 </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="unit_name" className="text-right font-medium text-slate-700">
+                    Đơn vị tính *
+                  </Label>
+                  <Input
+                    id="unit_name"
+                    name="unit_name"
+                    required
+                    placeholder="VD: gram, kg, ml, lít, cái, hộp..."
+                    className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100"
+                  />
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="unit_total" className="text-right font-medium text-slate-700">
+                    Tổng số đơn vị *
+                  </Label>
+                  <Input
+                    id="unit_total"
+                    name="unit_total"
+                    type="number"
+                    step="0.01"
+                    required
+                    min={0}
+                    placeholder="VD: 500 (gram), 1 (kg), 330 (ml)..."
+                    className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100"
+                  />
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="unit_step" className="text-right font-medium text-slate-700">
+                    Bước chia lẻ tối thiểu *
+                  </Label>
+                  <Input
+                    id="unit_step"
+                    name="unit_step"
+                    type="number"
+                    step="0.01"
+                    required
+                    min={0}
+                    placeholder="VD: 10 (gram), 0.1 (kg), 50 (ml)..."
+                    className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100"
+                  />
+                </div>
 
                 <div className="grid grid-cols-4 items-start gap-4">
                   <Label className="text-right font-medium text-slate-700 pt-2">
@@ -873,6 +930,48 @@ export default function ProductsPage() {
                       )}
                     </SelectContent>
                   </Select>
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="edit_unit_name" className="text-right font-medium text-slate-700">
+                    Đơn vị tính
+                  </Label>
+                  <Input
+                    id="edit_unit_name"
+                    name="unit_name"
+                    defaultValue={editingProduct?.unit_name}
+                    placeholder="VD: gram, kg, ml, lít, cái, hộp..."
+                    className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100"
+                  />
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="edit_unit_total" className="text-right font-medium text-slate-700">
+                    Tổng số đơn vị
+                  </Label>
+                  <Input
+                    id="edit_unit_total"
+                    name="unit_total"
+                    type="number"
+                    step="0.01"
+                    defaultValue={editingProduct?.unit_total}
+                    min={0}
+                    placeholder="VD: 500 (gram), 1 (kg), 330 (ml)..."
+                    className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100"
+                  />
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="edit_unit_step" className="text-right font-medium text-slate-700">
+                    Bước chia lẻ tối thiểu
+                  </Label>
+                  <Input
+                    id="edit_unit_step"
+                    name="unit_step"
+                    type="number"
+                    step="0.01"
+                    defaultValue={editingProduct?.unit_step}
+                    min={0}
+                    placeholder="VD: 10 (gram), 0.1 (kg), 50 (ml)..."
+                    className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100"
+                  />
                 </div>
                 <div className="grid grid-cols-4 items-start gap-4">
                   <Label className="text-right font-medium text-slate-700 pt-2">
@@ -1156,6 +1255,27 @@ export default function ProductsPage() {
                       <span className="text-sm font-medium text-slate-600">Giá:</span>
                       <span className="font-semibold text-lg text-slate-900">
                         {selectedProductDetail.price}
+                      </span>
+                    </div>
+                    
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm font-medium text-slate-600">Đơn vị tính:</span>
+                      <span className="text-sm font-medium text-slate-700">
+                        {selectedProductDetail.unit_name || "N/A"}
+                      </span>
+                    </div>
+                    
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm font-medium text-slate-600">Tổng số đơn vị:</span>
+                      <span className="text-sm font-medium text-slate-700">
+                        {selectedProductDetail.unit_total || "N/A"}
+                      </span>
+                    </div>
+                    
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm font-medium text-slate-600">Bước chia lẻ tối thiểu:</span>
+                      <span className="text-sm font-medium text-slate-700">
+                        {selectedProductDetail.unit_step || "N/A"}
                       </span>
                     </div>
                     
@@ -1799,6 +1919,16 @@ export default function ProductsPage() {
                   <span className="font-semibold text-slate-900">{product.price}</span>
                 </div>
                 <div className="flex items-center justify-between">
+                  <span className="text-sm text-slate-600">Đơn vị:</span>
+                  <span className="text-sm text-slate-700">
+                    {product.unit_total && product.unit_name ? (
+                      <span>{product.unit_total} {product.unit_name}</span>
+                    ) : (
+                      <span className="text-slate-500">N/A</span>
+                    )}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between">
                   <span className="text-sm text-slate-600">Chi nhánh:</span>
                   <div className="flex flex-wrap gap-1">
                     {product.productBranches?.slice(0, 2).map((branchItem: any, index: number) => (
@@ -1879,6 +2009,7 @@ export default function ProductsPage() {
                   <TableHead className="text-slate-600 font-semibold">Danh mục</TableHead>
                   <TableHead className="text-slate-600 font-semibold">Xuất xứ</TableHead>
                   <TableHead className="text-slate-600 font-semibold">Giá</TableHead>
+                  <TableHead className="text-slate-600 font-semibold">Đơn vị</TableHead>
                   <TableHead className="text-slate-600 font-semibold">Chi nhánh</TableHead>
                   <TableHead className="text-slate-600 font-semibold">Tags</TableHead>
                   <TableHead className="text-slate-600 font-semibold">Trạng thái</TableHead>
@@ -1925,6 +2056,15 @@ export default function ProductsPage() {
                       </div>
                     </TableCell>
                     <TableCell className="font-semibold text-slate-900">{product.price}</TableCell>
+                    <TableCell>
+                      <div className="text-sm text-slate-700">
+                        {product.unit_total && product.unit_name ? (
+                          <span>{product.unit_total} {product.unit_name}</span>
+                        ) : (
+                          <span className="text-slate-500">N/A</span>
+                        )}
+                      </div>
+                    </TableCell>
                     <TableCell>
                       <div className="flex flex-wrap gap-1">
                         {product.productBranches?.slice(0, 2).map((branchItem: any, index: number) => (
