@@ -133,7 +133,8 @@ export const prepareTemplateData = (
     pt_original_price: product.templates?.pt_original_price || 'Běžná cena',
     // Thông tin đơn vị giá
     unit_price_info: calculateUnitPrice(),
-    product_info: product.product?.product_info || ''
+    product_info: product.product?.product_info || '',
+    pt_vendor: product.templates?.pt_vendor || ''
   };
 };
 

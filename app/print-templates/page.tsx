@@ -94,6 +94,7 @@ export default function PrintTemplatesPage() {
     pt_original_price: "",
     pt_unit_price: "",
     pt_currency: "",
+    pt_vendor: "",
     pt_content: ""
   })
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
@@ -106,7 +107,8 @@ export default function PrintTemplatesPage() {
     pt_product_code: '',
     pt_original_price: '',
     pt_unit_price: '',
-    pt_currency: ''
+    pt_currency: '',
+    pt_vendor: ''
   })
   const [isCurrencyDropdownOpen, setIsCurrencyDropdownOpen] = useState(false)
   const [isEditCurrencyDropdownOpen, setIsEditCurrencyDropdownOpen] = useState(false)
@@ -175,6 +177,7 @@ export default function PrintTemplatesPage() {
         pt_original_price: "",
         pt_unit_price: "",
         pt_currency: "",
+        pt_vendor: "",
       })
     },
     onError: (error: any) => {
@@ -228,7 +231,7 @@ export default function PrintTemplatesPage() {
   // Handle form submission
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    if (!formData.pt_country_id || !formData.pt_title || !formData.pt_brand || !formData.pt_origin_country || !formData.pt_product_code || !formData.pt_original_price || !formData.pt_unit_price || !formData.pt_currency) {
+    if (!formData.pt_country_id || !formData.pt_title || !formData.pt_brand || !formData.pt_origin_country || !formData.pt_product_code || !formData.pt_original_price || !formData.pt_unit_price || !formData.pt_currency || !formData.pt_vendor) {
       toast.error("Vui lòng điền đầy đủ thông tin bắt buộc")
       return
     }
@@ -242,6 +245,7 @@ export default function PrintTemplatesPage() {
       pt_original_price: formData.pt_original_price.trim(),
       pt_unit_price: formData.pt_unit_price.trim(),
       pt_currency: formData.pt_currency.trim(),
+      pt_vendor: formData.pt_vendor.trim(),
       pt_content: formData.pt_content.trim()
     }
     
@@ -272,7 +276,8 @@ export default function PrintTemplatesPage() {
         pt_product_code: selectedTemplate.pt_product_code || '',
         pt_original_price: selectedTemplate.pt_original_price || '',
         pt_unit_price: selectedTemplate.pt_unit_price || '',
-        pt_currency: selectedTemplate.pt_currency || ''
+        pt_currency: selectedTemplate.pt_currency || '',
+        pt_vendor: selectedTemplate.pt_vendor || ''
       })
     }
   }, [isEditDialogOpen, selectedTemplate])
@@ -280,7 +285,7 @@ export default function PrintTemplatesPage() {
   // Xử lý submit cập nhật
   const handleEditSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    if (!editForm.pt_title || !editForm.pt_country_id || !editForm.pt_brand || !editForm.pt_origin_country || !editForm.pt_product_code || !editForm.pt_original_price || !editForm.pt_unit_price || !editForm.pt_currency) {
+    if (!editForm.pt_title || !editForm.pt_country_id || !editForm.pt_brand || !editForm.pt_origin_country || !editForm.pt_product_code || !editForm.pt_original_price || !editForm.pt_unit_price || !editForm.pt_currency || !editForm.pt_vendor) {
       toast.error("Vui lòng điền đầy đủ thông tin bắt buộc")
       return
     }
@@ -294,7 +299,8 @@ export default function PrintTemplatesPage() {
         pt_product_code: editForm.pt_product_code.trim(),
         pt_original_price: editForm.pt_original_price.trim(),
         pt_unit_price: editForm.pt_unit_price.trim(),
-        pt_currency: editForm.pt_currency.trim()
+        pt_currency: editForm.pt_currency.trim(),
+        pt_vendor: editForm.pt_vendor.trim()
       }
     })
   }
@@ -479,6 +485,16 @@ export default function PrintTemplatesPage() {
                           )}
                         </div>
                       </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="pt_vendor">Từ ngữ cho Nhà cung cấp *</Label>
+                        <Input
+                          id="pt_vendor"
+                          value={formData.pt_vendor}
+                          onChange={(e) => handleInputChange('pt_vendor', e.target.value)}
+                          placeholder="VD: Nhà cung cấp, Vendor, Supplier..."
+                          required
+                        />
+                      </div>
                     </div>
 
                     <div className="p-3 bg-blue-50 rounded-lg">
@@ -510,6 +526,10 @@ export default function PrintTemplatesPage() {
                         <div className="flex items-center gap-2">
                           <Badge variant="secondary" className="text-xs">Tiền tệ:</Badge>
                           <span className="font-medium">{formData.pt_currency || "Chưa chọn"}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Badge variant="secondary" className="text-xs">Nhà cung cấp:</Badge>
+                          <span className="font-medium">{formData.pt_vendor || "Chưa nhập"}</span>
                         </div>
                       </div>
                     </div>
@@ -803,6 +823,10 @@ export default function PrintTemplatesPage() {
                       <Badge variant="outline" className="text-xs">Tiền tệ:</Badge>
                       <span className="font-medium truncate">{template.pt_currency || "N/A"}</span>
                     </div>
+                    <div className="flex items-center gap-1">
+                      <Badge variant="outline" className="text-xs">Nhà cung cấp:</Badge>
+                      <span className="font-medium truncate">{template.pt_vendor || "N/A"}</span>
+                    </div>
                   </div>
                 </div>
 
@@ -908,6 +932,10 @@ export default function PrintTemplatesPage() {
                           <div className="flex items-center gap-1">
                             <Badge variant="outline" className="text-xs">Tiền tệ:</Badge>
                             <span className="font-medium truncate">{template.pt_currency || "N/A"}</span>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <Badge variant="outline" className="text-xs">Nhà cung cấp:</Badge>
+                            <span className="font-medium truncate">{template.pt_vendor || "N/A"}</span>
                           </div>
                         </div>
                       </div>
@@ -1062,6 +1090,10 @@ export default function PrintTemplatesPage() {
                       <Badge variant="outline" className="text-xs">Tiền tệ:</Badge>
                       <span className="font-medium">{selectedTemplate?.pt_currency || "N/A"}</span>
                     </div>
+                    <div className="flex items-center gap-2">
+                      <Badge variant="outline" className="text-xs">Nhà cung cấp:</Badge>
+                      <span className="font-medium">{selectedTemplate?.pt_vendor || "N/A"}</span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1098,6 +1130,10 @@ export default function PrintTemplatesPage() {
                 <div className="flex items-center gap-2">
                   <Badge variant="secondary" className="text-xs">Tiền tệ:</Badge>
                   <span className="font-medium">{selectedTemplate?.pt_currency || "N/A"}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Badge variant="secondary" className="text-xs">Nhà cung cấp:</Badge>
+                  <span className="font-medium">{selectedTemplate?.pt_vendor || "N/A"}</span>
                 </div>
               </div>
             </div>
@@ -1243,6 +1279,15 @@ export default function PrintTemplatesPage() {
                       )}
                     </div>
                   </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="edit_vendor">Từ ngữ cho Nhà cung cấp</Label>
+                    <Input
+                      id="edit_vendor"
+                      value={editForm.pt_vendor}
+                      onChange={e => setEditForm(f => ({...f, pt_vendor: e.target.value}))}
+                      placeholder="VD: Nhà cung cấp, Vendor, Supplier..."
+                    />
+                  </div>
                 </div>
                 <div className="p-3 bg-blue-50 rounded-lg">
                   <h4 className="font-medium text-sm mb-2 flex items-center gap-2">
@@ -1273,6 +1318,10 @@ export default function PrintTemplatesPage() {
                     <div className="flex items-center gap-2">
                       <Badge variant="secondary" className="text-xs">Tiền tệ:</Badge>
                       <span className="font-medium">{editForm.pt_currency || "Chưa chọn"}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Badge variant="secondary" className="text-xs">Nhà cung cấp:</Badge>
+                      <span className="font-medium">{editForm.pt_vendor || "Chưa nhập"}</span>
                     </div>
                   </div>
                 </div>
@@ -1334,6 +1383,10 @@ export default function PrintTemplatesPage() {
                     <div className="flex items-center gap-2">
                       <Badge variant="secondary" className="text-xs">Tiền tệ:</Badge>
                       <span className="font-medium">{selectedTemplate?.pt_currency || "N/A"}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Badge variant="secondary" className="text-xs">Nhà cung cấp:</Badge>
+                      <span className="font-medium">{selectedTemplate?.pt_vendor || "N/A"}</span>
                     </div>
                   </div>
                 </div>

@@ -16,6 +16,7 @@ export const i4Template = (data: {
   pt_original_price: string;
   unit_price_info: string;
   product_info: string;
+  pt_vendor: string;
 }) => {
 
   // Hàm helper để tạo một label
@@ -36,7 +37,7 @@ export const i4Template = (data: {
          return `
  <div style="position:absolute;top:${currentTop}rem;left:${currentLeft}rem;width:19rem;">
    <p style="white-space:normal;overflow:hidden;word-wrap:break-word;line-height:1.0;" class="ft14"><b>${data.product_name}<br/></b>${data.product_info}</p>
-   <p style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1.25rem;line-height:1.0;" class="ft15"><b>Prodávající: ${data.pt_brand}<br/>${data.pt_product_code}: ${data.product_code} <span style="float:right;">${data.pt_origin_country}: ${data.country_name}</span></b></p>
+   <p style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1.25rem;line-height:1.0;" class="ft15"><b>${data.pt_vendor}: ${data.pt_brand}<br/>${data.pt_product_code}: ${data.product_code} <span style="float:right;">${data.pt_origin_country}: ${data.country_name}</span></b></p>
  </div>`;
   };
 

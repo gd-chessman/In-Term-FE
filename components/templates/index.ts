@@ -28,6 +28,7 @@ export interface TemplateData {
   pt_origin_country: string;
   pt_product_code: string;
   pt_original_price: string;
+  pt_vendor: string;
   // Thông tin đơn vị giá
   unit_price_info: string;
   product_info: string;
