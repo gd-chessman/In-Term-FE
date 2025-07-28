@@ -178,7 +178,7 @@ export function AdminSidebar({ onClose }: AdminSidebarProps) {
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/20 backdrop-blur-sm border border-white/30">
             <Sparkles className="h-5 w-5 text-white" />
           </div>
-          <h1 className="text-lg lg:text-xl font-bold text-white">Admin Panel</h1>
+          <h1 className="text-lg lg:text-xl font-bold text-white">{process.env.NEXT_PUBLIC_APP_NAME}</h1>
         </div>
 
         {/* Close button for mobile */}
