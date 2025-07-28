@@ -334,6 +334,7 @@ export default function ProductsPage() {
       product_name: formData.get("product_name") as string,
       product_code: formData.get("product_code") as string,
       product_description: formData.get("product_description") as string,
+      product_info: formData.get("product_info") as string,
       category_id: Number(formData.get("category_id")),
       price: Number(formData.get("price")),
       origin_country_id: Number(formData.get("origin_country_id")),
@@ -360,6 +361,7 @@ export default function ProductsPage() {
     // Chỉ lấy các trường được phép cập nhật theo DTO
     const product_name = formData.get("product_name") as string
     const product_description = formData.get("product_description") as string
+    const product_info = formData.get("product_info") as string
     const category_id = Number(formData.get("category_id"))
     const price = Number(formData.get("price"))
     const origin_country_id = Number(formData.get("origin_country_id"))
@@ -367,6 +369,7 @@ export default function ProductsPage() {
     const unit_total = Number(formData.get("unit_total"))
     const unit_step = Number(formData.get("unit_step"))
     const branchIds = formData.getAll("branchIds").map(id => Number(id))
+    const tagIds = formData.getAll("tagIds").map(id => Number(id))
     
     // Chỉ thêm vào object nếu có giá trị
     if (product_name && product_name.trim()) {
@@ -374,6 +377,11 @@ export default function ProductsPage() {
     }
     if (product_description && product_description.trim()) {
       productData.product_description = product_description.trim()
+    }
+    if (product_info && product_info.trim()) {
+      productData.product_info = product_info.trim()
+    } else {
+      productData.product_info = ""
     }
     if (category_id && category_id > 0) {
       productData.category_id = category_id
@@ -395,6 +403,9 @@ export default function ProductsPage() {
     }
     if (branchIds.length > 0) {
       productData.branchIds = branchIds
+    }
+    if (tagIds.length > 0) {
+      productData.tagIds = tagIds
     }
     
     // Handle image file
@@ -622,123 +633,19 @@ export default function ProductsPage() {
                     className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100"
                   />
                 </div>
-                <div className="grid grid-cols-4 items-start gap-4">
-                  <Label htmlFor="product_description" className="text-right font-medium text-slate-700 pt-2">
-                    Mô tả
-                  </Label>
-                  <Textarea
-                    id="product_description"
-                    name="product_description"
-                    placeholder="Nhập mô tả sản phẩm (tùy chọn)"
-                    className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100 min-h-[80px]"
-                  />
-                </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="category_id" className="text-right font-medium text-slate-700">
-                    Danh mục *
-                  </Label>
-                  <Select name="category_id" required>
-                    <SelectTrigger className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100">
-                      <SelectValue placeholder="Chọn danh mục" />
-                    </SelectTrigger>
-                    <SelectContent className="rounded-xl border-slate-200 shadow-xl">
-                      {isLoadingCategories ? (
-                        <SelectItem value="" disabled>Đang tải...</SelectItem>
-                      ) : (
-                        flattenedCategories.map((category: any) => (
-                          <SelectItem key={category.category_id} value={category.category_id.toString()}>
-                            {category.category_name}
-                          </SelectItem>
-                        ))
-                      )}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="price" className="text-right font-medium text-slate-700">
-                    Giá *
-                  </Label>
-                  <Input
-                    id="price"
-                    name="price"
-                    type="number"
-                    step="0.01"
-                    required
-                    min={0}
-                    placeholder="Nhập giá sản phẩm"
-                    className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100"
-                  />
-                </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="origin_country_id" className="text-right font-medium text-slate-700">
-                    Xuất xứ *
-                  </Label>
-                  <Select name="origin_country_id" required>
-                    <SelectTrigger className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100">
-                      <SelectValue placeholder="Chọn quốc gia xuất xứ" />
-                    </SelectTrigger>
-                    <SelectContent className="rounded-xl border-slate-200 shadow-xl">
-                      {isLoading ? (
-                        <SelectItem value="" disabled>Đang tải...</SelectItem>
-                      ) : (
-                        countries.map((country: any) => (
-                          <SelectItem key={country.country_id} value={country.country_id.toString()}>
-                            <div className="flex items-center space-x-2">
-                              <span className="text-lg">{getCountryFlag(country.country_code)}</span>
-                              <span>{country.country_name}</span>
-                            </div>
-                          </SelectItem>
-                        ))
-                      )}
-                    </SelectContent>
-                  </Select>
-                </div>
-                  </div>
-                  
-                  {/* Cột phải */}
-                  <div className="space-y-6">
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="unit_name" className="text-right font-medium text-slate-700">
-                    Đơn vị tính *
-                  </Label>
-                  <Input
-                    id="unit_name"
-                    name="unit_name"
-                    required
-                    placeholder="VD: gram, kg, ml, lít, cái, hộp..."
-                    className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100"
-                  />
-                </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="unit_total" className="text-right font-medium text-slate-700">
-                    Tổng số đơn vị *
-                  </Label>
-                  <Input
-                    id="unit_total"
-                    name="unit_total"
-                    type="number"
-                    step="0.01"
-                    required
-                    min={0}
-                    placeholder="VD: 500 (gram), 1 (kg), 330 (ml)..."
-                    className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100"
-                  />
-                </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="unit_step" className="text-right font-medium text-slate-700">
-                    Bước chia lẻ tối thiểu *
-                  </Label>
-                  <Input
-                    id="unit_step"
-                    name="unit_step"
-                    type="number"
-                    step="0.01"
-                    required
-                    min={0}
-                    placeholder="VD: 10 (gram), 0.1 (kg), 50 (ml)..."
-                    className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100"
-                  />
-                </div>
+                              <div className="grid grid-cols-4 items-start gap-4">
+                <Label htmlFor="product_description" className="text-right font-medium text-slate-700 pt-2">
+                  Mô tả
+                </Label>
+                <Textarea
+                  id="product_description"
+                  name="product_description"
+                  placeholder="Nhập mô tả sản phẩm (tùy chọn)"
+                  className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100 min-h-[80px]"
+                />
+              </div>
+
+              
                 <div className="grid grid-cols-4 items-start gap-4">
                   <Label className="text-right font-medium text-slate-700 pt-2">
                     Tags
@@ -796,6 +703,126 @@ export default function ProductsPage() {
                       <div className="text-sm text-slate-500">Không có chi nhánh nào</div>
                     )}
                   </div>
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="origin_country_id" className="text-right font-medium text-slate-700">
+                    Xuất xứ *
+                  </Label>
+                  <Select name="origin_country_id" required>
+                    <SelectTrigger className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100">
+                      <SelectValue placeholder="Chọn quốc gia xuất xứ" />
+                    </SelectTrigger>
+                    <SelectContent className="rounded-xl border-slate-200 shadow-xl">
+                      {isLoading ? (
+                        <SelectItem value="" disabled>Đang tải...</SelectItem>
+                      ) : (
+                        countries.map((country: any) => (
+                          <SelectItem key={country.country_id} value={country.country_id.toString()}>
+                            <div className="flex items-center space-x-2">
+                              <span className="text-lg">{getCountryFlag(country.country_code)}</span>
+                              <span>{country.country_name}</span>
+                            </div>
+                          </SelectItem>
+                        ))
+                      )}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+
+                  </div>
+                  
+                  {/* Cột phải */}
+                  <div className="space-y-6">
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="category_id" className="text-right font-medium text-slate-700">
+                    Danh mục *
+                  </Label>
+                  <Select name="category_id" required>
+                    <SelectTrigger className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100">
+                      <SelectValue placeholder="Chọn danh mục" />
+                    </SelectTrigger>
+                    <SelectContent className="rounded-xl border-slate-200 shadow-xl">
+                      {isLoadingCategories ? (
+                        <SelectItem value="" disabled>Đang tải...</SelectItem>
+                      ) : (
+                        flattenedCategories.map((category: any) => (
+                          <SelectItem key={category.category_id} value={category.category_id.toString()}>
+                            {category.category_name}
+                          </SelectItem>
+                        ))
+                      )}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="price" className="text-right font-medium text-slate-700">
+                    Giá *
+                  </Label>
+                  <Input
+                    id="price"
+                    name="price"
+                    type="number"
+                    step="0.01"
+                    required
+                    min={0}
+                    placeholder="Nhập giá sản phẩm"
+                    className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100"
+                  />
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="unit_name" className="text-right font-medium text-slate-700">
+                    Đơn vị tính *
+                  </Label>
+                  <Input
+                    id="unit_name"
+                    name="unit_name"
+                    required
+                    placeholder="VD: gram, kg, ml, lít, cái, hộp..."
+                    className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100"
+                  />
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="unit_total" className="text-right font-medium text-slate-700">
+                    Tổng số đơn vị *
+                  </Label>
+                  <Input
+                    id="unit_total"
+                    name="unit_total"
+                    type="number"
+                    step="0.01"
+                    required
+                    min={0}
+                    placeholder="VD: 500 (gram), 1 (kg), 330 (ml)..."
+                    className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100"
+                  />
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="unit_step" className="text-right font-medium text-slate-700">
+                    Bước chia lẻ tối thiểu *
+                  </Label>
+                  <Input
+                    id="unit_step"
+                    name="unit_step"
+                    type="number"
+                    step="0.01"
+                    required
+                    min={0}
+                    placeholder="VD: 10 (gram), 0.1 (kg), 50 (ml)..."
+                    className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100"
+                  />
+                </div>
+                <div className="grid grid-cols-4 items-start gap-4">
+                  <Label htmlFor="product_info" className="text-right font-medium text-slate-700 pt-2">
+                    Thông tin sản phẩm *
+                  </Label>
+                  <Textarea
+                    id="product_info"
+                    name="product_info"
+                    required
+                    placeholder="Nhập thông tin chi tiết về sản phẩm"
+                    className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100 min-h-[80px]"
+                  />
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="image" className="text-right font-medium text-slate-700">
@@ -884,7 +911,101 @@ export default function ProductsPage() {
                   className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100 min-h-[80px]"
                 />
               </div>
-                  <div className="grid grid-cols-4 items-center gap-4">
+
+
+                <div className="grid grid-cols-4 items-start gap-4">
+                  <Label className="text-right font-medium text-slate-700 pt-2">
+                    Tags
+                  </Label>
+                  <div className="col-span-3 space-y-2 max-h-48 overflow-y-auto border border-slate-200 rounded-xl p-3 flex flex-wrap gap-2">
+                    {isLoadingTags ? (
+                      <div className="text-sm text-slate-500">Đang tải tags...</div>
+                    ) : tags.length > 0 ? (
+                      tags.map((tag: any) => (
+                        <div key={tag.tag_id} className="flex items-center space-x-2 !my-0">
+                          <Checkbox
+                            id={`edit-tag-${tag.tag_id}`}
+                            name="tagIds"
+                            value={tag.tag_id}
+                            defaultChecked={editingProduct?.productTags?.some((pt: any) => 
+                              (pt.tag_id || pt.ptg_tag_id) === tag.tag_id
+                            )}
+                            className="rounded border-slate-300"
+                          />
+                          <Label
+                            htmlFor={`edit-tag-${tag.tag_id}`}
+                            className="text-sm font-normal cursor-pointer hover:text-green-600"
+                          >
+                            {tag.tag_name}
+                          </Label>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="text-sm text-slate-500">Không có tags nào</div>
+                    )}
+                  </div>
+                </div>
+                <div className="grid grid-cols-4 items-start gap-4">
+                  <Label className="text-right font-medium text-slate-700 pt-2">
+                    Chi nhánh
+                  </Label>
+                  <div className="col-span-3 space-y-2 max-h-48 overflow-y-auto border border-slate-200 rounded-xl p-3 flex flex-wrap gap-2">
+                    {isLoadingBranches ? (
+                      <div className="text-sm text-slate-500">Đang tải chi nhánh...</div>
+                    ) : branches.length > 0 ? (
+                      branches.map((branch: any) => (
+                        <div key={branch.branch_id} className="flex items-center space-x-2 !my-0">
+                          <Checkbox
+                            id={`edit-branch-${branch.branch_id}`}
+                            name="branchIds"
+                            value={branch.branch_id}
+                            defaultChecked={editingProduct?.productBranches?.some((pb: any) => 
+                              (pb.branch_id || pb.pbg_branch_id) === branch.branch_id
+                            )}
+                            className="rounded border-slate-300"
+                          />
+                          <Label
+                            htmlFor={`edit-branch-${branch.branch_id}`}
+                            className="text-sm font-normal cursor-pointer hover:text-green-600"
+                          >
+                            {branch.branch_name}
+                          </Label>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="text-sm text-slate-500">Không có chi nhánh nào</div>
+                    )}
+                  </div>
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="edit_origin_country_id" className="text-right font-medium text-slate-700">
+                    Xuất xứ
+                  </Label>
+                  <Select name="origin_country_id" defaultValue={editingProduct?.origin?.country_id?.toString()}>
+                    <SelectTrigger className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100">
+                      <SelectValue placeholder="Chọn quốc gia xuất xứ" />
+                    </SelectTrigger>
+                    <SelectContent className="rounded-xl border-slate-200 shadow-xl">
+                      {isLoading ? (
+                        <SelectItem value="" disabled>Đang tải...</SelectItem>
+                      ) : (
+                        countries.map((country: any) => (
+                          <SelectItem key={country.country_id} value={country.country_id.toString()}>
+                            <div className="flex items-center space-x-2">
+                              <span className="text-lg">{getCountryFlag(country.country_code)}</span>
+                              <span>{country.country_name}</span>
+                            </div>
+                          </SelectItem>
+                        ))
+                      )}
+                    </SelectContent>
+                  </Select>
+                </div>
+                  </div>
+                  
+                  {/* Cột phải */}
+                  <div className="space-y-6">
+                <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="edit_category_id" className="text-right font-medium text-slate-700">
                     Danh mục
                   </Label>
@@ -919,34 +1040,6 @@ export default function ProductsPage() {
                     placeholder="Nhập giá sản phẩm"
                     className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100"
                   />
-                </div>
-                  </div>
-                  
-                  {/* Cột phải */}
-                  <div className="space-y-6">
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="edit_origin_country_id" className="text-right font-medium text-slate-700">
-                    Xuất xứ
-                  </Label>
-                  <Select name="origin_country_id" defaultValue={editingProduct?.origin?.country_id?.toString()}>
-                    <SelectTrigger className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100">
-                      <SelectValue placeholder="Chọn quốc gia xuất xứ" />
-                    </SelectTrigger>
-                    <SelectContent className="rounded-xl border-slate-200 shadow-xl">
-                      {isLoading ? (
-                        <SelectItem value="" disabled>Đang tải...</SelectItem>
-                      ) : (
-                        countries.map((country: any) => (
-                          <SelectItem key={country.country_id} value={country.country_id.toString()}>
-                            <div className="flex items-center space-x-2">
-                              <span className="text-lg">{getCountryFlag(country.country_code)}</span>
-                              <span>{country.country_name}</span>
-                            </div>
-                          </SelectItem>
-                        ))
-                      )}
-                    </SelectContent>
-                  </Select>
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="edit_unit_name" className="text-right font-medium text-slate-700">
@@ -991,37 +1084,19 @@ export default function ProductsPage() {
                   />
                 </div>
                 <div className="grid grid-cols-4 items-start gap-4">
-                  <Label className="text-right font-medium text-slate-700 pt-2">
-                    Chi nhánh
+                  <Label htmlFor="edit_product_info" className="text-right font-medium text-slate-700 pt-2">
+                    Thông tin sản phẩm *
                   </Label>
-                  <div className="col-span-3 space-y-2 max-h-48 overflow-y-auto border border-slate-200 rounded-xl p-3 flex flex-wrap gap-2">
-                    {isLoadingBranches ? (
-                      <div className="text-sm text-slate-500">Đang tải chi nhánh...</div>
-                    ) : branches.length > 0 ? (
-                      branches.map((branch: any) => (
-                        <div key={branch.branch_id} className="flex items-center space-x-2 !my-0">
-                          <Checkbox
-                            id={`edit-branch-${branch.branch_id}`}
-                            name="branchIds"
-                            value={branch.branch_id}
-                            defaultChecked={editingProduct?.productBranches?.some((pb: any) => 
-                              (pb.branch_id || pb.pbg_branch_id) === branch.branch_id
-                            )}
-                            className="rounded border-slate-300"
-                          />
-                          <Label
-                            htmlFor={`edit-branch-${branch.branch_id}`}
-                            className="text-sm font-normal cursor-pointer hover:text-green-600"
-                          >
-                            {branch.branch_name}
-                          </Label>
-                        </div>
-                      ))
-                    ) : (
-                      <div className="text-sm text-slate-500">Không có chi nhánh nào</div>
-                    )}
-                  </div>
+                  <Textarea
+                    id="edit_product_info"
+                    name="product_info"
+                    required
+                    defaultValue={editingProduct?.product_info}
+                    placeholder="Nhập thông tin chi tiết về sản phẩm"
+                    className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100 min-h-[80px]"
+                  />
                 </div>
+
                               
                               <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="edit_image" className="text-right font-medium text-slate-700">
@@ -1356,14 +1431,14 @@ export default function ProductsPage() {
               </div>
 
               {/* Additional Information */}
-              {selectedProductDetail.product_description && (
+              {selectedProductDetail.product_info && (
                 <div className="space-y-3">
                   <h4 className="text-lg font-semibold text-slate-800 border-b border-slate-200 pb-2">
-                    Mô tả chi tiết
+                    Thông tin sản phẩm
                   </h4>
                   <div className="p-4 bg-slate-50 rounded-lg border border-slate-200">
                     <p className="text-slate-700 leading-relaxed">
-                      {selectedProductDetail.product_description}
+                      {selectedProductDetail.product_info}
                     </p>
                   </div>
                 </div>
