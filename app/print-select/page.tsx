@@ -113,7 +113,8 @@ export default function PrintSelectPage() {
     a5: 1,
     v1: 1,
     v2: 1,
-    v3: 1
+    v3: 1,
+    i4: 1
   })
   const [productSearchTerm, setProductSearchTerm] = useState("")
   const [focusCountryField, setFocusCountryField] = useState(false)
@@ -774,7 +775,8 @@ export default function PrintSelectPage() {
       a5: item.printNums?.find((pn: any) => pn.pn_type === 'a5')?.pn_num || 1,
       v1: item.printNums?.find((pn: any) => pn.pn_type === 'v1')?.pn_num || 1,
       v2: item.printNums?.find((pn: any) => pn.pn_type === 'v2')?.pn_num || 1,
-      v3: item.printNums?.find((pn: any) => pn.pn_type === 'v3')?.pn_num || 1
+      v3: item.printNums?.find((pn: any) => pn.pn_type === 'v3')?.pn_num || 1,
+      i4: item.printNums?.find((pn: any) => pn.pn_type === 'i4')?.pn_num || 1
     })
     setIsEditNumDialogOpen(true)
   }
@@ -873,8 +875,8 @@ export default function PrintSelectPage() {
     e.preventDefault()
     
     // Validate all numbers
-    const { a4, a5, v1, v2, v3 } = editingAllNums
-    if (a4 < 0 || a5 < 0 || v1 < 0 || v2 < 0 || v3 < 0) {
+    const { a4, a5, v1, v2, v3, i4 } = editingAllNums
+    if (a4 < 0 || a5 < 0 || v1 < 0 || v2 < 0 || v3 < 0 || i4 < 0) {
       toast.error("Số lượng không được âm!")
       return
     }
@@ -886,6 +888,7 @@ export default function PrintSelectPage() {
     if (v1 > 0) updates.push({ pn_select_id: editingAllNums.pn_select_id, pn_type: 'v1', pn_num: v1 })
     if (v2 > 0) updates.push({ pn_select_id: editingAllNums.pn_select_id, pn_type: 'v2', pn_num: v2 })
     if (v3 > 0) updates.push({ pn_select_id: editingAllNums.pn_select_id, pn_type: 'v3', pn_num: v3 })
+    if (i4 > 0) updates.push({ pn_select_id: editingAllNums.pn_select_id, pn_type: 'i4', pn_num: i4 })
 
     // Execute all updates
     Promise.all(updates.map(update => updateNumMutation.mutateAsync(update)))
@@ -893,13 +896,14 @@ export default function PrintSelectPage() {
         toast.success("Đã cập nhật tất cả số lượng in thành công!")
         setIsEditNumDialogOpen(false)
         setEditingAllNums({
-          pn_select_id: 0,
-          a4: 1,
-          a5: 1,
-          v1: 1,
-          v2: 1,
-          v3: 1
-        })
+        pn_select_id: 0,
+        a4: 1,
+        a5: 1,
+        v1: 1,
+        v2: 1,
+        v3: 1,
+        i4: 1
+      })
         queryClient.invalidateQueries({ queryKey: ["printSelects"] })
       })
       .catch((error) => {
@@ -1618,7 +1622,7 @@ export default function PrintSelectPage() {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <div className="grid grid-cols-5 gap-1 text-xs">
+                      <div className="grid grid-cols-6 gap-1 text-xs">
                         <div className="text-center">
                           <div className="font-medium text-blue-600">A4</div>
                           <div 
@@ -1662,6 +1666,15 @@ export default function PrintSelectPage() {
                             onClick={() => handleEditNum(item, 'v3')}
                           >
                             {item.printNums?.find((pn: any) => pn.pn_type === 'v3')?.pn_num || 1}
+                          </div>
+                        </div>
+                        <div className="text-center">
+                          <div className="font-medium text-indigo-600">I4</div>
+                          <div 
+                            className="text-muted-foreground cursor-pointer hover:bg-indigo-50 rounded px-1 py-1 transition-colors"
+                            onClick={() => handleEditNum(item, 'i4')}
+                          >
+                            {item.printNums?.find((pn: any) => pn.pn_type === 'i4')?.pn_num || 1}
                           </div>
                         </div>
                       </div>
@@ -1892,6 +1905,15 @@ export default function PrintSelectPage() {
                         <div>
                           <div className="font-medium">V3</div>
                           <div className="text-xs text-muted-foreground">Khổ tùy chỉnh 3</div>
+                        </div>
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="i4">
+                      <div className="flex items-center space-x-2">
+                        <span>🏷️</span>
+                        <div>
+                          <div className="font-medium">I4</div>
+                          <div className="text-xs text-muted-foreground">Mẫu nhãn I4</div>
                         </div>
                       </div>
                     </SelectItem>
@@ -2412,13 +2434,28 @@ export default function PrintSelectPage() {
                   className="border-red-200 focus:border-red-500"
                 />
               </div>
+              <div className="space-y-2">
+                <Label htmlFor="i4_num" className="text-indigo-600 font-medium">I4</Label>
+                <Input
+                  id="i4_num"
+                  type="number"
+                  min="0"
+                  value={editingAllNums.i4}
+                  onChange={(e) => setEditingAllNums({
+                    ...editingAllNums,
+                    i4: parseInt(e.target.value) || 0
+                  })}
+                  placeholder="Số lượng I4"
+                  className="border-indigo-200 focus:border-indigo-500"
+                />
+              </div>
             </div>
 
             <div className="bg-blue-50 p-3 rounded-lg">
               <div className="text-sm text-blue-800">
                 <div><strong>Sản phẩm:</strong> {printSelections.find((item: any) => item.ps_id === editingAllNums.pn_select_id)?.product?.product_name}</div>
                 <div><strong>Xuất xứ:</strong> {printSelections.find((item: any) => item.ps_id === editingAllNums.pn_select_id)?.country?.country_name}</div>
-                <div><strong>Tổng số lượng:</strong> {editingAllNums.a4 + editingAllNums.a5 + editingAllNums.v1 + editingAllNums.v2 + editingAllNums.v3} bản</div>
+                <div><strong>Tổng số lượng:</strong> {editingAllNums.a4 + editingAllNums.a5 + editingAllNums.v1 + editingAllNums.v2 + editingAllNums.v3 + editingAllNums.i4} bản</div>
               </div>
             </div>
           </form>

@@ -3,12 +3,14 @@ import { a5Template } from './a5/template';
 import { v1Template } from './v1/template';
 import { v2Template } from './v2/template';
 import { v3Template } from './v3/template';
+import { i4Template } from './i4/template';
 
 export { a4Template } from './a4/template';
 export { a5Template } from './a5/template';
 export { v1Template } from './v1/template';
 export { v2Template } from './v2/template';
 export { v3Template } from './v3/template';
+export { i4Template } from './i4/template';
 
 export interface TemplateData {
   product_name: string;
@@ -28,6 +30,7 @@ export interface TemplateData {
   pt_original_price: string;
   // Thông tin đơn vị giá
   unit_price_info: string;
+  product_info: string;
 }
 
 export const getTemplate = (format: string) => {
@@ -42,6 +45,8 @@ export const getTemplate = (format: string) => {
       return v2Template;
     case 'v3':
       return v3Template;
+    case 'i4':
+      return i4Template;
     default:
       return a4Template; // fallback to a4
   }

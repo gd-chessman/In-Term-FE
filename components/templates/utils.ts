@@ -132,7 +132,8 @@ export const prepareTemplateData = (
     pt_product_code: product.templates?.pt_product_code || 'EAN',
     pt_original_price: product.templates?.pt_original_price || 'Běžná cena',
     // Thông tin đơn vị giá
-    unit_price_info: calculateUnitPrice()
+    unit_price_info: calculateUnitPrice(),
+    product_info: product.product?.product_info || ''
   };
 };
 
@@ -142,7 +143,7 @@ export const prepareTemplateData = (
  * @returns boolean
  */
 export const isValidTemplateFormat = (format: string): boolean => {
-  const validFormats = ['a4', 'a5', 'v1', 'v2', 'v3'];
+  const validFormats = ['a4', 'a5', 'v1', 'v2', 'v3', 'i4'];
   return validFormats.includes(format.toLowerCase());
 };
 
@@ -151,7 +152,7 @@ export const isValidTemplateFormat = (format: string): boolean => {
  * @returns Array of format names
  */
 export const getAvailableFormats = (): string[] => {
-  return ['a4', 'a5', 'v1', 'v2', 'v3'];
+  return ['a4', 'a5', 'v1', 'v2', 'v3', 'i4'];
 };
 
 /**
@@ -165,7 +166,8 @@ export const getFormatInfo = (format: string) => {
     a5: { name: 'A5', size: '148×210mm', description: 'Khổ giấy A5 nhỏ gọn' },
     v1: { name: 'V1', size: 'Tùy chỉnh', description: 'Khổ tùy chỉnh 1' },
     v2: { name: 'V2', size: 'Tùy chỉnh', description: 'Khổ tùy chỉnh 2' },
-    v3: { name: 'V3', size: 'Tùy chỉnh', description: 'Khổ tùy chỉnh 3' }
+    v3: { name: 'V3', size: 'Tùy chỉnh', description: 'Khổ tùy chỉnh 3' },
+    i4: { name: 'I4', size: 'Nhãn', description: 'Mẫu nhãn I4' }
   };
   
   return formatInfo[format.toLowerCase()] || formatInfo.a4;
