@@ -11,6 +11,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "@/contexts/theme-context";
 import { useAuth } from "@/hooks/useAuth";
 import { Toaster } from "@/components/ui/sonner";
+import { LangProvider } from "@/lang/LangProvider";
 
 interface ClientLayoutProps {
   children: React.ReactNode;
@@ -53,6 +54,7 @@ export function ClientLayout({ children }: ClientLayoutProps) {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <LangProvider>
       <ThemeProvider>
         {isLoginPage ? (
           // Simple layout for login page
@@ -107,8 +109,9 @@ export function ClientLayout({ children }: ClientLayoutProps) {
             </div>
           </div>
         )}
-        <Toaster position="top-right" />
-      </ThemeProvider>
+          <Toaster position="top-right" />
+        </ThemeProvider>
+      </LangProvider>
     </QueryClientProvider>
   );
 }
