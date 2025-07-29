@@ -149,6 +149,16 @@ export const a5Template = (data: {
 		  top: -0.2em;
 	  }
 	  
+	  /* CSS cho lá cờ quốc gia */
+	  .country-flag {
+		  width: 24px !important;
+		  height: 18px !important;
+		  object-fit: cover !important;
+		  display: inline !important;
+		  margin-top: 4px !important;
+		  margin-bottom: 0 !important;
+	  }
+	  
 	  /* Print media queries để đảm bảo in đúng */
 	  @media print {
 		  html {
@@ -179,6 +189,14 @@ export const a5Template = (data: {
 			  height: 100% !important;
 			  object-fit: cover !important;
 			  display: block !important;
+		  }
+		  
+		  /* Điều chỉnh kích thước lá cờ khi in */
+		  .country-flag {
+			  width: 16px !important;
+			  height: 12px !important;
+			  object-fit: cover !important;
+			  display: inline !important;
 		  }
 		  
 		  /* Đảm bảo tất cả text không bị wrap */
