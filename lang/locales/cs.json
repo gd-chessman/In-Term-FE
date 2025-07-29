@@ -1304,6 +1304,8 @@
       "country": "Země",
       "usageCount": "Počet použití",
       "delete": "Smazat",
+      "cancel": "Zrušit",
+      "deleteTemplate": "Smazat šablonu",
       "buttons": {
         "cancel": "Zrušit",
         "delete": "Smazat šablonu",

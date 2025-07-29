@@ -1301,6 +1301,8 @@
       "country": "Quốc gia",
       "usageCount": "Lượt sử dụng",
       "delete": "Xóa",
+      "cancel": "Hủy",
+      "deleteTemplate": "Xóa Template",
       "buttons": {
         "cancel": "Hủy",
         "delete": "Xóa Mẫu",

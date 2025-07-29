@@ -1295,6 +1295,8 @@
       "country": "Country",
       "usageCount": "Usage count",
       "delete": "Delete",
+      "cancel": "Cancel",
+      "deleteTemplate": "Delete Template",
       "buttons": {
         "cancel": "Cancel",
         "delete": "Delete Template",
@@ -1340,6 +1342,7 @@
         "actions": "Actions"
       },
       "actions": {
+        "actions": "Actions",
         "edit": "Edit",
         "delete": "Delete",
         "preview": "Preview",
