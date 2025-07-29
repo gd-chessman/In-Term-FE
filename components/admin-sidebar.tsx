@@ -144,10 +144,10 @@ export function AdminSidebar({ onClose }: AdminSidebarProps) {
   }
 
   // Tìm section chứa pathname hiện tại để tự động mở
-  const findActiveSection = () => {
-    for (const item of menuItems) {
+  const findActiveSection = (items: any[]) => {
+    for (const item of items) {
       if (item.children) {
-        const hasActiveChild = item.children.some(child => child.href === pathname)
+        const hasActiveChild = item.children.some((child: any) => child.href === pathname)
         if (hasActiveChild) {
           return item.title
         }
@@ -158,17 +158,17 @@ export function AdminSidebar({ onClose }: AdminSidebarProps) {
     return null
   }
 
-  const [expandedItem, setExpandedItem] = useState<string | null>(() => findActiveSection())
+  const [expandedItem, setExpandedItem] = useState<string | null>(() => findActiveSection(menuItems))
 
   const toggleExpanded = (title: string) => {
     setExpandedItem((prev) => (prev === title ? null : title))
   }
 
-  // Cập nhật expandedItem khi pathname thay đổi
+  // Cập nhật expandedItem khi pathname hoặc menuItems thay đổi
   useEffect(() => {
-    const activeSection = findActiveSection()
+    const activeSection = findActiveSection(menuItems)
     setExpandedItem(activeSection)
-  }, [pathname])
+  }, [pathname, menuItems])
 
   const handleLinkClick = () => {
     if (onClose) {
