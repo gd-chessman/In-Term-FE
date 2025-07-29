@@ -53,16 +53,18 @@ export const a4Template = (data: {
     const baseFontSize = 7.5; // font-size gốc của ft15
     
     let fontSize;
-	if (length <= 3) fontSize = 8.5;
-	else if (length <= 4) fontSize = 6.85;
-	else if (length <= 5) fontSize = 6.55;
-	else if (length <= 6) fontSize = 6.25;
-	else if (length <= 7) fontSize = 5.95;
-	else if (length <= 8) fontSize = 5.65;
-	else if (length <= 9) fontSize = 5.35;
-	else if (length <= 10) fontSize = 5.05;
-	else fontSize = 4.75;
+	if (length <= 3) fontSize = 10.5;
+	else if (length <= 4) fontSize = 8.85;
+	else if (length <= 5) fontSize = 8.55;
+	else if (length <= 6) fontSize = 8.25;
+	else if (length <= 7) fontSize = 7.95;
+	else if (length <= 8) fontSize = 7.65;
+	else if (length <= 9) fontSize = 7.35;
+	else if (length <= 10) fontSize = 7.05;
+	else fontSize = 6.75;
 	
+	
+
 
     // Tính toán sự khác biệt về chiều cao và điều chỉnh top (tăng thêm 1rem)
     const heightDiff = (baseFontSize - fontSize) / 2;
@@ -96,15 +98,15 @@ export const a4Template = (data: {
 	.ft14{font-size:7.1875rem;font-family:"Sriracha",cursive;color:#ffffff;}
 	.ft15{font-size:7.5rem;font-family:"Sriracha",cursive;color:#000000;}
 	.ft16{font-size:4.0625rem;font-family:"Inter",sans-serif;color:#000000;}
-	.ft17{font-size:13.75rem;font-family:"Sriracha",cursive;color:#000000;}
-	.ft17-small{font-size:11rem;font-family:"Sriracha",cursive;color:#000000;}
-	.ft17-medium{font-size:10.5rem;font-family:"Sriracha",cursive;color:#000000;}
-	.ft17-large{font-size:10rem;font-family:"Sriracha",cursive;color:#000000;}
-	.ft17-xlarge{font-size:9.5rem;font-family:"Sriracha",cursive;color:#000000;}
-	.ft17-xxlarge{font-size:9rem;font-family:"Sriracha",cursive;color:#000000;}
-	.ft17-xxxlarge{font-size:8.5rem;font-family:"Sriracha",cursive;color:#000000;}
-	.ft17-mini{font-size:8rem;font-family:"Sriracha",cursive;color:#000000;}
-	.ft17-tiny{font-size:7.5rem;font-family:"Sriracha",cursive;color:#000000;}
+	.ft17{font-size:13.75rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
+	.ft17-small{font-size:11rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
+	.ft17-medium{font-size:10.5rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
+	.ft17-large{font-size:10rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
+	.ft17-xlarge{font-size:9.5rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
+	.ft17-xxlarge{font-size:9rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
+	.ft17-xxxlarge{font-size:8.5rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
+	.ft17-mini{font-size:8rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
+	.ft17-tiny{font-size:7.5rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
 	.ft17-original{font-size:8.25rem;font-family:"Sriracha",cursive;color:#000000;}
 	.ft17-original-small{font-size:6.6rem;font-family:"Sriracha",cursive;color:#000000;}
 	.ft17-original-medium{font-size:6.3rem;font-family:"Sriracha",cursive;color:#000000;}
@@ -218,13 +220,13 @@ export const a4Template = (data: {
 <body bgcolor="#A0A0A0" vlink="blue" link="blue">
 <div id="page1-div">
 <img src="/a4s.png" alt="background image"/>
-<p style="position:absolute;top:11rem;left:50%;transform:translateX(-50%);white-space:nowrap" class="ft10">${data.pt_brand}</p>
-<p style="position:absolute;top:21.8125rem;left:0.5rem;white-space:nowrap" class="ft11">${data.product_name}</p>
+<p style="position:absolute;top:10rem;left:50%;transform:translateX(-50%);white-space:nowrap" class="ft10">${data.pt_brand}</p>
+<p style="position:absolute;top:21.8125rem;left:50%;transform:translateX(-50%);white-space:nowrap" class="ft11">${data.product_name}</p>
 <p style="position:absolute;top:25.375rem;left:1.625rem;white-space:nowrap" class="ft12">${data.pt_origin_country}: ${data.country_code} ${data.country_name}</p>
 <p style="position:absolute;top:29.25rem;left:1.625rem;white-space:nowrap" class="ft13">${data.pt_product_code} : ${data.product_code}</p>
 <p style="position:absolute;top:29rem;left:24.1875rem;white-space:nowrap" class="ft12-inter">${data.pt_original_price} : </p>
 <p style="position:absolute;top:30rem;left:2.0625rem;white-space:nowrap" class="ft14">${data.discount_percentage}</p>
-<p style="position:absolute;top:${originalPriceTop};left:28rem;white-space:nowrap" class="${originalPriceClass}">${data.price.replace(/(\d+)(\s*[^\d\s]+)$/, '$1')}${data.price_decimal ? `<span class="decimal-superscript">${data.price_decimal}</span>` : ''}</p>
+<p style="position:absolute;top:${originalPriceTop};left:30.4rem;white-space:nowrap" class="${originalPriceClass}">${data.price.replace(/(\d+)(\s*[^\d\s]+)$/, '$1')}${data.price_decimal ? `<span class="decimal-superscript">${data.price_decimal}</span>` : ''}</p>
 <p style="position:absolute;top:39.25rem;left:50%;transform:translateX(-50%);white-space:nowrap;" class="${priceClass}">${data.price_sale.replace(/(\d+)(\s*[^\d\s]+)$/, '$1')}<span style="display:inline-block;vertical-align:top;line-height:0.8;margin-top:0.4em;"><span style="display:block;font-size:0.4em;margin:0;">${data.price_sale_decimal || '&nbsp;'}</span><span style="display:block;font-size:0.35em;margin:0;">${data.price_sale.match(/(\s*[^\d\s]+)$/)?.[1] || '&nbsp;'}&nbsp;</span></span></p>
 <p style="position:absolute;top:52.4rem;left:50%;transform:translateX(-50%);white-space:nowrap;font-weight:600;font-size:1.5rem;font-family:'Sriracha',cursive;" class="ft12">${data.unit_price_info}&nbsp;</p>
 </div>

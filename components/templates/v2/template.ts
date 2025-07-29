@@ -53,15 +53,16 @@ export const v2Template = (data: {
     const baseFontSize = 3.4375; // font-size gốc của ft14
     
     let fontSize;
-    if (length <= 3) fontSize = 2.6;
-    else if (length <= 4) fontSize = 2.1;
-    else if (length <= 5) fontSize = 2;
-    else if (length <= 6) fontSize = 1.9;
-    else if (length <= 7) fontSize = 1.8;
-    else if (length <= 8) fontSize = 1.7;
-    else if (length <= 9) fontSize = 1.6;
-    else if (length <= 10) fontSize = 1.5;
-    else fontSize = 1.4;
+	if (length <= 3) fontSize = 3.6;
+	else if (length <= 4) fontSize = 3.1;
+	else if (length <= 5) fontSize = 3.0;
+	else if (length <= 6) fontSize = 2.9;
+	else if (length <= 7) fontSize = 2.8;
+	else if (length <= 8) fontSize = 2.7;
+	else if (length <= 9) fontSize = 2.6;
+	else if (length <= 10) fontSize = 2.5;
+	else fontSize = 2.4;
+	
 
     // Tính toán sự khác biệt về chiều cao và điều chỉnh top
     const heightDiff = (baseFontSize - fontSize) / 2;
@@ -102,15 +103,15 @@ export const v2Template = (data: {
 	.ft14-original-mini{font-size:1.5rem;font-family:"Sriracha",cursive;color:#000000;}
 	.ft14-original-tiny{font-size:1.4rem;font-family:"Sriracha",cursive;color:#000000;}
 	.ft15{font-size:1.1875rem;font-family:"Inter",sans-serif;color:#000000;}
-	.ft16{font-size:4.3rem;font-family:"Sriracha",cursive;color:#000000;}
-	.ft16-small{font-size:3.4rem;font-family:"Sriracha",cursive;color:#000000;}
-	.ft16-medium{font-size:3.2rem;font-family:"Sriracha",cursive;color:#000000;}
-	.ft16-large{font-size:3rem;font-family:"Sriracha",cursive;color:#000000;}
-	.ft16-xlarge{font-size:2.8rem;font-family:"Sriracha",cursive;color:#000000;}
-	.ft16-xxlarge{font-size:2.7rem;font-family:"Sriracha",cursive;color:#000000;}
-	.ft16-xxxlarge{font-size:2.5rem;font-family:"Sriracha",cursive;color:#000000;}
-	.ft16-mini{font-size:2.4rem;font-family:"Sriracha",cursive;color:#000000;}
-	.ft16-tiny{font-size:2.2rem;font-family:"Sriracha",cursive;color:#000000;}
+	.ft16{font-size:4.3rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
+	.ft16-small{font-size:3.4rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
+	.ft16-medium{font-size:3.2rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
+	.ft16-large{font-size:3rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
+	.ft16-xlarge{font-size:2.8rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
+	.ft16-xxlarge{font-size:2.7rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
+	.ft16-xxxlarge{font-size:2.5rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
+	.ft16-mini{font-size:2.4rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
+	.ft16-tiny{font-size:2.2rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
 	.ft17{font-size:1.5625rem;font-family:"Inter",sans-serif;color:#000000;}
 	.ft18{font-size:1rem;font-family:"Inter",sans-serif;color:#000000;}
 	.ft19{font-size:0.625rem;font-family:"Inter",sans-serif;color:#000000;}
@@ -225,11 +226,11 @@ export const v2Template = (data: {
 <body bgcolor="#A0A0A0" vlink="blue" link="blue">
 <div id="page1-div">
 <img src="/v2s.png" alt="background image"/>
-<p style="position:absolute;top:3rem;left:2.5rem;white-space:normal;text-align:left;max-width:10.5rem;line-height:0.9;" class="ft10 brand-text">${data.pt_brand}</p>
+<p style="position:absolute;top:2.8rem;left:2.5rem;white-space:normal;text-align:left;max-width:10.5rem;line-height:0.9;" class="ft10 brand-text">${data.pt_brand}</p>
 <p style="position:absolute;top:0.1rem;left:11.4375rem;white-space:nowrap" class="ft11">${data.product_name}</p>
 <p style="position:absolute;top:1.75rem;left:21.25rem;white-space:nowrap" class="ft12">${data.pt_original_price}:</p>
-<p style="position:absolute;top:3.5rem;left:11.0625rem;white-space:nowrap" class="ft13">${data.discount_percentage}</p>
-<p style="position:absolute;top:${originalPriceTop};left:21.6875rem;white-space:nowrap" class="${originalPriceClass}">${data.price.replace(/(\d+)(\s*[^\d\s]+)$/, '$1')}${data.price_decimal ? `<span class="decimal-superscript">${data.price_decimal}</span>` : ''}</p>
+<p style="position:absolute;top:3rem;left:11.0625rem;white-space:nowrap" class="ft13">${data.discount_percentage}</p>
+<p style="position:absolute;top:${originalPriceTop};left:22.875rem;white-space:nowrap" class="${originalPriceClass}">${data.price.replace(/(\d+)(\s*[^\d\s]+)$/, '$1')}${data.price_decimal ? `<span class="decimal-superscript">${data.price_decimal}</span>` : ''}</p>
 <p style="position:absolute;top:3.5875rem;right:15.6rem;white-space:nowrap" class="${priceClass}">${data.price_sale.replace(/(\d+)(\s*[^\d\s]+)$/, '$1')}<span style="display:inline-block;vertical-align:top;line-height:0.8;margin-top:0.4em;"><span style="display:block;font-size:0.4em;margin:0;">${data.price_sale_decimal || '&nbsp;'}</span><span style="display:block;font-size:0.35em;margin:0;">${data.price_sale.match(/(\s*[^\d\s]+)$/)?.[1] || '&nbsp;'}&nbsp;</span></span></p>
 <p style="position:absolute;top:9.2rem;right:15.4rem;white-space:nowrap;font-weight:600;font-size:0.75rem;font-family:'Sriracha',cursive;" class="ft12">${data.unit_price_info}&nbsp;</p>
 <p style="position:absolute;top:8.3125rem;left:11.4375rem;white-space:nowrap" class="ft111">${data.pt_origin_country}: ${data.country_code} ${data.country_name}<br/><span class="ft111-inter">${data.pt_product_code}: ${data.product_code}</span></p>

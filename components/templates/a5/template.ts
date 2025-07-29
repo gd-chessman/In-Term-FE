@@ -53,15 +53,16 @@ export const a5Template = (data: {
 	  const baseFontSize = 5.5; // font-size gốc của ft16
 	  
 	  let fontSize;
-	  if (length <= 3) fontSize = 8.75;
-	  else if (length <= 4) fontSize = 5.45;
-	  else if (length <= 5) fontSize = 5.225;
-	  else if (length <= 6) fontSize = 5.0;
-	  else if (length <= 7) fontSize = 4.775;
-	  else if (length <= 8) fontSize = 4.55;
-	  else if (length <= 9) fontSize = 4.325;
-	  else if (length <= 10) fontSize = 4.1;
-	  else fontSize = 3.875;
+	  if (length <= 3) fontSize = 9.75;
+	  else if (length <= 4) fontSize = 6.45;
+	  else if (length <= 5) fontSize = 6.225;
+	  else if (length <= 6) fontSize = 6.0;
+	  else if (length <= 7) fontSize = 5.775;
+	  else if (length <= 8) fontSize = 5.55;
+	  else if (length <= 9) fontSize = 5.325;
+	  else if (length <= 10) fontSize = 5.1;
+	  else fontSize = 4.875;
+	  
 	  
 	  
   
@@ -106,15 +107,15 @@ export const a5Template = (data: {
 	  .ft16-original-mini{font-size:3.6rem;font-family:"Sriracha",cursive;color:#000000;}
 	  .ft16-original-tiny{font-size:3.375rem;font-family:"Sriracha",cursive;color:#000000;}
 	  .ft17{font-size:2.6875rem;font-family:"Inter",sans-serif;color:#000000;}
-	  .ft18{font-size:12.0625rem;font-family:"Sriracha",cursive;color:#000000;}
-	  .ft18-small{font-size:9.65rem;font-family:"Sriracha",cursive;color:#000000;}
-	  .ft18-medium{font-size:9.225rem;font-family:"Sriracha",cursive;color:#000000;}
-	  .ft18-large{font-size:8.8rem;font-family:"Sriracha",cursive;color:#000000;}
-	  .ft18-xlarge{font-size:8.375rem;font-family:"Sriracha",cursive;color:#000000;}
-	  .ft18-xxlarge{font-size:7.95rem;font-family:"Sriracha",cursive;color:#000000;}
-	  .ft18-xxxlarge{font-size:7.525rem;font-family:"Sriracha",cursive;color:#000000;}
-	  .ft18-mini{font-size:7.1rem;font-family:"Sriracha",cursive;color:#000000;}
-	  .ft18-tiny{font-size:6.675rem;font-family:"Sriracha",cursive;color:#000000;}
+	  .ft18{font-size:12.0625rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
+	  .ft18-small{font-size:9.65rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
+	  .ft18-medium{font-size:9.225rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
+	  .ft18-large{font-size:8.8rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
+	  .ft18-xlarge{font-size:8.375rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
+	  .ft18-xxlarge{font-size:7.95rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
+	  .ft18-xxxlarge{font-size:7.525rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
+	  .ft18-mini{font-size:7.1rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
+	  .ft18-tiny{font-size:6.675rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
 	  .ft19{font-size:3.625rem;font-family:"Inter",sans-serif;color:#000000;}
 	  .ft110{font-size:1.5625rem;font-family:"Inter",sans-serif;color:#000000;}
 	  .ft111{font-size:1px;font-family:Helvetica;color:#000000;}
@@ -218,15 +219,15 @@ export const a5Template = (data: {
   <body bgcolor="#A0A0A0" vlink="blue" link="blue">
   <div id="page1-div">
   <img src="/a5s.png" alt="background image"/>
-  <p style="position:absolute;top:0.25rem;left:50%;transform:translateX(-50%);white-space:nowrap" class="ft10">${data.pt_brand}</p>
-  <p style="position:absolute;top:6.9375rem;left:1.8125rem;white-space:nowrap" class="ft11">${data.product_name}</p>
+  <p style="position:absolute;top:0rem;left:50%;transform:translateX(-50%);white-space:nowrap" class="ft10">${data.pt_brand}</p>
+  <p style="position:absolute;top:6.9375rem;left:50%;transform:translateX(-50%);white-space:nowrap" class="ft11">${data.product_name}</p>
   <p style="position:absolute;top:10rem;left:1.625rem;white-space:nowrap" class="ft12">${data.pt_origin_country}: ${data.country_code} ${data.country_name}</p>
   <p style="position:absolute;top:12rem;left:1.625rem;white-space:nowrap" class="ft13">${data.pt_product_code}: ${data.product_code}</p>
   <p style="position:absolute;top:11.1875rem;left:29.5rem;white-space:nowrap" class="ft14">${data.pt_original_price}:</p>
-  <p style="position:absolute;top:12.5rem;left:5.1875rem;white-space:nowrap" class="ft15">${data.discount_percentage}</p>
-  <p style="position:absolute;top:${originalPriceTop};left:31.25rem;white-space:nowrap" class="${originalPriceClass}">${data.price.replace(/(\d+)(\s*[^\d\s]+)$/, '$1')}${data.price_decimal ? `<span class="decimal-superscript">${data.price_decimal}</span>` : ''}</p>
+  <p style="position:absolute;top:11.8rem;left:5.1875rem;white-space:nowrap" class="ft15">${data.discount_percentage}</p>
+  <p style="position:absolute;top:${originalPriceTop};left:32.8rem;white-space:nowrap" class="${originalPriceClass}">${data.price.replace(/(\d+)(\s*[^\d\s]+)$/, '$1')}${data.price_decimal ? `<span class="decimal-superscript">${data.price_decimal}</span>` : ''}</p>
   <p style="position:absolute;top:18.0625rem;left:50%;transform:translateX(-50%);white-space:nowrap" class="${priceClass}">${data.price_sale.replace(/(\d+)(\s*[^\d\s]+)$/, '$1')}<span style="display:inline-block;vertical-align:top;line-height:0.8;margin-top:0.4em;"><span style="display:block;font-size:0.4em;margin:0;">${data.price_sale_decimal || '&nbsp;'}</span><span style="display:block;font-size:0.35em;margin:0;">${data.price_sale.match(/(\s*[^\d\s]+)$/)?.[1] || '&nbsp;'}&nbsp;</span></span></p>
-  <p style="position:absolute;top:29rem;left:50%;transform:translateX(-50%);white-space:nowrap;font-weight:600;font-size:1.25rem;font-family:'Sriracha',cursive;" class="ft12">${data.unit_price_info}&nbsp;</p>
+  <p style="position:absolute;top:30rem;left:50%;transform:translateX(-50%);white-space:nowrap;font-weight:600;font-size:1.25rem;font-family:'Sriracha',cursive;" class="ft12">${data.unit_price_info}&nbsp;</p>
   </div>
   </body>
   </html>`;

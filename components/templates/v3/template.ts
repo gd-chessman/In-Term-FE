@@ -53,15 +53,16 @@ export const v3Template = (data: {
     const baseFontSize = 4.9375; // font-size gốc của ft15
     
     let fontSize;
-    if (length <= 3) fontSize = 3.5;
-    else if (length <= 4) fontSize = 2.9;
-    else if (length <= 5) fontSize = 2.8;
-    else if (length <= 6) fontSize = 2.7;
-    else if (length <= 7) fontSize = 2.6;
-    else if (length <= 8) fontSize = 2.5;
-    else if (length <= 9) fontSize = 2.4;
-    else if (length <= 10) fontSize = 2.3;
-    else fontSize = 2.2;
+	if (length <= 3) fontSize = 4.5;
+	else if (length <= 4) fontSize = 3.9;
+	else if (length <= 5) fontSize = 3.8;
+	else if (length <= 6) fontSize = 3.7;
+	else if (length <= 7) fontSize = 3.6;
+	else if (length <= 8) fontSize = 3.5;
+	else if (length <= 9) fontSize = 3.4;
+	else if (length <= 10) fontSize = 3.3;
+	else fontSize = 3.2;
+	
 
     // Tính toán sự khác biệt về chiều cao và điều chỉnh top (giảm xuống 0rem)
     const heightDiff = (baseFontSize - fontSize) / 2;
@@ -103,15 +104,15 @@ export const v3Template = (data: {
 	.ft15-original-mini{font-size:2.3rem;font-family:"Sriracha",cursive;color:#000000;}
 	.ft15-original-tiny{font-size:2.2rem;font-family:"Sriracha",cursive;color:#000000;}
 	.ft16{font-size:1.75rem;font-family:"Inter",sans-serif;color:#000000;}
-	.ft17{font-size:8.75rem;font-family:"Sriracha",cursive;color:#000000;}
-	.ft17-small{font-size:7rem;font-family:"Sriracha",cursive;color:#000000;}
-	.ft17-medium{font-size:6.7rem;font-family:"Sriracha",cursive;color:#000000;}
-	.ft17-large{font-size:6.4rem;font-family:"Sriracha",cursive;color:#000000;}
-	.ft17-xlarge{font-size:4.5rem;font-family:"Sriracha",cursive;color:#000000;}
-	.ft17-xxlarge{font-size:4.2rem;font-family:"Sriracha",cursive;color:#000000;}
-	.ft17-xxxlarge{font-size:3.9rem;font-family:"Sriracha",cursive;color:#000000;}
-	.ft17-mini{font-size:3.6rem;font-family:"Sriracha",cursive;color:#000000;}
-	.ft17-tiny { font-size: 3.3rem; font-family: "Sriracha", cursive; color: #000000; margin-top: 1.5rem; }
+	.ft17{font-size:8.75rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
+	.ft17-small{font-size:7rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
+	.ft17-medium{font-size:6.7rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
+	.ft17-large{font-size:6.4rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
+	.ft17-xlarge{font-size:4.5rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
+	.ft17-xxlarge{font-size:4.2rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
+	.ft17-xxxlarge{font-size:3.9rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
+	.ft17-mini{font-size:3.6rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
+	.ft17-tiny { font-size: 3.3rem; font-family: "Sriracha", cursive; color: #000000; margin-top: 1.5rem; font-weight:bold; }
 	.ft18{font-size:3.125rem;font-family:"Inter",sans-serif;color:#000000;}
 	.ft19{font-size:1.9375rem;font-family:"Inter",sans-serif;color:#000000;}
 	.ft110{font-size:0.8125rem;font-family:"Inter",sans-serif;color:#000000;}
@@ -217,12 +218,12 @@ export const v3Template = (data: {
 <div id="page1-div">
 <img src="/v3s.png" alt="background image"/>
 <p style="position:absolute;top:-0.2rem;left:50%;transform:translateX(-50%);white-space:nowrap" class="ft10">${data.pt_brand}</p>
-<p style="position:absolute;top:4rem;left:7rem;white-space:nowrap" class="ft11">${data.product_name}</p>
+<p style="position:absolute;top:4rem;left:50%;transform:translateX(-50%);white-space:nowrap" class="ft11">${data.product_name}</p>
 <p style="position:absolute;top:5.9375rem;left:0.5625rem;white-space:nowrap" class="ft12">${data.pt_origin_country}: ${data.country_code} ${data.country_name}</p>
 <p style="position:absolute;top:7.3125rem;left:20.1875rem;white-space:nowrap" class="ft13">${data.pt_original_price}:</p>
-<p style="position:absolute;top:9.25rem;left:0.8125rem;white-space:nowrap" class="ft14">${data.discount_percentage}</p>
-<p style="position:absolute;top:${originalPriceTop};left:23rem;white-space:nowrap" class="${originalPriceClass}">${data.price.replace(/(\d+)(\s*[^\d\s]+)$/, '$1')}${data.price_decimal ? `<span class="decimal-superscript">${data.price_decimal}</span>` : ''}</p>
-<p style="position:absolute;top:8rem;right:2rem;white-space:nowrap" class="${priceClass}">${data.price_sale.replace(/(\d+)(\s*[^\d\s]+)$/, '$1')}<span style="display:inline-block;vertical-align:top;line-height:0.8;margin-top:0.4em;"><span style="display:block;font-size:0.4em;margin:0;">${data.price_sale_decimal || '&nbsp;'}</span><span style="display:block;font-size:0.35em;margin:0;">${data.price_sale.match(/(\s*[^\d\s]+)$/)?.[1] || '&nbsp;'}&nbsp;</span></span></p>
+<p style="position:absolute;top:8.6rem;left:0.8125rem;white-space:nowrap" class="ft14">${data.discount_percentage}</p>
+<p style="position:absolute;top:${originalPriceTop};left:24rem;white-space:nowrap" class="${originalPriceClass}">${data.price.replace(/(\d+)(\s*[^\d\s]+)$/, '$1')}${data.price_decimal ? `<span class="decimal-superscript">${data.price_decimal}</span>` : ''}</p>
+<p style="position:absolute;top:6.8rem;right:2rem;white-space:nowrap" class="${priceClass}">${data.price_sale.replace(/(\d+)(\s*[^\d\s]+)$/, '$1')}<span style="display:inline-block;vertical-align:top;line-height:0.8;margin-top:0.4em;"><span style="display:block;font-size:0.4em;margin:0;">${data.price_sale_decimal || '&nbsp;'}</span><span style="display:block;font-size:0.35em;margin:0;">${data.price_sale.match(/(\s*[^\d\s]+)$/)?.[1] || '&nbsp;'}&nbsp;</span></span></p>
 <p style="position:absolute;top:15.1875rem;right:2rem;white-space:nowrap;font-weight:600;font-size:1rem;font-family:'Sriracha',cursive;" class="ft13">${data.unit_price_info}&nbsp;</p>
 <p style="position:absolute;top:15.1875rem;left:0.5625rem;white-space:nowrap" class="ft110">${data.pt_product_code}: ${data.product_code}</p>
 </div>
