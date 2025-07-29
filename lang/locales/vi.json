@@ -1,3 +1,1837 @@
 {
-    
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Tổng quan hệ thống quản trị",
+    "stats": {
+      "totalUsers": "Tổng người dùng",
+      "products": "Sản phẩm",
+      "countries": "Quốc gia",
+      "todayPrints": "Lượt in hôm nay",
+      "currentSystem": "Hiện tại của hệ thống"
+    },
+    "recentActivities": {
+      "title": "Hoạt động gần đây",
+      "subtitle": "Các hoạt động mới nhất trong hệ thống",
+      "loading": "Đang tải hoạt động...",
+      "noActivities": "Không có hoạt động gần đây",
+      "actions": {
+        "login": "đã đăng nhập",
+        "logout": "đã đăng xuất",
+        "create": "đã tạo mới",
+        "update": "đã cập nhật",
+        "delete": "đã xóa",
+        "unknown": "thực hiện"
+      },
+      "timeAgo": {
+        "seconds": "giây trước",
+        "minutes": "phút trước",
+        "hours": "giờ trước",
+        "days": "ngày trước"
+      }
+    },
+    "printDistribution": {
+      "title": "Phân bố loại in",
+      "subtitle": "Thống kê theo loại template in",
+      "noData": "Không có dữ liệu in",
+      "noActivity": "Chưa có hoạt động in nào",
+      "tooltip": {
+        "prints": "lượt in",
+        "totalPrints": "Tổng lượt in",
+        "type": "Loại"
+      },
+      "unknown": "Không xác định"
+    }
+  },
+  "profile": {
+    "title": "Hồ sơ cá nhân",
+    "subtitle": "Quản lý thông tin cá nhân và cài đặt tài khoản",
+    "loading": "Đang tải...",
+    "error": "Không thể tải thông tin hồ sơ",
+    "tabs": {
+      "basic": "Thông tin cơ bản",
+      "content": "Từ ngữ sử dụng",
+      "preview": "Xem trước"
+    },
+    "personalInfo": {
+      "title": "Thông tin cá nhân",
+      "subtitle": "Cập nhật thông tin cá nhân của bạn",
+      "edit": "Chỉnh sửa",
+      "save": "Lưu",
+      "cancel": "Hủy",
+      "updateImage": "Cập nhật ảnh",
+      "fields": {
+        "fullname": "Họ và tên",
+        "email": "Email",
+        "phone": "Số điện thoại",
+        "address": "Địa chỉ",
+        "branch": "Chi nhánh",
+        "accountCreated": "Ngày tạo tài khoản"
+      },
+      "placeholders": {
+        "fullname": "Nhập họ và tên",
+        "email": "Nhập email",
+        "phone": "Nhập số điện thoại",
+        "address": "Nhập địa chỉ",
+        "branch": "Chọn chi nhánh"
+      },
+      "notAssigned": "Không phân bổ",
+      "notUpdated": "Chưa cập nhật",
+      "noInfo": "Chưa có thông tin",
+      "loading": "Đang tải..."
+    },
+    "changePassword": {
+      "title": "Thay đổi mật khẩu",
+      "subtitle": "Cập nhật mật khẩu tài khoản của bạn",
+      "changePassword": "Thay đổi mật khẩu",
+      "fields": {
+        "currentPassword": "Mật khẩu hiện tại",
+        "newPassword": "Mật khẩu mới",
+        "confirmPassword": "Xác nhận mật khẩu mới"
+      },
+      "placeholders": {
+        "currentPassword": "Nhập mật khẩu hiện tại",
+        "newPassword": "Nhập mật khẩu mới",
+        "confirmPassword": "Nhập lại mật khẩu mới"
+      }
+    },
+    "toasts": {
+      "profileUpdated": {
+        "title": "Thành công",
+        "description": "Thông tin hồ sơ đã được cập nhật"
+      },
+      "profileError": {
+        "title": "Lỗi",
+        "description": "Không thể cập nhật thông tin hồ sơ"
+      },
+      "avatarUpdated": {
+        "title": "Thành công",
+        "description": "Ảnh đại diện đã được cập nhật"
+      },
+      "avatarError": {
+        "title": "Lỗi",
+        "description": "Không thể cập nhật ảnh đại diện"
+      },
+      "passwordChanged": {
+        "title": "Thành công",
+        "description": "Mật khẩu đã được thay đổi"
+      },
+      "passwordError": {
+        "title": "Lỗi",
+        "description": "Không thể thay đổi mật khẩu"
+      },
+      "passwordMismatch": {
+        "title": "Lỗi",
+        "description": "Mật khẩu xác nhận không khớp"
+      }
+    }
+  },
+  "admins": {
+    "title": "Quản lý người dùng",
+    "subtitle": "Quản lý tài khoản người dùng và phân quyền",
+    "addUser": "Thêm người dùng",
+    "createUser": {
+      "title": "Thêm người dùng mới",
+      "subtitle": "Tạo tài khoản người dùng mới cho hệ thống",
+      "create": "Tạo người dùng",
+      "creating": "Đang tạo...",
+      "fields": {
+        "username": "Username",
+        "email": "Email",
+        "fullname": "Họ tên",
+        "level": "Cấp độ",
+        "role": "Vai trò",
+        "branch": "Chi nhánh",
+        "password": "Mật khẩu"
+      },
+      "placeholders": {
+        "username": "Nhập username",
+        "email": "Nhập email",
+        "fullname": "Nhập họ tên",
+        "level": "Chọn cấp độ",
+        "role": "Chọn vai trò",
+        "branch": "Chọn chi nhánh",
+        "password": "Nhập mật khẩu"
+      },
+      "loading": "Đang tải...",
+      "validation": "Vui lòng điền đầy đủ thông tin"
+    },
+    "stats": {
+      "totalUsers": "Tổng người dùng",
+      "totalUsersDesc": "Tổng số người dùng",
+      "activeUsers": "Đang hoạt động",
+      "inactiveUsers": "Không hoạt động",
+      "inactiveUsersDesc": "Cần kiểm tra",
+      "roles": "Vai trò",
+      "totalRoles": "Tổng vai trò"
+    },
+    "search": {
+      "title": "Tìm kiếm & Lọc",
+      "placeholder": "Tìm kiếm theo tên, email, username...",
+      "status": "Trạng thái",
+      "level": "Cấp độ",
+      "all": "Tất cả"
+    },
+    "table": {
+      "title": "Danh sách Admin",
+      "loading": "Đang tải...",
+      "loadingData": "Đang tải dữ liệu...",
+      "error": "Không thể tải dữ liệu admin",
+      "totalUsers": "Tổng cộng {count} admin",
+      "noData": "Không có dữ liệu admin",
+      "actions": "Thao tác",
+      "openMenu": "Mở menu",
+      "role": "Vai trò",
+      "level": "Cấp độ",
+      "branch": "Chi nhánh",
+      "status": "Trạng thái",
+      "lastLogin": "Đăng nhập cuối",
+      "createdAt": "Ngày tạo",
+      "noRole": "Chưa phân quyền",
+      "noBranch": "Chưa phân bổ",
+      "neverLogin": "Chưa đăng nhập",
+      "headers": {
+        "admin": "Admin",
+        "email": "Email",
+        "level": "Cấp độ",
+        "role": "Vai trò",
+        "branch": "Chi nhánh",
+        "status": "Trạng thái",
+        "lastLogin": "Đăng nhập cuối",
+        "actions": "Thao tác"
+      },
+      "actions": {
+        "assignRole": "Phân quyền",
+        "changeBranch": "Thay đổi chi nhánh",
+        "deactivate": "Vô hiệu hóa",
+        "suspend": "Tạm khóa",
+        "activate": "Kích hoạt"
+      }
+    },
+    "na": "N/A",
+    "status": {
+      "active": "Hoạt động",
+      "inactive": "Không hoạt động",
+      "suspended": "Tạm khóa"
+    },
+    "levels": {
+      "super_admin": "Super Admin",
+      "admin": "Admin",
+      "moderator": "Moderator",
+      "support": "Support"
+    },
+    "actions": {
+      "changeLevel": "Thay đổi cấp độ",
+      "changeBranch": "Thay đổi chi nhánh",
+      "updateLevel": "Cập nhật cấp độ",
+      "updateBranch": "Cập nhật chi nhánh",
+      "confirmLevel": "Xác nhận thay đổi cấp độ",
+      "confirmBranch": "Xác nhận thay đổi chi nhánh",
+      "currentLevel": "Cấp độ hiện tại",
+      "newLevel": "Cấp độ mới",
+      "currentBranch": "Chi nhánh hiện tại",
+      "newBranch": "Chi nhánh mới",
+      "selectNewLevel": "Chọn cấp độ mới",
+      "selectNewBranch": "Chọn chi nhánh mới",
+      "notAssigned": "Không phân bổ"
+    },
+    "toasts": {
+      "userCreated": {
+        "title": "Thành công",
+        "description": "Người dùng đã được tạo thành công"
+      },
+      "userCreatedError": {
+        "title": "Lỗi",
+        "description": "Không thể tạo người dùng"
+      },
+      "levelUpdated": {
+        "title": "Thành công",
+        "description": "Cấp độ đã được cập nhật thành công"
+      },
+      "levelUpdatedError": {
+        "title": "Lỗi",
+        "description": "Không thể cập nhật cấp độ"
+      },
+      "branchUpdated": {
+        "title": "Thành công",
+        "description": "Chi nhánh đã được cập nhật thành công"
+      },
+      "branchUpdatedError": {
+        "title": "Lỗi",
+        "description": "Không thể cập nhật chi nhánh"
+      },
+      "statusUpdated": {
+        "title": "Thành công",
+        "description": "Trạng thái đã được cập nhật thành công"
+      },
+      "statusUpdatedError": {
+        "title": "Lỗi",
+        "description": "Không thể cập nhật trạng thái"
+      }
+    },
+    "updateLevel": {
+      "title": "Cập nhật cấp độ",
+      "description": "Thay đổi cấp độ cho người dùng này",
+      "currentLevel": "Cấp độ hiện tại",
+      "newLevel": "Cấp độ mới",
+      "selectNewLevel": "Chọn cấp độ mới",
+      "updating": "Đang cập nhật...",
+      "updateLevel": "Cập nhật cấp độ"
+    },
+    "updateBranch": {
+      "title": "Cập nhật chi nhánh",
+      "description": "Thay đổi chi nhánh cho người dùng này",
+      "currentBranch": "Chi nhánh hiện tại",
+      "newBranch": "Chi nhánh mới",
+      "selectNewBranch": "Chọn chi nhánh mới",
+      "noBranch": "Không có chi nhánh",
+      "updating": "Đang cập nhật...",
+      "updateBranch": "Cập nhật chi nhánh"
+    }
+  },
+  "roles": {
+    "title": "Vai trò & Quyền",
+    "subtitle": "Quản lý vai trò và phân quyền trong hệ thống",
+    "loading": "Đang tải dữ liệu...",
+    "loadingRoles": "Đang tải danh sách vai trò...",
+    "error": "Có lỗi xảy ra khi tải dữ liệu",
+    "stats": {
+      "totalRoles": "Tổng vai trò",
+      "totalRolesDesc": "Tất cả vai trò",
+      "activeRoles": "Vai trò hoạt động",
+      "activeRolesDesc": "Đang hoạt động",
+      "inactiveRoles": "Vai trò không hoạt động",
+      "inactiveRolesDesc": "Không hoạt động",
+      "totalUsers": "Tổng người dùng",
+      "totalUsersDesc": "Tổng số người dùng"
+    },
+    "table": {
+      "title": "Danh sách Vai trò",
+      "totalRoles": "Tổng cộng {count} vai trò trong hệ thống",
+      "headers": {
+        "role": "Vai trò",
+        "description": "Mô tả",
+        "userCount": "Số người dùng",
+        "status": "Trạng thái",
+        "createdAt": "Ngày tạo",
+        "actions": "Thao tác"
+      }
+    },
+    "status": {
+      "active": "Hoạt động",
+      "inactive": "Không hoạt động"
+    },
+    "permissions": {
+      "title": "Phân quyền cho vai trò: {roleName}",
+      "subtitle": "Chọn các quyền cho vai trò này",
+      "savePermissions": "Lưu Quyền",
+      "actions": {
+        "edit": "Chỉnh sửa",
+        "permissions": "Phân quyền",
+        "delete": "Xóa"
+      },
+      "list": {
+        "viewAdmins": "Xem danh sách admin",
+        "createAdmin": "Tạo admin mới",
+        "updateAdmin": "Cập nhật admin",
+        "deleteAdmin": "Xóa admin",
+        "viewProducts": "Xem sản phẩm",
+        "createProduct": "Tạo sản phẩm",
+        "updateProduct": "Cập nhật sản phẩm",
+        "deleteProduct": "Xóa sản phẩm"
+      }
+    }
+  },
+  "logs": {
+    "title": "Nhật ký hoạt động",
+    "subtitle": "Theo dõi tất cả hoạt động trong hệ thống",
+    "loading": "Đang tải dữ liệu...",
+    "stats": {
+      "totalActivities": "Tổng hoạt động",
+      "totalActivitiesDesc": "Tổng số",
+      "login24h": "Đăng nhập 24h",
+      "login24hDesc": "24h qua",
+      "actionsToday": "Thao tác hôm nay",
+      "actionsTodayDesc": "Hôm nay",
+      "uniqueIps": "IP unique",
+      "uniqueIpsDesc": "Địa chỉ IP"
+    },
+    "search": {
+      "title": "Tìm kiếm & Lọc",
+      "placeholder": "Tìm kiếm theo admin, sản phẩm, IP...",
+      "action": "Hành động",
+      "module": "Phân hệ",
+      "all": "Tất cả"
+    },
+    "actions": {
+      "login": "Đăng nhập",
+      "logout": "Đăng xuất",
+      "create": "Tạo mới",
+      "update": "Cập nhật",
+      "delete": "Xóa",
+      "approve": "Duyệt",
+      "reject": "Từ chối",
+      "suspend": "Tạm ngưng",
+      "activate": "Kích hoạt",
+      "view": "Xem",
+      "export": "Xuất dữ liệu",
+      "import": "Nhập dữ liệu"
+    },
+    "modules": {
+      "admins": "Admin",
+      "roles": "Vai trò",
+      "countries": "Quốc gia",
+      "categories": "Danh mục",
+      "products": "Sản phẩm",
+      "product_tags": "Tag sản phẩm",
+      "price_printing": "In giá",
+      "settings": "Cài đặt"
+    },
+    "table": {
+      "title": "Lịch sử hoạt động",
+      "description": "Hiển thị {count} hoạt động gần nhất",
+      "headers": {
+        "time": "Thời gian",
+        "admin": "Quản trị viên",
+        "action": "Hành động",
+        "module": "Phân hệ",
+        "description": "Mô tả",
+        "ipAddress": "Địa chỉ IP",
+        "userAgent": "Thiết bị/Trình duyệt"
+      },
+      "noData": "N/A"
+    },
+    "timeAgo": {
+      "justNow": "Vừa xong",
+      "minutesAgo": "{minutes} phút trước",
+      "hoursAgo": "{hours} giờ trước",
+      "daysAgo": "{days} ngày trước"
+    }
+  },
+  "branches": {
+    "title": "Quản lý Chi nhánh",
+    "subtitle": "Quản lý thông tin các chi nhánh trong hệ thống",
+    "loading": "Đang tải dữ liệu chi nhánh...",
+    "error": "Có lỗi xảy ra khi tải dữ liệu",
+    "retry": "Thử lại",
+    "stats": {
+      "totalBranches": "Tổng chi nhánh",
+      "totalBranchesDesc": "Trong hệ thống",
+      "activeBranches": "Đang hoạt động",
+      "activeBranchesDesc": "Chi nhánh hoạt động",
+      "inactiveBranches": "Không hoạt động",
+      "inactiveBranchesDesc": "Chi nhánh tạm ngưng",
+      "activityRate": "Tỷ lệ hoạt động",
+      "activityRateDesc": "Chi nhánh hoạt động"
+    },
+    "search": {
+      "title": "Tìm kiếm & Lọc",
+      "placeholder": "Tìm kiếm theo tên chi nhánh, mô tả...",
+      "status": "Trạng thái",
+      "all": "Tất cả",
+      "active": "Hoạt động",
+      "inactive": "Không hoạt động"
+    },
+    "table": {
+      "title": "Danh sách Chi nhánh",
+      "description": "Tổng cộng {count} chi nhánh trong hệ thống",
+      "headers": {
+        "name": "Tên chi nhánh",
+        "description": "Mô tả",
+        "status": "Trạng thái",
+        "createdAt": "Ngày tạo",
+        "updatedAt": "Cập nhật",
+        "actions": "Thao tác"
+      },
+      "noDescription": "Không có mô tả"
+    },
+    "cards": {
+      "edit": "Chỉnh sửa",
+      "delete": "Xóa",
+      "status": "Trạng thái:",
+      "createdAt": "Ngày tạo:",
+      "updatedAt": "Cập nhật:"
+    },
+    "create": {
+      "title": "Thêm Chi nhánh mới",
+      "subtitle": "Thêm chi nhánh mới vào hệ thống",
+      "fields": {
+        "name": "Tên chi nhánh",
+        "description": "Mô tả"
+      },
+      "placeholders": {
+        "name": "Nhập tên chi nhánh",
+        "description": "Nhập mô tả chi nhánh (tùy chọn)"
+      },
+      "buttons": {
+        "add": "Thêm Chi nhánh",
+        "adding": "Đang thêm..."
+      },
+      "validation": {
+        "nameRequired": "Tên chi nhánh không được để trống"
+      }
+    },
+    "edit": {
+      "title": "Chỉnh sửa Chi nhánh",
+      "subtitle": "Cập nhật thông tin chi nhánh",
+      "buttons": {
+        "update": "Cập nhật Chi nhánh",
+        "updating": "Đang cập nhật..."
+      }
+    },
+    "delete": {
+      "title": "Xác nhận xóa",
+      "description": "Bạn có chắc chắn muốn xóa chi nhánh {name}? Hành động này không thể hoàn tác.",
+      "buttons": {
+        "cancel": "Hủy",
+        "delete": "Xóa Chi nhánh",
+        "deleting": "Đang xóa..."
+      }
+    },
+    "toasts": {
+      "createSuccess": "Tạo chi nhánh thành công!",
+      "createError": "Có lỗi xảy ra khi tạo chi nhánh",
+      "updateSuccess": "Cập nhật chi nhánh thành công!",
+      "updateError": "Có lỗi xảy ra khi cập nhật chi nhánh",
+      "deleteSuccess": "Xóa chi nhánh thành công!",
+      "deleteError": "Có lỗi xảy ra khi xóa chi nhánh",
+      "statusUpdateSuccess": "Cập nhật trạng thái thành công!",
+      "statusUpdateError": "Có lỗi xảy ra khi cập nhật trạng thái"
+    }
+  },
+  "header": {
+    "language": "Ngôn ngữ",
+    "vietnamese": "Tiếng Việt",
+    "english": "English",
+    "czech": "Čeština",
+    "defaultUser": "Admin User",
+    "defaultEmail": "admin@example.com",
+    "profile": "Hồ sơ cá nhân",
+    "dashboard": "Dashboard",
+    "products": "Quản lý sản phẩm",
+    "printSelect": "Chọn sản phẩm in",
+    "printHistory": "Lịch sử in",
+    "users": "Quản lý người dùng",
+    "activityLogs": "Nhật ký hoạt động",
+    "logout": "Đăng xuất",
+    "loggingOut": "Đang đăng xuất...",
+    "searchPlaceholder": "Tìm kiếm sản phẩm, mẫu in, quốc gia..."
+  },
+  "sidebar": {
+    "dashboard": "Dashboard",
+    "profile": "Hồ sơ cá nhân",
+    "userManagement": "Quản lý người dùng",
+    "userList": "Danh sách người dùng",
+    "rolesPermissions": "Vai trò & Quyền",
+    "activityLogs": "Nhật ký hoạt động",
+    "system": "Hệ thống",
+    "branches": "Chi nhánh",
+    "countries": "Quốc gia",
+    "settings": "Cài đặt",
+    "products": "Sản phẩm",
+    "productList": "Danh sách sản phẩm",
+    "categories": "Danh mục",
+    "tags": "Tags",
+    "printing": "In ấn",
+    "printTemplates": "Template in",
+    "printSelection": "Chọn sản phẩm in",
+    "printHistory": "Lịch sử in",
+    "defaultUser": "AU",
+    "defaultEmail": "admin@example.com"
+  },
+  "countries": {
+    "title": "Quản lý Quốc gia",
+    "subtitle": "Quản lý danh sách quốc gia và template in",
+    "loading": "Đang tải dữ liệu quốc gia...",
+    "error": "Có lỗi xảy ra khi tải dữ liệu",
+    "retry": "Thử lại",
+    "stats": {
+      "totalCountries": "Tổng quốc gia",
+      "active": "Đang hoạt động",
+      "totalProducts": "Tổng sản phẩm",
+      "acrossAllCountries": "Trên tất cả quốc gia",
+      "printTemplates": "Template in",
+      "totalTemplates": "Tổng template",
+      "avgProducts": "TB sản phẩm",
+      "productsPerCountry": "Sản phẩm/quốc gia"
+    },
+    "search": {
+      "title": "Tìm kiếm",
+      "placeholder": "Tìm kiếm theo tên quốc gia, mã quốc gia..."
+    },
+    "table": {
+      "title": "Danh sách Quốc gia",
+      "description": "Tổng cộng {count} quốc gia trong hệ thống",
+      "headers": {
+        "country": "Quốc gia",
+        "code": "Mã",
+        "products": "Số sản phẩm",
+        "templates": "Template in",
+        "createdAt": "Ngày tạo",
+        "actions": "Thao tác"
+      },
+      "actions": "Thao tác",
+      "edit": "Chỉnh sửa",
+      "delete": "Xóa"
+    },
+    "cards": {
+      "products": "Sản phẩm",
+      "templates": "Template",
+      "created": "Tạo"
+    },
+    "create": {
+      "title": "Thêm Quốc gia mới",
+      "subtitle": "Thêm quốc gia mới vào hệ thống",
+      "button": "Thêm Quốc gia",
+      "fields": {
+        "name": "Tên quốc gia",
+        "code": "Mã quốc gia"
+      },
+      "placeholders": {
+        "name": "Nhập tên quốc gia",
+        "code": "VN, US, JP..."
+      },
+      "buttons": {
+        "add": "Thêm Quốc gia",
+        "adding": "Đang thêm..."
+      },
+      "loading": {
+        "creating": "Đang tạo...",
+        "tags": "Đang tải tags...",
+        "branches": "Đang tải chi nhánh...",
+        "countries": "Đang tải...",
+        "categories": "Đang tải..."
+      }
+    },
+    "edit": {
+      "title": "Chỉnh sửa Quốc gia",
+      "subtitle": "Cập nhật thông tin quốc gia",
+      "fields": {
+        "name": "Tên quốc gia",
+        "code": "Mã quốc gia"
+      },
+      "placeholders": {
+        "name": "Nhập tên quốc gia",
+        "code": "VN, US, JP..."
+      },
+      "buttons": {
+        "update": "Cập nhật Quốc gia",
+        "updating": "Đang cập nhật..."
+      }
+    },
+    "delete": {
+      "title": "Xác nhận xóa quốc gia",
+      "description": "Bạn có chắc chắn muốn xóa quốc gia {name} ({code})? Hành động này không thể hoàn tác.",
+      "code": "Mã",
+      "buttons": {
+        "cancel": "Hủy",
+        "delete": "Xóa Quốc gia",
+        "deleting": "Đang xóa..."
+      }
+    },
+    "validation": {
+      "fillAllFields": "Vui lòng điền đầy đủ thông tin"
+    },
+    "toasts": {
+      "createSuccess": "Thêm quốc gia thành công!",
+      "createError": "Có lỗi xảy ra khi thêm quốc gia",
+      "createErrorDuplicate": "Quốc gia đã tồn tại, bị trùng tên hoặc mã quốc gia",
+      "updateSuccess": "Cập nhật quốc gia thành công!",
+      "updateError": "Có lỗi xảy ra khi cập nhật quốc gia",
+      "deleteSuccess": "Xóa quốc gia thành công!",
+      "deleteError": "Có lỗi xảy ra khi xóa quốc gia"
+    }
+  },
+  "products": {
+    "title": "Quản lý Sản phẩm",
+    "subtitle": "Xem và quản lý tất cả sản phẩm trong hệ thống",
+    "status": {
+      "active": "Hoạt động",
+      "inactive": "Không hoạt động"
+    },
+    "na": "N/A",
+    "create": {
+      "title": "Thêm Sản phẩm mới",
+      "subtitle": "Tạo sản phẩm mới trong hệ thống",
+      "button": "Thêm Sản phẩm",
+      "fields": {
+        "name": "Tên sản phẩm",
+        "code": "Mã sản phẩm",
+        "description": "Mô tả",
+        "tags": "Tags",
+        "branches": "Chi nhánh",
+        "origin": "Xuất xứ",
+        "category": "Danh mục",
+        "price": "Giá",
+        "unitName": "Đơn vị tính",
+        "unitTotal": "Tổng số đơn vị",
+        "unitStep": "Bước chia lẻ tối thiểu",
+        "productInfo": "Thông tin sản phẩm",
+        "image": "Ảnh sản phẩm"
+      },
+      "placeholders": {
+        "name": "Nhập tên sản phẩm (1-200 ký tự)",
+        "code": "Nhập mã sản phẩm (1-100 ký tự)",
+        "description": "Nhập mô tả sản phẩm (tùy chọn)",
+        "origin": "Chọn quốc gia xuất xứ",
+        "category": "Chọn danh mục",
+        "price": "Nhập giá sản phẩm",
+        "unitName": "VD: gram, kg, ml, lít, cái, hộp...",
+        "unitTotal": "VD: 500 (gram), 1 (kg), 330 (ml)...",
+        "unitStep": "VD: 0.1, 0.5, 1...",
+        "productInfo": "Nhập thông tin sản phẩm"
+      },
+      "loading": {
+        "tags": "Đang tải tags...",
+        "branches": "Đang tải chi nhánh..."
+      },
+      "noTags": "Không có tags nào",
+      "noBranches": "Không có chi nhánh nào",
+      "buttons": {
+        "create": "Tạo Sản phẩm"
+      }
+    },
+    "edit": {
+      "title": "Chỉnh sửa Sản phẩm",
+      "subtitle": "Cập nhật thông tin sản phẩm",
+      "fields": {
+        "name": "Tên sản phẩm",
+        "code": "Mã sản phẩm",
+        "description": "Mô tả",
+        "origin": "Xuất xứ",
+        "category": "Danh mục",
+        "price": "Giá",
+        "unitName": "Đơn vị tính",
+        "unitTotal": "Tổng số đơn vị",
+        "unitStep": "Bước chia lẻ tối thiểu",
+        "productInfo": "Thông tin sản phẩm",
+        "image": "Ảnh sản phẩm",
+        "branches": "Chi nhánh"
+      },
+      "placeholders": {
+        "name": "Nhập tên sản phẩm...",
+        "code": "Nhập mã sản phẩm...",
+        "description": "Nhập mô tả sản phẩm...",
+        "origin": "Chọn quốc gia xuất xứ",
+        "category": "Chọn danh mục",
+        "price": "Nhập giá sản phẩm",
+        "unitName": "VD: gram, kg, ml, lít, cái, hộp...",
+        "unitTotal": "VD: 500 (gram), 1 (kg), 330 (ml)...",
+        "unitStep": "VD: 10 (gram), 0.1 (kg), 50 (ml)...",
+        "productInfo": "Nhập thông tin chi tiết về sản phẩm"
+      },
+      "buttons": {
+        "update": "Cập nhật Sản phẩm"
+      },
+      "loading": {
+        "loading": "Đang tải...",
+        "updating": "Đang cập nhật...",
+        "branches": "Đang tải chi nhánh..."
+      }
+    },
+    "delete": {
+      "title": "Xác nhận xóa sản phẩm",
+      "description": "Bạn có chắc chắn muốn xóa sản phẩm {name}? Hành động này không thể hoàn tác.",
+      "confirmation": "Nhập tên sản phẩm để xác nhận",
+      "buttons": {
+        "cancel": "Hủy",
+        "delete": "Xóa Sản phẩm",
+        "deleting": "Đang xóa..."
+      }
+    },
+    "pagination": {
+      "showing": "Hiển thị",
+      "of": "trong tổng số",
+      "products": "sản phẩm",
+      "previous": "Trước",
+      "next": "Sau"
+    },
+    "detail": {
+      "title": "Chi tiết Sản phẩm",
+      "description": "Xem thông tin chi tiết về sản phẩm",
+      "close": "Đóng",
+      "basicInfo": "Thông tin cơ bản",
+      "classification": "Phân loại",
+      "noDescription": "Không có mô tả",
+      "tags": "Tags:",
+      "branches": "Chi nhánh:",
+      "noTags": "Chưa có tags",
+      "notAssigned": "Chưa phân bổ",
+      "createdAt": "Ngày tạo:",
+      "category": "Danh mục:",
+      "origin": "Xuất xứ:",
+      "price": "Giá:",
+      "unitName": "Đơn vị tính:",
+      "unitTotal": "Tổng số đơn vị:",
+      "unitStep": "Bước chia lẻ tối thiểu:",
+      "productInfo": "Thông tin sản phẩm"
+    },
+    "tags": {
+      "title": "Quản lý Tags",
+      "description": "Quản lý tags cho sản phẩm",
+      "currentTags": "Tags hiện tại",
+      "noTags": "Sản phẩm chưa có tags nào",
+      "addTags": "Thêm Tags",
+      "deleteTags": "Xóa Tags đã chọn",
+      "availableTags": "Tags có sẵn",
+      "noAvailableTags": "Tất cả tags đã được gán cho sản phẩm này",
+      "loading": {
+        "adding": "Đang thêm..."
+      },
+      "buttons": {
+        "add": "Thêm",
+        "close": "Đóng"
+      }
+    },
+    "stats": {
+      "totalProducts": "Tổng sản phẩm",
+      "activeProducts": "Sản phẩm hoạt động",
+      "inactiveProducts": "Sản phẩm không hoạt động",
+      "totalCategories": "Tổng danh mục",
+      "avgValue": "Giá trị TB",
+      "page": "Trang",
+      "allProducts": "Tất cả sản phẩm",
+      "ofTotal": "tổng số"
+    },
+    "search": {
+      "title": "Tìm kiếm & Lọc",
+      "placeholder": "Tìm kiếm theo tên, mã, mô tả sản phẩm...",
+      "advancedFilters": "Bộ lọc nâng cao",
+      "clearFilters": "Xóa bộ lọc",
+      "filters": {
+        "category": "Danh mục",
+        "status": "Trạng thái",
+        "branches": "Chi nhánh",
+        "productName": "Tên sản phẩm",
+        "productCode": "Mã sản phẩm",
+        "description": "Mô tả",
+        "minPrice": "Giá tối thiểu",
+        "maxPrice": "Giá tối đa",
+        "sortBy": "Sắp xếp theo",
+        "sortOrder": "Thứ tự",
+        "tags": "Tags",
+        "productNamePlaceholder": "Nhập tên sản phẩm...",
+        "productCodePlaceholder": "Nhập mã sản phẩm...",
+        "descriptionPlaceholder": "Nhập từ khóa mô tả...",
+        "minPricePlaceholder": "Nhập giá tối thiểu...",
+        "maxPricePlaceholder": "Nhập giá tối đa..."
+      },
+      "sortOptions": {
+        "created_at": "Ngày tạo",
+        "createdAt": "Ngày tạo",
+        "product_name": "Tên sản phẩm",
+        "productName": "Tên sản phẩm",
+        "product_code": "Mã sản phẩm",
+        "productCode": "Mã sản phẩm",
+        "price": "Giá",
+        "product_status": "Trạng thái",
+        "status": "Trạng thái"
+      },
+      "sortOrder": {
+        "asc": "Tăng dần",
+        "desc": "Giảm dần"
+      },
+      "allCategories": "Tất cả danh mục",
+      "allStatuses": "Tất cả trạng thái",
+      "allBranches": "Tất cả chi nhánh"
+    },
+    "table": {
+      "title": "Danh sách Sản phẩm",
+      "description": "Xem và quản lý tất cả {count} sản phẩm trong hệ thống",
+      "loading": {
+        "loading": "Đang tải dữ liệu...",
+        "updating": "Đang cập nhật dữ liệu..."
+      },
+      "headers": {
+        "name": "Tên sản phẩm",
+        "code": "Mã sản phẩm",
+        "product": "Sản phẩm",
+        "category": "Danh mục",
+        "origin": "Xuất xứ",
+        "price": "Giá",
+        "unit": "Đơn vị",
+        "branches": "Chi nhánh",
+        "tags": "Tags",
+        "status": "Trạng thái",
+        "createdAt": "Ngày tạo",
+        "actions": "Thao tác"
+      },
+      "actions": "Thao tác",
+      "openMenu": "Mở menu",
+      "viewDetail": "Xem chi tiết",
+      "edit": "Chỉnh sửa",
+      "manageTags": "Quản lý Tags",
+      "activate": "Kích hoạt",
+      "deactivate": "Tạm ngưng",
+      "delete": "Xóa"
+    },
+        "cards": {
+        "products": "Sản phẩm",
+        "templates": "Template",
+        "created": "Tạo",
+        "status": "Trạng thái",
+        "category": "Danh mục",
+        "origin": "Xuất xứ",
+        "price": "Giá",
+        "unit": "Đơn vị",
+        "branches": "Chi nhánh",
+        "tags": "Tags",
+        "notAssigned": "Chưa phân bổ"
+      },
+    "toasts": {
+      "createSuccess": {
+        "title": "Thành công",
+        "description": "Sản phẩm đã được tạo thành công"
+      },
+      "createError": {
+        "title": "Lỗi",
+        "description": "Có lỗi xảy ra khi tạo sản phẩm"
+      },
+      "updateSuccess": {
+        "title": "Thành công",
+        "description": "Sản phẩm đã được cập nhật thành công"
+      },
+      "updateError": {
+        "title": "Lỗi",
+        "description": "Có lỗi xảy ra khi cập nhật sản phẩm"
+      },
+      "statusUpdateSuccess": {
+        "title": "Thành công",
+        "description": "Trạng thái sản phẩm đã được cập nhật"
+      },
+      "statusUpdateError": {
+        "title": "Lỗi",
+        "description": "Có lỗi xảy ra khi cập nhật trạng thái sản phẩm"
+      },
+      "deleteTagsSuccess": {
+        "title": "Thành công",
+        "description": "Tags đã được xóa khỏi sản phẩm"
+      },
+      "deleteTagsError": {
+        "title": "Lỗi",
+        "description": "Có lỗi xảy ra khi xóa tags"
+      },
+      "addTagsSuccess": {
+        "title": "Thành công",
+        "description": "Tags đã được thêm vào sản phẩm"
+      },
+      "addTagsError": {
+        "title": "Lỗi",
+        "description": "Có lỗi xảy ra khi thêm tags"
+      },
+      "deleteSuccess": {
+        "title": "Thành công",
+        "description": "Sản phẩm đã được xóa thành công"
+      },
+      "deleteError": {
+        "title": "Lỗi",
+        "description": "Có lỗi xảy ra khi xóa sản phẩm"
+      }
+    }
+  },
+  "categories": {
+    "title": "Quản lý Danh mục",
+    "subtitle": "Quản lý cây danh mục sản phẩm",
+    "loading": "Đang tải dữ liệu...",
+    "error": "Có lỗi xảy ra khi tải dữ liệu",
+    "create": {
+      "title": "Thêm Danh mục mới",
+      "subtitle": "Tạo danh mục sản phẩm mới",
+      "button": "Thêm Danh mục",
+      "fields": {
+        "name": "Tên danh mục",
+        "parent": "Danh mục cha"
+      },
+      "placeholders": {
+        "name": "Nhập tên danh mục...",
+        "parent": "Chọn danh mục cha (tùy chọn)"
+      },
+      "buttons": {
+        "create": "Tạo Danh mục",
+        "creating": "Đang tạo..."
+      }
+    },
+    "edit": {
+      "title": "Chỉnh sửa Danh mục",
+      "subtitle": "Cập nhật thông tin danh mục",
+      "fields": {
+        "name": "Tên danh mục",
+        "parent": "Danh mục cha"
+      },
+      "placeholders": {
+        "name": "Nhập tên danh mục...",
+        "parent": "Chọn danh mục cha (tùy chọn)"
+      },
+      "buttons": {
+        "update": "Cập nhật Danh mục",
+        "updating": "Đang cập nhật..."
+      }
+    },
+    "delete": {
+      "title": "Xác nhận xóa danh mục",
+      "description": "Bạn có chắc chắn muốn xóa danh mục {name}? Hành động này không thể hoàn tác.",
+      "warning": "Cảnh báo: Xóa danh mục sẽ xóa tất cả danh mục con và sản phẩm liên quan.",
+      "note": "⚠️ Lưu ý:",
+      "noteDescription": "Nếu danh mục này đang được sử dụng bởi sản phẩm hoặc có danh mục con, bạn sẽ không thể xóa được. Hãy xóa danh mục khỏi sản phẩm và xóa các danh mục con trước.",
+      "cannotUndo": "Hành động này không thể hoàn tác.",
+      "childCategories": "Có {count} danh mục con",
+      "buttons": {
+        "cancel": "Hủy",
+        "delete": "Xóa Danh mục",
+        "deleting": "Đang xóa..."
+      }
+    },
+    "stats": {
+      "totalCategories": "Tổng danh mục",
+      "rootCategories": "Danh mục gốc",
+      "childCategories": "Danh mục con",
+      "avgDepth": "Độ sâu TB",
+      "highestLevel": "Cấp độ cao nhất",
+      "level2": "Cấp độ 2",
+      "totalProducts": "Tổng sản phẩm"
+    },
+    "table": {
+      "headers": {
+        "name": "Tên danh mục",
+        "parent": "Danh mục cha",
+        "products": "Sản phẩm",
+        "children": "Danh mục con",
+        "actions": "Thao tác"
+      },
+      "actions": {
+        "edit": "Chỉnh sửa",
+        "delete": "Xóa",
+        "expand": "Mở rộng",
+        "collapse": "Thu gọn"
+      },
+      "noParent": "Không có",
+      "noChildren": "Không có",
+      "noProducts": "0 sản phẩm",
+      "noParentOption": "📁 Không có danh mục cha (Danh mục gốc)"
+    },
+    "search": {
+      "title": "Tìm kiếm",
+      "placeholder": "Tìm kiếm theo tên danh mục..."
+    },
+    "tree": {
+      "title": "Cây danh mục",
+      "description": "Danh sách danh mục theo cấu trúc cây",
+      "headers": {
+        "category": "Danh mục",
+        "children": "Danh mục con",
+        "id": "ID",
+        "actions": "Thao tác"
+      },
+      "noData": "Chưa có dữ liệu",
+      "openMenu": "Mở menu"
+    },
+    "toasts": {
+      "createSuccess": {
+        "title": "Thành công",
+        "description": "Danh mục đã được tạo thành công"
+      },
+      "createError": {
+        "title": "Lỗi",
+        "description": "Có lỗi xảy ra khi tạo danh mục"
+      },
+      "updateSuccess": {
+        "title": "Thành công",
+        "description": "Danh mục đã được cập nhật thành công"
+      },
+      "updateError": {
+        "title": "Lỗi",
+        "description": "Có lỗi xảy ra khi cập nhật danh mục"
+      },
+      "deleteSuccess": {
+        "title": "Thành công",
+        "description": "Danh mục đã được xóa thành công"
+      },
+      "deleteError": {
+        "title": "Lỗi",
+        "description": "Có lỗi xảy ra khi xóa danh mục"
+      }
+    }
+  },
+  "tags": {
+    "title": "Quản lý Tags",
+    "subtitle": "Quản lý danh sách tags và thông tin",
+    "create": {
+      "title": "Tạo Tag Mới",
+      "subtitle": "Thêm tag mới vào hệ thống",
+      "fields": {
+        "name": "Tên tag",
+        "description": "Mô tả"
+      },
+      "placeholders": {
+        "name": "Nhập tên tag...",
+        "description": "Nhập mô tả tag..."
+      },
+      "buttons": {
+        "create": "Tạo Tag"
+      },
+      "loading": {
+        "creating": "Đang tạo tag..."
+      }
+    },
+    "edit": {
+      "title": "Chỉnh sửa Tag",
+      "subtitle": "Cập nhật thông tin tag",
+      "fields": {
+        "name": "Tên tag",
+        "description": "Mô tả"
+      },
+      "placeholders": {
+        "name": "Nhập tên tag...",
+        "description": "Nhập mô tả tag..."
+      },
+      "buttons": {
+        "update": "Cập nhật Tag"
+      },
+      "loading": {
+        "updating": "Đang cập nhật tag..."
+      }
+    },
+    "delete": {
+      "title": "Xóa Tag",
+      "description": "Bạn có chắc chắn muốn xóa tag này? Hành động này không thể hoàn tác.",
+      "buttons": {
+        "cancel": "Hủy",
+        "delete": "Xóa Tag"
+      },
+      "loading": {
+        "deleting": "Đang xóa tag..."
+      }
+    },
+    "stats": {
+      "totalTags": "Tổng tags",
+      "activeTags": "Tags hoạt động",
+      "inactiveTags": "Tags không hoạt động",
+      "totalProducts": "Tổng sản phẩm",
+      "page": "Trang",
+      "allTags": "Tất cả tags",
+      "ofTotal": "trên tổng số",
+      "popularTag": "Tag phổ biến",
+      "popularTagId": "ID tag phổ biến",
+      "avgProductsPerTag": "TB sản phẩm/tag",
+      "productsPerTag": "Sản phẩm/tag"
+    },
+    "search": {
+      "placeholder": "Tìm kiếm theo tên tag..."
+    },
+    "table": {
+      "title": "Danh sách Tags",
+      "description": "Tổng cộng {count} tags trong hệ thống",
+      "headers": {
+        "tag": "Tag",
+        "name": "Tên",
+        "description": "Mô tả",
+        "products": "Sản phẩm",
+        "createdAt": "Ngày tạo",
+        "actions": "Thao tác"
+      },
+      "loading": {
+        "loading": "Đang tải dữ liệu...",
+        "updating": "Đang cập nhật dữ liệu..."
+      },
+      "actions": "Thao tác",
+      "edit": "Chỉnh sửa",
+      "delete": "Xóa",
+      "viewDetail": "Xem chi tiết"
+    },
+    "cards": {
+      "tags": "Tags",
+      "created": "Tạo",
+      "description": "Mô tả",
+      "products": "Sản phẩm",
+      "noDescription": "Không có mô tả"
+    },
+    "toasts": {
+      "createSuccess": {
+        "title": "Thành công!",
+        "message": "Tạo tag thành công!"
+      },
+      "createError": {
+        "title": "Lỗi!",
+        "message": "Có lỗi xảy ra khi tạo tag"
+      },
+      "updateSuccess": {
+        "title": "Thành công!",
+        "message": "Cập nhật tag thành công!"
+      },
+      "updateError": {
+        "title": "Lỗi!",
+        "message": "Có lỗi xảy ra khi cập nhật tag"
+      },
+      "deleteSuccess": {
+        "title": "Thành công!",
+        "message": "Xóa tag thành công!"
+      },
+      "deleteError": {
+        "title": "Lỗi!",
+        "message": "Có lỗi xảy ra khi xóa tag"
+      }
+    },
+    "validation": {
+      "tagNameRequired": "Vui lòng nhập tên tag"
+    },
+    "accessibility": {
+      "openMenu": "Mở menu"
+    },
+    "labels": {
+      "id": "ID",
+      "updated": "Cập nhật",
+      "idWithColon": "ID:"
+    }
+  },
+  "printTemplates": {
+    "title": "Quản lý Mẫu In",
+    "subtitle": "Quản lý các mẫu in sản phẩm",
+    "loading": "Đang tải dữ liệu...",
+    "error": "Có lỗi xảy ra khi tải dữ liệu",
+    "na": "N/A",
+    "id": "ID",
+    "retry": "Thử lại",
+    "searchAndFilter": "Tìm kiếm & Lọc",
+    "copy": "Sao chép",
+    "create": {
+      "title": "Tạo Mẫu In Mới",
+      "subtitle": "Tạo mẫu in sản phẩm mới",
+      "button": "Tạo Mẫu In",
+      "cancel": "Hủy",
+      "creating": "Đang tạo...",
+      "createTemplate": "Tạo Template",
+      "tabs": {
+        "basic": "Thông tin cơ bản",
+        "content": "Từ ngữ sử dụng",
+        "preview": "Xem trước"
+      },
+      "fields": {
+        "title": "Tiêu đề mẫu",
+        "country": "Quốc gia",
+        "brand": "Thương hiệu",
+        "originCountry": "Xuất xứ",
+        "productCode": "Mã sản phẩm",
+        "originalPrice": "Giá gốc",
+        "unitPrice": "Đơn giá",
+        "currency": "Tiền tệ",
+        "vendor": "Nhà cung cấp",
+        "content": "Nội dung"
+      },
+      "placeholders": {
+        "title": "Nhập tiêu đề mẫu...",
+        "brand": "Nhập thương hiệu...",
+        "originCountry": "Nhập xuất xứ...",
+        "productCode": "Nhập mã sản phẩm...",
+        "originalPrice": "Nhập giá gốc...",
+        "unitPrice": "Nhập đơn giá...",
+        "currency": "VD: $, €, ¥, ₫...",
+        "vendor": "Nhập nhà cung cấp...",
+        "content": "Nhập nội dung mẫu..."
+      },
+      "buttons": {
+        "create": "Tạo Mẫu",
+        "creating": "Đang tạo...",
+        "createTemplate": "Tạo Template"
+      }
+    },
+    "edit": {
+      "edit": "Chỉnh sửa",
+      "title": "Chỉnh sửa Mẫu In",
+      "subtitle": "Cập nhật thông tin mẫu in",
+      "editTemplate": "Chỉnh sửa Template",
+      "tabs": {
+        "basic": "Thông tin cơ bản",
+        "content": "Từ ngữ sử dụng",
+        "analytics": "Thống kê"
+      },
+      "templateTitle": "Tiêu đề Template",
+      "country": "Quốc gia",
+      "brandWords": "Từ ngữ cho Thương hiệu",
+      "brandWordsPlaceholder": "VD: Thương hiệu, Brand, Nhãn hiệu...",
+      "originCountryWords": "Từ ngữ cho Xuất xứ",
+      "originCountryWordsPlaceholder": "VD: Xuất xứ, Origin, Nguồn gốc...",
+      "productCodeWords": "Từ ngữ cho Mã sản phẩm",
+      "productCodeWordsPlaceholder": "VD: Mã SP, Product Code, SKU...",
+      "originalPriceWords": "Từ ngữ cho Giá gốc",
+      "originalPriceWordsPlaceholder": "VD: Giá gốc, Original Price, MSRP...",
+      "unitPriceWords": "Từ ngữ cho Giá đơn vị",
+      "unitPriceWordsPlaceholder": "VD: Giá đơn vị, Unit Price, Price per unit...",
+      "currencySymbol": "Ký hiệu tiền tệ",
+      "currencySymbolPlaceholder": "VD: $, €, ¥, ₫...",
+      "vendorWords": "Từ ngữ cho Nhà cung cấp",
+      "vendorWordsPlaceholder": "VD: Nhà cung cấp, Vendor, Supplier...",
+      "cancel": "Hủy",
+      "saveChanges": "Lưu thay đổi",
+      "saving": "Đang lưu...",
+      "fields": {
+        "title": "Tiêu đề mẫu",
+        "country": "Quốc gia",
+        "brand": "Thương hiệu",
+        "originCountry": "Xuất xứ",
+        "productCode": "Mã sản phẩm",
+        "originalPrice": "Giá gốc",
+        "unitPrice": "Đơn giá",
+        "currency": "Tiền tệ",
+        "vendor": "Nhà cung cấp"
+      },
+      "placeholders": {
+        "title": "Nhập tiêu đề mẫu...",
+        "brand": "Nhập thương hiệu...",
+        "originCountry": "Nhập xuất xứ...",
+        "productCode": "Nhập mã sản phẩm...",
+        "originalPrice": "Nhập giá gốc...",
+        "unitPrice": "Nhập đơn giá...",
+        "vendor": "Nhập nhà cung cấp..."
+      },
+      "buttons": {
+        "update": "Cập nhật Mẫu",
+        "updating": "Đang cập nhật...",
+        "cancel": "Hủy",
+        "saving": "Đang lưu...",
+        "saveChanges": "Lưu thay đổi"
+      }
+    },
+    "delete": {
+      "title": "Xác nhận xóa mẫu in",
+      "description": "Bạn có chắc chắn muốn xóa mẫu in này? Hành động này không thể hoàn tác.",
+      "confirmDelete": "Xác nhận xóa template",
+      "confirmDeleteMessage": "Bạn có chắc chắn muốn xóa template \"{templateTitle}\"?",
+      "warning": "Lưu ý",
+      "warningMessage": "Template này đang được sử dụng cho quốc gia {countryName}. Việc xóa template có thể ảnh hưởng đến quá trình in ấn.",
+      "actionCannotBeUndone": "Hành động này không thể hoàn tác.",
+      "country": "Quốc gia",
+      "usageCount": "Lượt sử dụng",
+      "delete": "Xóa",
+      "buttons": {
+        "cancel": "Hủy",
+        "delete": "Xóa Mẫu",
+        "deleting": "Đang xóa...",
+        "deleteTemplate": "Xóa Template"
+      }
+    },
+    "stats": {
+      "totalTemplates": "Tổng mẫu in",
+      "activeTemplates": "Mẫu hoạt động",
+      "totalCountries": "Quốc gia",
+      "avgTemplatesPerCountry": "TB mẫu/quốc gia",
+      "allTemplates": "Tất cả template",
+      "totalUsage": "Tổng lượt sử dụng",
+      "supportedCountries": "Đang hỗ trợ",
+      "usageCount": "lượt sử dụng",
+      "usageLevel": "Mức độ sử dụng",
+      "high": "Cao",
+      "medium": "Trung bình",
+      "low": "Thấp",
+      "mostPopular": "Phổ biến nhất"
+    },
+    "search": {
+      "title": "Tìm kiếm",
+      "placeholder": "Tìm kiếm theo tiêu đề mẫu...",
+      "allCountries": "Tất cả quốc gia",
+      "searchAndFilter": "Tìm kiếm & Lọc",
+      "filter": {
+        "selectCountry": "Chọn quốc gia",
+        "allCountries": "Tất cả quốc gia"
+      }
+    },
+    "table": {
+      "title": "Danh sách Mẫu In",
+      "description": "Tổng {count} mẫu in trong hệ thống",
+      "headers": {
+        "template": "Mẫu In",
+        "title": "Tiêu đề",
+        "country": "Quốc gia",
+        "brand": "Thương hiệu",
+        "currency": "Tiền tệ",
+        "createdAt": "Ngày tạo",
+        "actions": "Thao tác"
+      },
+      "actions": {
+        "actions": "Thao tác",
+        "edit": "Chỉnh sửa",
+        "delete": "Xóa",
+        "preview": "Xem trước",
+        "copy": "Sao chép"
+      },
+      "noData": "Chưa có dữ liệu"
+    },
+    "list": {
+      "templateList": "Danh sách Template",
+      "totalTemplates": "Tổng cộng {count} template",
+      "template": "Template",
+      "country": "Quốc gia",
+      "content": "Nội dung",
+      "usageCount": "Lượt sử dụng",
+      "updatedAt": "Cập nhật",
+      "actions": "Thao tác"
+    },
+    "analytics": {
+      "usageCount": "Lượt sử dụng",
+      "usageLevel": "Mức độ sử dụng",
+      "wordsUsed": "Các từ ngữ được sử dụng"
+    },
+    "cards": {
+      "template": "Mẫu In",
+      "created": "Ngày tạo",
+      "country": "Quốc gia",
+      "brand": "Thương hiệu",
+      "currency": "Tiền tệ",
+      "noBrand": "Không có thương hiệu"
+    },
+    "copy": "Sao chép",
+    "preview": {
+      "title": "Xem trước Template",
+      "close": "Đóng",
+      "preview": "Xem trước",
+      "previewTemplate": "Xem trước Template",
+      "wordsUsed": "Các từ ngữ được sử dụng",
+      "wordsUsedInTemplate": "Từ ngữ sử dụng trong Template",
+      "notEntered": "Chưa nhập",
+      "notSelected": "Chưa chọn",
+      "usageCount": "Lượt sử dụng",
+      "usageLevel": "Mức độ sử dụng"
+    },
+    "toasts": {
+      "createSuccess": {
+        "title": "Thành công",
+        "message": "Tạo mẫu in thành công!"
+      },
+      "createError": {
+        "title": "Lỗi",
+        "message": "Có lỗi xảy ra khi tạo mẫu in"
+      },
+      "updateSuccess": {
+        "title": "Thành công",
+        "message": "Cập nhật mẫu in thành công!"
+      },
+      "updateError": {
+        "title": "Lỗi",
+        "message": "Có lỗi xảy ra khi cập nhật mẫu in"
+      },
+      "deleteSuccess": {
+        "title": "Thành công",
+        "message": "Xóa mẫu in thành công!"
+      },
+      "deleteError": {
+        "title": "Lỗi",
+        "message": "Có lỗi xảy ra khi xóa mẫu in"
+      },
+      "validation": {
+        "requiredFields": "Vui lòng điền đầy đủ thông tin bắt buộc"
+      }
+    }
+  },
+  "printSelect": {
+    "title": "Chọn sản phẩm In",
+    "subtitle": "Quản lý danh sách sản phẩm được chọn để in với giao diện hiện đại",
+    "na": "N/A",
+    "stats": {
+      "totalProducts": "Tổng sản phẩm",
+      "inPrintList": "Trong danh sách in",
+      "active": "Đang hoạt động",
+      "readyToPrint": "Sẵn sàng in",
+      "totalPrints": "Tổng lượt in",
+      "totalPrintCount": "Lượt in tổng cộng",
+      "topProduct": "Top sản phẩm",
+      "printCount": "lượt in"
+    },
+    "search": {
+      "title": "Tìm kiếm & Lọc nâng cao",
+      "placeholder": "Tìm kiếm theo tên sản phẩm, mã sản phẩm...",
+      "selectCountry": "Chọn quốc gia",
+      "allCountries": "Tất cả quốc gia",
+      "status": "Trạng thái",
+      "all": "Tất cả",
+      "active": "Hoạt động",
+      "inactive": "Tạm dừng"
+    },
+    "loading": "Đang tải dữ liệu...",
+    "actions": {
+      "actions": "Thao tác",
+      "printNow": "In ngay",
+      "cannotPrint": "Không thể in (Tạm dừng)",
+      "edit": "Chỉnh sửa",
+      "delete": "Xóa",
+      "deleting": "Đang xóa..."
+    },
+    "addProduct": {
+      "addProduct": "Thêm sản phẩm",
+      "title": "Thêm sản phẩm vào danh sách in",
+      "description": "Chọn sản phẩm và cấu hình thông tin in ấn",
+      "tabs": {
+        "basic": "Thông tin cơ bản",
+        "config": "Cấu hình in"
+      },
+      "fields": {
+        "product": "Sản phẩm",
+        "selectProduct": "Chọn sản phẩm",
+        "searchProduct": "Tìm kiếm sản phẩm...",
+        "countryTemplate": "Mẫu in quốc gia",
+        "selectCountryTemplate": "Chọn mẫu in quốc gia",
+        "salePrice": "Giá khuyến mãi (tùy chọn)",
+        "enterSalePrice": "Nhập giá khuyến mãi",
+        "saleStartTime": "Thời gian bắt đầu bán",
+        "saleEndTime": "Thời gian kết thúc bán",
+        "status": "Trạng thái",
+        "selectStatus": "Chọn trạng thái",
+        "active": "Hoạt động",
+        "inactive": "Tạm dừng",
+        "option1": "Tùy chọn 1 (tùy chọn)",
+        "enterOption1": "Nhập tùy chọn 1",
+        "option2": "Tùy chọn 2 (tùy chọn)",
+        "enterOption2": "Nhập tùy chọn 2",
+        "option3": "Tùy chọn 3 (tùy chọn)",
+        "enterOption3": "Nhập tùy chọn 3"
+      },
+      "buttons": {
+        "adding": "Đang thêm...",
+        "addToList": "Thêm vào danh sách"
+      }
+    },
+    "buttons": {
+      "printSelected": "In đã chọn"
+    },
+    "editInfo": {
+      "title": "Chỉnh sửa thông tin in",
+      "description": "Cập nhật thông tin sản phẩm trong danh sách in",
+      "tabs": {
+        "basic": "Thông tin cơ bản",
+        "config": "Cấu hình in"
+      },
+      "fields": {
+        "product": "Sản phẩm",
+        "selectProduct": "Chọn sản phẩm",
+        "countryTemplate": "Mẫu in quốc gia",
+        "selectCountryTemplate": "Chọn mẫu in quốc gia",
+        "salePrice": "Giá khuyến mãi (tùy chọn)",
+        "enterSalePrice": "Nhập giá bán khuyến mãi",
+        "saleStartTime": "Thời gian bắt đầu bán",
+        "saleEndTime": "Thời gian kết thúc bán",
+        "status": "Trạng thái",
+        "selectStatus": "Chọn trạng thái",
+        "active": "Hoạt động",
+        "inactive": "Tạm dừng",
+        "option1": "Tùy chọn 1 (tùy chọn)",
+        "enterOption1": "Nhập tùy chọn 1",
+        "option2": "Tùy chọn 2 (tùy chọn)",
+        "enterOption2": "Nhập tùy chọn 2",
+        "option3": "Tùy chọn 3 (tùy chọn)",
+        "enterOption3": "Nhập tùy chọn 3"
+      },
+      "buttons": {
+        "updating": "Đang cập nhật...",
+        "updateInfo": "Cập nhật thông tin"
+      }
+    },
+    "editNum": {
+      "title": "Cập nhật cấu hình số lượng in",
+      "description": "Chỉnh sửa số lượng cấu hình in cho tất cả các khổ giấy",
+      "placeholders": {
+        "a4": "Số lượng A4",
+        "a5": "Số lượng A5",
+        "v1": "Số lượng V1",
+        "v2": "Số lượng V2",
+        "v3": "Số lượng V3",
+        "i4": "Số lượng I4"
+      },
+      "info": {
+        "product": "Sản phẩm",
+        "origin": "Xuất xứ",
+        "totalQuantity": "Tổng số lượng",
+        "copies": "bản"
+      },
+      "buttons": {
+        "cancel": "Hủy",
+        "updating": "Đang cập nhật...",
+        "updateAll": "Cập nhật tất cả"
+      }
+    },
+    "productList": {
+      "title": "Danh sách sản phẩm chọn in",
+      "description": "Hiển thị {filtered} / {total} sản phẩm",
+      "notSet": "Chưa thiết lập",
+      "noOptions": "Không có",
+      "openMenu": "Mở menu",
+      "headers": {
+        "product": "Sản phẩm",
+        "countryTemplate": "Mẫu in quốc gia",
+        "originalPrice": "Giá gốc",
+        "salePrice": "Giá khuyến mãi",
+        "saleTime": "Thời gian bán",
+        "options": "Tùy chọn",
+        "printConfig": "Cấu hình số lượng in",
+        "status": "Trạng thái",
+        "createdAt": "Ngày tạo",
+        "actions": "Thao tác"
+      }
+    },
+    "printDialog": {
+      "title": "In sản phẩm ({count} sản phẩm)",
+      "description": "Cấu hình và thực hiện in cho các sản phẩm đã chọn",
+      "itemsToPrint": "Sản phẩm sẽ in:",
+      "paused": "Tạm dừng",
+      "warning": {
+        "inactiveItems": "Cảnh báo: {count} sản phẩm có trạng thái không hoạt động",
+        "onlyActive": "Chỉ sản phẩm có trạng thái \"Hoạt động\" mới được in"
+      },
+      "settings": {
+        "template": "Mẫu in",
+        "templateFor": "Template cho {country}",
+        "multipleTemplates": "Nhiều mẫu in ({count} mẫu)",
+        "productsWithTemplates": "{products} sản phẩm với {templates} mẫu in khác nhau",
+        "noTemplateFound": "Không tìm thấy mẫu in quốc gia",
+        "printSize": "Khổ in",
+        "customSize1": "Khổ tùy chỉnh 1",
+        "customSize2": "Khổ tùy chỉnh 2",
+        "customSize3": "Khổ tùy chỉnh 3",
+        "labelTemplate": "Mẫu nhãn I4",
+        "copies": "Số bản in",
+        "quantityFromConfig": "Số lượng được lấy từ cấu hình in khổ {size}",
+        "printInfo": "Thông tin in",
+        "totalPages": "Tổng số trang",
+        "printNote": "Ghi chú in (tùy chọn)",
+        "enterPrintNote": "Nhập ghi chú cho lần in này...",
+        "noteWillBeSaved": "Ghi chú sẽ được lưu vào lịch sử in",
+        "previewContent": "Xem trước nội dung sẽ in",
+        "previewPrintContent": "Xem trước nội dung in",
+        "previewDescription": "Preview nội dung sẽ được in với {count} sản phẩm"
+      },
+      "preview": {
+        "template": "Template {size}",
+        "productCopy": "Sản phẩm {product}/{total} - Bản {copy}/{copies}"
+      },
+      "progress": {
+        "processing": "Đang xử lý in...",
+        "pleaseWait": "Vui lòng chờ"
+      },
+      "footer": {
+        "total": "Tổng",
+        "pages": "trang",
+        "cancel": "Hủy"
+      },
+      "buttons": {
+        "printing": "Đang in...",
+        "startPrint": "Bắt đầu in"
+      }
+    },
+    "deleteDialog": {
+      "title": "Xác nhận xóa sản phẩm",
+      "description": "Bạn có chắc chắn muốn xóa sản phẩm <strong>{productName}</strong> khỏi danh sách in?",
+      "warning": "⚠️ Hành động này không thể hoàn tác.",
+      "info": {
+        "code": "Mã",
+        "origin": "Xuất xứ",
+        "paperSize": "Khổ giấy"
+      },
+      "buttons": {
+        "cancel": "Hủy",
+        "deleting": "Đang xóa...",
+        "deleteProduct": "Xóa sản phẩm"
+      }
+    },
+    "status": {
+      "active": "Hoạt động",
+      "inactive": "Tạm dừng"
+    },
+    "priority": {
+      "high": "Cao",
+      "medium": "Trung bình",
+      "low": "Thấp"
+    },
+    "card": {
+      "printConfig": "Cấu hình số lượng in:",
+      "paperSize": "Khổ giấy",
+      "quantity": "Số lượng",
+      "saleTime": "Thời gian bán",
+      "createdAt": "Ngày tạo",
+      "updated": "Cập nhật"
+    },
+    "toasts": {
+      "addSuccess": "Thêm sản phẩm vào danh sách in thành công!",
+      "addError": "Có lỗi xảy ra khi thêm sản phẩm!",
+      "deleteSuccess": "Đã xóa sản phẩm khỏi danh sách in!",
+      "deleteError": "Có lỗi xảy ra khi xóa sản phẩm!",
+      "updateSuccess": "Đã cập nhật thông tin sản phẩm!",
+      "updateError": "Có lỗi xảy ra khi cập nhật sản phẩm!",
+      "updateNumSuccess": "Đã cập nhật số lượng in thành công!",
+      "updateNumError": "Có lỗi xảy ra khi cập nhật số lượng in!",
+      "printError": "Có lỗi xảy ra khi gửi lệnh in!",
+      "requiredFields": "Vui lòng điền đầy đủ thông tin bắt buộc!",
+      "cannotPrintProduct": "Không thể in sản phẩm \"{productName}\" vì trạng thái hiện tại là {status}",
+      "minQuantity": "Số lượng phải lớn hơn hoặc bằng 1!",
+      "negativeQuantity": "Số lượng không được âm!",
+      "updateAllNumSuccess": "Đã cập nhật tất cả số lượng in thành công!",
+      "updateAllNumError": "Có lỗi xảy ra khi cập nhật số lượng in!"
+    },
+    "templateFor": "Template cho {country}",
+    "printLogNote": "In {copies} bản với template {template}{note}",
+    "printLogNote.note": "Ghi chú",
+    "printAll": "In tất cả ({active}/{total})"
+  },
+  "printLogs": {
+    "title": "Lịch sử In",
+    "subtitle": "Theo dõi tất cả hoạt động in ấn trong hệ thống",
+    "na": "N/A",
+    "loading": "Đang tải lịch sử in...",
+    "status": {
+      "success": "Thành công",
+      "error": "Lỗi",
+      "processing": "Đang xử lý",
+      "cancelled": "Đã hủy"
+    },
+    "timeAgo": {
+      "justNow": "Vừa xong",
+      "minutesAgo": "{minutes} phút trước",
+      "hoursAgo": "{hours} giờ trước",
+      "daysAgo": "{days} ngày trước"
+    },
+    "stats": {
+      "todayPrints": "Lượt in hôm nay",
+      "totalPrints": "Tổng lượt in",
+      "activeTemplates": "Template đang dùng",
+      "topAdmin": "Top Admin",
+      "topProduct": "Top Sản phẩm",
+      "today": "Hôm nay",
+      "allTime": "Tất cả thời gian",
+      "active": "Đang hoạt động",
+      "prints": "lượt in"
+    },
+    "search": {
+      "title": "Tìm kiếm & Lọc",
+      "table": "Bảng",
+      "timeline": "Timeline",
+      "placeholder": "Tìm kiếm theo admin, sản phẩm, template...",
+      "fromDate": "Từ ngày",
+      "toDate": "Đến ngày"
+    },
+    "table": {
+      "title": "Lịch sử in chi tiết",
+      "description": "Hiển thị {count} hoạt động in gần nhất",
+      "headers": {
+        "time": "Thời gian",
+        "admin": "Người thực hiện",
+        "product": "Sản phẩm",
+        "template": "Template",
+        "status": "Trạng thái",
+        "quantity": "Số lượng",
+        "actions": "Thao tác"
+      }
+    },
+    "timeline": {
+      "title": "Timeline View",
+      "description": "Xem hoạt động in theo thời gian",
+      "prints": "bản in"
+    },
+    "dialog": {
+      "title": "Chi tiết lịch sử in #{id}",
+      "description": "Thông tin chi tiết về hoạt động in này",
+      "admin": "Admin thực hiện",
+      "product": "Sản phẩm",
+      "template": "Template",
+      "quantity": "Số lượng in",
+      "copies": "bản",
+      "note": "Ghi chú",
+      "noNote": "Không có ghi chú"
+    },
+    "pagination": {
+      "showing": "Hiển thị {start} - {end} trong tổng số {total} bản ghi",
+      "previous": "Trước",
+      "next": "Sau"
+    }
+  },
+  "login": {
+    "title": "Đăng nhập",
+    "subtitle": "Đăng nhập để truy cập hệ thống quản trị",
+    "description": "Nhập thông tin đăng nhập của bạn",
+    "fields": {
+      "username": "Tên người dùng",
+      "password": "Mật khẩu"
+    },
+    "placeholders": {
+      "username": "Nhập tên người dùng",
+      "password": "Nhập mật khẩu"
+    },
+    "forgotPassword": "Quên mật khẩu?",
+    "loading": "Đang đăng nhập...",
+    "submit": "Đăng nhập",
+    "footer": {
+      "rights": "Tất cả quyền được bảo lưu."
+    },
+    "errors": {
+      "general": "Đã xảy ra lỗi. Vui lòng thử lại."
+    }
+  },
+  "forgotPassword": {
+    "title": "Quên mật khẩu",
+    "subtitle": "Khôi phục mật khẩu tài khoản",
+    "description": "Nhập email để nhận link khôi phục mật khẩu",
+    "fields": {
+      "email": "Email"
+    },
+    "placeholders": {
+      "email": "Nhập email của bạn"
+    },
+    "loading": "Đang gửi...",
+    "submit": "Gửi mã khôi phục",
+    "success": {
+      "title": "Email đã được gửi!",
+      "description": "Chúng tôi đã gửi link khôi phục mật khẩu đến {email}",
+      "note": "Vui lòng kiểm tra hộp thư và spam folder. Link có hiệu lực trong 24 giờ."
+    },
+    "backToLogin": "Quay lại đăng nhập",
+    "footer": {
+      "rights": "Tất cả quyền được bảo lưu."
+    },
+    "errors": {
+      "general": "Đã xảy ra lỗi. Vui lòng thử lại."
+    }
+  },
+  "resetPassword": {
+    "title": "Đổi mật khẩu",
+    "subtitle": "Đổi mật khẩu tài khoản",
+    "description": "Cập nhật mật khẩu mới cho tài khoản của bạn",
+    "fields": {
+      "resetCode": "Nhập mã xác thực",
+      "newPassword": "Mật khẩu mới",
+      "confirmPassword": "Xác nhận mật khẩu mới"
+    },
+    "placeholders": {
+      "resetCode": "Nhập mã xác thực 6 số",
+      "newPassword": "Nhập mật khẩu mới",
+      "confirmPassword": "Nhập lại mật khẩu mới"
+    },
+    "resetCodeNote": "Mã xác thực đã được gửi đến email của bạn",
+    "passwordStrength": {
+      "strong": "Mật khẩu mạnh",
+      "weak": "Cần cải thiện"
+    },
+    "requirements": {
+      "title": "Yêu cầu mật khẩu",
+      "minLength": "Ít nhất 8 ký tự",
+      "uppercase": "Có chữ hoa",
+      "lowercase": "Có chữ thường",
+      "numbers": "Có số",
+      "special": "Có ký tự đặc biệt"
+    },
+    "passwordMatch": {
+      "match": "Mật khẩu khớp",
+      "mismatch": "Mật khẩu không khớp"
+    },
+    "loading": "Đang cập nhật...",
+    "submit": "Cập nhật mật khẩu",
+    "success": {
+      "title": "Đổi mật khẩu thành công!",
+      "description": "Mật khẩu của bạn đã được cập nhật. Vui lòng đăng nhập lại với mật khẩu mới.",
+      "securityNote": "Để bảo mật tài khoản, bạn sẽ được đăng xuất khỏi tất cả thiết bị khác.",
+      "loginAgain": "Đăng nhập lại"
+    },
+    "backToDashboard": "Quay lại Dashboard",
+    "footer": {
+      "rights": "Tất cả quyền được bảo lưu."
+    },
+    "errors": {
+      "general": "Đã xảy ra lỗi. Vui lòng thử lại.",
+      "passwordRequirements": "Mật khẩu mới không đáp ứng yêu cầu bảo mật",
+      "passwordMismatch": "Mật khẩu xác nhận không khớp"
+    }
+  }
 }

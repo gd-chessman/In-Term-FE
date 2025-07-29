@@ -29,6 +29,7 @@ import { Label } from "@/components/ui/label"
 import { Plus, Search, MoreHorizontal, Edit, Trash2, Globe, Flag, MapPin, FileText, TrendingUp, Loader2, Grid, List } from "lucide-react"
 import { getCountries, createCountry, updateCountry, deleteCountry } from "@/services/CountryService"
 import { toast } from "sonner"
+import { useLang } from "@/lang/useLang"
 
 // Helper function to get flag emoji from country code
 const getFlagEmoji = (countryCode: string) => {
@@ -40,6 +41,7 @@ const getFlagEmoji = (countryCode: string) => {
 }
 
 export default function CountriesPage() {
+  const { t } = useLang()
   const searchParams = useSearchParams()
   const [searchTerm, setSearchTerm] = useState("")
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
@@ -74,15 +76,15 @@ export default function CountriesPage() {
     mutationFn: createCountry,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['countries'] })
-      toast.success("Thêm quốc gia thành công!")
+      toast.success(t('countries.toasts.createSuccess'))
       setIsCreateDialogOpen(false)
       setFormData({ country_name: "", country_code: "" })
     },
     onError: (error: any) => {
       if (error?.status === 409) {
-        toast.error("Quốc gia đã tồn tại, bị trùng tên hoặc mã quốc gia")
+        toast.error(t('countries.toasts.createErrorDuplicate'))
       } else {
-      toast.error("Có lỗi xảy ra khi thêm quốc gia")
+      toast.error(t('countries.toasts.createError'))
       }
     }
   })
@@ -92,13 +94,13 @@ export default function CountriesPage() {
     mutationFn: ({ id, item }: { id: number; item: any }) => updateCountry(id, item),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['countries'] })
-      toast.success("Cập nhật quốc gia thành công!")
+      toast.success(t('countries.toasts.updateSuccess'))
       setIsEditDialogOpen(false)
       setEditingCountry(null)
       setFormData({ country_name: "", country_code: "" })
     },
     onError: (error: any) => {
-      toast.error(error?.response?.data?.message || "Có lỗi xảy ra khi cập nhật quốc gia")
+      toast.error(error?.response?.data?.message || t('countries.toasts.updateError'))
     }
   })
 
@@ -107,12 +109,12 @@ export default function CountriesPage() {
     mutationFn: deleteCountry,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['countries'] })
-      toast.success("Xóa quốc gia thành công!")
+      toast.success(t('countries.toasts.deleteSuccess'))
       setIsDeleteDialogOpen(false)
       setDeletingCountry(null)
     },
     onError: (error: any) => {
-      toast.error(error?.response?.data?.message || "Có lỗi xảy ra khi xóa quốc gia")
+      toast.error(error?.response?.data?.message || t('countries.toasts.deleteError'))
     }
   })
 
@@ -126,7 +128,7 @@ export default function CountriesPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (!formData.country_name.trim() || !formData.country_code.trim()) {
-      toast.error("Vui lòng điền đầy đủ thông tin")
+      toast.error(t('countries.validation.fillAllFields'))
       return
     }
     createCountryMutation.mutate(formData)
@@ -136,7 +138,7 @@ export default function CountriesPage() {
   const handleUpdateSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (!formData.country_name.trim() || !formData.country_code.trim()) {
-      toast.error("Vui lòng điền đầy đủ thông tin")
+      toast.error(t('countries.validation.fillAllFields'))
       return
     }
     updateCountryMutation.mutate({
@@ -184,7 +186,7 @@ export default function CountriesPage() {
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="flex items-center space-x-2">
           <Loader2 className="h-6 w-6 animate-spin text-blue-600" />
-          <span className="text-slate-600">Đang tải dữ liệu quốc gia...</span>
+          <span className="text-slate-600">{t('countries.loading')}</span>
         </div>
       </div>
     )
@@ -194,9 +196,9 @@ export default function CountriesPage() {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
-          <div className="text-red-600 mb-2">Có lỗi xảy ra khi tải dữ liệu</div>
+          <div className="text-red-600 mb-2">{t('countries.error')}</div>
           <Button onClick={() => refetch()} variant="outline">
-            Thử lại
+            {t('countries.retry')}
           </Button>
         </div>
       </div>
@@ -209,9 +211,9 @@ export default function CountriesPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-4xl font-bold bg-gradient-to-r from-slate-900 via-blue-800 to-cyan-800 bg-clip-text text-transparent">
-            Quản lý Quốc gia
+            {t('countries.title')}
           </h1>
-          <p className="text-slate-600 mt-2">Quản lý danh sách quốc gia và template in</p>
+          <p className="text-slate-600 mt-2">{t('countries.subtitle')}</p>
         </div>
         <div className="flex items-center gap-2">
           <div className="flex items-center bg-white rounded-lg border shadow-sm">
@@ -236,38 +238,38 @@ export default function CountriesPage() {
             <DialogTrigger asChild>
               <Button className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl">
                 <Plus className="mr-2 h-4 w-4" />
-                Thêm Quốc gia
+                {t('countries.create.button')}
               </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[500px] bg-white/95 backdrop-blur-xl border-slate-200/60 shadow-2xl rounded-2xl">
               <DialogHeader>
-                <DialogTitle className="text-xl font-semibold text-slate-900">Thêm Quốc gia mới</DialogTitle>
-                <DialogDescription className="text-slate-600">Thêm quốc gia mới vào hệ thống</DialogDescription>
+                <DialogTitle className="text-xl font-semibold text-slate-900">{t('countries.create.title')}</DialogTitle>
+                <DialogDescription className="text-slate-600">{t('countries.create.subtitle')}</DialogDescription>
               </DialogHeader>
               <form onSubmit={handleSubmit}>
                 <div className="grid gap-6 py-4">
                   <div className="grid grid-cols-4 items-center gap-4">
                     <Label htmlFor="country_name" className="text-right font-medium text-slate-700">
-                      Tên quốc gia
+                      {t('countries.create.fields.name')}
                     </Label>
                     <Input
                       id="country_name"
                       value={formData.country_name}
                       onChange={(e) => handleInputChange('country_name', e.target.value)}
                       className="col-span-3 rounded-xl border-slate-200 focus:border-blue-300 focus:ring-2 focus:ring-blue-100"
-                      placeholder="Nhập tên quốc gia"
+                      placeholder={t('countries.create.placeholders.name')}
                       required
                     />
                   </div>
                   <div className="grid grid-cols-4 items-center gap-4">
                     <Label htmlFor="country_code" className="text-right font-medium text-slate-700">
-                      Mã quốc gia
+                      {t('countries.create.fields.code')}
                     </Label>
                     <Input
                       id="country_code"
                       value={formData.country_code}
                       onChange={(e) => handleInputChange('country_code', e.target.value.toUpperCase())}
-                      placeholder="VN, US, JP..."
+                      placeholder={t('countries.create.placeholders.code')}
                       className="col-span-3 rounded-xl border-slate-200 focus:border-blue-300 focus:ring-2 focus:ring-blue-100"
                       required
                     />
@@ -282,10 +284,10 @@ export default function CountriesPage() {
                     {createCountryMutation.isPending ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Đang thêm...
+                        {t('countries.create.buttons.adding')}
                       </>
                     ) : (
-                      'Thêm Quốc gia'
+                      t('countries.create.buttons.add')
                     )}
                   </Button>
                 </DialogFooter>
@@ -299,37 +301,37 @@ export default function CountriesPage() {
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent className="sm:max-w-[500px] bg-white/95 backdrop-blur-xl border-slate-200/60 shadow-2xl rounded-2xl">
           <DialogHeader>
-            <DialogTitle className="text-xl font-semibold text-slate-900">Chỉnh sửa Quốc gia</DialogTitle>
-            <DialogDescription className="text-slate-600">Cập nhật thông tin quốc gia</DialogDescription>
+            <DialogTitle className="text-xl font-semibold text-slate-900">{t('countries.edit.title')}</DialogTitle>
+            <DialogDescription className="text-slate-600">{t('countries.edit.subtitle')}</DialogDescription>
           </DialogHeader>
           <form onSubmit={handleUpdateSubmit}>
             <div className="grid gap-6 py-4">
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="edit_country_name" className="text-right font-medium text-slate-700">
-                  Tên quốc gia
-                </Label>
-                <Input
-                  id="edit_country_name"
-                  value={formData.country_name}
-                  onChange={(e) => handleInputChange('country_name', e.target.value)}
-                  className="col-span-3 rounded-xl border-slate-200 focus:border-blue-300 focus:ring-2 focus:ring-blue-100"
-                  placeholder="Nhập tên quốc gia"
-                  required
-                />
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="edit_country_code" className="text-right font-medium text-slate-700">
-                  Mã quốc gia
-                </Label>
-                <Input
-                  id="edit_country_code"
-                  value={formData.country_code}
-                  onChange={(e) => handleInputChange('country_code', e.target.value.toUpperCase())}
-                  placeholder="VN, US, JP..."
-                  className="col-span-3 rounded-xl border-slate-200 focus:border-blue-300 focus:ring-2 focus:ring-blue-100"
-                  required
-                />
-              </div>
+                   <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="edit_country_name" className="text-right font-medium text-slate-700">
+                      {t('countries.edit.fields.name')}
+                    </Label>
+                    <Input
+                      id="edit_country_name"
+                      value={formData.country_name}
+                      onChange={(e) => handleInputChange('country_name', e.target.value)}
+                      className="col-span-3 rounded-xl border-slate-200 focus:border-blue-300 focus:ring-2 focus:ring-blue-100"
+                      placeholder={t('countries.edit.placeholders.name')}
+                      required
+                    />
+                  </div>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="edit_country_code" className="text-right font-medium text-slate-700">
+                      {t('countries.edit.fields.code')}
+                    </Label>
+                    <Input
+                      id="edit_country_code"
+                      value={formData.country_code}
+                      onChange={(e) => handleInputChange('country_code', e.target.value.toUpperCase())}
+                      placeholder={t('countries.edit.placeholders.code')}
+                      className="col-span-3 rounded-xl border-slate-200 focus:border-blue-300 focus:ring-2 focus:ring-blue-100"
+                      required
+                    />
+                  </div>
             </div>
             <DialogFooter>
               <Button 
@@ -340,10 +342,10 @@ export default function CountriesPage() {
                 {updateCountryMutation.isPending ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Đang cập nhật...
+                    {t('countries.edit.buttons.updating')}
                   </>
                 ) : (
-                  'Cập nhật Quốc gia'
+                  t('countries.edit.buttons.update')
                 )}
               </Button>
             </DialogFooter>
@@ -355,18 +357,19 @@ export default function CountriesPage() {
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <DialogContent className="sm:max-w-[500px] bg-white/95 backdrop-blur-xl border-slate-200/60 shadow-2xl rounded-2xl">
           <DialogHeader>
-            <DialogTitle className="text-xl font-semibold text-slate-900">Xác nhận xóa quốc gia</DialogTitle>
+            <DialogTitle className="text-xl font-semibold text-slate-900">{t('countries.delete.title')}</DialogTitle>
             <DialogDescription className="text-slate-600">
-              Bạn có chắc chắn muốn xóa quốc gia <strong>{deletingCountry?.country_name}</strong> ({deletingCountry?.country_code})?
-              <br />
-              Hành động này không thể hoàn tác.
+              {t('countries.delete.description', { 
+                name: deletingCountry?.country_name, 
+                code: deletingCountry?.country_code 
+              })}
             </DialogDescription>
           </DialogHeader>
           <div className="flex items-center space-x-2 p-4 bg-red-50 rounded-lg border border-red-200">
             <div className="text-2xl">{deletingCountry && getFlagEmoji(deletingCountry.country_code)}</div>
             <div>
               <div className="font-semibold text-red-800">{deletingCountry?.country_name}</div>
-              <div className="text-sm text-red-600">Mã: {deletingCountry?.country_code}</div>
+              <div className="text-sm text-red-600">{t('countries.delete.code')}: {deletingCountry?.country_code}</div>
             </div>
           </div>
           <DialogFooter className="space-x-2">
@@ -375,7 +378,7 @@ export default function CountriesPage() {
               onClick={() => setIsDeleteDialogOpen(false)}
               disabled={deleteCountryMutation.isPending}
             >
-              Hủy
+              {t('countries.delete.buttons.cancel')}
             </Button>
             <Button 
               variant="destructive"
@@ -385,12 +388,12 @@ export default function CountriesPage() {
               {deleteCountryMutation.isPending ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Đang xóa...
+                  {t('countries.delete.buttons.deleting')}
                 </>
               ) : (
                 <>
                   <Trash2 className="mr-2 h-4 w-4" />
-                  Xóa Quốc gia
+                  {t('countries.delete.buttons.delete')}
                 </>
               )}
             </Button>
@@ -403,7 +406,7 @@ export default function CountriesPage() {
         <Card className="relative overflow-hidden bg-gradient-to-br from-blue-50 to-cyan-50 border-blue-200/50 hover:shadow-xl transition-all duration-300 group hover:-translate-y-1 rounded-xl">
           <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-blue-400/20 to-cyan-400/20 rounded-full -mr-10 -mt-10"></div>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative">
-            <CardTitle className="text-sm font-medium text-slate-700">Tổng quốc gia</CardTitle>
+            <CardTitle className="text-sm font-medium text-slate-700">{t('countries.stats.totalCountries')}</CardTitle>
             <div className="h-12 w-12 rounded-xl bg-gradient-to-r from-blue-500 to-cyan-500 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
               <Globe className="h-6 w-6 text-white" />
             </div>
@@ -412,7 +415,7 @@ export default function CountriesPage() {
             <div className="text-3xl font-bold text-slate-900">{countries.length}</div>
             <div className="flex items-center text-xs text-blue-600 mt-2">
               <TrendingUp className="h-3 w-3 mr-1" />
-              Đang hoạt động
+              {t('countries.stats.active')}
             </div>
           </CardContent>
         </Card>
@@ -420,7 +423,7 @@ export default function CountriesPage() {
         <Card className="relative overflow-hidden bg-gradient-to-br from-green-50 to-emerald-50 border-green-200/50 hover:shadow-xl transition-all duration-300 group hover:-translate-y-1 rounded-xl">
           <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-green-400/20 to-emerald-400/20 rounded-full -mr-10 -mt-10"></div>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative">
-            <CardTitle className="text-sm font-medium text-slate-700">Tổng sản phẩm</CardTitle>
+            <CardTitle className="text-sm font-medium text-slate-700">{t('countries.stats.totalProducts')}</CardTitle>
             <div className="h-12 w-12 rounded-xl bg-gradient-to-r from-green-500 to-emerald-500 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
               <Flag className="h-6 w-6 text-white" />
             </div>
@@ -429,14 +432,14 @@ export default function CountriesPage() {
             <div className="text-3xl font-bold text-slate-900">
               {countries.reduce((total: number, country: any) => total + (country.total_product || 0), 0)}
             </div>
-            <p className="text-xs text-green-600 mt-1">Trên tất cả quốc gia</p>
+            <p className="text-xs text-green-600 mt-1">{t('countries.stats.acrossAllCountries')}</p>
           </CardContent>
         </Card>
 
         <Card className="relative overflow-hidden bg-gradient-to-br from-purple-50 to-violet-50 border-purple-200/50 hover:shadow-xl transition-all duration-300 group hover:-translate-y-1 rounded-xl">
           <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-purple-400/20 to-violet-400/20 rounded-full -mr-10 -mt-10"></div>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative">
-            <CardTitle className="text-sm font-medium text-slate-700">Template in</CardTitle>
+            <CardTitle className="text-sm font-medium text-slate-700">{t('countries.stats.printTemplates')}</CardTitle>
             <div className="h-12 w-12 rounded-xl bg-gradient-to-r from-purple-500 to-violet-500 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
               <FileText className="h-6 w-6 text-white" />
             </div>
@@ -445,14 +448,14 @@ export default function CountriesPage() {
             <div className="text-3xl font-bold text-slate-900">
               {countries.reduce((total: number, country: any) => total + (country.total_template || 0), 0)}
             </div>
-            <p className="text-xs text-purple-600 mt-1">Tổng template</p>
+            <p className="text-xs text-purple-600 mt-1">{t('countries.stats.totalTemplates')}</p>
           </CardContent>
         </Card>
 
         <Card className="relative overflow-hidden bg-gradient-to-br from-orange-50 to-red-50 border-orange-200/50 hover:shadow-xl transition-all duration-300 group hover:-translate-y-1 rounded-xl">
           <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-orange-400/20 to-red-400/20 rounded-full -mr-10 -mt-10"></div>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative">
-            <CardTitle className="text-sm font-medium text-slate-700">TB sản phẩm</CardTitle>
+            <CardTitle className="text-sm font-medium text-slate-700">{t('countries.stats.avgProducts')}</CardTitle>
             <div className="h-12 w-12 rounded-xl bg-gradient-to-r from-orange-500 to-red-500 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
               <MapPin className="h-6 w-6 text-white" />
             </div>
@@ -461,7 +464,7 @@ export default function CountriesPage() {
             <div className="text-3xl font-bold text-slate-900">
               {countries.length > 0 ? Math.round(countries.reduce((total: number, country: any) => total + (country.total_product || 0), 0) / countries.length * 10) / 10 : 0}
             </div>
-            <p className="text-xs text-orange-600 mt-1">Sản phẩm/quốc gia</p>
+            <p className="text-xs text-orange-600 mt-1">{t('countries.stats.productsPerCountry')}</p>
           </CardContent>
         </Card>
       </div>
@@ -469,13 +472,13 @@ export default function CountriesPage() {
       {/* Search */}
       <Card className="bg-white/70 backdrop-blur-sm border-slate-200/60 hover:shadow-xl transition-all duration-300 rounded-xl">
         <CardHeader>
-          <CardTitle className="text-slate-900">Tìm kiếm</CardTitle>
+          <CardTitle className="text-slate-900">{t('countries.search.title')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="relative">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
             <Input
-              placeholder="Tìm kiếm theo tên quốc gia, mã quốc gia..."
+              placeholder={t('countries.search.placeholder')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10 rounded-xl border-slate-200 focus:border-blue-300 focus:ring-2 focus:ring-blue-100"
@@ -489,19 +492,19 @@ export default function CountriesPage() {
         /* Table View */
         <Card className="bg-white/70 backdrop-blur-sm border-slate-200/60 hover:shadow-xl transition-all duration-300 rounded-xl">
           <CardHeader>
-            <CardTitle className="text-slate-900">Danh sách Quốc gia</CardTitle>
-            <CardDescription>Tổng cộng {filteredCountries.length} quốc gia trong hệ thống</CardDescription>
+            <CardTitle className="text-slate-900">{t('countries.table.title')}</CardTitle>
+            <CardDescription>{t('countries.table.description', { count: filteredCountries.length })}</CardDescription>
           </CardHeader>
           <CardContent>
             <Table>
               <TableHeader>
                 <TableRow className="border-slate-100 hover:bg-slate-50/50">
-                  <TableHead className="text-slate-600 font-semibold">Quốc gia</TableHead>
-                  <TableHead className="text-slate-600 font-semibold">Mã</TableHead>
-                  <TableHead className="text-slate-600 font-semibold">Số sản phẩm</TableHead>
-                  <TableHead className="text-slate-600 font-semibold">Template in</TableHead>
-                  <TableHead className="text-slate-600 font-semibold">Ngày tạo</TableHead>
-                  <TableHead className="text-right text-slate-600 font-semibold">Thao tác</TableHead>
+                  <TableHead className="text-slate-600 font-semibold">{t('countries.table.headers.country')}</TableHead>
+                  <TableHead className="text-slate-600 font-semibold">{t('countries.table.headers.code')}</TableHead>
+                  <TableHead className="text-slate-600 font-semibold">{t('countries.table.headers.products')}</TableHead>
+                  <TableHead className="text-slate-600 font-semibold">{t('countries.table.headers.templates')}</TableHead>
+                  <TableHead className="text-slate-600 font-semibold">{t('countries.table.headers.createdAt')}</TableHead>
+                  <TableHead className="text-right text-slate-600 font-semibold">{t('countries.table.headers.actions')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -545,13 +548,13 @@ export default function CountriesPage() {
                           align="end"
                           className="bg-white/95 backdrop-blur-xl border-slate-200/60 shadow-xl rounded-xl"
                         >
-                          <DropdownMenuLabel>Thao tác</DropdownMenuLabel>
+                          <DropdownMenuLabel>{t('countries.table.actions')}</DropdownMenuLabel>
                           <DropdownMenuItem 
                             className="hover:bg-slate-50/80 rounded-lg"
                             onClick={() => handleEdit(country)}
                           >
                             <Edit className="mr-2 h-4 w-4" />
-                            Chỉnh sửa
+                            {t('countries.table.edit')}
                           </DropdownMenuItem>
                           {/* <DropdownMenuItem className="hover:bg-slate-50/80 rounded-lg">
                             <FileText className="mr-2 h-4 w-4" />
@@ -563,7 +566,7 @@ export default function CountriesPage() {
                             onClick={() => handleDelete(country)}
                           >
                             <Trash2 className="mr-2 h-4 w-4" />
-                            Xóa
+                            {t('countries.table.delete')}
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -605,13 +608,13 @@ export default function CountriesPage() {
                       align="end"
                       className="bg-white/95 backdrop-blur-xl border-slate-200/60 shadow-xl rounded-xl"
                     >
-                      <DropdownMenuLabel>Thao tác</DropdownMenuLabel>
+                      <DropdownMenuLabel>{t('countries.table.actions')}</DropdownMenuLabel>
                       <DropdownMenuItem 
                         className="hover:bg-slate-50/80 rounded-lg"
                         onClick={() => handleEdit(country)}
                       >
                         <Edit className="mr-2 h-4 w-4" />
-                        Chỉnh sửa
+                        {t('countries.table.edit')}
                       </DropdownMenuItem>
                       <DropdownMenuItem className="hover:bg-slate-50/80 rounded-lg">
                         <FileText className="mr-2 h-4 w-4" />
@@ -623,7 +626,7 @@ export default function CountriesPage() {
                         onClick={() => handleDelete(country)}
                       >
                         <Trash2 className="mr-2 h-4 w-4" />
-                        Xóa
+                        {t('countries.table.delete')}
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -632,19 +635,19 @@ export default function CountriesPage() {
               <CardContent>
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-slate-600">Sản phẩm:</span>
+                    <span className="text-sm text-slate-600">{t('countries.cards.products')}:</span>
                     <Badge className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white border-0 shadow-lg">
                       {country.total_product || 0}
                     </Badge>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-slate-600">Template:</span>
+                    <span className="text-sm text-slate-600">{t('countries.cards.templates')}:</span>
                     <Badge className="bg-gradient-to-r from-green-500 to-emerald-500 text-white border-0 shadow-lg">
                       {country.total_template || 0}
                     </Badge>
                   </div>
                   <div className="text-xs text-slate-500 pt-2 border-t border-slate-100">
-                    Tạo: {new Date(country.created_at).toLocaleDateString("vi-VN")}
+                    {t('countries.cards.created')}: {new Date(country.created_at).toLocaleDateString("vi-VN")}
                   </div>
                 </div>
               </CardContent>

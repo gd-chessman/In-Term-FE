@@ -24,8 +24,10 @@ import { getProductStatistics } from "@/services/ProductService"
 import { getCountryStatistics } from "@/services/CountryService"
 import { getPrintStatistics } from "@/services/PrintService"
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from 'recharts'
+import { useLang } from "@/lang/useLang"
 
 export default function AdminDashboard() {
+  const { t } = useLang()
 
   const { data: adminStatistics, isLoading: statsLoading } = useQuery({
     queryKey: ["admin-statistics"],
@@ -59,10 +61,10 @@ export default function AdminDashboard() {
     const date = new Date(dateString)
     const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000)
     
-    if (diffInSeconds < 60) return `${diffInSeconds} giây trước`
-    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} phút trước`
-    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} giờ trước`
-    return `${Math.floor(diffInSeconds / 86400)} ngày trước`
+    if (diffInSeconds < 60) return `${diffInSeconds} ${t('dashboard.recentActivities.timeAgo.seconds')}`
+    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} ${t('dashboard.recentActivities.timeAgo.minutes')}`
+    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} ${t('dashboard.recentActivities.timeAgo.hours')}`
+    return `${Math.floor(diffInSeconds / 86400)} ${t('dashboard.recentActivities.timeAgo.days')}`
   }
 
   // Hàm lấy icon và màu sắc cho từng loại action
@@ -89,17 +91,17 @@ export default function AdminDashboard() {
     
     switch (log.log_action) {
       case 'login':
-        return `${adminName} đã đăng nhập`
+        return `${adminName} ${t('dashboard.recentActivities.actions.login')}`
       case 'logout':
-        return `${adminName} đã đăng xuất`
+        return `${adminName} ${t('dashboard.recentActivities.actions.logout')}`
       case 'create':
-        return `${adminName} đã tạo mới ${log.log_module}`
+        return `${adminName} ${t('dashboard.recentActivities.actions.create')} ${log.log_module}`
       case 'update':
-        return `${adminName} đã cập nhật ${log.log_module}`
+        return `${adminName} ${t('dashboard.recentActivities.actions.update')} ${log.log_module}`
       case 'delete':
-        return `${adminName} đã xóa ${log.log_module}`
+        return `${adminName} ${t('dashboard.recentActivities.actions.delete')} ${log.log_module}`
       default:
-        return log.log_description || `${adminName} thực hiện ${log.log_action}`
+        return log.log_description || `${adminName} ${t('dashboard.recentActivities.actions.unknown')} ${log.log_action}`
     }
   }
 
@@ -109,10 +111,10 @@ export default function AdminDashboard() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-gray-900 via-blue-800 to-indigo-800 dark:from-gray-100 dark:via-blue-400 dark:to-indigo-400 bg-clip-text text-transparent">
-            Dashboard
+            {t('dashboard.title')}
           </h1>
           <p className="text-gray-600 dark:text-gray-400 mt-1 lg:mt-2 text-sm lg:text-base">
-            Tổng quan hệ thống quản trị
+            {t('dashboard.subtitle')}
           </p>
         </div>
       </div>
@@ -122,7 +124,7 @@ export default function AdminDashboard() {
         <Card className="relative overflow-hidden bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-blue-200/50 dark:border-blue-800/50 hover:shadow-xl transition-all duration-300 group hover:-translate-y-1">
           <div className="absolute top-0 right-0 w-16 h-16 lg:w-20 lg:h-20 bg-gradient-to-br from-blue-400/20 to-indigo-400/20 dark:from-blue-400/10 dark:to-indigo-400/10 rounded-full -mr-8 lg:-mr-10 -mt-8 lg:-mt-10"></div>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative">
-            <CardTitle className="text-sm font-medium text-gray-700 dark:text-gray-300">Tổng người dùng</CardTitle>
+            <CardTitle className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('dashboard.stats.totalUsers')}</CardTitle>
             <div className="h-10 w-10 lg:h-12 lg:w-12 rounded-xl bg-gradient-to-r from-blue-500 to-indigo-500 dark:from-blue-600 dark:to-indigo-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
               <Users className="h-5 w-5 lg:h-6 lg:w-6 text-white" />
             </div>
@@ -131,7 +133,7 @@ export default function AdminDashboard() {
             <div className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-gray-100">{adminStatistics?.total}</div>
             <div className="flex items-center text-xs text-green-600 dark:text-green-400 mt-2">
               <TrendingUp className="h-3 w-3 mr-1" />
-              Hiện tại của hệ thống
+              {t('dashboard.stats.currentSystem')}
             </div>
           </CardContent>
         </Card>
@@ -139,7 +141,7 @@ export default function AdminDashboard() {
         <Card className="relative overflow-hidden bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border-green-200/50 dark:border-green-800/50 hover:shadow-xl transition-all duration-300 group hover:-translate-y-1">
           <div className="absolute top-0 right-0 w-16 h-16 lg:w-20 lg:h-20 bg-gradient-to-br from-green-400/20 to-emerald-400/20 dark:from-green-400/10 dark:to-emerald-400/10 rounded-full -mr-8 lg:-mr-10 -mt-8 lg:-mt-10"></div>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative">
-            <CardTitle className="text-sm font-medium text-gray-700 dark:text-gray-300">Sản phẩm</CardTitle>
+            <CardTitle className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('dashboard.stats.products')}</CardTitle>
             <div className="h-10 w-10 lg:h-12 lg:w-12 rounded-xl bg-gradient-to-r from-green-500 to-emerald-500 dark:from-green-600 dark:to-emerald-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
               <Package className="h-5 w-5 lg:h-6 lg:w-6 text-white" />
             </div>
@@ -148,7 +150,7 @@ export default function AdminDashboard() {
             <div className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-gray-100">{productStatistics?.totalProducts}</div>
             <div className="flex items-center text-xs text-green-600 dark:text-green-400 mt-2">
               <TrendingUp className="h-3 w-3 mr-1" />
-              Hiện tại của hệ thống
+              {t('dashboard.stats.currentSystem')}
             </div>
           </CardContent>
         </Card>
@@ -156,7 +158,7 @@ export default function AdminDashboard() {
         <Card className="relative overflow-hidden bg-gradient-to-br from-purple-50 to-violet-50 dark:from-purple-900/20 dark:to-violet-900/20 border-purple-200/50 dark:border-purple-800/50 hover:shadow-xl transition-all duration-300 group hover:-translate-y-1">
           <div className="absolute top-0 right-0 w-16 h-16 lg:w-20 lg:h-20 bg-gradient-to-br from-purple-400/20 to-violet-400/20 dark:from-purple-400/10 dark:to-violet-400/10 rounded-full -mr-8 lg:-mr-10 -mt-8 lg:-mt-10"></div>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative">
-            <CardTitle className="text-sm font-medium text-gray-700 dark:text-gray-300">Quốc gia</CardTitle>
+            <CardTitle className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('dashboard.stats.countries')}</CardTitle>
             <div className="h-10 w-10 lg:h-12 lg:w-12 rounded-xl bg-gradient-to-r from-purple-500 to-violet-500 dark:from-purple-600 dark:to-violet-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
               <Globe className="h-5 w-5 lg:h-6 lg:w-6 text-white" />
             </div>
@@ -165,7 +167,7 @@ export default function AdminDashboard() {
             <div className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-gray-100">{countryStatistics?.totalCountries}</div>
             <div className="flex items-center text-xs text-green-600 dark:text-green-400 mt-2">
               <TrendingUp className="h-3 w-3 mr-1" />
-              Hiện tại của hệ thống
+              {t('dashboard.stats.currentSystem')}
             </div>
           </CardContent>
         </Card>
@@ -173,7 +175,7 @@ export default function AdminDashboard() {
         <Card className="relative overflow-hidden bg-gradient-to-br from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20 border-orange-200/50 dark:border-orange-800/50 hover:shadow-xl transition-all duration-300 group hover:-translate-y-1">
           <div className="absolute top-0 right-0 w-16 h-16 lg:w-20 lg:h-20 bg-gradient-to-br from-orange-400/20 to-red-400/20 dark:from-orange-400/10 dark:to-red-400/10 rounded-full -mr-8 lg:-mr-10 -mt-8 lg:-mt-10"></div>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative">
-            <CardTitle className="text-sm font-medium text-gray-700 dark:text-gray-300">Lượt in hôm nay</CardTitle>
+            <CardTitle className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('dashboard.stats.todayPrints')}</CardTitle>
             <div className="h-10 w-10 lg:h-12 lg:w-12 rounded-xl bg-gradient-to-r from-orange-500 to-red-500 dark:from-orange-600 dark:to-red-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
               <Printer className="h-5 w-5 lg:h-6 lg:w-6 text-white" />
             </div>
@@ -182,7 +184,7 @@ export default function AdminDashboard() {
             <div className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-gray-100">{printStatistics?.overview?.todayPrints}</div>
             <div className="flex items-center text-xs text-green-600 dark:text-green-400 mt-2">
               <TrendingUp className="h-3 w-3 mr-1" />
-              Hiện tại của hệ thống
+              {t('dashboard.stats.currentSystem')}
             </div>
           </CardContent>
         </Card>
@@ -194,9 +196,9 @@ export default function AdminDashboard() {
           <CardHeader className="border-b border-gray-100 dark:border-gray-700">
             <div className="flex items-center justify-between">
               <div>
-                <CardTitle className="text-gray-900 dark:text-gray-100 text-lg lg:text-xl">Hoạt động gần đây</CardTitle>
+                <CardTitle className="text-gray-900 dark:text-gray-100 text-lg lg:text-xl">{t('dashboard.recentActivities.title')}</CardTitle>
                 <CardDescription className="text-sm text-gray-600 dark:text-gray-400">
-                  Các hoạt động mới nhất trong hệ thống
+                  {t('dashboard.recentActivities.subtitle')}
                 </CardDescription>
               </div>
               <Button
@@ -214,7 +216,7 @@ export default function AdminDashboard() {
                 <div className="flex items-center justify-center py-8">
                   <div className="flex items-center space-x-2">
                     <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
-                    <span className="text-gray-600 dark:text-gray-400">Đang tải hoạt động...</span>
+                    <span className="text-gray-600 dark:text-gray-400">{t('dashboard.recentActivities.loading')}</span>
                   </div>
                 </div>
               ) : logsData?.data?.logs && logsData.data.logs.length > 0 ? (
@@ -240,7 +242,7 @@ export default function AdminDashboard() {
                 <div className="flex items-center justify-center py-8">
                   <div className="text-center">
                     <Activity className="h-8 w-8 text-gray-400 mx-auto mb-2" />
-                    <p className="text-gray-600 dark:text-gray-400 text-sm">Không có hoạt động gần đây</p>
+                    <p className="text-gray-600 dark:text-gray-400 text-sm">{t('dashboard.recentActivities.noActivities')}</p>
                   </div>
                 </div>
               )}
@@ -253,9 +255,9 @@ export default function AdminDashboard() {
           <CardHeader className="border-b border-gray-100 dark:border-gray-700">
             <div className="flex items-center justify-between">
               <div>
-                <CardTitle className="text-gray-900 dark:text-gray-100 text-lg lg:text-xl">Phân bố loại in</CardTitle>
+                <CardTitle className="text-gray-900 dark:text-gray-100 text-lg lg:text-xl">{t('dashboard.printDistribution.title')}</CardTitle>
                 <CardDescription className="text-sm text-gray-600 dark:text-gray-400">
-                  Thống kê theo loại template in
+                  {t('dashboard.printDistribution.subtitle')}
                 </CardDescription>
               </div>
               <div className="h-8 w-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
@@ -272,7 +274,7 @@ export default function AdminDashboard() {
                     <XAxis 
                       dataKey="type" 
                       tick={{ fontSize: 12, fill: '#666' }}
-                      tickFormatter={(value) => value || "Không xác định"}
+                      tickFormatter={(value) => value || t('dashboard.printDistribution.unknown')}
                     />
                     <YAxis 
                       tick={{ fontSize: 12, fill: '#666' }}
@@ -285,8 +287,8 @@ export default function AdminDashboard() {
                         borderRadius: '8px',
                         boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
                       }}
-                      formatter={(value: any, name: any) => [`${value} lượt in`, 'Tổng lượt in']}
-                      labelFormatter={(label) => `Loại: ${label || 'Không xác định'}`}
+                      formatter={(value: any, name: any) => [`${value} ${t('dashboard.printDistribution.tooltip.prints')}`, t('dashboard.printDistribution.tooltip.totalPrints')]}
+                      labelFormatter={(label) => `${t('dashboard.printDistribution.tooltip.type')}: ${label || t('dashboard.printDistribution.unknown')}`}
                     />
                     <Bar 
                       dataKey="totalPrints" 
@@ -306,8 +308,8 @@ export default function AdminDashboard() {
               <div className="flex items-center justify-center h-[300px]">
                 <div className="text-center">
                   <Printer className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                  <p className="text-gray-600 dark:text-gray-400 text-sm">Không có dữ liệu in</p>
-                  <p className="text-gray-500 dark:text-gray-500 text-xs mt-1">Chưa có hoạt động in nào</p>
+                  <p className="text-gray-600 dark:text-gray-400 text-sm">{t('dashboard.printDistribution.noData')}</p>
+                  <p className="text-gray-500 dark:text-gray-500 text-xs mt-1">{t('dashboard.printDistribution.noActivity')}</p>
                 </div>
               </div>
             )}

@@ -16,8 +16,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useToast } from "@/hooks/use-toast"
 import { Loader2, User, Mail, Phone, Calendar, MapPin, Edit, Save, X, Camera, Lock, Eye, EyeOff, Crown } from "lucide-react"
+import { useLang } from "@/lang/useLang"
 
 export default function ProfilePage() {
+  const { t } = useLang()
   const [isEditing, setIsEditing] = useState(false)
   const [formData, setFormData] = useState({
     admin_fullname: "",
@@ -76,16 +78,16 @@ export default function ProfilePage() {
     },
     onSuccess: () => {
       toast({
-        title: "Thành công",
-        description: "Thông tin hồ sơ đã được cập nhật",
+        title: t('profile.toasts.profileUpdated.title'),
+        description: t('profile.toasts.profileUpdated.description'),
       })
       setIsEditing(false)
       queryClient.invalidateQueries({ queryKey: ["userMe"] })
     },
     onError: (error) => {
       toast({
-        title: "Lỗi",
-        description: "Không thể cập nhật thông tin hồ sơ",
+        title: t('profile.toasts.profileError.title'),
+        description: t('profile.toasts.profileError.description'),
         variant: "destructive",
       })
     }
@@ -99,8 +101,8 @@ export default function ProfilePage() {
     },
     onSuccess: () => {
       toast({
-        title: "Thành công",
-        description: "Ảnh đại diện đã được cập nhật",
+        title: t('profile.toasts.avatarUpdated.title'),
+        description: t('profile.toasts.avatarUpdated.description'),
       })
       setSelectedAvatar(null)
       setAvatarPreview(null)
@@ -108,8 +110,8 @@ export default function ProfilePage() {
     },
     onError: (error) => {
       toast({
-        title: "Lỗi",
-        description: "Không thể cập nhật ảnh đại diện",
+        title: t('profile.toasts.avatarError.title'),
+        description: t('profile.toasts.avatarError.description'),
         variant: "destructive",
       })
     }
@@ -121,8 +123,8 @@ export default function ProfilePage() {
     },
     onSuccess: () => {
       toast({
-        title: "Thành công",
-        description: "Mật khẩu đã được thay đổi",
+        title: t('profile.toasts.passwordChanged.title'),
+        description: t('profile.toasts.passwordChanged.description'),
       })
       setPasswordData({
         current_password: "",
@@ -132,8 +134,8 @@ export default function ProfilePage() {
     },
     onError: (error) => {
       toast({
-        title: "Lỗi",
-        description: "Không thể thay đổi mật khẩu",
+        title: t('profile.toasts.passwordError.title'),
+        description: t('profile.toasts.passwordError.description'),
         variant: "destructive",
       })
     }
@@ -179,8 +181,8 @@ export default function ProfilePage() {
   const handlePasswordChange = () => {
     if (passwordData.new_password !== passwordData.confirm_password) {
       toast({
-        title: "Lỗi",
-        description: "Mật khẩu xác nhận không khớp",
+        title: t('profile.toasts.passwordMismatch.title'),
+        description: t('profile.toasts.passwordMismatch.description'),
         variant: "destructive",
       })
       return
@@ -216,7 +218,7 @@ export default function ProfilePage() {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
-          <p className="text-red-500">Không thể tải thông tin hồ sơ</p>
+          <p className="text-red-500">{t('profile.error')}</p>
         </div>
       </div>
     )
@@ -225,9 +227,9 @@ export default function ProfilePage() {
   return (
     <div className="container mx-auto py-8 px-4 max-w-7xl">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-zinc-100">Hồ sơ cá nhân</h1>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-zinc-100">{t('profile.title')}</h1>
         <p className="text-gray-600 dark:text-zinc-400 mt-2">
-          Quản lý thông tin cá nhân và cài đặt tài khoản
+          {t('profile.subtitle')}
         </p>
       </div>
 
@@ -268,7 +270,7 @@ export default function ProfilePage() {
                   ) : (
                     <Camera className="h-4 w-4" />
                   )}
-                  Cập nhật ảnh
+                  {t('profile.personalInfo.updateImage')}
                 </Button>
               </div>
             )}
@@ -293,8 +295,8 @@ export default function ProfilePage() {
         <div className="lg:col-span-2">
           <Tabs defaultValue="profile" className="w-full">
             <TabsList className="grid w-full grid-cols-2 h-12">
-              <TabsTrigger value="profile" className="text-base">Thông tin cá nhân</TabsTrigger>
-              <TabsTrigger value="password" className="text-base">Thay đổi mật khẩu</TabsTrigger>
+              <TabsTrigger value="profile" className="text-base">{t('profile.tabs.personalInfo')}</TabsTrigger>
+              <TabsTrigger value="password" className="text-base">{t('profile.tabs.changePassword')}</TabsTrigger>
             </TabsList>
 
             {/* Profile Tab */}
@@ -303,9 +305,9 @@ export default function ProfilePage() {
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <div>
-                      <CardTitle className="text-xl">Thông tin cá nhân</CardTitle>
+                      <CardTitle className="text-xl">{t('profile.personalInfo.title')}</CardTitle>
                       <CardDescription className="text-base">
-                        Cập nhật thông tin cá nhân của bạn
+                        {t('profile.personalInfo.subtitle')}
                       </CardDescription>
                     </div>
                     {!isEditing ? (
@@ -316,7 +318,7 @@ export default function ProfilePage() {
                         className="flex items-center gap-2"
                       >
                         <Edit className="h-4 w-4" />
-                        Chỉnh sửa
+                        {t('profile.personalInfo.edit')}
                       </Button>
                     ) : (
                       <div className="flex gap-2">
@@ -331,7 +333,7 @@ export default function ProfilePage() {
                           ) : (
                             <Save className="h-4 w-4" />
                           )}
-                          Lưu
+                          {t('profile.personalInfo.save')}
                         </Button>
                         <Button
                           onClick={handleCancel}
@@ -340,7 +342,7 @@ export default function ProfilePage() {
                           className="flex items-center gap-2"
                         >
                           <X className="h-4 w-4" />
-                          Hủy
+                          {t('profile.personalInfo.cancel')}
                         </Button>
                       </div>
                     )}
@@ -351,19 +353,19 @@ export default function ProfilePage() {
                     <div className="space-y-3">
                       <Label htmlFor="fullname" className="flex items-center gap-2 text-base">
                         <User className="h-5 w-5" />
-                        Họ và tên
+                        {t('profile.personalInfo.fields.fullname')}
                       </Label>
                       {isEditing ? (
                         <Input
                           id="fullname"
                           value={formData.admin_fullname}
                           onChange={(e) => setFormData(prev => ({ ...prev, admin_fullname: e.target.value }))}
-                          placeholder="Nhập họ và tên"
+                          placeholder={t('profile.personalInfo.placeholders.fullname')}
                           className="h-12 text-base"
                         />
                       ) : (
                         <p className="text-base text-gray-600 dark:text-zinc-400 py-3 px-3 bg-gray-50 dark:bg-zinc-800 rounded-md">
-                          {userMe?.admin_fullname || "Chưa cập nhật"}
+                          {userMe?.admin_fullname || t('profile.personalInfo.notUpdated')}
                         </p>
                       )}
                     </div>
@@ -371,19 +373,19 @@ export default function ProfilePage() {
                     <div className="space-y-3">
                       <Label htmlFor="email" className="flex items-center gap-2 text-base">
                         <Mail className="h-5 w-5" />
-                        Email
+                        {t('profile.personalInfo.fields.email')}
                       </Label>
                       {isEditing ? (
                         <Input
                           id="email"
                           value={formData.admin_email}
                           onChange={(e) => setFormData(prev => ({ ...prev, admin_email: e.target.value }))}
-                          placeholder="Nhập email"
+                          placeholder={t('profile.personalInfo.placeholders.email')}
                           className="h-12 text-base"
                         />
                       ) : (
                         <p className="text-base text-gray-600 dark:text-zinc-400 py-3 px-3 bg-gray-50 dark:bg-zinc-800 rounded-md">
-                          {userMe?.admin_email || "Chưa cập nhật"}
+                          {userMe?.admin_email || t('profile.personalInfo.notUpdated')}
                         </p>
                       )}
                     </div>
@@ -391,19 +393,19 @@ export default function ProfilePage() {
                     <div className="space-y-3">
                       <Label htmlFor="phone" className="flex items-center gap-2 text-base">
                         <Phone className="h-5 w-5" />
-                        Số điện thoại
+                        {t('profile.personalInfo.fields.phone')}
                       </Label>
                       {isEditing ? (
                         <Input
                           id="phone"
                           value={formData.admin_phone}
                           onChange={(e) => setFormData(prev => ({ ...prev, admin_phone: e.target.value }))}
-                          placeholder="Nhập số điện thoại"
+                          placeholder={t('profile.personalInfo.placeholders.phone')}
                           className="h-12 text-base"
                         />
                       ) : (
                         <p className="text-base text-gray-600 dark:text-zinc-400 py-3 px-3 bg-gray-50 dark:bg-zinc-800 rounded-md">
-                          {userMe?.admin_phone || "Chưa cập nhật"}
+                          {userMe?.admin_phone || t('profile.personalInfo.notUpdated')}
                         </p>
                       )}
                     </div>
@@ -411,19 +413,19 @@ export default function ProfilePage() {
                     <div className="space-y-3">
                       <Label htmlFor="address" className="flex items-center gap-2 text-base">
                         <MapPin className="h-5 w-5" />
-                        Địa chỉ
+                        {t('profile.personalInfo.fields.address')}
                       </Label>
                       {isEditing ? (
                         <Input
                           id="address"
                           value={formData.admin_address}
                           onChange={(e) => setFormData(prev => ({ ...prev, admin_address: e.target.value }))}
-                          placeholder="Nhập địa chỉ"
+                          placeholder={t('profile.personalInfo.placeholders.address')}
                           className="h-12 text-base"
                         />
                       ) : (
                         <p className="text-base text-gray-600 dark:text-zinc-400 py-3 px-3 bg-gray-50 dark:bg-zinc-800 rounded-md">
-                          {userMe?.admin_address || "Chưa cập nhật"}
+                          {userMe?.admin_address || t('profile.personalInfo.notUpdated')}
                         </p>
                       )}
                     </div>
@@ -431,19 +433,19 @@ export default function ProfilePage() {
                     <div className="space-y-3">
                       <Label htmlFor="branch" className="flex items-center gap-2 text-base">
                         <MapPin className="h-5 w-5" />
-                        Chi nhánh
+                        {t('profile.personalInfo.fields.branch')}
                       </Label>
                       {isEditing ? (
                         <Select value={formData.admin_branch_id} onValueChange={(value) => setFormData(prev => ({ ...prev, admin_branch_id: value }))}>
                           <SelectTrigger className="h-12 text-base">
-                            <SelectValue placeholder="Chọn chi nhánh" />
+                            <SelectValue placeholder={t('profile.personalInfo.placeholders.branch')} />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="none">Không phân bổ</SelectItem>
+                            <SelectItem value="none">{t('profile.personalInfo.notAssigned')}</SelectItem>
                             {branchesLoading ? (
                               <div className="flex items-center justify-center p-2">
                                 <Loader2 className="h-4 w-4 animate-spin" />
-                                <span className="ml-2 text-sm">Đang tải...</span>
+                                <span className="ml-2 text-sm">{t('profile.personalInfo.loading')}</span>
                               </div>
                             ) : (
                               branches?.map((branch: any) => (
@@ -456,7 +458,7 @@ export default function ProfilePage() {
                         </Select>
                       ) : (
                         <p className="text-base text-gray-600 dark:text-zinc-400 py-3 px-3 bg-gray-50 dark:bg-zinc-800 rounded-md">
-                          {userMe?.branch?.branch_name || "Chưa phân bổ"}
+                          {userMe?.branch?.branch_name || t('profile.personalInfo.notAssigned')}
                         </p>
                       )}
                     </div>
@@ -464,10 +466,10 @@ export default function ProfilePage() {
                     <div className="space-y-3">
                       <Label className="flex items-center gap-2 text-base">
                         <Calendar className="h-5 w-5" />
-                        Ngày tạo tài khoản
+                        {t('profile.personalInfo.fields.accountCreated')}
                       </Label>
                       <p className="text-base text-gray-600 dark:text-zinc-400 py-3 px-3 bg-gray-50 dark:bg-zinc-800 rounded-md">
-                        {userMe?.created_at ? new Date(userMe.created_at).toLocaleDateString('vi-VN') : "Chưa có thông tin"}
+                        {userMe?.created_at ? new Date(userMe.created_at).toLocaleDateString('vi-VN') : t('profile.personalInfo.noInfo')}
                       </p>
                     </div>
                   </div>
@@ -482,10 +484,10 @@ export default function ProfilePage() {
                   <div className="flex items-center gap-3">
                     <Lock className="h-6 w-6" />
                     <div>
-                      <CardTitle className="text-xl">Thay đổi mật khẩu</CardTitle>
-                      <CardDescription className="text-base">
-                        Cập nhật mật khẩu tài khoản của bạn
-                      </CardDescription>
+                                          <CardTitle className="text-xl">{t('profile.changePassword.title')}</CardTitle>
+                    <CardDescription className="text-base">
+                      {t('profile.changePassword.subtitle')}
+                    </CardDescription>
                     </div>
                   </div>
                 </CardHeader>
@@ -494,7 +496,7 @@ export default function ProfilePage() {
                     <div className="space-y-3">
                       <Label htmlFor="current-password" className="flex items-center gap-2 text-base">
                         <Lock className="h-5 w-5" />
-                        Mật khẩu hiện tại
+                        {t('profile.changePassword.fields.currentPassword')}
                       </Label>
                       <div className="relative">
                         <Input
@@ -502,7 +504,7 @@ export default function ProfilePage() {
                           type={showPasswords.current ? "text" : "password"}
                           value={passwordData.current_password}
                           onChange={(e) => setPasswordData(prev => ({ ...prev, current_password: e.target.value }))}
-                          placeholder="Nhập mật khẩu hiện tại"
+                          placeholder={t('profile.changePassword.placeholders.currentPassword')}
                           className="h-12 text-base pr-12"
                         />
                         <Button
@@ -524,7 +526,7 @@ export default function ProfilePage() {
                     <div className="space-y-3">
                       <Label htmlFor="new-password" className="flex items-center gap-2 text-base">
                         <Lock className="h-5 w-5" />
-                        Mật khẩu mới
+                        {t('profile.changePassword.fields.newPassword')}
                       </Label>
                       <div className="relative">
                         <Input
@@ -532,7 +534,7 @@ export default function ProfilePage() {
                           type={showPasswords.new ? "text" : "password"}
                           value={passwordData.new_password}
                           onChange={(e) => setPasswordData(prev => ({ ...prev, new_password: e.target.value }))}
-                          placeholder="Nhập mật khẩu mới"
+                          placeholder={t('profile.changePassword.placeholders.newPassword')}
                           className="h-12 text-base pr-12"
                         />
                         <Button
@@ -554,7 +556,7 @@ export default function ProfilePage() {
                     <div className="space-y-3">
                       <Label htmlFor="confirm-password" className="flex items-center gap-2 text-base">
                         <Lock className="h-5 w-5" />
-                        Xác nhận mật khẩu mới
+                        {t('profile.changePassword.fields.confirmPassword')}
                       </Label>
                       <div className="relative">
                         <Input
@@ -562,7 +564,7 @@ export default function ProfilePage() {
                           type={showPasswords.confirm ? "text" : "password"}
                           value={passwordData.confirm_password}
                           onChange={(e) => setPasswordData(prev => ({ ...prev, confirm_password: e.target.value }))}
-                          placeholder="Nhập lại mật khẩu mới"
+                          placeholder={t('profile.changePassword.placeholders.confirmPassword')}
                           className="h-12 text-base pr-12"
                         />
                         <Button
@@ -593,7 +595,7 @@ export default function ProfilePage() {
                       ) : (
                         <Lock className="h-5 w-5" />
                       )}
-                      Thay đổi mật khẩu
+                      {t('profile.changePassword.changePassword')}
                     </Button>
                   </div>
                 </CardContent>

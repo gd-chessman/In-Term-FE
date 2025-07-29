@@ -51,8 +51,10 @@ import {
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { getCategoriesTree, createCategory, updateCategory, deleteCategory } from "@/services/CategoryService"
 import { toast } from "sonner"
+import { useLang } from "@/lang/useLang"
 
 export default function CategoriesPage() {
+  const { t } = useLang()
   const searchParams = useSearchParams()
   const [searchTerm, setSearchTerm] = useState("")
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
@@ -96,13 +98,13 @@ export default function CategoriesPage() {
   const createCategoryMutation = useMutation({
     mutationFn: createCategory,
     onSuccess: () => {
-      toast.success("Tạo danh mục thành công!")
+      toast.success(t('categories.toasts.createSuccess.description'))
       queryClient.invalidateQueries({ queryKey: ["categories-tree"] })
       setIsCreateDialogOpen(false)
       setFormData({ category_name: "", parent_id: "none" })
     },
     onError: (error: any) => {
-      toast.error(error.response?.data?.message || "Có lỗi xảy ra khi tạo danh mục")
+      toast.error(error.response?.data?.message || t('categories.toasts.createError.description'))
     }
   })
 
@@ -110,14 +112,14 @@ export default function CategoriesPage() {
   const updateCategoryMutation = useMutation({
     mutationFn: ({ id, item }: { id: number; item: any }) => updateCategory(id, item),
     onSuccess: () => {
-      toast.success("Cập nhật danh mục thành công!")
+      toast.success(t('categories.toasts.updateSuccess.description'))
       queryClient.invalidateQueries({ queryKey: ["categories-tree"] })
       setIsEditDialogOpen(false)
       setEditingCategory(null)
       setFormData({ category_name: "", parent_id: "none" })
     },
     onError: (error: any) => {
-      toast.error(error.response?.data?.message || "Có lỗi xảy ra khi cập nhật danh mục")
+      toast.error(error.response?.data?.message || t('categories.toasts.updateError.description'))
     }
   })
 
@@ -125,7 +127,7 @@ export default function CategoriesPage() {
   const deleteCategoryMutation = useMutation({
     mutationFn: deleteCategory,
     onSuccess: () => {
-      toast.success("Xóa danh mục thành công!")
+      toast.success(t('categories.toasts.deleteSuccess.description'))
       queryClient.invalidateQueries({ queryKey: ["categories-tree"] })
       setIsDeleteDialogOpen(false)
       setDeletingCategory(null)
@@ -134,7 +136,7 @@ export default function CategoriesPage() {
       if (error.response?.status === 409) {
         toast.error("Danh mục đang được sử dụng bởi sản phẩm hoặc có danh mục con.")
       } else {
-        toast.error(error.response?.data?.message || "Có lỗi xảy ra khi xóa danh mục")
+        toast.error(error.response?.data?.message || t('categories.toasts.deleteError.description'))
       }
     }
   })
@@ -241,9 +243,9 @@ export default function CategoriesPage() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-4xl font-bold bg-gradient-to-r from-slate-900 via-green-800 to-emerald-800 bg-clip-text text-transparent">
-              Quản lý Danh mục
+              {t('categories.title')}
             </h1>
-            <p className="text-slate-600 mt-2">Đang tải dữ liệu...</p>
+            <p className="text-slate-600 mt-2">{t('categories.loading')}</p>
           </div>
         </div>
         <div className="grid gap-6 md:grid-cols-4">
@@ -268,9 +270,9 @@ export default function CategoriesPage() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-4xl font-bold bg-gradient-to-r from-slate-900 via-green-800 to-emerald-800 bg-clip-text text-transparent">
-              Quản lý Danh mục
+              {t('categories.title')}
             </h1>
-            <p className="text-red-600 mt-2">Có lỗi xảy ra khi tải dữ liệu</p>
+            <p className="text-red-600 mt-2">{t('categories.error')}</p>
           </div>
         </div>
       </div>
@@ -283,27 +285,27 @@ export default function CategoriesPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-4xl font-bold bg-gradient-to-r from-slate-900 via-green-800 to-emerald-800 bg-clip-text text-transparent">
-            Quản lý Danh mục
+            {t('categories.title')}
           </h1>
-          <p className="text-slate-600 mt-2">Quản lý cây danh mục sản phẩm</p>
+          <p className="text-slate-600 mt-2">{t('categories.subtitle')}</p>
         </div>
         <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
           <DialogTrigger asChild>
             <Button className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl">
               <Plus className="mr-2 h-4 w-4" />
-              Thêm Danh mục
+              {t('categories.create.button')}
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[500px] bg-white/95 backdrop-blur-xl border-slate-200/60 shadow-2xl rounded-2xl">
             <DialogHeader>
-              <DialogTitle className="text-xl font-semibold text-slate-900">Thêm Danh mục mới</DialogTitle>
-              <DialogDescription className="text-slate-600">Tạo danh mục sản phẩm mới</DialogDescription>
+              <DialogTitle className="text-xl font-semibold text-slate-900">{t('categories.create.title')}</DialogTitle>
+              <DialogDescription className="text-slate-600">{t('categories.create.subtitle')}</DialogDescription>
             </DialogHeader>
             <form onSubmit={handleSubmit}>
               <div className="grid gap-6 py-4">
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="category_name" className="text-right font-medium text-slate-700">
-                    Tên danh mục
+                    {t('categories.create.fields.name')}
                   </Label>
                   <Input
                     id="category_name"
@@ -311,20 +313,20 @@ export default function CategoriesPage() {
                     value={formData.category_name}
                     onChange={handleInputChange}
                     className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100"
-                    placeholder="Nhập tên danh mục..."
+                    placeholder={t('categories.create.placeholders.name')}
                     required
                   />
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="parent_id" className="text-right font-medium text-slate-700">
-                    Danh mục cha
+                    {t('categories.create.fields.parent')}
                   </Label>
                   <Select value={formData.parent_id} onValueChange={handleParentIdChange}>
                     <SelectTrigger className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100">
-                      <SelectValue placeholder="Chọn danh mục cha (tùy chọn)" />
+                      <SelectValue placeholder={t('categories.create.placeholders.parent')} />
                     </SelectTrigger>
                     <SelectContent className="rounded-xl border-slate-200 shadow-xl">
-                      <SelectItem value="none">📁 Không có danh mục cha (Danh mục gốc)</SelectItem>
+                      <SelectItem value="none">{t('categories.table.noParentOption')}</SelectItem>
                       {categoriesTree.map((category: any) => (
                         <SelectItem key={category.category_id} value={category.category_id.toString()}>
                           📁 {category.category_name}
@@ -341,7 +343,7 @@ export default function CategoriesPage() {
                   onClick={() => setIsCreateDialogOpen(false)}
                   className="rounded-xl"
                 >
-                  Hủy
+                  {t('categories.delete.buttons.cancel')}
                 </Button>
                 <Button 
                   type="submit"
@@ -351,10 +353,10 @@ export default function CategoriesPage() {
                   {createCategoryMutation.isPending ? (
                     <>
                       <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
-                      Đang tạo...
+                      {t('categories.create.buttons.creating')}
                     </>
                   ) : (
-                    "Tạo Danh mục"
+                    t('categories.create.buttons.create')
                   )}
                 </Button>
               </DialogFooter>
@@ -368,7 +370,7 @@ export default function CategoriesPage() {
         <Card className="relative overflow-hidden bg-gradient-to-br from-green-50 to-emerald-50 border-green-200/50 hover:shadow-xl transition-all duration-300 group hover:-translate-y-1 rounded-xl">
           <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-green-400/20 to-emerald-400/20 rounded-full -mr-10 -mt-10"></div>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative">
-            <CardTitle className="text-sm font-medium text-slate-700">Tổng danh mục</CardTitle>
+            <CardTitle className="text-sm font-medium text-slate-700">{t('categories.stats.totalCategories')}</CardTitle>
             <div className="h-12 w-12 rounded-xl bg-gradient-to-r from-green-500 to-emerald-500 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
               <Folder className="h-6 w-6 text-white" />
             </div>
@@ -377,7 +379,7 @@ export default function CategoriesPage() {
             <div className="text-3xl font-bold text-slate-900">{totalCategories}</div>
             <div className="flex items-center text-xs text-green-600 mt-2">
               <TrendingUp className="h-3 w-3 mr-1" />
-              {rootCategories} danh mục gốc
+              {rootCategories} {t('categories.stats.rootCategories').toLowerCase()}
             </div>
           </CardContent>
         </Card>
@@ -385,42 +387,42 @@ export default function CategoriesPage() {
         <Card className="relative overflow-hidden bg-gradient-to-br from-blue-50 to-cyan-50 border-blue-200/50 hover:shadow-xl transition-all duration-300 group hover:-translate-y-1 rounded-xl">
           <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-blue-400/20 to-cyan-400/20 rounded-full -mr-10 -mt-10"></div>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative">
-            <CardTitle className="text-sm font-medium text-slate-700">Danh mục gốc</CardTitle>
+            <CardTitle className="text-sm font-medium text-slate-700">{t('categories.stats.rootCategories')}</CardTitle>
             <div className="h-12 w-12 rounded-xl bg-gradient-to-r from-blue-500 to-cyan-500 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
               <FolderOpen className="h-6 w-6 text-white" />
             </div>
           </CardHeader>
           <CardContent className="relative">
             <div className="text-3xl font-bold text-slate-900">{rootCategories}</div>
-            <p className="text-xs text-blue-600 mt-1">Cấp độ cao nhất</p>
+            <p className="text-xs text-blue-600 mt-1">{t('categories.stats.highestLevel')}</p>
           </CardContent>
         </Card>
 
         <Card className="relative overflow-hidden bg-gradient-to-br from-purple-50 to-violet-50 border-purple-200/50 hover:shadow-xl transition-all duration-300 group hover:-translate-y-1 rounded-xl">
           <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-purple-400/20 to-violet-400/20 rounded-full -mr-10 -mt-10"></div>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative">
-            <CardTitle className="text-sm font-medium text-slate-700">Danh mục con</CardTitle>
+            <CardTitle className="text-sm font-medium text-slate-700">{t('categories.stats.childCategories')}</CardTitle>
             <div className="h-12 w-12 rounded-xl bg-gradient-to-r from-purple-500 to-violet-500 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
               <BarChart3 className="h-6 w-6 text-white" />
             </div>
           </CardHeader>
           <CardContent className="relative">
             <div className="text-3xl font-bold text-slate-900">{childCategories}</div>
-            <p className="text-xs text-purple-600 mt-1">Cấp độ 2</p>
+            <p className="text-xs text-purple-600 mt-1">{t('categories.stats.level2')}</p>
           </CardContent>
         </Card>
 
         <Card className="relative overflow-hidden bg-gradient-to-br from-orange-50 to-red-50 border-orange-200/50 hover:shadow-xl transition-all duration-300 group hover:-translate-y-1 rounded-xl">
           <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-orange-400/20 to-red-400/20 rounded-full -mr-10 -mt-10"></div>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative">
-            <CardTitle className="text-sm font-medium text-slate-700">Tổng sản phẩm</CardTitle>
+            <CardTitle className="text-sm font-medium text-slate-700">{t('categories.stats.totalProducts')}</CardTitle>
             <div className="h-12 w-12 rounded-xl bg-gradient-to-r from-orange-500 to-red-500 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
               <Package className="h-6 w-6 text-white" />
             </div>
           </CardHeader>
           <CardContent className="relative">
             <div className="text-3xl font-bold text-slate-900">-</div>
-            <p className="text-xs text-orange-600 mt-1">Chưa có dữ liệu</p>
+            <p className="text-xs text-orange-600 mt-1">{t('categories.tree.noData')}</p>
           </CardContent>
         </Card>
       </div>
@@ -430,13 +432,13 @@ export default function CategoriesPage() {
       {/* Search */}
       <Card className="bg-white/70 backdrop-blur-sm border-slate-200/60 hover:shadow-xl transition-all duration-300 rounded-xl">
         <CardHeader>
-          <CardTitle className="text-slate-900">Tìm kiếm</CardTitle>
+          <CardTitle className="text-slate-900">{t('categories.search.title')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="relative">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
             <Input
-              placeholder="Tìm kiếm theo tên danh mục..."
+              placeholder={t('categories.search.placeholder')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100"
@@ -448,17 +450,17 @@ export default function CategoriesPage() {
       {/* Categories Table */}
       <Card className="bg-white/70 backdrop-blur-sm border-slate-200/60 hover:shadow-xl transition-all duration-300 rounded-xl">
         <CardHeader>
-          <CardTitle className="text-slate-900">Cây danh mục</CardTitle>
-          <CardDescription>Danh sách danh mục theo cấu trúc cây</CardDescription>
+          <CardTitle className="text-slate-900">{t('categories.tree.title')}</CardTitle>
+          <CardDescription>{t('categories.tree.description')}</CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow className="border-slate-100 hover:bg-slate-50/50">
-                <TableHead className="text-slate-600 font-semibold">Danh mục</TableHead>
-                <TableHead className="text-slate-600 font-semibold">Danh mục con</TableHead>
-                <TableHead className="text-slate-600 font-semibold">ID</TableHead>
-                <TableHead className="text-right text-slate-600 font-semibold">Thao tác</TableHead>
+                <TableHead className="text-slate-600 font-semibold">{t('categories.tree.headers.category')}</TableHead>
+                <TableHead className="text-slate-600 font-semibold">{t('categories.tree.headers.children')}</TableHead>
+                <TableHead className="text-slate-600 font-semibold">{t('categories.tree.headers.id')}</TableHead>
+                <TableHead className="text-right text-slate-600 font-semibold">{t('categories.tree.headers.actions')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -513,7 +515,7 @@ export default function CategoriesPage() {
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-slate-100 rounded-lg">
-                          <span className="sr-only">Mở menu</span>
+                          <span className="sr-only">{t('categories.tree.openMenu')}</span>
                           <MoreHorizontal className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
@@ -521,13 +523,13 @@ export default function CategoriesPage() {
                         align="end"
                         className="bg-white/95 backdrop-blur-xl border-slate-200/60 shadow-xl rounded-xl"
                       >
-                        <DropdownMenuLabel>Thao tác</DropdownMenuLabel>
+                        <DropdownMenuLabel>{t('categories.table.headers.actions')}</DropdownMenuLabel>
                         <DropdownMenuItem 
                           className="hover:bg-slate-50/80 rounded-lg"
                           onClick={() => handleEditClick(category)}
                         >
                           <Edit className="mr-2 h-4 w-4" />
-                          Chỉnh sửa
+                          {t('categories.table.actions.edit')}
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem 
@@ -535,7 +537,7 @@ export default function CategoriesPage() {
                           onClick={() => handleDeleteClick(category)}
                         >
                           <Trash2 className="mr-2 h-4 w-4" />
-                          Xóa
+                          {t('categories.table.actions.delete')}
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -551,14 +553,14 @@ export default function CategoriesPage() {
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent className="sm:max-w-[500px] bg-white/95 backdrop-blur-xl border-slate-200/60 shadow-2xl rounded-2xl">
           <DialogHeader>
-            <DialogTitle className="text-xl font-semibold text-slate-900">Chỉnh sửa Danh mục</DialogTitle>
-            <DialogDescription className="text-slate-600">Cập nhật thông tin danh mục sản phẩm</DialogDescription>
+            <DialogTitle className="text-xl font-semibold text-slate-900">{t('categories.edit.title')}</DialogTitle>
+            <DialogDescription className="text-slate-600">{t('categories.edit.subtitle')}</DialogDescription>
           </DialogHeader>
           <form onSubmit={handleEditSubmit}>
             <div className="grid gap-6 py-4">
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="edit_category_name" className="text-right font-medium text-slate-700">
-                  Tên danh mục
+                  {t('categories.edit.fields.name')}
                 </Label>
                 <Input
                   id="edit_category_name"
@@ -566,20 +568,20 @@ export default function CategoriesPage() {
                   value={formData.category_name}
                   onChange={handleInputChange}
                   className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100"
-                  placeholder="Nhập tên danh mục..."
+                  placeholder={t('categories.edit.placeholders.name')}
                   required
                 />
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="edit_parent_id" className="text-right font-medium text-slate-700">
-                  Danh mục cha
+                  {t('categories.edit.fields.parent')}
                 </Label>
                 <Select value={formData.parent_id} onValueChange={handleParentIdChange}>
                   <SelectTrigger className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100">
-                    <SelectValue placeholder="Chọn danh mục cha (tùy chọn)" />
+                    <SelectValue placeholder={t('categories.edit.placeholders.parent')} />
                   </SelectTrigger>
                   <SelectContent className="rounded-xl border-slate-200 shadow-xl">
-                    <SelectItem value="none">📁 Không có danh mục cha (Danh mục gốc)</SelectItem>
+                    <SelectItem value="none">{t('categories.table.noParentOption')}</SelectItem>
                     {categoriesTree
                       .filter((cat: any) => cat.category_id !== editingCategory?.category_id)
                       .map((category: any) => (
@@ -598,7 +600,7 @@ export default function CategoriesPage() {
                 onClick={() => setIsEditDialogOpen(false)}
                 className="rounded-xl"
               >
-                Hủy
+                {t('categories.delete.buttons.cancel')}
               </Button>
               <Button 
                 type="submit"
@@ -608,10 +610,10 @@ export default function CategoriesPage() {
                 {updateCategoryMutation.isPending ? (
                   <>
                     <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
-                    Đang cập nhật...
+                    {t('categories.edit.buttons.updating')}
                   </>
                 ) : (
-                  "Cập nhật Danh mục"
+                  t('categories.edit.buttons.update')
                 )}
               </Button>
             </DialogFooter>
@@ -623,13 +625,13 @@ export default function CategoriesPage() {
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Xác nhận xóa danh mục</AlertDialogTitle>
+            <AlertDialogTitle>{t('categories.delete.title')}</AlertDialogTitle>
             <AlertDialogDescription>
-              Bạn có chắc chắn muốn xóa danh mục <strong>"{deletingCategory?.category_name}"</strong>?
+              {t('categories.delete.description', { name: deletingCategory?.category_name })}
               <br /><br />
-              <span className="text-amber-600 font-medium">⚠️ Lưu ý:</span> Nếu danh mục này đang được sử dụng bởi sản phẩm hoặc có danh mục con, bạn sẽ không thể xóa được. Hãy xóa danh mục khỏi sản phẩm và xóa các danh mục con trước.
+              <span className="text-amber-600 font-medium">{t('categories.delete.note')}</span> {t('categories.delete.noteDescription')}
               <br /><br />
-              Hành động này không thể hoàn tác.
+              {t('categories.delete.cannotUndo')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <div className="flex items-center space-x-2 p-4 bg-red-50 rounded-lg border border-red-200">
@@ -639,13 +641,13 @@ export default function CategoriesPage() {
               <div className="text-sm text-red-600">ID: {deletingCategory?.category_id}</div>
               {deletingCategory?.children && deletingCategory.children.length > 0 && (
                 <div className="text-sm text-red-600">
-                  Có {deletingCategory.children.length} danh mục con
+                  {t('categories.delete.childCategories', { count: deletingCategory.children.length })}
                 </div>
               )}
             </div>
           </div>
           <AlertDialogFooter>
-            <AlertDialogCancel>Hủy</AlertDialogCancel>
+            <AlertDialogCancel>{t('categories.delete.buttons.cancel')}</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDeleteConfirm}
               disabled={deleteCategoryMutation.isPending}
@@ -654,10 +656,10 @@ export default function CategoriesPage() {
               {deleteCategoryMutation.isPending ? (
                 <>
                   <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
-                  Đang xóa...
+                  {t('categories.delete.buttons.deleting')}
                 </>
               ) : (
-                "Xóa"
+                t('categories.delete.buttons.delete')
               )}
             </AlertDialogAction>
           </AlertDialogFooter>

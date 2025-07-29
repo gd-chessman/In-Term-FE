@@ -64,10 +64,12 @@ import {
   Loader2,
 } from "lucide-react"
 // import { formatPrice } from "@/utils/common"
+import { useLang } from "@/lang/useLang"
 
 
 
 export default function PrintSelectPage() {
+  const { t } = useLang()
   const searchParams = useSearchParams()
   const [searchTerm, setSearchTerm] = useState("")
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
@@ -187,7 +189,7 @@ export default function PrintSelectPage() {
     id: template.pt_id.toString(),
     name: template.pt_title,
     icon: "📄",
-    description: `Template cho ${template.country?.country_name}`,
+    description: t('printSelect.templateFor', { country: template.country?.country_name }),
     template: template
   }))
 
@@ -195,7 +197,7 @@ export default function PrintSelectPage() {
   const createMutation = useMutation({
     mutationFn: createPrintSelect,
     onSuccess: () => {
-      toast.success("Thêm sản phẩm vào danh sách in thành công!")
+      toast.success(t('printSelect.toasts.addSuccess'))
       setIsCreateDialogOpen(false)
       setFormData({
         ps_product_id: "",
@@ -213,7 +215,7 @@ export default function PrintSelectPage() {
       queryClient.invalidateQueries({ queryKey: ["printSelects"] })
     },
     onError: (error: any) => {
-      toast.error(error?.response?.data?.message || "Có lỗi xảy ra khi thêm sản phẩm!")
+      toast.error(error?.response?.data?.message || t('printSelect.toasts.addError'))
     },
   })
 
@@ -221,11 +223,11 @@ export default function PrintSelectPage() {
   const deleteMutation = useMutation({
     mutationFn: deletePrintSelect,
     onSuccess: () => {
-      toast.success("Đã xóa sản phẩm khỏi danh sách in!")
+      toast.success(t('printSelect.toasts.deleteSuccess'))
       queryClient.invalidateQueries({ queryKey: ["printSelects"] })
     },
     onError: (error: any) => {
-      toast.error(error?.response?.data?.message || "Có lỗi xảy ra khi xóa sản phẩm!")
+      toast.error(error?.response?.data?.message || t('printSelect.toasts.deleteError'))
     },
   })
 
@@ -233,7 +235,7 @@ export default function PrintSelectPage() {
   const updateMutation = useMutation({
     mutationFn: ({ id, item }: { id: number; item: any }) => updatePrintSelect(id, item),
     onSuccess: () => {
-      toast.success("Đã cập nhật thông tin sản phẩm!")
+      toast.success(t('printSelect.toasts.updateSuccess'))
       setIsEditDialogOpen(false)
       setEditingItem(null)
       setEditFormData({
@@ -250,7 +252,7 @@ export default function PrintSelectPage() {
       queryClient.invalidateQueries({ queryKey: ["printSelects"] })
     },
     onError: (error: any) => {
-      toast.error(error?.response?.data?.message || "Có lỗi xảy ra khi cập nhật sản phẩm!")
+      toast.error(error?.response?.data?.message || t('printSelect.toasts.updateError'))
     },
   })
 
@@ -258,7 +260,7 @@ export default function PrintSelectPage() {
   const updateNumMutation = useMutation({
     mutationFn: updatePrintSelectNum,
     onSuccess: () => {
-      toast.success("Đã cập nhật số lượng in thành công!")
+      toast.success(t('printSelect.toasts.updateNumSuccess'))
       setIsEditNumDialogOpen(false)
       setEditingNumData({
         pn_select_id: 0,
@@ -268,7 +270,7 @@ export default function PrintSelectPage() {
       queryClient.invalidateQueries({ queryKey: ["printSelects"] })
     },
     onError: (error: any) => {
-      toast.error(error?.response?.data?.message || "Có lỗi xảy ra khi cập nhật số lượng in!")
+      toast.error(error?.response?.data?.message || t('printSelect.toasts.updateNumError'))
     },
   })
 
@@ -326,8 +328,7 @@ export default function PrintSelectPage() {
       setPrintingItems([])
     },
     onError: (error: any) => {
-      toast.error("Có lỗi xảy ra khi gửi lệnh in!")
-      setPrintProgress(0)
+      toast.error(t('printSelect.toasts.printError'))
     },
   })
 
@@ -335,7 +336,7 @@ export default function PrintSelectPage() {
     e.preventDefault()
     
     if (!formData.ps_product_id || !formData.ps_country_id) {
-      toast.error("Vui lòng điền đầy đủ thông tin bắt buộc!")
+      toast.error(t('printSelect.toasts.requiredFields'))
       return
     }
 
@@ -357,22 +358,22 @@ export default function PrintSelectPage() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "active":
-        return <Badge className="bg-gradient-to-r from-green-500 to-emerald-500 text-white border-0">Hoạt động</Badge>
+        return <Badge className="bg-gradient-to-r from-green-500 to-emerald-500 text-white border-0">{t('printSelect.status.active')}</Badge>
       case "inactive":
-        return <Badge className="bg-gradient-to-r from-gray-400 to-gray-500 text-white border-0">Tạm dừng</Badge>
+        return <Badge className="bg-gradient-to-r from-gray-400 to-gray-500 text-white border-0">{t('printSelect.status.inactive')}</Badge>
       default:
-        return <Badge variant="secondary">{status}</Badge>
+        return <Badge variant="outline">{status}</Badge>
     }
   }
 
   const getPriorityBadge = (priority: string) => {
     switch (priority) {
       case "high":
-        return <Badge className="bg-gradient-to-r from-red-500 to-pink-500 text-white border-0">Cao</Badge>
+        return <Badge className="bg-gradient-to-r from-red-500 to-pink-500 text-white border-0">{t('printSelect.priority.high')}</Badge>
       case "medium":
-        return <Badge className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white border-0">Trung bình</Badge>
+        return <Badge className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white border-0">{t('printSelect.priority.medium')}</Badge>
       case "low":
-        return <Badge className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white border-0">Thấp</Badge>
+        return <Badge className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white border-0">{t('printSelect.priority.low')}</Badge>
       default:
         return <Badge variant="outline">{priority}</Badge>
     }
@@ -520,9 +521,11 @@ export default function PrintSelectPage() {
   const totalItems = printSelections.length
 
   const handlePrintSingle = (item: any) => {
-    // Kiểm tra trạng thái sản phẩm
     if (item.ps_status !== "active") {
-      toast.error(`Không thể in sản phẩm "${item.product?.product_name}" vì trạng thái hiện tại là ${item.ps_status === "inactive" ? "Tạm dừng" : item.ps_status}`)
+      toast.error(t('printSelect.toasts.cannotPrintProduct', { 
+        productName: item.product?.product_name,
+        status: item.ps_status === "inactive" ? t('printSelect.status.inactive') : item.ps_status 
+      }))
       return
     }
     
@@ -785,7 +788,7 @@ export default function PrintSelectPage() {
     e.preventDefault()
     
     if (editingNumData.pn_num < 1) {
-      toast.error("Số lượng phải lớn hơn hoặc bằng 1!")
+      toast.error(t('printSelect.toasts.minQuantity'))
       return
     }
 
@@ -874,26 +877,26 @@ export default function PrintSelectPage() {
   const handleUpdateAllNumsSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     
-    // Validate all numbers
-    const { a4, a5, v1, v2, v3, i4 } = editingAllNums
-    if (a4 < 0 || a5 < 0 || v1 < 0 || v2 < 0 || v3 < 0 || i4 < 0) {
-      toast.error("Số lượng không được âm!")
+    // Kiểm tra số lượng âm
+    if (editingAllNums.a4 < 0 || editingAllNums.a5 < 0 || editingAllNums.v1 < 0 || 
+        editingAllNums.v2 < 0 || editingAllNums.v3 < 0 || editingAllNums.i4 < 0) {
+      toast.error(t('printSelect.toasts.negativeQuantity'))
       return
     }
 
     // Update each type
     const updates = []
-    if (a4 > 0) updates.push({ pn_select_id: editingAllNums.pn_select_id, pn_type: 'a4', pn_num: a4 })
-    if (a5 > 0) updates.push({ pn_select_id: editingAllNums.pn_select_id, pn_type: 'a5', pn_num: a5 })
-    if (v1 > 0) updates.push({ pn_select_id: editingAllNums.pn_select_id, pn_type: 'v1', pn_num: v1 })
-    if (v2 > 0) updates.push({ pn_select_id: editingAllNums.pn_select_id, pn_type: 'v2', pn_num: v2 })
-    if (v3 > 0) updates.push({ pn_select_id: editingAllNums.pn_select_id, pn_type: 'v3', pn_num: v3 })
-    if (i4 > 0) updates.push({ pn_select_id: editingAllNums.pn_select_id, pn_type: 'i4', pn_num: i4 })
+    if (editingAllNums.a4 > 0) updates.push({ pn_select_id: editingAllNums.pn_select_id, pn_type: 'a4', pn_num: editingAllNums.a4 })
+    if (editingAllNums.a5 > 0) updates.push({ pn_select_id: editingAllNums.pn_select_id, pn_type: 'a5', pn_num: editingAllNums.a5 })
+    if (editingAllNums.v1 > 0) updates.push({ pn_select_id: editingAllNums.pn_select_id, pn_type: 'v1', pn_num: editingAllNums.v1 })
+    if (editingAllNums.v2 > 0) updates.push({ pn_select_id: editingAllNums.pn_select_id, pn_type: 'v2', pn_num: editingAllNums.v2 })
+    if (editingAllNums.v3 > 0) updates.push({ pn_select_id: editingAllNums.pn_select_id, pn_type: 'v3', pn_num: editingAllNums.v3 })
+    if (editingAllNums.i4 > 0) updates.push({ pn_select_id: editingAllNums.pn_select_id, pn_type: 'i4', pn_num: editingAllNums.i4 })
 
     // Execute all updates
     Promise.all(updates.map(update => updateNumMutation.mutateAsync(update)))
       .then(() => {
-        toast.success("Đã cập nhật tất cả số lượng in thành công!")
+        toast.success(t('printSelect.toasts.updateAllNumSuccess'))
         setIsEditNumDialogOpen(false)
         setEditingAllNums({
         pn_select_id: 0,
@@ -907,7 +910,7 @@ export default function PrintSelectPage() {
         queryClient.invalidateQueries({ queryKey: ["printSelects"] })
       })
       .catch((error) => {
-        toast.error("Có lỗi xảy ra khi cập nhật số lượng in!")
+        toast.error(t('printSelect.toasts.updateAllNumError'))
       })
   }
 
@@ -947,7 +950,11 @@ export default function PrintSelectPage() {
         pl_type: getPlType(),
         pl_time_sale_start: selectedItem?.ps_time_sale_start || new Date().toISOString(),
         pl_time_sale_end: selectedItem?.ps_time_sale_end || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // 30 ngày từ hiện tại
-        pl_log_note: `In ${selectedPrintCopies} bản với template ${selectedPrintSize.toUpperCase()}${printNote ? ` - Ghi chú: ${printNote}` : ''}`
+        pl_log_note: t('printSelect.printLogNote', { 
+          copies: selectedPrintCopies, 
+          template: selectedPrintSize.toUpperCase(),
+          note: printNote ? ` - ${t('printSelect.printLogNote.note')}: ${printNote}` : ''
+        })
       }
       
       await runPrintSelect(printLogData)
@@ -972,9 +979,9 @@ export default function PrintSelectPage() {
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold tracking-tight bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-            Chọn sản phẩm In
+            {t('printSelect.title')}
           </h1>
-          <p className="text-muted-foreground">Quản lý danh sách sản phẩm được chọn để in với giao diện hiện đại</p>
+          <p className="text-muted-foreground">{t('printSelect.subtitle')}</p>
         </div>
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center space-y-2 sm:space-y-0 sm:space-x-2 w-full sm:w-auto">
           <div className="flex items-center space-x-1 bg-muted rounded-lg p-1">
@@ -1002,41 +1009,44 @@ export default function PrintSelectPage() {
             className="border-green-200 text-green-600 hover:bg-green-50 w-full sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Printer className="mr-2 h-4 w-4" />
-            In tất cả ({filteredItems.filter((item: any) => item.ps_status === "active").length}/{filteredItems.length})
+            {t('printSelect.printAll', { 
+              active: filteredItems.filter((item: any) => item.ps_status === "active").length,
+              total: filteredItems.length 
+            })}
           </Button>
           <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
             <DialogTrigger asChild>
               <Button className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 w-full sm:w-auto">
                 <Plus className="mr-2 h-4 w-4" />
-                Thêm sản phẩm
+                {t('printSelect.addProduct.addProduct')}
               </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[600px]">
               <DialogHeader>
                 <DialogTitle className="text-xl bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                  Thêm sản phẩm vào danh sách in
+                  {t('printSelect.addProduct.title')}
                 </DialogTitle>
-                <DialogDescription>Chọn sản phẩm và cấu hình thông tin in ấn</DialogDescription>
+                <DialogDescription>{t('printSelect.addProduct.description')}</DialogDescription>
               </DialogHeader>
               <Tabs defaultValue="basic" className="w-full">
                 <TabsList className="grid w-full grid-cols-2">
-                  <TabsTrigger value="basic">Thông tin cơ bản</TabsTrigger>
-                  <TabsTrigger value="config">Cấu hình in</TabsTrigger>
+                  <TabsTrigger value="basic">{t('printSelect.addProduct.tabs.basic')}</TabsTrigger>
+                  <TabsTrigger value="config">{t('printSelect.addProduct.tabs.config')}</TabsTrigger>
                 </TabsList>
                 <TabsContent value="basic" className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="product">Sản phẩm *</Label>
+                      <Label htmlFor="product">{t('printSelect.addProduct.fields.product')} *</Label>
                       <Select value={formData.ps_product_id} onValueChange={(value) => setFormData({...formData, ps_product_id: value})}>
                         <SelectTrigger>
-                          <SelectValue placeholder="Chọn sản phẩm" />
+                          <SelectValue placeholder={t('printSelect.addProduct.fields.selectProduct')} />
                         </SelectTrigger>
                         <SelectContent>
                           <div className="p-2">
                             <div className="relative">
                               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                               <Input
-                                placeholder="Tìm kiếm sản phẩm..."
+                                placeholder={t('printSelect.addProduct.fields.searchProduct')}
                                 value={productSearchTerm}
                                 onChange={(e) => setProductSearchTerm(e.target.value)}
                                 className="pl-8 h-8 text-sm"
@@ -1064,10 +1074,10 @@ export default function PrintSelectPage() {
                       </Select>
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="country">Mẫu in quốc gia *</Label>
+                      <Label htmlFor="country">{t('printSelect.addProduct.fields.countryTemplate')} *</Label>
                       <Select value={formData.ps_country_id} onValueChange={(value) => setFormData({...formData, ps_country_id: value})}>
                         <SelectTrigger>
-                          <SelectValue placeholder="Chọn mẫu in quốc gia" />
+                          <SelectValue placeholder={t('printSelect.addProduct.fields.selectCountryTemplate')} />
                         </SelectTrigger>
                         <SelectContent>
                           {printTemplates.map((template: any) => (
@@ -1083,11 +1093,11 @@ export default function PrintSelectPage() {
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="price_sale">Giá khuyến mãi (tùy chọn)</Label>
+                    <Label htmlFor="price_sale">{t('printSelect.addProduct.fields.salePrice')}</Label>
                     <Input 
                       id="price_sale" 
                       type="number" 
-                      placeholder="Nhập giá khuyến mãi" 
+                      placeholder={t('printSelect.addProduct.fields.enterSalePrice')} 
                       value={formData.ps_price_sale}
                       step="0.01"
                       onChange={(e) => setFormData({...formData, ps_price_sale: e.target.value})}
@@ -1095,7 +1105,7 @@ export default function PrintSelectPage() {
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="ps_time_sale_start">Thời gian bắt đầu bán</Label>
+                      <Label htmlFor="ps_time_sale_start">{t('printSelect.addProduct.fields.saleStartTime')}</Label>
                       <Input 
                         id="ps_time_sale_start" 
                         type="date"
@@ -1105,7 +1115,7 @@ export default function PrintSelectPage() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="ps_time_sale_end">Thời gian kết thúc bán</Label>
+                      <Label htmlFor="ps_time_sale_end">{t('printSelect.addProduct.fields.saleEndTime')}</Label>
                       <Input 
                         id="ps_time_sale_end" 
                         type="date"
@@ -1118,40 +1128,40 @@ export default function PrintSelectPage() {
                 </TabsContent>
                 <TabsContent value="config" className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="status">Trạng thái *</Label>
+                    <Label htmlFor="status">{t('printSelect.addProduct.fields.status')} *</Label>
                     <Select value={formData.ps_status} onValueChange={(value) => setFormData({...formData, ps_status: value})}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Chọn trạng thái" />
+                        <SelectValue placeholder={t('printSelect.addProduct.fields.selectStatus')} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="active">Hoạt động</SelectItem>
-                        <SelectItem value="inactive">Tạm dừng</SelectItem>
+                        <SelectItem value="active">{t('printSelect.addProduct.fields.active')}</SelectItem>
+                        <SelectItem value="inactive">{t('printSelect.addProduct.fields.inactive')}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="ps_option_1">Tùy chọn 1 (tùy chọn)</Label>
+                    <Label htmlFor="ps_option_1">{t('printSelect.addProduct.fields.option1')}</Label>
                     <Input 
                       id="ps_option_1" 
-                      placeholder="Nhập tùy chọn 1" 
+                      placeholder={t('printSelect.addProduct.fields.enterOption1')} 
                       value={formData.ps_option_1}
                       onChange={(e) => setFormData({...formData, ps_option_1: e.target.value})}
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="ps_option_2">Tùy chọn 2 (tùy chọn)</Label>
+                    <Label htmlFor="ps_option_2">{t('printSelect.addProduct.fields.option2')}</Label>
                     <Input 
                       id="ps_option_2" 
-                      placeholder="Nhập tùy chọn 2" 
+                      placeholder={t('printSelect.addProduct.fields.enterOption2')} 
                       value={formData.ps_option_2}
                       onChange={(e) => setFormData({...formData, ps_option_2: e.target.value})}
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="ps_option_3">Tùy chọn 3 (tùy chọn)</Label>
+                    <Label htmlFor="ps_option_3">{t('printSelect.addProduct.fields.option3')}</Label>
                     <Input 
                       id="ps_option_3" 
-                      placeholder="Nhập tùy chọn 3" 
+                      placeholder={t('printSelect.addProduct.fields.enterOption3')} 
                       value={formData.ps_option_3}
                       onChange={(e) => setFormData({...formData, ps_option_3: e.target.value})}
                     />
@@ -1168,10 +1178,10 @@ export default function PrintSelectPage() {
                   {createMutation.isPending ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Đang thêm...
+                      {t('printSelect.addProduct.buttons.adding')}
                     </>
                   ) : (
-                    "Thêm vào danh sách"
+                    t('printSelect.addProduct.buttons.addToList')
                   )}
                 </Button>
               </DialogFooter>
@@ -1187,7 +1197,7 @@ export default function PrintSelectPage() {
               className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 w-full sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Printer className="mr-2 h-4 w-4" />
-              In đã chọn ({selectedItems.filter((id: number) => {
+              {t('printSelect.buttons.printSelected')} ({selectedItems.filter((id: number) => {
                 const item = printSelections.find((item: any) => item.ps_id === id)
                 return item?.ps_status === "active"
               }).length}/{selectedItems.length})
@@ -1200,14 +1210,14 @@ export default function PrintSelectPage() {
       <div className="grid gap-4 md:grid-cols-4">
         <Card className="bg-gradient-to-br from-blue-50 to-cyan-50 border-blue-200 hover:shadow-lg transition-all duration-300">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-blue-700">Tổng sản phẩm</CardTitle>
+            <CardTitle className="text-sm font-medium text-blue-700">{t('printSelect.stats.totalProducts')}</CardTitle>
             <div className="h-8 w-8 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-full flex items-center justify-center">
               <Package className="h-4 w-4 text-white" />
             </div>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-blue-900">{printSelections.length}</div>
-            <p className="text-xs text-blue-600">Trong danh sách in</p>
+            <p className="text-xs text-blue-600">{t('printSelect.stats.inPrintList')}</p>
             <div className="mt-2">
               <Progress value={75} className="h-1" />
             </div>
@@ -1216,14 +1226,14 @@ export default function PrintSelectPage() {
 
         <Card className="bg-gradient-to-br from-green-50 to-emerald-50 border-green-200 hover:shadow-lg transition-all duration-300">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-green-700">Đang hoạt động</CardTitle>
+            <CardTitle className="text-sm font-medium text-green-700">{t('printSelect.stats.active')}</CardTitle>
             <div className="h-8 w-8 bg-gradient-to-br from-green-500 to-emerald-500 rounded-full flex items-center justify-center">
               <TrendingUp className="h-4 w-4 text-white" />
             </div>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-900">{activeCount}</div>
-            <p className="text-xs text-green-600">Sẵn sàng in</p>
+            <p className="text-xs text-green-600">{t('printSelect.stats.readyToPrint')}</p>
             <div className="mt-2">
               <Progress value={(activeCount / printSelections.length) * 100} className="h-1" />
             </div>
@@ -1232,14 +1242,14 @@ export default function PrintSelectPage() {
 
         <Card className="bg-gradient-to-br from-purple-50 to-pink-50 border-purple-200 hover:shadow-lg transition-all duration-300">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-purple-700">Tổng lượt in</CardTitle>
+            <CardTitle className="text-sm font-medium text-purple-700">{t('printSelect.stats.totalPrints')}</CardTitle>
             <div className="h-8 w-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
               <Printer className="h-4 w-4 text-white" />
             </div>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-purple-900">{printStatistics?.overview?.totalPrintLogs}</div>
-            <p className="text-xs text-purple-600">Lượt in tổng cộng</p>
+            <p className="text-xs text-purple-600">{t('printSelect.stats.totalPrintCount')}</p>
             <div className="mt-2">
               <Progress value={85} className="h-1" />
             </div>
@@ -1248,15 +1258,15 @@ export default function PrintSelectPage() {
 
         <Card className="bg-gradient-to-br from-orange-50 to-red-50 border-orange-200 hover:shadow-lg transition-all duration-300">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-orange-700">Top sản phẩm</CardTitle>
+            <CardTitle className="text-sm font-medium text-orange-700">{t('printSelect.stats.topProduct')}</CardTitle>
             <div className="h-8 w-8 bg-gradient-to-br from-orange-500 to-red-500 rounded-full flex items-center justify-center">
               <FileText className="h-4 w-4 text-white" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-orange-900">{printStatistics?.topProducts?.[0]?.total_prints || 0} <span className="text-xs text-orange-600">lượt in</span></div>
+            <div className="text-2xl font-bold text-orange-900">{printStatistics?.topProducts?.[0]?.total_prints || 0} <span className="text-xs text-orange-600">{t('printSelect.stats.printCount')}</span></div>
             <div className="text-xs text-orange-600 mt-1 truncate">
-              {printStatistics?.topProducts?.[0]?.product_name || 'N/A'}
+              {printStatistics?.topProducts?.[0]?.product_name || t('printSelect.na')}
             </div>
           </CardContent>
         </Card>
@@ -1267,7 +1277,7 @@ export default function PrintSelectPage() {
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <Search className="h-5 w-5 text-blue-600" />
-            <span>Tìm kiếm & Lọc nâng cao</span>
+            <span>{t('printSelect.search.title')}</span>
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -1275,7 +1285,7 @@ export default function PrintSelectPage() {
             <div className="relative">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Tìm kiếm theo tên sản phẩm, mã sản phẩm..."
+                placeholder={t('printSelect.search.placeholder')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-8"
@@ -1284,10 +1294,10 @@ export default function PrintSelectPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
               <Select value={selectedCountry} onValueChange={setSelectedCountry}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Chọn quốc gia" />
+                  <SelectValue placeholder={t('printSelect.search.selectCountry')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">Tất cả quốc gia</SelectItem>
+                  <SelectItem value="all">{t('printSelect.search.allCountries')}</SelectItem>
                   {countries.map((country: any) => (
                     <SelectItem key={country.country_id} value={country.country_name}>
                       <div className="flex items-center space-x-2">
@@ -1300,12 +1310,12 @@ export default function PrintSelectPage() {
               </Select>
               <Select value={selectedStatus} onValueChange={setSelectedStatus}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Trạng thái" />
+                  <SelectValue placeholder={t('printSelect.search.status')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">Tất cả</SelectItem>
-                  <SelectItem value="active">Hoạt động</SelectItem>
-                  <SelectItem value="inactive">Tạm dừng</SelectItem>
+                  <SelectItem value="all">{t('printSelect.search.all')}</SelectItem>
+                  <SelectItem value="active">{t('printSelect.search.active')}</SelectItem>
+                  <SelectItem value="inactive">{t('printSelect.search.inactive')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -1319,7 +1329,7 @@ export default function PrintSelectPage() {
           <CardContent className="flex items-center justify-center py-12">
             <div className="flex items-center space-x-2">
               <Loader2 className="h-6 w-6 animate-spin" />
-              <span>Đang tải dữ liệu...</span>
+              <span>{t('printSelect.loading')}</span>
             </div>
           </CardContent>
         </Card>
@@ -1352,7 +1362,7 @@ export default function PrintSelectPage() {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <DropdownMenuLabel>Thao tác</DropdownMenuLabel>
+                      <DropdownMenuLabel>{t('printSelect.actions.actions')}</DropdownMenuLabel>
                       {/* <DropdownMenuItem>
                         <Eye className="mr-2 h-4 w-4" />
                         Xem chi tiết
@@ -1363,11 +1373,11 @@ export default function PrintSelectPage() {
                         className={item.ps_status !== "active" ? "opacity-50 cursor-not-allowed" : ""}
                       >
                         <Printer className="mr-2 h-4 w-4" />
-                        {item.ps_status === "active" ? "In ngay" : "Không thể in (Tạm dừng)"}
+                        {item.ps_status === "active" ? t('printSelect.actions.printNow') : t('printSelect.actions.cannotPrint')}
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => handleEditItem(item)}>
                         <Edit className="mr-2 h-4 w-4" />
-                        Chỉnh sửa
+                        {t('printSelect.actions.edit')}
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem 
@@ -1376,7 +1386,7 @@ export default function PrintSelectPage() {
                         disabled={deleteMutation.isPending}
                       >
                         <Trash2 className="mr-2 h-4 w-4" />
-                        {deleteMutation.isPending ? "Đang xóa..." : "Xóa"}
+                        {deleteMutation.isPending ? t('printSelect.actions.deleting') : t('printSelect.actions.delete')}
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -1412,15 +1422,15 @@ export default function PrintSelectPage() {
 
                 {/* Print Statistics */}
                 <div className="space-y-2">
-                  <div className="text-xs font-medium text-muted-foreground">Cấu hình số lượng in:</div>
+                  <div className="text-xs font-medium text-muted-foreground">{t('printSelect.card.printConfig')}</div>
                   
                   {/* Small table for print numbers */}
                   <div className="bg-gray-50 rounded-lg p-2">
                     <table className="w-full text-xs">
                       <thead>
                         <tr className="border-b border-gray-200">
-                          <th className="text-left py-1">Khổ giấy</th>
-                          <th className="text-right py-1">Số lượng</th>
+                          <th className="text-left py-1">{t('printSelect.card.paperSize')}</th>
+                          <th className="text-right py-1">{t('printSelect.card.quantity')}</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -1487,17 +1497,17 @@ export default function PrintSelectPage() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2">
                     <Clock className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm font-medium">Thời gian bán:</span>
+                    <span className="text-sm font-medium">{t('printSelect.card.saleTime')}:</span>
                   </div>
                   <div className="text-xs text-muted-foreground text-right">
-                    <div>{item.ps_time_sale_start ? new Date(item.ps_time_sale_start).toLocaleDateString("vi-VN") : "Chưa thiết lập"}</div>
-                    <div>→ {item.ps_time_sale_end ? new Date(item.ps_time_sale_end).toLocaleDateString("vi-VN") : "Chưa thiết lập"}</div>
+                    <div>{item.ps_time_sale_start ? new Date(item.ps_time_sale_start).toLocaleDateString("vi-VN") : t('printSelect.productList.notSet')}</div>
+                    <div>→ {item.ps_time_sale_end ? new Date(item.ps_time_sale_end).toLocaleDateString("vi-VN") : t('printSelect.productList.notSet')}</div>
                   </div>
                 </div>
 
                 <div className="space-y-2">
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">Ngày tạo:</span>
+                    <span className="text-muted-foreground">{t('printSelect.card.createdAt')}:</span>
                     <span className="font-medium">{new Date(item.created_at).toLocaleDateString("vi-VN")}</span>
                   </div>
                 </div>
@@ -1505,7 +1515,7 @@ export default function PrintSelectPage() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-1 text-xs text-muted-foreground">
                     <Clock className="h-3 w-3" />
-                    <span>Cập nhật: {new Date(item.updated_at).toLocaleDateString("vi-VN")}</span>
+                    <span>{t('printSelect.card.updated')}: {new Date(item.updated_at).toLocaleDateString("vi-VN")}</span>
                   </div>
                 </div>
               </CardContent>
@@ -1520,10 +1530,10 @@ export default function PrintSelectPage() {
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
               <List className="h-5 w-5 text-blue-600" />
-              <span>Danh sách sản phẩm chọn in</span>
+              <span>{t('printSelect.productList.title')}</span>
             </CardTitle>
             <CardDescription>
-              Hiển thị {filteredItems.length} / {printSelections.length} sản phẩm
+              {t('printSelect.productList.description', { filtered: filteredItems.length, total: printSelections.length })}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -1536,16 +1546,16 @@ export default function PrintSelectPage() {
                       onCheckedChange={handleSelectAll}
                     />
                   </TableHead>
-                  <TableHead>Sản phẩm</TableHead>
-                  <TableHead>Mẫu in quốc gia</TableHead>
-                  <TableHead>Giá gốc</TableHead>
-                  <TableHead>Giá khuyến mãi</TableHead>
-                  <TableHead>Thời gian bán</TableHead>
-                  <TableHead>Tùy chọn</TableHead>
-                  <TableHead>Cấu hình số lượng in</TableHead>
-                  <TableHead>Trạng thái</TableHead>
-                  <TableHead>Ngày tạo</TableHead>
-                  <TableHead className="text-right">Thao tác</TableHead>
+                  <TableHead>{t('printSelect.productList.headers.product')}</TableHead>
+                  <TableHead>{t('printSelect.productList.headers.countryTemplate')}</TableHead>
+                  <TableHead>{t('printSelect.productList.headers.originalPrice')}</TableHead>
+                  <TableHead>{t('printSelect.productList.headers.salePrice')}</TableHead>
+                  <TableHead>{t('printSelect.productList.headers.saleTime')}</TableHead>
+                  <TableHead>{t('printSelect.productList.headers.options')}</TableHead>
+                  <TableHead>{t('printSelect.productList.headers.printConfig')}</TableHead>
+                  <TableHead>{t('printSelect.productList.headers.status')}</TableHead>
+                  <TableHead>{t('printSelect.productList.headers.createdAt')}</TableHead>
+                  <TableHead className="text-right">{t('printSelect.productList.headers.actions')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -1594,10 +1604,10 @@ export default function PrintSelectPage() {
                         onClick={() => handleEditItemFromTime(item)}
                       >
                         <div className="text-xs text-muted-foreground">
-                          {item.ps_time_sale_start ? new Date(item.ps_time_sale_start).toLocaleDateString("vi-VN") : "Chưa thiết lập"}
+                          {item.ps_time_sale_start ? new Date(item.ps_time_sale_start).toLocaleDateString("vi-VN") : t('printSelect.productList.notSet')}
                         </div>
                         <div className="text-xs text-muted-foreground">
-                          → {item.ps_time_sale_end ? new Date(item.ps_time_sale_end).toLocaleDateString("vi-VN") : "Chưa thiết lập"}
+                          → {item.ps_time_sale_end ? new Date(item.ps_time_sale_end).toLocaleDateString("vi-VN") : t('printSelect.productList.notSet')}
                         </div>
                       </div>
                     </TableCell>
@@ -1607,7 +1617,7 @@ export default function PrintSelectPage() {
                         onClick={() => handleEditItemFromOption(item)}
                       >
                         <Badge variant="secondary" className="text-xs">
-                          {item.templates?.ps_option_1 || "Không có"}
+                          {item.templates?.ps_option_1 || t('printSelect.productList.noOptions')}
                         </Badge>
                         {item.templates?.ps_option_2 && (
                           <Badge variant="secondary" className="text-xs">
@@ -1695,12 +1705,12 @@ export default function PrintSelectPage() {
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Button variant="ghost" className="h-8 w-8 p-0">
-                            <span className="sr-only">Mở menu</span>
+                            <span className="sr-only">{t('printSelect.productList.openMenu')}</span>
                             <MoreHorizontal className="h-4 w-4" />
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuLabel>Thao tác</DropdownMenuLabel>
+                          <DropdownMenuLabel>{t('printSelect.actions.actions')}</DropdownMenuLabel>
                           {/* <DropdownMenuItem>
                             <Eye className="mr-2 h-4 w-4" />
                             Xem chi tiết
@@ -1711,11 +1721,11 @@ export default function PrintSelectPage() {
                             className={item.ps_status !== "active" ? "opacity-50 cursor-not-allowed" : ""}
                           >
                             <Printer className="mr-2 h-4 w-4" />
-                            {item.ps_status === "active" ? "In ngay" : "Không thể in (Tạm dừng)"}
+                            {item.ps_status === "active" ? t('printSelect.actions.printNow') : t('printSelect.actions.cannotPrint')}
                           </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => handleEditItem(item)}>
                             <Edit className="mr-2 h-4 w-4" />
-                            Chỉnh sửa
+                            {t('printSelect.actions.edit')}
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
                           <DropdownMenuItem 
@@ -1724,7 +1734,7 @@ export default function PrintSelectPage() {
                             disabled={deleteMutation.isPending}
                           >
                             <Trash2 className="mr-2 h-4 w-4" />
-                            {deleteMutation.isPending ? "Đang xóa..." : "Xóa khỏi danh sách"}
+                            {deleteMutation.isPending ? t('printSelect.actions.deleting') : t('printSelect.actions.delete')}
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -1743,15 +1753,15 @@ export default function PrintSelectPage() {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Printer className="h-5 w-5 text-green-500" />
-              In sản phẩm ({printingItems.length} sản phẩm)
+              {t('printSelect.printDialog.title', { count: printingItems.length })}
             </DialogTitle>
-            <DialogDescription>Cấu hình và thực hiện in cho các sản phẩm đã chọn</DialogDescription>
+            <DialogDescription>{t('printSelect.printDialog.description')}</DialogDescription>
           </DialogHeader>
 
           <div className="space-y-6">
             {/* Print Items Preview */}
             <div className="space-y-3">
-              <Label className="text-sm font-medium">Sản phẩm sẽ in:</Label>
+              <Label className="text-sm font-medium">{t('printSelect.printDialog.itemsToPrint')}</Label>
               
               {/* Warning for inactive items */}
               {(() => {
@@ -1763,11 +1773,11 @@ export default function PrintSelectPage() {
                       <div className="flex items-center space-x-2">
                         <span className="text-yellow-600">⚠️</span>
                         <span className="text-sm font-medium text-yellow-800">
-                          Cảnh báo: {inactiveItems.length} sản phẩm có trạng thái không hoạt động
+                          {t('printSelect.printDialog.warning.inactiveItems', { count: inactiveItems.length })}
                         </span>
                       </div>
                       <div className="text-xs text-yellow-700 mt-1">
-                        Chỉ sản phẩm có trạng thái "Hoạt động" mới được in
+                        {t('printSelect.printDialog.warning.onlyActive')}
                       </div>
                     </div>
                   )
@@ -1785,13 +1795,13 @@ export default function PrintSelectPage() {
                         <code className="bg-white px-2 py-1 rounded text-xs">{item.product?.product_code}</code>
                         {item.ps_status !== "active" && (
                           <Badge variant="destructive" className="text-xs">
-                            Tạm dừng
+                            {t('printSelect.printDialog.paused')}
                           </Badge>
                         )}
                       </div>
                       <div className="flex items-center space-x-2">
                         <Badge variant="secondary" className="text-xs">
-                          {item.templates?.ps_option_1 || "Không có"}
+                          {item.templates?.ps_option_1 || t('printSelect.productList.noOptions')}
                         </Badge>
                         {getTypeBadge(item.ps_type)}
                       </div>
@@ -1803,7 +1813,7 @@ export default function PrintSelectPage() {
             {/* Print Settings */}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="print-format">Mẫu in</Label>
+                <Label htmlFor="print-format">{t('printSelect.printDialog.settings.template')}</Label>
                 <div className="flex items-center space-x-2 h-10 px-3 bg-gray-50 rounded-md border text-sm">
                   {(() => {
                     const itemsToPrint = printSelections.filter((item: any) => printingItems.includes(item.ps_id))
@@ -1827,7 +1837,7 @@ export default function PrintSelectPage() {
                             <span className="text-base">{getCountryFlag(matchingTemplate.country?.country_code)}</span>
                             <div className="truncate">
                               <div className="font-medium truncate">{matchingTemplate.pt_title}</div>
-                              <div className="text-xs text-muted-foreground truncate">Template cho {matchingTemplate.country?.country_name}</div>
+                              <div className="text-xs text-muted-foreground truncate">{t('printSelect.printDialog.settings.templateFor', { country: matchingTemplate.country?.country_name })}</div>
                             </div>
                           </>
                         )
@@ -1838,9 +1848,9 @@ export default function PrintSelectPage() {
                         <>
                           <span className="text-base">📋</span>
                           <div className="truncate">
-                            <div className="font-medium truncate">Nhiều mẫu in ({uniqueTemplates.size} mẫu)</div>
+                            <div className="font-medium truncate">{t('printSelect.printDialog.settings.multipleTemplates', { count: uniqueTemplates.size })}</div>
                             <div className="text-xs text-muted-foreground truncate">
-                              {itemsToPrint.length} sản phẩm với {uniqueTemplates.size} mẫu in khác nhau
+                              {t('printSelect.printDialog.settings.productsWithTemplates', { products: itemsToPrint.length, templates: uniqueTemplates.size })}
                             </div>
                           </div>
                         </>
@@ -1849,7 +1859,7 @@ export default function PrintSelectPage() {
                     
                     return (
                       <div className="text-muted-foreground">
-                        Không tìm thấy mẫu in quốc gia
+                        {t('printSelect.printDialog.settings.noTemplateFound')}
                       </div>
                     )
                   })()}
@@ -1857,7 +1867,7 @@ export default function PrintSelectPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="print-size">Khổ in</Label>
+                <Label htmlFor="print-size">{t('printSelect.printDialog.settings.printSize')}</Label>
                 <Select value={selectedPrintSize} onValueChange={setSelectedPrintSize}>
                   <SelectTrigger>
                     <SelectValue />
@@ -1886,7 +1896,7 @@ export default function PrintSelectPage() {
                         <span>📋</span>
                         <div>
                           <div className="font-medium">V1</div>
-                          <div className="text-xs text-muted-foreground">Khổ tùy chỉnh 1</div>
+                          <div className="text-xs text-muted-foreground">{t('printSelect.printDialog.settings.customSize1')}</div>
                         </div>
                       </div>
                     </SelectItem>
@@ -1895,7 +1905,7 @@ export default function PrintSelectPage() {
                         <span>📋</span>
                         <div>
                           <div className="font-medium">V2</div>
-                          <div className="text-xs text-muted-foreground">Khổ tùy chỉnh 2</div>
+                          <div className="text-xs text-muted-foreground">{t('printSelect.printDialog.settings.customSize2')}</div>
                         </div>
                       </div>
                     </SelectItem>
@@ -1904,7 +1914,7 @@ export default function PrintSelectPage() {
                         <span>📋</span>
                         <div>
                           <div className="font-medium">V3</div>
-                          <div className="text-xs text-muted-foreground">Khổ tùy chỉnh 3</div>
+                          <div className="text-xs text-muted-foreground">{t('printSelect.printDialog.settings.customSize3')}</div>
                         </div>
                       </div>
                     </SelectItem>
@@ -1913,7 +1923,7 @@ export default function PrintSelectPage() {
                         <span>🏷️</span>
                         <div>
                           <div className="font-medium">I4</div>
-                          <div className="text-xs text-muted-foreground">Mẫu nhãn I4</div>
+                          <div className="text-xs text-muted-foreground">{t('printSelect.printDialog.settings.labelTemplate')}</div>
                         </div>
                       </div>
                     </SelectItem>
@@ -1924,7 +1934,7 @@ export default function PrintSelectPage() {
 
 
               <div className="space-y-2">
-                <Label htmlFor="print-copies">Số bản in</Label>
+                <Label htmlFor="print-copies">{t('printSelect.printDialog.settings.copies')}</Label>
                 <Input
                   id="print-copies"
                   type="number"
@@ -1934,35 +1944,35 @@ export default function PrintSelectPage() {
                   onChange={(e) => setSelectedPrintCopies(Number.parseInt(e.target.value) || 1)}
                 />
                 <p className="text-xs text-muted-foreground">
-                  Số lượng được lấy từ cấu hình in khổ {selectedPrintSize.toUpperCase()}
+                  {t('printSelect.printDialog.settings.quantityFromConfig', { size: selectedPrintSize.toUpperCase() })}
                 </p>
               </div>
               <div className="space-y-2">
-                <Label>Thông tin in</Label>
+                <Label>{t('printSelect.printDialog.settings.printInfo')}</Label>
                 <div className="text-sm text-muted-foreground">
-                  <div>Template: {selectedPrintSize.toUpperCase()}</div>
-                  <div>Tổng số trang: {calculateTotalPages()}</div>
+                  <div>{t('printSelect.printDialog.settings.template')}: {selectedPrintSize.toUpperCase()}</div>
+                  <div>{t('printSelect.printDialog.settings.totalPages')}: {calculateTotalPages()}</div>
                 </div>
               </div>
 
               <div className="space-y-2 col-span-2">
-                <Label htmlFor="print-note">Ghi chú in (tùy chọn)</Label>
+                <Label htmlFor="print-note">{t('printSelect.printDialog.settings.printNote')}</Label>
                 <Input
                   id="print-note"
-                  placeholder="Nhập ghi chú cho lần in này..."
+                  placeholder={t('printSelect.printDialog.settings.enterPrintNote')}
                   value={printNote}
                   onChange={(e) => setPrintNote(e.target.value)}
                   className="w-full"
                 />
                 <p className="text-xs text-muted-foreground">
-                  Ghi chú sẽ được lưu vào lịch sử in
+                  {t('printSelect.printDialog.settings.noteWillBeSaved')}
                 </p>
               </div>
             </div>
 
             {/* Thêm vào Print Dialog, sau phần Print Settings */}
             <div className="space-y-2">
-              <Label>Xem trước nội dung sẽ in</Label>
+              <Label>{t('printSelect.printDialog.settings.previewContent')}</Label>
               <Dialog>
                 <DialogTrigger asChild>
                   <Button 
@@ -1970,16 +1980,16 @@ export default function PrintSelectPage() {
                     className="w-full"
                   >
                     <Eye className="mr-2 h-4 w-4" />
-                    Xem trước nội dung in
+                    {t('printSelect.printDialog.settings.previewPrintContent')}
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="max-w-4xl max-h-[80vh]">
                   <DialogHeader>
                     <DialogTitle className="flex items-center">
                       <Printer className="w-5 h-5 mr-2 text-green-600" />
-                      Xem trước nội dung in
+                      {t('printSelect.printDialog.settings.previewPrintContent')}
                     </DialogTitle>
-                    <DialogDescription>Preview nội dung sẽ được in với {printingItems.length} sản phẩm</DialogDescription>
+                    <DialogDescription>{t('printSelect.printDialog.settings.previewDescription', { count: printingItems.length })}</DialogDescription>
                   </DialogHeader>
 
                   <div className="space-y-4">
@@ -2019,9 +2029,14 @@ export default function PrintSelectPage() {
                                   >
                                     <div className="bg-gray-100 p-3 border-b">
                                       <div className="flex items-center justify-between text-sm">
-                                        <span className="font-medium">Template {selectedPrintSize.toUpperCase()}</span>
+                                        <span className="font-medium">{t('printSelect.printDialog.preview.template', { size: selectedPrintSize.toUpperCase() })}</span>
                                         <span className="text-gray-500">
-                                          Sản phẩm {itemIndex + 1}/{printingItems.length} - Bản {copyIndex + 1}/{selectedPrintCopies}
+                                          {t('printSelect.printDialog.preview.productCopy', { 
+                                            product: itemIndex + 1, 
+                                            total: printingItems.length, 
+                                            copy: copyIndex + 1, 
+                                            copies: selectedPrintCopies 
+                                          })}
                                         </span>
                                       </div>
                                     </div>
@@ -2055,8 +2070,8 @@ export default function PrintSelectPage() {
             {printMutation.isPending && (
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span>Đang xử lý in...</span>
-                  <span>Vui lòng chờ</span>
+                  <span>{t('printSelect.printDialog.progress.processing')}</span>
+                  <span>{t('printSelect.printDialog.progress.pleaseWait')}</span>
                 </div>
                 <Progress value={100} className="h-2" />
               </div>
@@ -2089,11 +2104,11 @@ export default function PrintSelectPage() {
           <DialogFooter className="flex justify-between">
             <div className="flex items-center space-x-2 text-sm text-muted-foreground">
               <Printer className="h-4 w-4" />
-              <span>Tổng: {calculateTotalPages()} trang</span>
+              <span>{t('printSelect.printDialog.footer.total')}: {calculateTotalPages()} {t('printSelect.printDialog.footer.pages')}</span>
             </div>
             <div className="flex space-x-2">
               <Button variant="outline" onClick={() => setIsPrintDialogOpen(false)}>
-                Hủy
+                {t('printSelect.printDialog.footer.cancel')}
               </Button>
               <Button
                 onClick={executePrint}
@@ -2106,12 +2121,12 @@ export default function PrintSelectPage() {
                 {printMutation.isPending ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Đang in...
+                    {t('printSelect.printDialog.buttons.printing')}
                   </>
                 ) : (
                   <>
                     <Printer className="mr-2 h-4 w-4" />
-                    Bắt đầu in
+                    {t('printSelect.printDialog.buttons.startPrint')}
                   </>
                 )}
               </Button>
@@ -2124,11 +2139,11 @@ export default function PrintSelectPage() {
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <AlertDialogContent className="bg-white/95 backdrop-blur-xl border-slate-200/60 shadow-2xl rounded-2xl">
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-xl font-semibold text-slate-900">Xác nhận xóa sản phẩm</AlertDialogTitle>
+            <AlertDialogTitle className="text-xl font-semibold text-slate-900">{t('printSelect.deleteDialog.title')}</AlertDialogTitle>
             <AlertDialogDescription className="text-slate-600">
-              Bạn có chắc chắn muốn xóa sản phẩm <strong>{itemToDelete?.product?.product_name}</strong> khỏi danh sách in?
+              {t('printSelect.deleteDialog.description', { productName: itemToDelete?.product?.product_name })}
               <br />
-              <span className="text-red-600 font-semibold">⚠️ Hành động này không thể hoàn tác.</span>
+              <span className="text-red-600 font-semibold">{t('printSelect.deleteDialog.warning')}</span>
             </AlertDialogDescription>
           </AlertDialogHeader>
           
@@ -2140,9 +2155,9 @@ export default function PrintSelectPage() {
               </div>
               <div>
                 <div className="font-semibold text-slate-800">{itemToDelete.product?.product_name}</div>
-                <div className="text-sm text-slate-600">Mã: <code className="bg-white px-1 rounded text-slate-700">{itemToDelete.product?.product_code}</code></div>
-                <div className="text-sm text-slate-600">Xuất xứ: {itemToDelete.country?.country_name}</div>
-                <div className="text-sm text-slate-600">Khổ giấy: {itemToDelete.ps_type}</div>
+                <div className="text-sm text-slate-600">{t('printSelect.deleteDialog.info.code')}: <code className="bg-white px-1 rounded text-slate-700">{itemToDelete.product?.product_code}</code></div>
+                <div className="text-sm text-slate-600">{t('printSelect.deleteDialog.info.origin')}: {itemToDelete.country?.country_name}</div>
+                <div className="text-sm text-slate-600">{t('printSelect.deleteDialog.info.paperSize')}: {itemToDelete.ps_type}</div>
               </div>
             </div>
           )}
@@ -2153,7 +2168,7 @@ export default function PrintSelectPage() {
               disabled={deleteMutation.isPending}
               onClick={() => setItemToDelete(null)}
             >
-              Hủy
+              {t('printSelect.deleteDialog.buttons.cancel')}
             </AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDeleteConfirm}
@@ -2163,12 +2178,12 @@ export default function PrintSelectPage() {
               {deleteMutation.isPending ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Đang xóa...
+                  {t('printSelect.deleteDialog.buttons.deleting')}
                 </>
               ) : (
                 <>
                   <Trash2 className="mr-2 h-4 w-4" />
-                  Xóa sản phẩm
+                  {t('printSelect.deleteDialog.buttons.deleteProduct')}
                 </>
               )}
             </AlertDialogAction>
@@ -2186,26 +2201,26 @@ export default function PrintSelectPage() {
         <DialogContent className="sm:max-w-[600px]">
           <DialogHeader>
             <DialogTitle className="text-xl bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              Chỉnh sửa thông tin in
+              {t('printSelect.editInfo.title')}
             </DialogTitle>
-            <DialogDescription>Cập nhật thông tin sản phẩm trong danh sách in</DialogDescription>
+            <DialogDescription>{t('printSelect.editInfo.description')}</DialogDescription>
           </DialogHeader>
           <form onSubmit={handleUpdateSubmit}>
             <Tabs value={activeEditTab} onValueChange={setActiveEditTab} className="w-full">
               <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="basic">Thông tin cơ bản</TabsTrigger>
-                <TabsTrigger value="config">Cấu hình in</TabsTrigger>
+                <TabsTrigger value="basic">{t('printSelect.editInfo.tabs.basic')}</TabsTrigger>
+                <TabsTrigger value="config">{t('printSelect.editInfo.tabs.config')}</TabsTrigger>
               </TabsList>
               <TabsContent value="basic" className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="edit_product">Sản phẩm *</Label>
+                    <Label htmlFor="edit_product">{t('printSelect.editInfo.fields.product')} *</Label>
                     <Select 
                       value={editFormData.ps_product_id} 
                       onValueChange={(value) => setEditFormData({...editFormData, ps_product_id: value})}
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder="Chọn sản phẩm" />
+                        <SelectValue placeholder={t('printSelect.editInfo.fields.selectProduct')} />
                       </SelectTrigger>
                       <SelectContent>
                         {products.map((product: any) => (
@@ -2222,7 +2237,7 @@ export default function PrintSelectPage() {
                     </Select>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="edit_country">Mẫu in quốc gia *</Label>
+                    <Label htmlFor="edit_country">{t('printSelect.editInfo.fields.countryTemplate')} *</Label>
                     <Select 
                       value={editFormData.ps_country_id} 
                       onValueChange={(value) => setEditFormData({...editFormData, ps_country_id: value})}
@@ -2230,7 +2245,7 @@ export default function PrintSelectPage() {
                       onOpenChange={setIsCountrySelectOpen}
                     >
                       <SelectTrigger ref={countrySelectRef} id="edit-country-select">
-                        <SelectValue placeholder="Chọn mẫu in quốc gia" />
+                        <SelectValue placeholder={t('printSelect.editInfo.fields.selectCountryTemplate')} />
                       </SelectTrigger>
                       <SelectContent>
                         {printTemplates.map((template: any) => (
@@ -2246,11 +2261,11 @@ export default function PrintSelectPage() {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="edit_price_sale">Giá khuyến mãi (tùy chọn)</Label>
+                  <Label htmlFor="edit_price_sale">{t('printSelect.editInfo.fields.salePrice')}</Label>
                   <Input 
                     id="edit_price_sale" 
                     type="number" 
-                    placeholder="Nhập giá bán khuyến mãi" 
+                    placeholder={t('printSelect.editInfo.fields.enterSalePrice')} 
                     value={editFormData.ps_price_sale}
                     step="0.01"
                     onChange={(e) => setEditFormData({...editFormData, ps_price_sale: e.target.value})}
@@ -2258,7 +2273,7 @@ export default function PrintSelectPage() {
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="edit_ps_time_sale_start">Thời gian bắt đầu bán</Label>
+                    <Label htmlFor="edit_ps_time_sale_start">{t('printSelect.editInfo.fields.saleStartTime')}</Label>
                     <Input 
                       id="edit_ps_time_sale_start" 
                       type="date"
@@ -2268,7 +2283,7 @@ export default function PrintSelectPage() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="edit_ps_time_sale_end">Thời gian kết thúc bán</Label>
+                    <Label htmlFor="edit_ps_time_sale_end">{t('printSelect.editInfo.fields.saleEndTime')}</Label>
                     <Input 
                       id="edit_ps_time_sale_end" 
                       type="date"
@@ -2281,43 +2296,43 @@ export default function PrintSelectPage() {
               </TabsContent>
               <TabsContent value="config" className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="edit_status">Trạng thái *</Label>
+                  <Label htmlFor="edit_status">{t('printSelect.editInfo.fields.status')} *</Label>
                   <Select 
                     value={editFormData.ps_status} 
                     onValueChange={(value) => setEditFormData({...editFormData, ps_status: value})}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Chọn trạng thái" />
+                      <SelectValue placeholder={t('printSelect.editInfo.fields.selectStatus')} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="active">Hoạt động</SelectItem>
-                      <SelectItem value="inactive">Tạm dừng</SelectItem>
+                      <SelectItem value="active">{t('printSelect.editInfo.fields.active')}</SelectItem>
+                      <SelectItem value="inactive">{t('printSelect.editInfo.fields.inactive')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="edit_ps_option_1">Tùy chọn 1 (tùy chọn)</Label>
+                  <Label htmlFor="edit_ps_option_1">{t('printSelect.editInfo.fields.option1')}</Label>
                   <Input 
                     id="edit_ps_option_1" 
-                    placeholder="Nhập tùy chọn 1" 
+                    placeholder={t('printSelect.editInfo.fields.enterOption1')} 
                     value={editFormData.ps_option_1}
                     onChange={(e) => setEditFormData({...editFormData, ps_option_1: e.target.value})}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="edit_ps_option_2">Tùy chọn 2 (tùy chọn)</Label>
+                  <Label htmlFor="edit_ps_option_2">{t('printSelect.editInfo.fields.option2')}</Label>
                   <Input 
                     id="edit_ps_option_2" 
-                    placeholder="Nhập tùy chọn 2" 
+                    placeholder={t('printSelect.editInfo.fields.enterOption2')} 
                     value={editFormData.ps_option_2}
                     onChange={(e) => setEditFormData({...editFormData, ps_option_2: e.target.value})}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="edit_ps_option_3">Tùy chọn 3 (tùy chọn)</Label>
+                  <Label htmlFor="edit_ps_option_3">{t('printSelect.editInfo.fields.option3')}</Label>
                   <Input 
                     id="edit_ps_option_3" 
-                    placeholder="Nhập tùy chọn 3" 
+                    placeholder={t('printSelect.editInfo.fields.enterOption3')} 
                     value={editFormData.ps_option_3}
                     onChange={(e) => setEditFormData({...editFormData, ps_option_3: e.target.value})}
                   />
@@ -2333,10 +2348,10 @@ export default function PrintSelectPage() {
                 {updateMutation.isPending ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Đang cập nhật...
+                    {t('printSelect.editInfo.buttons.updating')}
                   </>
                 ) : (
-                  "Cập nhật thông tin"
+                  t('printSelect.editInfo.buttons.updateInfo')
                 )}
               </Button>
             </DialogFooter>
@@ -2350,10 +2365,10 @@ export default function PrintSelectPage() {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Edit className="h-5 w-5 text-blue-500" />
-              Cập nhật cấu hình số lượng in
+              {t('printSelect.editNum.title')}
             </DialogTitle>
             <DialogDescription>
-              Chỉnh sửa số lượng cấu hình in cho tất cả các khổ giấy
+              {t('printSelect.editNum.description')}
             </DialogDescription>
           </DialogHeader>
 
@@ -2370,7 +2385,7 @@ export default function PrintSelectPage() {
                     ...editingAllNums,
                     a4: parseInt(e.target.value) || 0
                   })}
-                  placeholder="Số lượng A4"
+                  placeholder={t('printSelect.editNum.placeholders.a4')}
                   className="border-blue-200 focus:border-blue-500"
                 />
               </div>
@@ -2385,7 +2400,7 @@ export default function PrintSelectPage() {
                     ...editingAllNums,
                     a5: parseInt(e.target.value) || 0
                   })}
-                  placeholder="Số lượng A5"
+                  placeholder={t('printSelect.editNum.placeholders.a5')}
                   className="border-green-200 focus:border-green-500"
                 />
               </div>
@@ -2400,7 +2415,7 @@ export default function PrintSelectPage() {
                     ...editingAllNums,
                     v1: parseInt(e.target.value) || 0
                   })}
-                  placeholder="Số lượng V1"
+                  placeholder={t('printSelect.editNum.placeholders.v1')}
                   className="border-purple-200 focus:border-purple-500"
                 />
               </div>
@@ -2415,7 +2430,7 @@ export default function PrintSelectPage() {
                     ...editingAllNums,
                     v2: parseInt(e.target.value) || 0
                   })}
-                  placeholder="Số lượng V2"
+                  placeholder={t('printSelect.editNum.placeholders.v2')}
                   className="border-orange-200 focus:border-orange-500"
                 />
               </div>
@@ -2430,7 +2445,7 @@ export default function PrintSelectPage() {
                     ...editingAllNums,
                     v3: parseInt(e.target.value) || 0
                   })}
-                  placeholder="Số lượng V3"
+                  placeholder={t('printSelect.editNum.placeholders.v3')}
                   className="border-red-200 focus:border-red-500"
                 />
               </div>
@@ -2445,7 +2460,7 @@ export default function PrintSelectPage() {
                     ...editingAllNums,
                     i4: parseInt(e.target.value) || 0
                   })}
-                  placeholder="Số lượng I4"
+                  placeholder={t('printSelect.editNum.placeholders.i4')}
                   className="border-indigo-200 focus:border-indigo-500"
                 />
               </div>
@@ -2453,9 +2468,9 @@ export default function PrintSelectPage() {
 
             <div className="bg-blue-50 p-3 rounded-lg">
               <div className="text-sm text-blue-800">
-                <div><strong>Sản phẩm:</strong> {printSelections.find((item: any) => item.ps_id === editingAllNums.pn_select_id)?.product?.product_name}</div>
-                <div><strong>Xuất xứ:</strong> {printSelections.find((item: any) => item.ps_id === editingAllNums.pn_select_id)?.country?.country_name}</div>
-                <div><strong>Tổng số lượng:</strong> {editingAllNums.a4 + editingAllNums.a5 + editingAllNums.v1 + editingAllNums.v2 + editingAllNums.v3 + editingAllNums.i4} bản</div>
+                <div><strong>{t('printSelect.editNum.info.product')}:</strong> {printSelections.find((item: any) => item.ps_id === editingAllNums.pn_select_id)?.product?.product_name}</div>
+                <div><strong>{t('printSelect.editNum.info.origin')}:</strong> {printSelections.find((item: any) => item.ps_id === editingAllNums.pn_select_id)?.country?.country_name}</div>
+                <div><strong>{t('printSelect.editNum.info.totalQuantity')}:</strong> {editingAllNums.a4 + editingAllNums.a5 + editingAllNums.v1 + editingAllNums.v2 + editingAllNums.v3 + editingAllNums.i4} {t('printSelect.editNum.info.copies')}</div>
               </div>
             </div>
           </form>
@@ -2466,7 +2481,7 @@ export default function PrintSelectPage() {
               onClick={() => setIsEditNumDialogOpen(false)}
               disabled={updateNumMutation.isPending}
             >
-              Hủy
+              {t('printSelect.editNum.buttons.cancel')}
             </Button>
             <Button
               onClick={handleUpdateAllNumsSubmit}
@@ -2476,10 +2491,10 @@ export default function PrintSelectPage() {
               {updateNumMutation.isPending ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Đang cập nhật...
+                  {t('printSelect.editNum.buttons.updating')}
                 </>
               ) : (
-                "Cập nhật tất cả"
+                t('printSelect.editNum.buttons.updateAll')
               )}
             </Button>
           </DialogFooter>

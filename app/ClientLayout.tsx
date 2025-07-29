@@ -93,7 +93,7 @@ export function ClientLayout({ children }: ClientLayoutProps) {
                     <Menu className="h-6 w-6" />
                   </Button>
                   <h1 className="text-lg font-semibold text-gray-900 dark:text-zinc-100">
-                    Admin Panel
+                    {process.env.NEXT_PUBLIC_APP_NAME}
                   </h1>
                   <div className="w-10" /> {/* Spacer */}
                 </div>

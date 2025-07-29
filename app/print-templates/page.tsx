@@ -63,6 +63,7 @@ import {
   Calendar,
   Loader2,
 } from "lucide-react"
+import { useLang } from "@/lang/useLang"
 
 
 const getCountryFlag = (countryCode: string) => {
@@ -77,6 +78,7 @@ const getCountryFlag = (countryCode: string) => {
 }
 
 export default function PrintTemplatesPage() {
+  const { t } = useLang()
   const searchParams = useSearchParams()
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedCountry, setSelectedCountry] = useState("all")
@@ -165,7 +167,7 @@ export default function PrintTemplatesPage() {
     mutationFn: createPrintTemplate,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['print-templates'] })
-      toast.success("Tạo template thành công!")
+      toast.success(t('printTemplates.toasts.createSuccess.message'))
       setIsCreateDialogOpen(false)
       setFormData({
         pt_country_id: "",
@@ -181,7 +183,7 @@ export default function PrintTemplatesPage() {
       })
     },
     onError: (error: any) => {
-      toast.error(error?.response?.data?.message || "Có lỗi xảy ra khi tạo template")
+      toast.error(error?.response?.data?.message || t('printTemplates.toasts.createError.message'))
     }
   })
 
@@ -189,12 +191,12 @@ export default function PrintTemplatesPage() {
     mutationFn: deletePrintTemplate,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['print-templates'] })
-      toast.success("Xóa template thành công!")
+      toast.success(t('printTemplates.toasts.deleteSuccess.message'))
       setDeleteDialogOpen(false)
       setTemplateToDelete(null)
     },
     onError: (error: any) => {
-      toast.error(error?.response?.data?.message || "Có lỗi xảy ra khi xóa template")
+      toast.error(error?.response?.data?.message || t('printTemplates.toasts.deleteError.message'))
       setDeleteDialogOpen(false)
       setTemplateToDelete(null)
     }
@@ -205,12 +207,23 @@ export default function PrintTemplatesPage() {
     mutationFn: ({ countryId, item }: { countryId: number, item: any }) => updatePrintTemplate(countryId, item),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['print-templates'] })
-      toast.success("Cập nhật template thành công!")
+      toast.success(t('printTemplates.toasts.updateSuccess.message'))
       setIsEditDialogOpen(false)
       setSelectedTemplate(null)
+      setEditForm({
+        pt_title: '',
+        pt_country_id: '',
+        pt_brand: '',
+        pt_origin_country: '',
+        pt_product_code: '',
+        pt_original_price: '',
+        pt_unit_price: '',
+        pt_currency: '',
+        pt_vendor: ''
+      })
     },
     onError: (error: any) => {
-      toast.error(error?.response?.data?.message || "Có lỗi xảy ra khi cập nhật template")
+      toast.error(error?.response?.data?.message || t('printTemplates.toasts.updateError.message'))
     }
   })
 
@@ -232,7 +245,7 @@ export default function PrintTemplatesPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (!formData.pt_country_id || !formData.pt_title || !formData.pt_brand || !formData.pt_origin_country || !formData.pt_product_code || !formData.pt_original_price || !formData.pt_unit_price || !formData.pt_currency || !formData.pt_vendor) {
-      toast.error("Vui lòng điền đầy đủ thông tin bắt buộc")
+      toast.error(t('printTemplates.toasts.validation.requiredFields'))
       return
     }
     
@@ -286,7 +299,7 @@ export default function PrintTemplatesPage() {
   const handleEditSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (!editForm.pt_title || !editForm.pt_country_id || !editForm.pt_brand || !editForm.pt_origin_country || !editForm.pt_product_code || !editForm.pt_original_price || !editForm.pt_unit_price || !editForm.pt_currency || !editForm.pt_vendor) {
-      toast.error("Vui lòng điền đầy đủ thông tin bắt buộc")
+      toast.error(t('printTemplates.toasts.validation.requiredFields'))
       return
     }
     updateTemplateMutation.mutate({
@@ -310,7 +323,7 @@ export default function PrintTemplatesPage() {
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="flex items-center space-x-2">
           <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
-          <span className="text-slate-600">Đang tải danh sách template...</span>
+          <span className="text-slate-600">{t('printTemplates.loading')}</span>
         </div>
       </div>
     )
@@ -320,9 +333,9 @@ export default function PrintTemplatesPage() {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
-          <div className="text-red-600 mb-2">Có lỗi xảy ra khi tải danh sách template</div>
+          <div className="text-red-600 mb-2">{t('printTemplates.error')}</div>
           <Button onClick={() => queryClient.refetchQueries({ queryKey: ['print-templates'] })} variant="outline">
-            Thử lại
+            {t('printTemplates.retry')}
           </Button>
         </div>
       </div>
@@ -335,58 +348,58 @@ export default function PrintTemplatesPage() {
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold tracking-tight bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-            Template In
+            {t('printTemplates.title')}
           </h1>
-          <p className="text-muted-foreground">Quản lý template in cho từng quốc gia</p>
+          <p className="text-muted-foreground">{t('printTemplates.subtitle')}</p>
         </div>
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
           <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
             <DialogTrigger asChild>
               <Button className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 w-full sm:w-auto">
                 <Plus className="mr-2 h-4 w-4" />
-                Thêm Template
+                {t('printTemplates.create.button')}
               </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[700px]">
               <DialogHeader>
                 <DialogTitle className="flex items-center gap-2">
                   <FileText className="h-5 w-5 text-blue-500" />
-                  Thêm Template mới
+                  {t('printTemplates.create.title')}
                 </DialogTitle>
-                <DialogDescription>Tạo template in mới cho quốc gia</DialogDescription>
+                <DialogDescription>{t('printTemplates.create.subtitle')}</DialogDescription>
               </DialogHeader>
               <form onSubmit={handleSubmit}>
                 <Tabs defaultValue="basic" className="w-full">
                   <TabsList className="grid w-full grid-cols-3">
-                    <TabsTrigger value="basic">Thông tin cơ bản</TabsTrigger>
-                    <TabsTrigger value="content">Từ ngữ sử dụng</TabsTrigger>
-                    <TabsTrigger value="preview">Xem trước</TabsTrigger>
+                    <TabsTrigger value="basic">{t('printTemplates.create.tabs.basic')}</TabsTrigger>
+                    <TabsTrigger value="content">{t('printTemplates.create.tabs.content')}</TabsTrigger>
+                    <TabsTrigger value="preview">{t('printTemplates.create.tabs.preview')}</TabsTrigger>
                   </TabsList>
                   <TabsContent value="basic" className="space-y-4">
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label htmlFor="pt_title">Tiêu đề Template *</Label>
+                        <Label htmlFor="pt_title">{t('printTemplates.create.fields.title')} *</Label>
                         <Input 
                           id="pt_title" 
                           value={formData.pt_title}
                           onChange={(e) => handleInputChange('pt_title', e.target.value)}
-                          placeholder="Nhập tiêu đề..." 
+                          placeholder={t('printTemplates.create.placeholders.title')} 
                           required
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="pt_country">Quốc gia *</Label>
+                        <Label htmlFor="pt_country">{t('printTemplates.create.fields.country')} *</Label>
                         <Select 
                           value={formData.pt_country_id} 
                           onValueChange={(value) => handleInputChange('pt_country_id', value)}
                           required
                         >
                           <SelectTrigger>
-                            <SelectValue placeholder="Chọn quốc gia" />
+                            <SelectValue placeholder={t('printTemplates.search.filter.selectCountry')} />
                           </SelectTrigger>
                                                   <SelectContent>
                           {isLoadingCountries ? (
-                            <SelectItem value="" disabled>Đang tải...</SelectItem>
+                            <SelectItem value="" disabled>{t('printTemplates.loading')}</SelectItem>
                           ) : (
                             countries.map((country: any) => (
                               <SelectItem key={country.country_id} value={country.country_id.toString()}>
@@ -405,66 +418,66 @@ export default function PrintTemplatesPage() {
                   <TabsContent value="content" className="space-y-4">
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label htmlFor="pt_brand">Từ ngữ cho Thương hiệu *</Label>
+                        <Label htmlFor="pt_brand">{t('printTemplates.create.fields.brand')} *</Label>
                         <Input
                           id="pt_brand"
                           value={formData.pt_brand}
                           onChange={(e) => handleInputChange('pt_brand', e.target.value)}
-                          placeholder="VD: Thương hiệu, Brand, Nhãn hiệu..."
+                          placeholder={t('printTemplates.create.placeholders.brand')}
                           required
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="pt_origin_country">Từ ngữ cho Xuất xứ *</Label>
+                        <Label htmlFor="pt_origin_country">{t('printTemplates.create.fields.originCountry')} *</Label>
                         <Input
                           id="pt_origin_country"
                           value={formData.pt_origin_country}
                           onChange={(e) => handleInputChange('pt_origin_country', e.target.value)}
-                          placeholder="VD: Xuất xứ, Origin, Nguồn gốc..."
+                          placeholder={t('printTemplates.create.placeholders.originCountry')}
                           required
                         />
                       </div>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label htmlFor="pt_product_code">Từ ngữ cho Mã sản phẩm *</Label>
+                        <Label htmlFor="pt_product_code">{t('printTemplates.create.fields.productCode')} *</Label>
                         <Input
                           id="pt_product_code"
                           value={formData.pt_product_code}
                           onChange={(e) => handleInputChange('pt_product_code', e.target.value)}
-                          placeholder="VD: Mã SP, Product Code, SKU..."
+                          placeholder={t('printTemplates.create.placeholders.productCode')}
                           required
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="pt_original_price">Từ ngữ cho Giá gốc *</Label>
+                        <Label htmlFor="pt_original_price">{t('printTemplates.create.fields.originalPrice')} *</Label>
                         <Input
                           id="pt_original_price"
                           value={formData.pt_original_price}
                           onChange={(e) => handleInputChange('pt_original_price', e.target.value)}
-                          placeholder="VD: Giá gốc, Original Price, MSRP..."
+                          placeholder={t('printTemplates.create.placeholders.originalPrice')}
                           required
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="pt_unit_price">Từ ngữ cho Giá đơn vị *</Label>
+                        <Label htmlFor="pt_unit_price">{t('printTemplates.create.fields.unitPrice')} *</Label>
                         <Input
                           id="pt_unit_price"
                           value={formData.pt_unit_price}
                           onChange={(e) => handleInputChange('pt_unit_price', e.target.value)}
-                          placeholder="VD: Giá đơn vị, Unit Price, Price per unit..."
+                          placeholder={t('printTemplates.create.placeholders.unitPrice')}
                           required
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="pt_currency">Ký hiệu tiền tệ *</Label>
+                        <Label htmlFor="pt_currency">{t('printTemplates.create.fields.currency')} *</Label>
                         <div className="relative currency-dropdown">
                           <Input
                             id="pt_currency"
                             value={formData.pt_currency}
                             onChange={(e) => handleInputChange('pt_currency', e.target.value)}
                             onFocus={() => setIsCurrencyDropdownOpen(true)}
-                            placeholder="VD: $, €, ¥, ₫..."
+                            placeholder={t('printTemplates.create.placeholders.currency')}
                             required
                           />
                           {isCurrencyDropdownOpen && (
@@ -486,12 +499,12 @@ export default function PrintTemplatesPage() {
                         </div>
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="pt_vendor">Từ ngữ cho Nhà cung cấp *</Label>
+                        <Label htmlFor="pt_vendor">{t('printTemplates.create.fields.vendor')} *</Label>
                         <Input
                           id="pt_vendor"
                           value={formData.pt_vendor}
                           onChange={(e) => handleInputChange('pt_vendor', e.target.value)}
-                          placeholder="VD: Nhà cung cấp, Vendor, Supplier..."
+                          placeholder={t('printTemplates.create.placeholders.vendor')}
                           required
                         />
                       </div>
@@ -500,36 +513,36 @@ export default function PrintTemplatesPage() {
                     <div className="p-3 bg-blue-50 rounded-lg">
                       <h4 className="font-medium text-sm mb-2 flex items-center gap-2">
                         <Code className="h-4 w-4" />
-                        Các từ ngữ sẽ được sử dụng trong template:
+                        {t('printTemplates.preview.wordsUsed')}
                       </h4>
                       <div className="grid grid-cols-2 gap-2 text-sm">
                         <div className="flex items-center gap-2">
-                          <Badge variant="secondary" className="text-xs">Thương hiệu:</Badge>
-                          <span className="font-medium">{formData.pt_brand || "Chưa nhập"}</span>
+                          <Badge variant="secondary" className="text-xs">{t('printTemplates.create.fields.brand')}:</Badge>
+                          <span className="font-medium">{formData.pt_brand || t('printTemplates.na')}</span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <Badge variant="secondary" className="text-xs">Xuất xứ:</Badge>
-                          <span className="font-medium">{formData.pt_origin_country || "Chưa nhập"}</span>
+                          <Badge variant="secondary" className="text-xs">{t('printTemplates.create.fields.originCountry')}:</Badge>
+                          <span className="font-medium">{formData.pt_origin_country || t('printTemplates.na')}</span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <Badge variant="secondary" className="text-xs">Mã SP:</Badge>
-                          <span className="font-medium">{formData.pt_product_code || "Chưa nhập"}</span>
+                          <Badge variant="secondary" className="text-xs">{t('printTemplates.create.fields.productCode')}:</Badge>
+                          <span className="font-medium">{formData.pt_product_code || t('printTemplates.na')}</span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <Badge variant="secondary" className="text-xs">Giá gốc:</Badge>
-                          <span className="font-medium">{formData.pt_original_price || "Chưa nhập"}</span>
+                          <Badge variant="secondary" className="text-xs">{t('printTemplates.create.fields.originalPrice')}:</Badge>
+                          <span className="font-medium">{formData.pt_original_price || t('printTemplates.na')}</span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <Badge variant="secondary" className="text-xs">Giá đơn vị:</Badge>
-                          <span className="font-medium">{formData.pt_unit_price || "Chưa nhập"}</span>
+                          <Badge variant="secondary" className="text-xs">{t('printTemplates.create.fields.unitPrice')}:</Badge>
+                          <span className="font-medium">{formData.pt_unit_price || t('printTemplates.na')}</span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <Badge variant="secondary" className="text-xs">Tiền tệ:</Badge>
-                          <span className="font-medium">{formData.pt_currency || "Chưa chọn"}</span>
+                          <Badge variant="secondary" className="text-xs">{t('printTemplates.create.fields.currency')}:</Badge>
+                          <span className="font-medium">{formData.pt_currency || t('printTemplates.na')}</span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <Badge variant="secondary" className="text-xs">Nhà cung cấp:</Badge>
-                          <span className="font-medium">{formData.pt_vendor || "Chưa nhập"}</span>
+                          <Badge variant="secondary" className="text-xs">{t('printTemplates.create.fields.vendor')}:</Badge>
+                          <span className="font-medium">{formData.pt_vendor || t('printTemplates.na')}</span>
                         </div>
                       </div>
                     </div>
@@ -538,36 +551,36 @@ export default function PrintTemplatesPage() {
                     <div className="border rounded-lg p-4 bg-gray-50 min-h-[200px]">
                       <h4 className="font-medium mb-3 flex items-center gap-2">
                         <Eye className="h-4 w-4" />
-                        Xem trước Template:
+                        {t('printTemplates.preview.previewTemplate')}
                       </h4>
                       <div className="bg-white p-4 rounded border text-sm space-y-3">
                         <div className="grid grid-cols-2 gap-4">
                           <div className="space-y-2">
                             <div className="flex items-center gap-2">
-                              <Badge variant="outline" className="text-xs">Thương hiệu:</Badge>
-                              <span className="font-medium">{formData.pt_brand || "Chưa nhập"}</span>
+                              <Badge variant="outline" className="text-xs">{t('printTemplates.create.fields.brand')}:</Badge>
+                              <span className="font-medium">{formData.pt_brand || t('printTemplates.preview.notEntered')}</span>
                             </div>
                             <div className="flex items-center gap-2">
-                              <Badge variant="outline" className="text-xs">Xuất xứ:</Badge>
-                              <span className="font-medium">{formData.pt_origin_country || "Chưa nhập"}</span>
+                              <Badge variant="outline" className="text-xs">{t('printTemplates.create.fields.originCountry')}:</Badge>
+                              <span className="font-medium">{formData.pt_origin_country || t('printTemplates.preview.notEntered')}</span>
                             </div>
                           </div>
                           <div className="space-y-2">
                             <div className="flex items-center gap-2">
-                              <Badge variant="outline" className="text-xs">Mã SP:</Badge>
-                              <span className="font-medium">{formData.pt_product_code || "Chưa nhập"}</span>
+                              <Badge variant="outline" className="text-xs">{t('printTemplates.create.fields.productCode')}:</Badge>
+                              <span className="font-medium">{formData.pt_product_code || t('printTemplates.preview.notEntered')}</span>
                             </div>
                             <div className="flex items-center gap-2">
-                              <Badge variant="outline" className="text-xs">Giá gốc:</Badge>
-                              <span className="font-medium">{formData.pt_original_price || "Chưa nhập"}</span>
+                              <Badge variant="outline" className="text-xs">{t('printTemplates.create.fields.originalPrice')}:</Badge>
+                              <span className="font-medium">{formData.pt_original_price || t('printTemplates.preview.notEntered')}</span>
                             </div>
                             <div className="flex items-center gap-2">
-                              <Badge variant="outline" className="text-xs">Giá đơn vị:</Badge>
-                              <span className="font-medium">{formData.pt_unit_price || "Chưa nhập"}</span>
+                              <Badge variant="outline" className="text-xs">{t('printTemplates.create.fields.unitPrice')}:</Badge>
+                              <span className="font-medium">{formData.pt_unit_price || t('printTemplates.preview.notEntered')}</span>
                             </div>
                             <div className="flex items-center gap-2">
-                              <Badge variant="outline" className="text-xs">Tiền tệ:</Badge>
-                              <span className="font-medium">{formData.pt_currency || "Chưa chọn"}</span>
+                              <Badge variant="outline" className="text-xs">{t('printTemplates.create.fields.currency')}:</Badge>
+                              <span className="font-medium">{formData.pt_currency || t('printTemplates.preview.notSelected')}</span>
                             </div>
                           </div>
                         </div>
@@ -582,7 +595,7 @@ export default function PrintTemplatesPage() {
                     variant="outline" 
                     onClick={() => setIsCreateDialogOpen(false)}
                   >
-                    Hủy
+                    {t('printTemplates.create.cancel')}
                   </Button>
                   <Button 
                     type="submit"
@@ -592,10 +605,10 @@ export default function PrintTemplatesPage() {
                     {createTemplateMutation.isPending ? (
                       <>
                         <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
-                        Đang tạo...
+                        {t('printTemplates.create.creating')}
                       </>
                     ) : (
-                      'Tạo Template'
+                      t('printTemplates.create.createTemplate')
                     )}
                   </Button>
                 </DialogFooter>
@@ -610,7 +623,7 @@ export default function PrintTemplatesPage() {
         <Card className="relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-cyan-500/10" />
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Tổng Template</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('printTemplates.stats.totalTemplates')}</CardTitle>
             <div className="p-2 bg-blue-100 rounded-full">
               <FileText className="h-4 w-4 text-blue-600" />
             </div>
@@ -619,7 +632,7 @@ export default function PrintTemplatesPage() {
             <div className="text-2xl font-bold text-blue-600">{templates.length}</div>
             <p className="text-xs text-muted-foreground flex items-center gap-1">
               <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-              Tất cả template
+              {t('printTemplates.stats.allTemplates')}
             </p>
           </CardContent>
         </Card>
@@ -627,21 +640,21 @@ export default function PrintTemplatesPage() {
         <Card className="relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-green-500/10 to-emerald-500/10" />
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Tổng lượt sử dụng</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('printTemplates.stats.totalUsage')}</CardTitle>
             <div className="p-2 bg-green-100 rounded-full">
               <TrendingUp className="h-4 w-4 text-green-600" />
             </div>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-600">{totalUsage.toLocaleString()}</div>
-            <p className="text-xs text-muted-foreground">Tổng lượt sử dụng</p>
+            <p className="text-xs text-muted-foreground">{t('printTemplates.stats.totalUsage')}</p>
           </CardContent>
         </Card>
 
         <Card className="relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-pink-500/10" />
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Phổ biến nhất</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('printTemplates.stats.mostPopular')}</CardTitle>
             <div className="p-2 bg-purple-100 rounded-full">
               <BarChart3 className="h-4 w-4 text-purple-600" />
             </div>
@@ -655,14 +668,14 @@ export default function PrintTemplatesPage() {
         <Card className="relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 to-red-500/10" />
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Quốc gia</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('printTemplates.stats.totalCountries')}</CardTitle>
             <div className="p-2 bg-orange-100 rounded-full">
               <Globe className="h-4 w-4 text-orange-600" />
             </div>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-orange-600">{countries.length}</div>
-            <p className="text-xs text-muted-foreground">Đang hỗ trợ</p>
+            <p className="text-xs text-muted-foreground">{t('printTemplates.stats.supportedCountries')}</p>
           </CardContent>
         </Card>
       </div>
@@ -672,7 +685,7 @@ export default function PrintTemplatesPage() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Search className="h-5 w-5" />
-            Tìm kiếm & Lọc
+            {t('printTemplates.searchAndFilter')}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -680,7 +693,7 @@ export default function PrintTemplatesPage() {
             <div className="relative flex-1 w-full">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Tìm kiếm theo tiêu đề, nội dung..."
+                placeholder={t('printTemplates.search.placeholder')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-8"
@@ -689,13 +702,13 @@ export default function PrintTemplatesPage() {
             <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
               <Select value={selectedCountry} onValueChange={setSelectedCountry}>
                 <SelectTrigger className="w-full sm:w-[200px]">
-                  <SelectValue placeholder="Chọn quốc gia" />
+                  <SelectValue placeholder={t('printTemplates.filter.selectCountry')} />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">
                     <div className="flex items-center gap-2">
                       <Globe className="h-4 w-4" />
-                      <span>Tất cả quốc gia</span>
+                      <span>{t('printTemplates.search.allCountries')}</span>
                     </div>
                   </SelectItem>
                   {countries.map((country: any) => (
@@ -763,7 +776,7 @@ export default function PrintTemplatesPage() {
                       </Button>
                     </DropdownMenuTrigger>
                                             <DropdownMenuContent align="end" className="bg-white/95 backdrop-blur-xl border-slate-200/60 shadow-xl rounded-xl z-50">
-                      <DropdownMenuLabel>Thao tác</DropdownMenuLabel>
+                      <DropdownMenuLabel>{t('printTemplates.table.actions.actions')}</DropdownMenuLabel>
                       <DropdownMenuItem
                         onClick={() => {
                           setSelectedTemplate(template)
@@ -771,7 +784,7 @@ export default function PrintTemplatesPage() {
                         }}
                       >
                         <Eye className="mr-2 h-4 w-4" />
-                        Xem trước
+                        {t('printTemplates.preview.preview')}
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         onClick={() => {
@@ -780,7 +793,7 @@ export default function PrintTemplatesPage() {
                         }}
                       >
                         <Edit className="mr-2 h-4 w-4" />
-                        Chỉnh sửa
+                        {t('printTemplates.edit.edit')}
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem 
@@ -789,7 +802,7 @@ export default function PrintTemplatesPage() {
                         disabled={deleteTemplateMutation.isPending}
                       >
                         <Trash2 className="mr-2 h-4 w-4" />
-                        {deleteTemplateMutation.isPending && templateToDelete?.pt_id === template.pt_id ? 'Đang xóa...' : 'Xóa'}
+                        {deleteTemplateMutation.isPending && templateToDelete?.pt_id === template.pt_id ? t('printTemplates.delete.deleting') : t('printTemplates.delete.delete')}
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -797,35 +810,35 @@ export default function PrintTemplatesPage() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="bg-gray-50 rounded-lg p-3">
-                  <div className="text-xs text-muted-foreground mb-2">Từ ngữ sử dụng:</div>
+                  <div className="text-xs text-muted-foreground mb-2">{t('printTemplates.preview.wordsUsed')}:</div>
                   <div className="grid grid-cols-2 gap-2 text-xs">
                     <div className="flex items-center gap-1">
-                      <Badge variant="outline" className="text-xs">Thương hiệu:</Badge>
-                      <span className="font-medium truncate">{template.pt_brand || "N/A"}</span>
+                      <Badge variant="outline" className="text-xs">{t('printTemplates.create.fields.brand')}:</Badge>
+                      <span className="font-medium truncate">{template.pt_brand || t('printTemplates.na')}</span>
                     </div>
                     <div className="flex items-center gap-1">
-                      <Badge variant="outline" className="text-xs">Xuất xứ:</Badge>
-                      <span className="font-medium truncate">{template.pt_origin_country || "N/A"}</span>
+                      <Badge variant="outline" className="text-xs">{t('printTemplates.create.fields.originCountry')}:</Badge>
+                      <span className="font-medium truncate">{template.pt_origin_country || t('printTemplates.na')}</span>
                     </div>
                     <div className="flex items-center gap-1">
-                      <Badge variant="outline" className="text-xs">Mã SP:</Badge>
-                      <span className="font-medium truncate">{template.pt_product_code || "N/A"}</span>
+                      <Badge variant="outline" className="text-xs">{t('printTemplates.create.fields.productCode')}:</Badge>
+                      <span className="font-medium truncate">{template.pt_product_code || t('printTemplates.na')}</span>
                     </div>
                     <div className="flex items-center gap-1">
-                      <Badge variant="outline" className="text-xs">Giá gốc:</Badge>
-                      <span className="font-medium truncate">{template.pt_original_price || "N/A"}</span>
+                      <Badge variant="outline" className="text-xs">{t('printTemplates.create.fields.originalPrice')}:</Badge>
+                      <span className="font-medium truncate">{template.pt_original_price || t('printTemplates.na')}</span>
                     </div>
                     <div className="flex items-center gap-1">
-                      <Badge variant="outline" className="text-xs">Giá đơn vị:</Badge>
-                      <span className="font-medium truncate">{template.pt_unit_price || "N/A"}</span>
+                      <Badge variant="outline" className="text-xs">{t('printTemplates.create.fields.unitPrice')}:</Badge>
+                      <span className="font-medium truncate">{template.pt_unit_price || t('printTemplates.na')}</span>
                     </div>
                     <div className="flex items-center gap-1">
-                      <Badge variant="outline" className="text-xs">Tiền tệ:</Badge>
-                      <span className="font-medium truncate">{template.pt_currency || "N/A"}</span>
+                      <Badge variant="outline" className="text-xs">{t('printTemplates.create.fields.currency')}:</Badge>
+                      <span className="font-medium truncate">{template.pt_currency || t('printTemplates.na')}</span>
                     </div>
                     <div className="flex items-center gap-1">
-                      <Badge variant="outline" className="text-xs">Nhà cung cấp:</Badge>
-                      <span className="font-medium truncate">{template.pt_vendor || "N/A"}</span>
+                      <Badge variant="outline" className="text-xs">{t('printTemplates.create.fields.vendor')}:</Badge>
+                      <span className="font-medium truncate">{template.pt_vendor || t('printTemplates.na')}</span>
                     </div>
                   </div>
                 </div>
@@ -834,7 +847,7 @@ export default function PrintTemplatesPage() {
                   <div className="flex items-center gap-2">
                     <Printer className="h-4 w-4 text-muted-foreground" />
                     <span className="font-medium">{template.usage?.totalPrints || 0}</span>
-                    <span className="text-muted-foreground">lượt sử dụng</span>
+                    <span className="text-muted-foreground">{t('printTemplates.stats.usageCount')}</span>
                   </div>
                   <div className="flex items-center gap-2 text-muted-foreground">
                     <Calendar className="h-4 w-4" />
@@ -844,7 +857,7 @@ export default function PrintTemplatesPage() {
 
                 <div className="space-y-2">
                   <div className="flex justify-between text-xs text-muted-foreground">
-                    <span>Mức độ sử dụng</span>
+                    <span>{t('printTemplates.stats.usageLevel')}</span>
                     <span>{template.usage?.usagePercentage || 0}%</span>
                   </div>
                   <Progress value={template.usage?.usagePercentage || 0} className="h-2" />
@@ -854,8 +867,8 @@ export default function PrintTemplatesPage() {
                       template.usage?.usageLevel === 'medium' ? 'bg-yellow-500' : 'bg-gray-400'
                     }`}></div>
                     <span className="text-muted-foreground capitalize">
-                      {template.usage?.usageLevel === 'high' ? 'Cao' : 
-                       template.usage?.usageLevel === 'medium' ? 'Trung bình' : 'Thấp'}
+                      {template.usage?.usageLevel === 'high' ? t('printTemplates.stats.high') : 
+                       template.usage?.usageLevel === 'medium' ? t('printTemplates.stats.medium') : t('printTemplates.stats.low')}
                     </span>
                   </div>
                 </div>
@@ -876,19 +889,19 @@ export default function PrintTemplatesPage() {
       ) : (
         <Card>
           <CardHeader>
-            <CardTitle>Danh sách Template</CardTitle>
-            <CardDescription>Tổng cộng {filteredTemplates.length} template</CardDescription>
+            <CardTitle>{t('printTemplates.list.templateList')}</CardTitle>
+            <CardDescription>{t('printTemplates.list.totalTemplates', { count: filteredTemplates.length })}</CardDescription>
           </CardHeader>
           <CardContent>
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Template</TableHead>
-                  <TableHead>Quốc gia</TableHead>
-                  <TableHead>Nội dung</TableHead>
-                  <TableHead>Lượt sử dụng</TableHead>
-                  <TableHead>Cập nhật</TableHead>
-                  <TableHead className="text-right">Thao tác</TableHead>
+                  <TableHead>{t('printTemplates.list.template')}</TableHead>
+                  <TableHead>{t('printTemplates.list.country')}</TableHead>
+                  <TableHead>{t('printTemplates.list.content')}</TableHead>
+                  <TableHead>{t('printTemplates.list.usageCount')}</TableHead>
+                  <TableHead>{t('printTemplates.list.updatedAt')}</TableHead>
+                  <TableHead className="text-right">{t('printTemplates.list.actions')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -899,7 +912,7 @@ export default function PrintTemplatesPage() {
                         <div className="text-lg">{getCountryFlag(template.country?.country_code)}</div>
                         <div>
                           <div className="font-medium">{template.pt_title}</div>
-                          <div className="text-sm text-muted-foreground">ID: {template.pt_id}</div>
+                          <div className="text-sm text-muted-foreground">{t('printTemplates.id')}: {template.pt_id}</div>
                         </div>
                       </div>
                     </TableCell>
@@ -910,32 +923,32 @@ export default function PrintTemplatesPage() {
                       <div className="max-w-xs">
                         <div className="grid grid-cols-2 gap-1 text-xs">
                           <div className="flex items-center gap-1">
-                            <Badge variant="outline" className="text-xs">Thương hiệu:</Badge>
-                            <span className="font-medium truncate">{template.pt_brand || "N/A"}</span>
+                            <Badge variant="outline" className="text-xs">{t('printTemplates.create.fields.brand')}:</Badge>
+                            <span className="font-medium truncate">{template.pt_brand || t('printTemplates.na')}</span>
                           </div>
                           <div className="flex items-center gap-1">
-                            <Badge variant="outline" className="text-xs">Xuất xứ:</Badge>
-                            <span className="font-medium truncate">{template.pt_origin_country || "N/A"}</span>
+                            <Badge variant="outline" className="text-xs">{t('printTemplates.create.fields.originCountry')}:</Badge>
+                            <span className="font-medium truncate">{template.pt_origin_country || t('printTemplates.na')}</span>
                           </div>
                           <div className="flex items-center gap-1">
-                            <Badge variant="outline" className="text-xs">Mã SP:</Badge>
-                            <span className="font-medium truncate">{template.pt_product_code || "N/A"}</span>
+                            <Badge variant="outline" className="text-xs">{t('printTemplates.create.fields.productCode')}:</Badge>
+                            <span className="font-medium truncate">{template.pt_product_code || t('printTemplates.na')}</span>
                           </div>
                           <div className="flex items-center gap-1">
-                            <Badge variant="outline" className="text-xs">Giá gốc:</Badge>
-                            <span className="font-medium truncate">{template.pt_original_price || "N/A"}</span>
+                            <Badge variant="outline" className="text-xs">{t('printTemplates.create.fields.originalPrice')}:</Badge>
+                            <span className="font-medium truncate">{template.pt_original_price || t('printTemplates.na')}</span>
                           </div>
                           <div className="flex items-center gap-1">
-                            <Badge variant="outline" className="text-xs">Giá đơn vị:</Badge>
-                            <span className="font-medium truncate">{template.pt_unit_price || "N/A"}</span>
+                            <Badge variant="outline" className="text-xs">{t('printTemplates.create.fields.unitPrice')}:</Badge>
+                            <span className="font-medium truncate">{template.pt_unit_price || t('printTemplates.na')}</span>
                           </div>
                           <div className="flex items-center gap-1">
-                            <Badge variant="outline" className="text-xs">Tiền tệ:</Badge>
-                            <span className="font-medium truncate">{template.pt_currency || "N/A"}</span>
+                            <Badge variant="outline" className="text-xs">{t('printTemplates.create.fields.currency')}:</Badge>
+                            <span className="font-medium truncate">{template.pt_currency || t('printTemplates.na')}</span>
                           </div>
                           <div className="flex items-center gap-1">
-                            <Badge variant="outline" className="text-xs">Nhà cung cấp:</Badge>
-                            <span className="font-medium truncate">{template.pt_vendor || "N/A"}</span>
+                            <Badge variant="outline" className="text-xs">{t('printTemplates.create.fields.vendor')}:</Badge>
+                            <span className="font-medium truncate">{template.pt_vendor || t('printTemplates.na')}</span>
                           </div>
                         </div>
                       </div>
@@ -953,8 +966,8 @@ export default function PrintTemplatesPage() {
                           template.usage?.usageLevel === 'medium' ? 'bg-yellow-500' : 'bg-gray-400'
                         }`}></div>
                         <span className="text-xs text-muted-foreground capitalize">
-                          {template.usage?.usageLevel === 'high' ? 'Cao' : 
-                           template.usage?.usageLevel === 'medium' ? 'Trung bình' : 'Thấp'}
+                          {template.usage?.usageLevel === 'high' ? t('printTemplates.stats.high') : 
+                           template.usage?.usageLevel === 'medium' ? t('printTemplates.stats.medium') : t('printTemplates.stats.low')}
                         </span>
                       </div>
                     </TableCell>
@@ -978,7 +991,7 @@ export default function PrintTemplatesPage() {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="bg-white/95 backdrop-blur-xl border-slate-200/60 shadow-xl rounded-xl z-50">
-                          <DropdownMenuLabel>Thao tác</DropdownMenuLabel>
+                          <DropdownMenuLabel>{t('printTemplates.table.actions.actions')}</DropdownMenuLabel>
                           <DropdownMenuItem
                             onClick={() => {
                               setSelectedTemplate(template)
@@ -986,7 +999,7 @@ export default function PrintTemplatesPage() {
                             }}
                           >
                             <Eye className="mr-2 h-4 w-4" />
-                            Xem trước
+                            {t('printTemplates.preview.preview')}
                           </DropdownMenuItem>
                           <DropdownMenuItem
                             onClick={() => {
@@ -995,11 +1008,11 @@ export default function PrintTemplatesPage() {
                             }}
                           >
                             <Edit className="mr-2 h-4 w-4" />
-                            Chỉnh sửa
+                            {t('printTemplates.edit.edit')}
                           </DropdownMenuItem>
                           <DropdownMenuItem>
                             <Copy className="mr-2 h-4 w-4" />
-                            Sao chép
+                            {t('printTemplates.copy')}
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
                           <DropdownMenuItem 
@@ -1008,7 +1021,7 @@ export default function PrintTemplatesPage() {
                             disabled={deleteTemplateMutation.isPending}
                           >
                             <Trash2 className="mr-2 h-4 w-4" />
-                            {deleteTemplateMutation.isPending && templateToDelete?.pt_id === template.pt_id ? 'Đang xóa...' : 'Xóa'}
+                            {deleteTemplateMutation.isPending && templateToDelete?.pt_id === template.pt_id ? t('printTemplates.delete.deleting') : t('printTemplates.delete.delete')}
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -1027,7 +1040,7 @@ export default function PrintTemplatesPage() {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Eye className="h-5 w-5 text-blue-500" />
-              Xem trước Template
+              {t('printTemplates.preview.previewTemplate')}
             </DialogTitle>
             <DialogDescription className="flex items-center gap-2">
               <span>{getCountryFlag(selectedTemplate?.pt_country_code)}</span>
@@ -1037,11 +1050,11 @@ export default function PrintTemplatesPage() {
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div className="space-y-1">
-                <span className="text-muted-foreground">Lượt sử dụng:</span>
+                <span className="text-muted-foreground">{t('printTemplates.preview.usageCount')}:</span>
                 <div className="font-medium">{selectedTemplate?.usage?.totalPrints || 0}</div>
               </div>
               <div className="space-y-1">
-                <span className="text-muted-foreground">Mức độ sử dụng:</span>
+                <span className="text-muted-foreground">{t('printTemplates.preview.usageLevel')}:</span>
                 <div className="font-medium flex items-center gap-2">
                   <span>{selectedTemplate?.usage?.usagePercentage || 0}%</span>
                   <div className={`w-2 h-2 rounded-full ${
@@ -1049,8 +1062,8 @@ export default function PrintTemplatesPage() {
                     selectedTemplate?.usage?.usageLevel === 'medium' ? 'bg-yellow-500' : 'bg-gray-400'
                   }`}></div>
                   <span className="text-xs capitalize">
-                    {selectedTemplate?.usage?.usageLevel === 'high' ? 'Cao' : 
-                     selectedTemplate?.usage?.usageLevel === 'medium' ? 'Trung bình' : 'Thấp'}
+                    {selectedTemplate?.usage?.usageLevel === 'high' ? t('printTemplates.stats.high') : 
+                     selectedTemplate?.usage?.usageLevel === 'medium' ? t('printTemplates.stats.medium') : t('printTemplates.stats.low')}
                   </span>
                 </div>
               </div>
@@ -1059,40 +1072,40 @@ export default function PrintTemplatesPage() {
             <div className="border rounded-lg p-4 bg-gray-50">
               <h4 className="font-medium mb-3 flex items-center gap-2">
                 <FileText className="h-4 w-4" />
-                Từ ngữ sử dụng trong Template:
+                {t('printTemplates.preview.wordsUsedInTemplate')}
               </h4>
               <div className="bg-white p-4 rounded border text-sm space-y-3">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <div className="flex items-center gap-2">
-                      <Badge variant="outline" className="text-xs">Thương hiệu:</Badge>
-                      <span className="font-medium">{selectedTemplate?.pt_brand || "N/A"}</span>
+                      <Badge variant="outline" className="text-xs">{t('printTemplates.create.fields.brand')}:</Badge>
+                      <span className="font-medium">{selectedTemplate?.pt_brand || t('printTemplates.na')}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Badge variant="outline" className="text-xs">Xuất xứ:</Badge>
-                      <span className="font-medium">{selectedTemplate?.pt_origin_country || "N/A"}</span>
+                      <Badge variant="outline" className="text-xs">{t('printTemplates.create.fields.originCountry')}:</Badge>
+                      <span className="font-medium">{selectedTemplate?.pt_origin_country || t('printTemplates.na')}</span>
                     </div>
                   </div>
                   <div className="space-y-2">
                     <div className="flex items-center gap-2">
-                      <Badge variant="outline" className="text-xs">Mã SP:</Badge>
-                      <span className="font-medium">{selectedTemplate?.pt_product_code || "N/A"}</span>
+                      <Badge variant="outline" className="text-xs">{t('printTemplates.create.fields.productCode')}:</Badge>
+                      <span className="font-medium">{selectedTemplate?.pt_product_code || t('printTemplates.na')}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Badge variant="outline" className="text-xs">Giá gốc:</Badge>
-                      <span className="font-medium">{selectedTemplate?.pt_original_price || "N/A"}</span>
+                      <Badge variant="outline" className="text-xs">{t('printTemplates.create.fields.originalPrice')}:</Badge>
+                      <span className="font-medium">{selectedTemplate?.pt_original_price || t('printTemplates.na')}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Badge variant="outline" className="text-xs">Giá đơn vị:</Badge>
-                      <span className="font-medium">{selectedTemplate?.pt_unit_price || "N/A"}</span>
+                      <Badge variant="outline" className="text-xs">{t('printTemplates.create.fields.unitPrice')}:</Badge>
+                      <span className="font-medium">{selectedTemplate?.pt_unit_price || t('printTemplates.na')}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Badge variant="outline" className="text-xs">Tiền tệ:</Badge>
-                      <span className="font-medium">{selectedTemplate?.pt_currency || "N/A"}</span>
+                      <Badge variant="outline" className="text-xs">{t('printTemplates.create.fields.currency')}:</Badge>
+                      <span className="font-medium">{selectedTemplate?.pt_currency || t('printTemplates.na')}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Badge variant="outline" className="text-xs">Nhà cung cấp:</Badge>
-                      <span className="font-medium">{selectedTemplate?.pt_vendor || "N/A"}</span>
+                      <Badge variant="outline" className="text-xs">{t('printTemplates.create.fields.vendor')}:</Badge>
+                      <span className="font-medium">{selectedTemplate?.pt_vendor || t('printTemplates.na')}</span>
                     </div>
                   </div>
                 </div>
@@ -1104,43 +1117,43 @@ export default function PrintTemplatesPage() {
             <div className="bg-blue-50 p-3 rounded-lg">
               <h4 className="font-medium text-sm mb-2 flex items-center gap-2">
                 <Code className="h-4 w-4" />
-                Các từ ngữ được sử dụng:
+                {t('printTemplates.preview.wordsUsed')}
               </h4>
               <div className="grid grid-cols-2 gap-2 text-sm">
                 <div className="flex items-center gap-2">
-                  <Badge variant="secondary" className="text-xs">Thương hiệu:</Badge>
-                  <span className="font-medium">{selectedTemplate?.pt_brand || "N/A"}</span>
+                  <Badge variant="secondary" className="text-xs">{t('printTemplates.create.fields.brand')}:</Badge>
+                  <span className="font-medium">{selectedTemplate?.pt_brand || t('printTemplates.na')}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Badge variant="secondary" className="text-xs">Xuất xứ:</Badge>
-                  <span className="font-medium">{selectedTemplate?.pt_origin_country || "N/A"}</span>
+                  <Badge variant="secondary" className="text-xs">{t('printTemplates.create.fields.originCountry')}:</Badge>
+                  <span className="font-medium">{selectedTemplate?.pt_origin_country || t('printTemplates.na')}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Badge variant="secondary" className="text-xs">Mã SP:</Badge>
-                  <span className="font-medium">{selectedTemplate?.pt_product_code || "N/A"}</span>
+                  <Badge variant="secondary" className="text-xs">{t('printTemplates.create.fields.productCode')}:</Badge>
+                  <span className="font-medium">{selectedTemplate?.pt_product_code || t('printTemplates.na')}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Badge variant="secondary" className="text-xs">Giá gốc:</Badge>
-                  <span className="font-medium">{selectedTemplate?.pt_original_price || "N/A"}</span>
+                  <Badge variant="secondary" className="text-xs">{t('printTemplates.create.fields.originalPrice')}:</Badge>
+                  <span className="font-medium">{selectedTemplate?.pt_original_price || t('printTemplates.na')}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Badge variant="secondary" className="text-xs">Giá đơn vị:</Badge>
-                  <span className="font-medium">{selectedTemplate?.pt_unit_price || "N/A"}</span>
+                  <Badge variant="secondary" className="text-xs">{t('printTemplates.create.fields.unitPrice')}:</Badge>
+                  <span className="font-medium">{selectedTemplate?.pt_unit_price || t('printTemplates.na')}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Badge variant="secondary" className="text-xs">Tiền tệ:</Badge>
-                  <span className="font-medium">{selectedTemplate?.pt_currency || "N/A"}</span>
+                  <Badge variant="secondary" className="text-xs">{t('printTemplates.create.fields.currency')}:</Badge>
+                  <span className="font-medium">{selectedTemplate?.pt_currency || t('printTemplates.na')}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Badge variant="secondary" className="text-xs">Nhà cung cấp:</Badge>
-                  <span className="font-medium">{selectedTemplate?.pt_vendor || "N/A"}</span>
+                  <Badge variant="secondary" className="text-xs">{t('printTemplates.create.fields.vendor')}:</Badge>
+                  <span className="font-medium">{selectedTemplate?.pt_vendor || t('printTemplates.na')}</span>
                 </div>
               </div>
             </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsPreviewDialogOpen(false)}>
-              Đóng
+              {t('printTemplates.preview.close')}
             </Button>
             <Button
               onClick={() => {
@@ -1150,7 +1163,7 @@ export default function PrintTemplatesPage() {
               className="bg-gradient-to-r from-blue-500 to-purple-600"
             >
               <Edit className="mr-2 h-4 w-4" />
-              Chỉnh sửa
+              {t('printTemplates.edit.edit')}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -1162,7 +1175,7 @@ export default function PrintTemplatesPage() {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Edit className="h-5 w-5 text-blue-500" />
-              Chỉnh sửa Template
+              {t('printTemplates.edit.editTemplate')}
             </DialogTitle>
             <DialogDescription className="flex items-center gap-2">
               <span>{getCountryFlag(selectedTemplate?.pt_country_code)}</span>
@@ -1172,18 +1185,18 @@ export default function PrintTemplatesPage() {
           <form onSubmit={handleEditSubmit}>
             <Tabs defaultValue="basic" className="w-full">
               <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="basic">Thông tin cơ bản</TabsTrigger>
-                <TabsTrigger value="content">Từ ngữ sử dụng</TabsTrigger>
-                <TabsTrigger value="analytics">Thống kê</TabsTrigger>
+                <TabsTrigger value="basic">{t('printTemplates.edit.tabs.basic')}</TabsTrigger>
+                <TabsTrigger value="content">{t('printTemplates.edit.tabs.content')}</TabsTrigger>
+                <TabsTrigger value="analytics">{t('printTemplates.edit.tabs.analytics')}</TabsTrigger>
               </TabsList>
               <TabsContent value="basic" className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="edit_title">Tiêu đề Template</Label>
+                    <Label htmlFor="edit_title">{t('printTemplates.edit.templateTitle')}</Label>
                     <Input id="edit_title" value={editForm.pt_title} onChange={e => setEditForm(f => ({...f, pt_title: e.target.value}))} />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="edit_country">Quốc gia</Label>
+                    <Label htmlFor="edit_country">{t('printTemplates.edit.country')}</Label>
                     <Select value={editForm.pt_country_id} onValueChange={v => setEditForm(f => ({...f, pt_country_id: v}))}>
                       <SelectTrigger>
                         <SelectValue />
@@ -1205,61 +1218,61 @@ export default function PrintTemplatesPage() {
               <TabsContent value="content" className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="edit_brand">Từ ngữ cho Thương hiệu</Label>
+                    <Label htmlFor="edit_brand">{t('printTemplates.edit.brandWords')}</Label>
                     <Input
                       id="edit_brand"
                       value={editForm.pt_brand}
                       onChange={e => setEditForm(f => ({...f, pt_brand: e.target.value}))}
-                      placeholder="VD: Thương hiệu, Brand, Nhãn hiệu..."
+                      placeholder={t('printTemplates.edit.brandWordsPlaceholder')}
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="edit_origin_country">Từ ngữ cho Xuất xứ</Label>
+                    <Label htmlFor="edit_origin_country">{t('printTemplates.edit.originCountryWords')}</Label>
                     <Input
                       id="edit_origin_country"
                       value={editForm.pt_origin_country}
                       onChange={e => setEditForm(f => ({...f, pt_origin_country: e.target.value}))}
-                      placeholder="VD: Xuất xứ, Origin, Nguồn gốc..."
+                      placeholder={t('printTemplates.edit.originCountryWordsPlaceholder')}
                     />
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="edit_product_code">Từ ngữ cho Mã sản phẩm</Label>
+                    <Label htmlFor="edit_product_code">{t('printTemplates.edit.productCodeWords')}</Label>
                     <Input
                       id="edit_product_code"
                       value={editForm.pt_product_code}
                       onChange={e => setEditForm(f => ({...f, pt_product_code: e.target.value}))}
-                      placeholder="VD: Mã SP, Product Code, SKU..."
+                      placeholder={t('printTemplates.edit.productCodeWordsPlaceholder')}
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="edit_original_price">Từ ngữ cho Giá gốc</Label>
+                    <Label htmlFor="edit_original_price">{t('printTemplates.edit.originalPriceWords')}</Label>
                     <Input
                       id="edit_original_price"
                       value={editForm.pt_original_price}
                       onChange={e => setEditForm(f => ({...f, pt_original_price: e.target.value}))}
-                      placeholder="VD: Giá gốc, Original Price, MSRP..."
+                      placeholder={t('printTemplates.edit.originalPriceWordsPlaceholder')}
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="edit_unit_price">Từ ngữ cho Giá đơn vị</Label>
+                    <Label htmlFor="edit_unit_price">{t('printTemplates.edit.unitPriceWords')}</Label>
                     <Input
                       id="edit_unit_price"
                       value={editForm.pt_unit_price}
                       onChange={e => setEditForm(f => ({...f, pt_unit_price: e.target.value}))}
-                      placeholder="VD: Giá đơn vị, Unit Price, Price per unit..."
+                      placeholder={t('printTemplates.edit.unitPriceWordsPlaceholder')}
                     />
                   </div>
                                     <div className="space-y-2">
-                    <Label htmlFor="edit_currency">Ký hiệu tiền tệ</Label>
+                    <Label htmlFor="edit_currency">{t('printTemplates.edit.currencySymbol')}</Label>
                     <div className="relative currency-dropdown">
                       <Input
                         id="edit_currency"
                         value={editForm.pt_currency}
                         onChange={e => setEditForm(f => ({...f, pt_currency: e.target.value}))}
                         onFocus={() => setIsEditCurrencyDropdownOpen(true)}
-                        placeholder="VD: $, €, ¥, ₫..."
+                        placeholder={t('printTemplates.edit.currencySymbolPlaceholder')}
                       />
                       {isEditCurrencyDropdownOpen && (
                         <div className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-[200px] overflow-y-auto">
@@ -1280,48 +1293,48 @@ export default function PrintTemplatesPage() {
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="edit_vendor">Từ ngữ cho Nhà cung cấp</Label>
+                    <Label htmlFor="edit_vendor">{t('printTemplates.edit.vendorWords')}</Label>
                     <Input
                       id="edit_vendor"
                       value={editForm.pt_vendor}
                       onChange={e => setEditForm(f => ({...f, pt_vendor: e.target.value}))}
-                      placeholder="VD: Nhà cung cấp, Vendor, Supplier..."
+                      placeholder={t('printTemplates.edit.vendorWordsPlaceholder')}
                     />
                   </div>
                 </div>
                 <div className="p-3 bg-blue-50 rounded-lg">
                   <h4 className="font-medium text-sm mb-2 flex items-center gap-2">
                     <Code className="h-4 w-4" />
-                    Các từ ngữ sẽ được sử dụng trong template:
+                    {t('printTemplates.preview.wordsUsed')}
                   </h4>
                   <div className="grid grid-cols-2 gap-2 text-sm">
                     <div className="flex items-center gap-2">
-                      <Badge variant="secondary" className="text-xs">Thương hiệu:</Badge>
-                      <span className="font-medium">{editForm.pt_brand || "Chưa nhập"}</span>
+                      <Badge variant="secondary" className="text-xs">{t('printTemplates.create.fields.brand')}:</Badge>
+                      <span className="font-medium">{editForm.pt_brand || t('printTemplates.preview.notEntered')}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Badge variant="secondary" className="text-xs">Xuất xứ:</Badge>
-                      <span className="font-medium">{editForm.pt_origin_country || "Chưa nhập"}</span>
+                      <Badge variant="secondary" className="text-xs">{t('printTemplates.create.fields.originCountry')}:</Badge>
+                      <span className="font-medium">{editForm.pt_origin_country || t('printTemplates.preview.notEntered')}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Badge variant="secondary" className="text-xs">Mã SP:</Badge>
-                      <span className="font-medium">{editForm.pt_product_code || "Chưa nhập"}</span>
+                      <Badge variant="secondary" className="text-xs">{t('printTemplates.create.fields.productCode')}:</Badge>
+                      <span className="font-medium">{editForm.pt_product_code || t('printTemplates.preview.notEntered')}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Badge variant="secondary" className="text-xs">Giá gốc:</Badge>
-                      <span className="font-medium">{editForm.pt_original_price || "Chưa nhập"}</span>
+                      <Badge variant="secondary" className="text-xs">{t('printTemplates.create.fields.originalPrice')}:</Badge>
+                      <span className="font-medium">{editForm.pt_original_price || t('printTemplates.preview.notEntered')}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Badge variant="secondary" className="text-xs">Giá đơn vị:</Badge>
-                      <span className="font-medium">{editForm.pt_unit_price || "Chưa nhập"}</span>
+                      <Badge variant="secondary" className="text-xs">{t('printTemplates.create.fields.unitPrice')}:</Badge>
+                      <span className="font-medium">{editForm.pt_unit_price || t('printTemplates.preview.notEntered')}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Badge variant="secondary" className="text-xs">Tiền tệ:</Badge>
-                      <span className="font-medium">{editForm.pt_currency || "Chưa chọn"}</span>
+                      <Badge variant="secondary" className="text-xs">{t('printTemplates.create.fields.currency')}:</Badge>
+                      <span className="font-medium">{editForm.pt_currency || t('printTemplates.preview.notSelected')}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Badge variant="secondary" className="text-xs">Nhà cung cấp:</Badge>
-                      <span className="font-medium">{editForm.pt_vendor || "Chưa nhập"}</span>
+                      <Badge variant="secondary" className="text-xs">{t('printTemplates.create.fields.vendor')}:</Badge>
+                      <span className="font-medium">{editForm.pt_vendor || t('printTemplates.preview.notEntered')}</span>
                     </div>
                   </div>
                 </div>
@@ -1331,7 +1344,7 @@ export default function PrintTemplatesPage() {
                 <div className="grid grid-cols-2 gap-4">
                   <Card>
                     <CardHeader className="pb-2">
-                      <CardTitle className="text-sm">Lượt sử dụng</CardTitle>
+                      <CardTitle className="text-sm">{t('printTemplates.analytics.usageCount')}</CardTitle>
                     </CardHeader>
                     <CardContent>
                       <div className="text-2xl font-bold text-blue-600">{selectedTemplate?.usage?.totalPrints || 0}</div>
@@ -1340,7 +1353,7 @@ export default function PrintTemplatesPage() {
                   </Card>
                   <Card>
                     <CardHeader className="pb-2">
-                      <CardTitle className="text-sm">Mức độ sử dụng</CardTitle>
+                      <CardTitle className="text-sm">{t('printTemplates.analytics.usageLevel')}</CardTitle>
                     </CardHeader>
                     <CardContent>
                       <div className="text-sm font-medium flex items-center gap-2">
@@ -1351,42 +1364,42 @@ export default function PrintTemplatesPage() {
                         }`}></div>
                       </div>
                       <div className="text-xs text-muted-foreground mt-1 capitalize">
-                        {selectedTemplate?.usage?.usageLevel === 'high' ? 'Cao' : 
-                         selectedTemplate?.usage?.usageLevel === 'medium' ? 'Trung bình' : 'Thấp'}
+                        {selectedTemplate?.usage?.usageLevel === 'high' ? t('printTemplates.stats.high') : 
+                         selectedTemplate?.usage?.usageLevel === 'medium' ? t('printTemplates.stats.medium') : t('printTemplates.stats.low')}
                       </div>
                     </CardContent>
                   </Card>
                 </div>
                 <div className="space-y-2">
-                  <Label>Các từ ngữ được sử dụng</Label>
+                  <Label>{t('printTemplates.analytics.wordsUsed')}</Label>
                   <div className="grid grid-cols-2 gap-2 p-3 bg-gray-50 rounded-lg text-sm">
                     <div className="flex items-center gap-2">
-                      <Badge variant="secondary" className="text-xs">Thương hiệu:</Badge>
-                      <span className="font-medium">{selectedTemplate?.pt_brand || "N/A"}</span>
+                      <Badge variant="secondary" className="text-xs">{t('printTemplates.create.fields.brand')}:</Badge>
+                      <span className="font-medium">{selectedTemplate?.pt_brand || t('printTemplates.na')}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Badge variant="secondary" className="text-xs">Xuất xứ:</Badge>
-                      <span className="font-medium">{selectedTemplate?.pt_origin_country || "N/A"}</span>
+                      <Badge variant="secondary" className="text-xs">{t('printTemplates.create.fields.originCountry')}:</Badge>
+                      <span className="font-medium">{selectedTemplate?.pt_origin_country || t('printTemplates.na')}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Badge variant="secondary" className="text-xs">Mã SP:</Badge>
-                      <span className="font-medium">{selectedTemplate?.pt_product_code || "N/A"}</span>
+                      <Badge variant="secondary" className="text-xs">{t('printTemplates.create.fields.productCode')}:</Badge>
+                      <span className="font-medium">{selectedTemplate?.pt_product_code || t('printTemplates.na')}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Badge variant="secondary" className="text-xs">Giá gốc:</Badge>
-                      <span className="font-medium">{selectedTemplate?.pt_original_price || "N/A"}</span>
+                      <Badge variant="secondary" className="text-xs">{t('printTemplates.create.fields.originalPrice')}:</Badge>
+                      <span className="font-medium">{selectedTemplate?.pt_original_price || t('printTemplates.na')}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Badge variant="secondary" className="text-xs">Giá đơn vị:</Badge>
-                      <span className="font-medium">{selectedTemplate?.pt_unit_price || "N/A"}</span>
+                      <Badge variant="secondary" className="text-xs">{t('printTemplates.create.fields.unitPrice')}:</Badge>
+                      <span className="font-medium">{selectedTemplate?.pt_unit_price || t('printTemplates.na')}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Badge variant="secondary" className="text-xs">Tiền tệ:</Badge>
-                      <span className="font-medium">{selectedTemplate?.pt_currency || "N/A"}</span>
+                      <Badge variant="secondary" className="text-xs">{t('printTemplates.create.fields.currency')}:</Badge>
+                      <span className="font-medium">{selectedTemplate?.pt_currency || t('printTemplates.na')}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Badge variant="secondary" className="text-xs">Nhà cung cấp:</Badge>
-                      <span className="font-medium">{selectedTemplate?.pt_vendor || "N/A"}</span>
+                      <Badge variant="secondary" className="text-xs">{t('printTemplates.create.fields.vendor')}:</Badge>
+                      <span className="font-medium">{selectedTemplate?.pt_vendor || t('printTemplates.na')}</span>
                     </div>
                   </div>
                 </div>
@@ -1394,16 +1407,16 @@ export default function PrintTemplatesPage() {
             </Tabs>
             <DialogFooter className="mt-4">
               <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
-                Hủy
+                {t('printTemplates.edit.cancel')}
               </Button>
               <Button type="submit" disabled={updateTemplateMutation.isPending} className="bg-gradient-to-r from-blue-500 to-purple-600">
                 {updateTemplateMutation.isPending ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Đang lưu...
+                    {t('printTemplates.edit.saving')}
                   </>
                 ) : (
-                  'Lưu thay đổi'
+                  t('printTemplates.edit.saveChanges')
                 )}
               </Button>
             </DialogFooter>
@@ -1415,13 +1428,13 @@ export default function PrintTemplatesPage() {
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent className="bg-white/95 backdrop-blur-xl border-slate-200/60 shadow-2xl rounded-2xl">
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-xl font-semibold text-slate-900">Xác nhận xóa template</AlertDialogTitle>
+            <AlertDialogTitle className="text-xl font-semibold text-slate-900">{t('printTemplates.delete.confirmDelete')}</AlertDialogTitle>
             <AlertDialogDescription className="text-slate-600">
-              Bạn có chắc chắn muốn xóa template <strong>"{templateToDelete?.pt_title}"</strong>?
+              {t('printTemplates.delete.confirmDeleteMessage', { templateTitle: templateToDelete?.pt_title })}
               <br /><br />
-              <span className="text-amber-600 font-medium">⚠️ Lưu ý:</span> Template này đang được sử dụng cho quốc gia {templateToDelete?.country?.country_name}. Việc xóa template có thể ảnh hưởng đến quá trình in ấn.
+              <span className="text-amber-600 font-medium">⚠️ {t('printTemplates.delete.warning')}:</span> {t('printTemplates.delete.warningMessage', { countryName: templateToDelete?.country?.country_name })}
               <br /><br />
-              Hành động này không thể hoàn tác.
+              {t('printTemplates.delete.actionCannotBeUndone')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <div className="flex items-center space-x-3 p-4 bg-red-50 rounded-lg border border-red-200">
@@ -1431,10 +1444,10 @@ export default function PrintTemplatesPage() {
             <div>
               <div className="font-semibold text-red-800">{templateToDelete?.pt_title}</div>
               <div className="text-sm text-red-600">
-                Quốc gia: {templateToDelete?.country?.country_name} {getCountryFlag(templateToDelete?.country?.country_code)}
+                {t('printTemplates.delete.country')}: {templateToDelete?.country?.country_name} {getCountryFlag(templateToDelete?.country?.country_code)}
               </div>
               <div className="text-sm text-red-600">
-                Lượt sử dụng: {templateToDelete?.usage?.totalPrints || 0} ({templateToDelete?.usage?.usagePercentage || 0}%)
+                {t('printTemplates.delete.usageCount')}: {templateToDelete?.usage?.totalPrints || 0} ({templateToDelete?.usage?.usagePercentage || 0}%)
               </div>
             </div>
           </div>
@@ -1443,7 +1456,7 @@ export default function PrintTemplatesPage() {
               className="rounded-xl"
               disabled={deleteTemplateMutation.isPending}
             >
-              Hủy
+              {t('printTemplates.delete.cancel')}
             </AlertDialogCancel>
             <AlertDialogAction
               onClick={() => templateToDelete && deleteTemplateMutation.mutate(templateToDelete.pt_country_id)}
@@ -1453,12 +1466,12 @@ export default function PrintTemplatesPage() {
               {deleteTemplateMutation.isPending ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Đang xóa...
+                  {t('printTemplates.delete.deleting')}
                 </>
               ) : (
                 <>
                   <Trash2 className="mr-2 h-4 w-4" />
-                  Xóa Template
+                  {t('printTemplates.delete.deleteTemplate')}
                 </>
               )}
             </AlertDialogAction>

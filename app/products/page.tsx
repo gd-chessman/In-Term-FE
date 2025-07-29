@@ -63,8 +63,10 @@ import {
 } from "lucide-react"
 import { getCountries } from "@/services/CountryService"
 import { getActiveBranches } from "@/services/BranchService"
+import { useLang } from "@/lang/useLang"
 
 export default function ProductsPage() {
+  const { t } = useLang()
   const searchParams = useSearchParams()
   const [searchTerm, setSearchTerm] = useState("")
   const [currentPage, setCurrentPage] = useState(1)
@@ -180,14 +182,14 @@ export default function ProductsPage() {
       queryClient.invalidateQueries({ queryKey: ["products"] })
       setIsCreateDialogOpen(false)
       toast({
-        title: "Thành công",
-        description: "Sản phẩm đã được tạo thành công",
+        title: t('products.toasts.createSuccess.title'),
+        description: t('products.toasts.createSuccess.description'),
       })
     },
     onError: (error: any) => {
       toast({
-        title: "Lỗi",
-        description: error.response?.data?.message || "Có lỗi xảy ra khi tạo sản phẩm",
+        title: t('products.toasts.createError.title'),
+        description: error.response?.data?.message || t('products.toasts.createError.description'),
         variant: "destructive",
       })
     },
@@ -199,16 +201,16 @@ export default function ProductsPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["products"] })
       toast({
-        title: "Thành công",
-        description: "Sản phẩm đã được cập nhật thành công",
+        title: t('products.toasts.updateSuccess.title'),
+        description: t('products.toasts.updateSuccess.description'),
       })
       setIsEditDialogOpen(false)
       setEditingProduct(null)
     },
     onError: (error: any) => {
       toast({
-        title: "Lỗi",
-        description: error.response?.data?.message || "Có lỗi xảy ra khi cập nhật sản phẩm",
+        title: t('products.toasts.updateError.title'),
+        description: error.response?.data?.message || t('products.toasts.updateError.description'),
         variant: "destructive",
       })
     },
@@ -220,14 +222,14 @@ export default function ProductsPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["products"] })
       toast({
-        title: "Thành công",
-        description: "Trạng thái sản phẩm đã được cập nhật",
+        title: t('products.toasts.statusUpdateSuccess.title'),
+        description: t('products.toasts.statusUpdateSuccess.description'),
       })
     },
     onError: (error: any) => {
       toast({
-        title: "Lỗi",
-        description: error.response?.data?.message || "Có lỗi xảy ra khi cập nhật trạng thái sản phẩm",
+        title: t('products.toasts.statusUpdateError.title'),
+        description: error.response?.data?.message || t('products.toasts.statusUpdateError.description'),
         variant: "destructive",
       })
     },
@@ -239,16 +241,16 @@ export default function ProductsPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["products"] })
       toast({
-        title: "Thành công",
-        description: "Tags đã được xóa khỏi sản phẩm",
+        title: t('products.toasts.deleteTagsSuccess.title'),
+        description: t('products.toasts.deleteTagsSuccess.description'),
       })
       setTagsDialogOpen(false)
       setSelectedProduct(null)
     },
     onError: (error: any) => {
       toast({
-        title: "Lỗi",
-        description: error.response?.data?.message || "Có lỗi xảy ra khi xóa tags",
+        title: t('products.toasts.deleteTagsError.title'),
+        description: error.response?.data?.message || t('products.toasts.deleteTagsError.description'),
         variant: "destructive",
       })
     },
@@ -260,15 +262,15 @@ export default function ProductsPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["products"] })
       toast({
-        title: "Thành công",
-        description: "Tags đã được thêm vào sản phẩm",
+        title: t('products.toasts.addTagsSuccess.title'),
+        description: t('products.toasts.addTagsSuccess.description'),
       })
       setSelectedTagsToAdd([])
     },
     onError: (error: any) => {
       toast({
-        title: "Lỗi",
-        description: error.response?.data?.message || "Có lỗi xảy ra khi thêm tags",
+        title: t('products.toasts.addTagsError.title'),
+        description: error.response?.data?.message || t('products.toasts.addTagsError.description'),
         variant: "destructive",
       })
     },
@@ -280,16 +282,16 @@ export default function ProductsPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["products"] })
       toast({
-        title: "Thành công",
-        description: "Sản phẩm đã được xóa thành công",
+        title: t('products.toasts.deleteSuccess.title'),
+        description: t('products.toasts.deleteSuccess.description'),
       })
       setDeleteDialogOpen(false)
       setProductToDelete(null)
     },
     onError: (error: any) => {
       toast({
-        title: "Lỗi",
-        description: error.response?.data?.message || "Có lỗi xảy ra khi xóa sản phẩm",
+        title: t('products.toasts.deleteError.title'),
+        description: error.response?.data?.message || t('products.toasts.deleteError.description'),
         variant: "destructive",
       })
     },
@@ -303,13 +305,13 @@ export default function ProductsPage() {
       case "active":
         return (
           <Badge className="bg-gradient-to-r from-green-500 to-emerald-500 text-white border-0 shadow-lg">
-            Hoạt động
+            {t('products.status.active')}
           </Badge>
         )
       case "inactive":
         return (
           <Badge className="bg-gradient-to-r from-gray-400 to-gray-500 text-white border-0 shadow-lg">
-            Không hoạt động
+            {t('products.status.inactive')}
           </Badge>
         )
       default:
@@ -580,21 +582,21 @@ export default function ProductsPage() {
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-slate-900 via-green-800 to-emerald-800 bg-clip-text text-transparent">
-            Quản lý Sản phẩm
+            {t('products.title')}
           </h1>
-          <p className="text-slate-600 mt-2">Quản lý danh sách sản phẩm và thông tin</p>
+          <p className="text-slate-600 mt-2">{t('products.subtitle')}</p>
         </div>
         <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
           <DialogTrigger asChild>
             <Button className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl">
               <Plus className="mr-2 h-4 w-4" />
-              Thêm Sản phẩm
+              {t('products.create.button')}
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[900px] lg:max-w-[1124px] bg-white/95 backdrop-blur-xl border-slate-200/60 shadow-2xl rounded-2xl">
             <DialogHeader>
-              <DialogTitle className="text-xl font-semibold text-slate-900">Thêm Sản phẩm mới</DialogTitle>
-              <DialogDescription className="text-slate-600">Tạo sản phẩm mới trong hệ thống</DialogDescription>
+              <DialogTitle className="text-xl font-semibold text-slate-900">{t('products.create.title')}</DialogTitle>
+              <DialogDescription className="text-slate-600">{t('products.create.subtitle')}</DialogDescription>
             </DialogHeader>
             <form onSubmit={(e) => {
               e.preventDefault()
@@ -607,7 +609,7 @@ export default function ProductsPage() {
                   <div className="space-y-6">
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="product_name" className="text-right font-medium text-slate-700">
-                    Tên sản phẩm *
+                    {t('products.create.fields.name')} *
                   </Label>
                   <Input
                     id="product_name"
@@ -615,13 +617,13 @@ export default function ProductsPage() {
                     required
                     minLength={1}
                     maxLength={200}
-                    placeholder="Nhập tên sản phẩm (1-200 ký tự)"
+                    placeholder={t('products.create.placeholders.name')}
                     className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100"
                   />
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="product_code" className="text-right font-medium text-slate-700">
-                    Mã sản phẩm *
+                    {t('products.create.fields.code')} *
                   </Label>
                   <Input
                     id="product_code"
@@ -629,30 +631,30 @@ export default function ProductsPage() {
                     required
                     minLength={1}
                     maxLength={100}
-                    placeholder="Nhập mã sản phẩm (1-100 ký tự)"
+                    placeholder={t('products.create.placeholders.code')}
                     className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100"
                   />
                 </div>
-                              <div className="grid grid-cols-4 items-start gap-4">
-                <Label htmlFor="product_description" className="text-right font-medium text-slate-700 pt-2">
-                  Mô tả
-                </Label>
-                <Textarea
-                  id="product_description"
-                  name="product_description"
-                  placeholder="Nhập mô tả sản phẩm (tùy chọn)"
-                  className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100 min-h-[80px]"
-                />
-              </div>
+                <div className="grid grid-cols-4 items-start gap-4">
+                  <Label htmlFor="product_description" className="text-right font-medium text-slate-700 pt-2">
+                  {t('products.create.fields.description')}
+                  </Label>
+                  <Textarea
+                    id="product_description"
+                    name="product_description"
+                  placeholder={t('products.create.placeholders.description')}
+                    className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100 min-h-[80px]"
+                  />
+                </div>
 
               
                 <div className="grid grid-cols-4 items-start gap-4">
                   <Label className="text-right font-medium text-slate-700 pt-2">
-                    Tags
+                    {t('products.create.fields.tags')}
                   </Label>
                   <div className="col-span-3 space-y-2 max-h-48 overflow-y-auto border border-slate-200 rounded-xl p-3 flex flex-wrap gap-2">
                     {isLoadingTags ? (
-                      <div className="text-sm text-slate-500">Đang tải tags...</div>
+                      <div className="text-sm text-slate-500">{t('products.create.loading.tags')}</div>
                     ) : tags.length > 0 ? (
                       tags.map((tag: any) => (
                         <div key={tag.tag_id} className="flex items-center space-x-2 !my-0">
@@ -671,17 +673,17 @@ export default function ProductsPage() {
                         </div>
                       ))
                     ) : (
-                      <div className="text-sm text-slate-500">Không có tags nào</div>
+                      <div className="text-sm text-slate-500">{t('products.create.noTags')}</div>
                     )}
-                  </div>
+                </div>
                 </div>
                 <div className="grid grid-cols-4 items-start gap-4">
                   <Label className="text-right font-medium text-slate-700 pt-2">
-                    Chi nhánh
+                    {t('products.create.fields.branches')}
                   </Label>
                   <div className="col-span-3 space-y-2 max-h-48 overflow-y-auto border border-slate-200 rounded-xl p-3 flex flex-wrap gap-2">
                     {isLoadingBranches ? (
-                      <div className="text-sm text-slate-500">Đang tải chi nhánh...</div>
+                      <div className="text-sm text-slate-500">{t('products.create.loading.branches')}</div>
                     ) : branches.length > 0 ? (
                       branches.map((branch: any) => (
                         <div key={branch.branch_id} className="flex items-center space-x-2 !my-0">
@@ -700,21 +702,21 @@ export default function ProductsPage() {
                         </div>
                       ))
                     ) : (
-                      <div className="text-sm text-slate-500">Không có chi nhánh nào</div>
+                      <div className="text-sm text-slate-500">{t('products.create.noBranches')}</div>
                     )}
                   </div>
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="origin_country_id" className="text-right font-medium text-slate-700">
-                    Xuất xứ *
+                    {t('products.create.fields.origin')} *
                   </Label>
                   <Select name="origin_country_id" required>
                     <SelectTrigger className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100">
-                      <SelectValue placeholder="Chọn quốc gia xuất xứ" />
+                      <SelectValue placeholder={t('products.create.placeholders.origin')} />
                     </SelectTrigger>
                     <SelectContent className="rounded-xl border-slate-200 shadow-xl">
                       {isLoading ? (
-                        <SelectItem value="" disabled>Đang tải...</SelectItem>
+                        <SelectItem value="" disabled>{t('products.create.loading.countries')}</SelectItem>
                       ) : (
                         countries.map((country: any) => (
                           <SelectItem key={country.country_id} value={country.country_id.toString()}>
@@ -736,15 +738,15 @@ export default function ProductsPage() {
                   <div className="space-y-6">
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="category_id" className="text-right font-medium text-slate-700">
-                    Danh mục *
+                    {t('products.create.fields.category')} *
                   </Label>
                   <Select name="category_id" required>
                     <SelectTrigger className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100">
-                      <SelectValue placeholder="Chọn danh mục" />
+                      <SelectValue placeholder={t('products.create.placeholders.category')} />
                     </SelectTrigger>
                     <SelectContent className="rounded-xl border-slate-200 shadow-xl">
                       {isLoadingCategories ? (
-                        <SelectItem value="" disabled>Đang tải...</SelectItem>
+                        <SelectItem value="" disabled>{t('products.create.loading.categories')}</SelectItem>
                       ) : (
                         flattenedCategories.map((category: any) => (
                           <SelectItem key={category.category_id} value={category.category_id.toString()}>
@@ -757,7 +759,7 @@ export default function ProductsPage() {
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="price" className="text-right font-medium text-slate-700">
-                    Giá *
+                    {t('products.create.fields.price')} *
                   </Label>
                   <Input
                     id="price"
@@ -766,25 +768,25 @@ export default function ProductsPage() {
                     step="0.01"
                     required
                     min={0}
-                    placeholder="Nhập giá sản phẩm"
+                    placeholder={t('products.create.placeholders.price')}
                     className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100"
                   />
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="unit_name" className="text-right font-medium text-slate-700">
-                    Đơn vị tính *
-                  </Label>
+                    {t('products.create.fields.unitName')} *
+                          </Label>
                   <Input
                     id="unit_name"
                     name="unit_name"
                     required
-                    placeholder="VD: gram, kg, ml, lít, cái, hộp..."
+                    placeholder={t('products.create.placeholders.unitName')}
                     className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100"
                   />
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="unit_total" className="text-right font-medium text-slate-700">
-                    Tổng số đơn vị *
+                    {t('products.create.fields.unitTotal')} *
                   </Label>
                   <Input
                     id="unit_total"
@@ -793,13 +795,13 @@ export default function ProductsPage() {
                     step="0.01"
                     required
                     min={0}
-                    placeholder="VD: 500 (gram), 1 (kg), 330 (ml)..."
+                    placeholder={t('products.create.placeholders.unitTotal')}
                     className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100"
                   />
-                </div>
+                  </div>
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="unit_step" className="text-right font-medium text-slate-700">
-                    Bước chia lẻ tối thiểu *
+                    {t('products.create.fields.unitStep')} *
                   </Label>
                   <Input
                     id="unit_step"
@@ -808,25 +810,25 @@ export default function ProductsPage() {
                     step="0.01"
                     required
                     min={0}
-                    placeholder="VD: 10 (gram), 0.1 (kg), 50 (ml)..."
+                    placeholder={t('products.create.placeholders.unitStep')}
                     className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100"
                   />
                 </div>
                 <div className="grid grid-cols-4 items-start gap-4">
                   <Label htmlFor="product_info" className="text-right font-medium text-slate-700 pt-2">
-                    Thông tin sản phẩm *
+                    {t('products.create.fields.productInfo')} *
                   </Label>
                   <Textarea
                     id="product_info"
                     name="product_info"
                     required
-                    placeholder="Nhập thông tin chi tiết về sản phẩm"
+                    placeholder={t('products.create.placeholders.productInfo')}
                     className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100 min-h-[80px]"
                   />
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="image" className="text-right font-medium text-slate-700">
-                    Ảnh sản phẩm
+                    {t('products.create.fields.image')}
                   </Label>
                   <Input
                     id="image"
@@ -846,7 +848,7 @@ export default function ProductsPage() {
                   className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white rounded-xl"
                 >
                   {createProductMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  Tạo Sản phẩm
+                  {t('products.create.buttons.create')}
                 </Button>
               </DialogFooter>
             </form>
@@ -858,8 +860,8 @@ export default function ProductsPage() {
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent className="sm:max-w-[900px] lg:max-w-[1124px] bg-white/95 backdrop-blur-xl border-slate-200/60 shadow-2xl rounded-2xl">
           <DialogHeader>
-            <DialogTitle className="text-xl font-semibold text-slate-900">Chỉnh sửa Sản phẩm</DialogTitle>
-            <DialogDescription className="text-slate-600">Cập nhật thông tin sản phẩm</DialogDescription>
+            <DialogTitle className="text-xl font-semibold text-slate-900">{t('products.edit.title')}</DialogTitle>
+            <DialogDescription className="text-slate-600">{t('products.edit.subtitle')}</DialogDescription>
           </DialogHeader>
           <form onSubmit={(e) => {
             e.preventDefault()
@@ -872,7 +874,7 @@ export default function ProductsPage() {
                 <div className="space-y-6">
                   <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="edit_product_name" className="text-right font-medium text-slate-700">
-                    Tên sản phẩm
+                    {t('products.edit.fields.name')}
                   </Label>
                   <Input
                     id="edit_product_name"
@@ -880,13 +882,13 @@ export default function ProductsPage() {
                     defaultValue={editingProduct?.product_name}
                     minLength={1}
                     maxLength={200}
-                    placeholder="Nhập tên sản phẩm (1-200 ký tự)"
+                    placeholder={t('products.edit.placeholders.name')}
                     className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100"
                   />
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="edit_product_code" className="text-right font-medium text-slate-700">
-                    Mã sản phẩm
+                    {t('products.edit.fields.code')}
                   </Label>
                   <Input
                     id="edit_product_code"
@@ -895,19 +897,19 @@ export default function ProductsPage() {
                     disabled
                     minLength={1}
                     maxLength={100}
-                    placeholder="Nhập mã sản phẩm (1-100 ký tự)"
+                    placeholder={t('products.edit.placeholders.code')}
                     className="col-span-3 rounded-xl border-slate-200 bg-slate-50 text-slate-500 cursor-not-allowed"
                   />
                 </div>
               <div className="grid grid-cols-4 items-start gap-4">
                 <Label htmlFor="edit_product_description" className="text-right font-medium text-slate-700 pt-2">
-                  Mô tả
+                  {t('products.edit.fields.description')}
                 </Label>
                 <Textarea
                   id="edit_product_description"
                   name="product_description"
                   defaultValue={editingProduct?.product_description}
-                  placeholder="Nhập mô tả sản phẩm (tùy chọn)"
+                  placeholder={t('products.edit.placeholders.description')}
                   className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100 min-h-[80px]"
                 />
               </div>
@@ -915,11 +917,11 @@ export default function ProductsPage() {
 
                 <div className="grid grid-cols-4 items-start gap-4">
                   <Label className="text-right font-medium text-slate-700 pt-2">
-                    Tags
+                    {t('products.edit.fields.tags')}
                   </Label>
                   <div className="col-span-3 space-y-2 max-h-48 overflow-y-auto border border-slate-200 rounded-xl p-3 flex flex-wrap gap-2">
                     {isLoadingTags ? (
-                      <div className="text-sm text-slate-500">Đang tải tags...</div>
+                      <div className="text-sm text-slate-500">{t('products.edit.loading.tags')}</div>
                     ) : tags.length > 0 ? (
                       tags.map((tag: any) => (
                         <div key={tag.tag_id} className="flex items-center space-x-2 !my-0">
@@ -947,11 +949,11 @@ export default function ProductsPage() {
                 </div>
                 <div className="grid grid-cols-4 items-start gap-4">
                   <Label className="text-right font-medium text-slate-700 pt-2">
-                    Chi nhánh
+                    {t('products.edit.fields.branches')}
                   </Label>
                   <div className="col-span-3 space-y-2 max-h-48 overflow-y-auto border border-slate-200 rounded-xl p-3 flex flex-wrap gap-2">
                     {isLoadingBranches ? (
-                      <div className="text-sm text-slate-500">Đang tải chi nhánh...</div>
+                      <div className="text-sm text-slate-500">{t('products.edit.loading.branches')}</div>
                     ) : branches.length > 0 ? (
                       branches.map((branch: any) => (
                         <div key={branch.branch_id} className="flex items-center space-x-2 !my-0">
@@ -976,18 +978,18 @@ export default function ProductsPage() {
                       <div className="text-sm text-slate-500">Không có chi nhánh nào</div>
                     )}
                   </div>
-                </div>
+              </div>
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="edit_origin_country_id" className="text-right font-medium text-slate-700">
-                    Xuất xứ
+                    {t('products.edit.fields.origin')}
                   </Label>
                   <Select name="origin_country_id" defaultValue={editingProduct?.origin?.country_id?.toString()}>
                     <SelectTrigger className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100">
-                      <SelectValue placeholder="Chọn quốc gia xuất xứ" />
+                      <SelectValue placeholder={t('products.edit.placeholders.origin')} />
                     </SelectTrigger>
                     <SelectContent className="rounded-xl border-slate-200 shadow-xl">
                       {isLoading ? (
-                        <SelectItem value="" disabled>Đang tải...</SelectItem>
+                        <SelectItem value="" disabled>{t('products.edit.loading.loading')}</SelectItem>
                       ) : (
                         countries.map((country: any) => (
                           <SelectItem key={country.country_id} value={country.country_id.toString()}>
@@ -1005,17 +1007,17 @@ export default function ProductsPage() {
                   
                   {/* Cột phải */}
                   <div className="space-y-6">
-                <div className="grid grid-cols-4 items-center gap-4">
+                  <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="edit_category_id" className="text-right font-medium text-slate-700">
-                    Danh mục
+                    {t('products.edit.fields.category')}
                   </Label>
                   <Select name="category_id" defaultValue={editingProduct?.category_id?.toString()}>
                     <SelectTrigger className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100">
-                      <SelectValue placeholder="Chọn danh mục" />
+                      <SelectValue placeholder={t('products.edit.placeholders.category')} />
                     </SelectTrigger>
                     <SelectContent className="rounded-xl border-slate-200 shadow-xl">
                       {isLoadingCategories ? (
-                        <SelectItem value="" disabled>Đang tải...</SelectItem>
+                        <SelectItem value="" disabled>{t('products.edit.loading.loading')}</SelectItem>
                       ) : (
                         flattenedCategories.map((category: any) => (
                           <SelectItem key={category.category_id} value={category.category_id.toString()}>
@@ -1028,7 +1030,7 @@ export default function ProductsPage() {
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="edit_price" className="text-right font-medium text-slate-700">
-                    Giá
+                    {t('products.edit.fields.price')}
                   </Label>
                   <Input
                     id="edit_price"
@@ -1037,25 +1039,25 @@ export default function ProductsPage() {
                     step="0.01"
                     defaultValue={editingProduct?.price}
                     min={0}
-                    placeholder="Nhập giá sản phẩm"
+                    placeholder={t('products.edit.placeholders.price')}
                     className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100"
                   />
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="edit_unit_name" className="text-right font-medium text-slate-700">
-                    Đơn vị tính
+                    {t('products.edit.fields.unitName')}
                   </Label>
                   <Input
                     id="edit_unit_name"
                     name="unit_name"
                     defaultValue={editingProduct?.unit_name}
-                    placeholder="VD: gram, kg, ml, lít, cái, hộp..."
+                    placeholder={t('products.edit.placeholders.unitName')}
                     className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100"
                   />
-                </div>
+                            </div>
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="edit_unit_total" className="text-right font-medium text-slate-700">
-                    Tổng số đơn vị
+                    {t('products.edit.fields.unitTotal')}
                   </Label>
                   <Input
                     id="edit_unit_total"
@@ -1064,13 +1066,13 @@ export default function ProductsPage() {
                     step="0.01"
                     defaultValue={editingProduct?.unit_total}
                     min={0}
-                    placeholder="VD: 500 (gram), 1 (kg), 330 (ml)..."
+                    placeholder={t('products.edit.placeholders.unitTotal')}
                     className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100"
                   />
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="edit_unit_step" className="text-right font-medium text-slate-700">
-                    Bước chia lẻ tối thiểu
+                    {t('products.edit.fields.unitStep')}
                   </Label>
                   <Input
                     id="edit_unit_step"
@@ -1079,20 +1081,20 @@ export default function ProductsPage() {
                     step="0.01"
                     defaultValue={editingProduct?.unit_step}
                     min={0}
-                    placeholder="VD: 10 (gram), 0.1 (kg), 50 (ml)..."
+                    placeholder={t('products.edit.placeholders.unitStep')}
                     className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100"
                   />
                 </div>
                 <div className="grid grid-cols-4 items-start gap-4">
                   <Label htmlFor="edit_product_info" className="text-right font-medium text-slate-700 pt-2">
-                    Thông tin sản phẩm *
+                    {t('products.edit.fields.productInfo')} *
                   </Label>
                   <Textarea
                     id="edit_product_info"
                     name="product_info"
                     required
                     defaultValue={editingProduct?.product_info}
-                    placeholder="Nhập thông tin chi tiết về sản phẩm"
+                    placeholder={t('products.edit.placeholders.productInfo')}
                     className="col-span-3 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100 min-h-[80px]"
                   />
                 </div>
@@ -1100,7 +1102,7 @@ export default function ProductsPage() {
                               
                               <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="edit_image" className="text-right font-medium text-slate-700">
-                    Ảnh sản phẩm
+                    {t('products.edit.fields.image')}
                   </Label>
                   <Input
                     id="edit_image"
@@ -1112,7 +1114,7 @@ export default function ProductsPage() {
                 </div>
                   </div>
                 </div>
-              </div>
+            </div>
             <DialogFooter>
               <Button 
                 type="submit" 
@@ -1120,7 +1122,7 @@ export default function ProductsPage() {
                 className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white rounded-xl"
               >
                 {updateProductMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Cập nhật Sản phẩm
+                {t('products.edit.buttons.update')}
               </Button>
             </DialogFooter>
           </form>
@@ -1131,9 +1133,9 @@ export default function ProductsPage() {
       <Dialog open={tagsDialogOpen} onOpenChange={setTagsDialogOpen}>
         <DialogContent className="sm:max-w-[500px] bg-white/95 backdrop-blur-xl border-slate-200/60 shadow-2xl rounded-2xl">
           <DialogHeader>
-            <DialogTitle className="text-xl font-semibold text-slate-900">Quản lý Tags</DialogTitle>
+            <DialogTitle className="text-xl font-semibold text-slate-900">{t('products.tags.title')}</DialogTitle>
             <DialogDescription className="text-slate-600">
-              Quản lý tags cho sản phẩm: <strong>{selectedProduct?.product_name}</strong>
+              {t('products.tags.description')}: <strong>{selectedProduct?.product_name}</strong>
             </DialogDescription>
           </DialogHeader>
           
@@ -1145,14 +1147,14 @@ export default function ProductsPage() {
               </div>
               <div>
                 <div className="font-semibold text-slate-800">{selectedProduct?.product_name}</div>
-                <div className="text-sm text-slate-600">Mã: <code className="bg-white px-1 rounded">{selectedProduct?.product_code}</code></div>
+                <div className="text-sm text-slate-600">{t('products.table.headers.code')}: <code className="bg-white px-1 rounded">{selectedProduct?.product_code}</code></div>
               </div>
             </div>
 
             {/* Current Tags */}
             <div>
               <Label className="text-sm font-medium text-slate-700 mb-2 block">
-                Tags hiện tại ({selectedProduct?.productTags?.length || 0})
+                {t('products.tags.currentTags')} ({selectedProduct?.productTags?.length || 0})
               </Label>
               {selectedProduct?.productTags && selectedProduct.productTags.length > 0 ? (
                 <div className="space-y-2">
@@ -1179,7 +1181,7 @@ export default function ProductsPage() {
               ) : (
                 <div className="text-center py-6 text-slate-500">
                   <Tags className="h-8 w-8 mx-auto mb-2 text-slate-400" />
-                  <p>Sản phẩm chưa có tags nào</p>
+                  <p>{t('products.tags.noTags')}</p>
                 </div>
               )}
               {selectedTagsToDelete.length > 0 && (
@@ -1206,11 +1208,11 @@ export default function ProductsPage() {
             {/* Add New Tags */}
             <div>
               <Label className="text-sm font-medium text-slate-700 mb-2 block">
-                Thêm tags mới
+                {t('products.tags.addTags')}
               </Label>
               <div className="space-y-2 max-h-32 overflow-y-auto border border-slate-200 rounded-lg p-3">
                 {isLoadingTags ? (
-                  <div className="text-sm text-slate-500">Đang tải tags...</div>
+                  <div className="text-sm text-slate-500">{t('products.search.loading.tags')}</div>
                 ) : tags.length > 0 ? (
                   tags
                     .filter((tag: any) => {
@@ -1240,7 +1242,7 @@ export default function ProductsPage() {
                 ) : (
                   <div className="text-center py-4 text-slate-500">
                     <Tags className="h-6 w-6 mx-auto mb-1 text-slate-400" />
-                    <p className="text-sm">Tất cả tags đã được gán cho sản phẩm này</p>
+                    <p className="text-sm">{t('products.tags.noAvailableTags')}</p>
                   </div>
                 )}
               </div>
@@ -1253,12 +1255,12 @@ export default function ProductsPage() {
                   {addProductTagsMutation.isPending ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Đang thêm...
+                      {t('products.tags.loading.adding')}
                     </>
                   ) : (
                     <>
                       <Plus className="mr-2 h-4 w-4" />
-                      Thêm {selectedTagsToAdd.length} tag(s)
+                      {t('products.tags.buttons.add')} {selectedTagsToAdd.length} tag(s)
                     </>
                   )}
                 </Button>
@@ -1273,7 +1275,7 @@ export default function ProductsPage() {
               disabled={deleteProductTagsMutation.isPending}
               className="rounded-xl"
             >
-              Đóng
+              {t('products.tags.buttons.close')}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -1283,9 +1285,9 @@ export default function ProductsPage() {
       <Dialog open={detailDialogOpen} onOpenChange={setDetailDialogOpen}>
         <DialogContent className="sm:max-w-[700px] bg-white/95 backdrop-blur-xl border-slate-200/60 shadow-2xl rounded-2xl">
           <DialogHeader>
-            <DialogTitle className="text-xl font-semibold text-slate-900">Chi tiết Sản phẩm</DialogTitle>
+            <DialogTitle className="text-xl font-semibold text-slate-900">{t('products.detail.title')}</DialogTitle>
             <DialogDescription className="text-slate-600">
-              Thông tin chi tiết về sản phẩm
+              {t('products.detail.description')}
             </DialogDescription>
           </DialogHeader>
           
@@ -1314,7 +1316,7 @@ export default function ProductsPage() {
                     {getStatusBadge(selectedProductDetail.product_status)}
                   </div>
                   <p className="text-slate-600 text-sm">
-                    {selectedProductDetail.product_description || "Không có mô tả"}
+                    {selectedProductDetail.product_description || t('products.detail.noDescription')}
                   </p>
                 </div>
               </div>
@@ -1324,57 +1326,57 @@ export default function ProductsPage() {
                 {/* Basic Information */}
                 <div className="space-y-4">
                   <h4 className="text-lg font-semibold text-slate-800 border-b border-slate-200 pb-2">
-                    Thông tin cơ bản
+                    {t('products.detail.basicInfo')}
                   </h4>
                   
                   <div className="space-y-3">
                     <div className="flex justify-between items-center">
-                      <span className="text-sm font-medium text-slate-600">Danh mục:</span>
+                      <span className="text-sm font-medium text-slate-600">{t('products.detail.category')}:</span>
                       <Badge variant="outline" className="border-slate-300 text-slate-700 rounded-lg">
-                        {selectedProductDetail.category?.category_name || "N/A"}
+                        {selectedProductDetail.category?.category_name || t('products.na')}
                       </Badge>
                     </div>
                     
                     <div className="flex justify-between items-center">
-                      <span className="text-sm font-medium text-slate-600">Xuất xứ:</span>
+                      <span className="text-sm font-medium text-slate-600">{t('products.detail.origin')}:</span>
                       <div className="flex items-center space-x-2">
                         <span className="text-lg">{getCountryFlag(selectedProductDetail.origin?.country_code)}</span>
                         <span className="text-sm font-medium text-slate-700">
-                          {selectedProductDetail.origin?.country_name || "N/A"}
+                          {selectedProductDetail.origin?.country_name || t('products.na')}
                         </span>
                       </div>
                     </div>
                     
                     <div className="flex justify-between items-center">
-                      <span className="text-sm font-medium text-slate-600">Giá:</span>
+                      <span className="text-sm font-medium text-slate-600">{t('products.detail.price')}:</span>
                       <span className="font-semibold text-lg text-slate-900">
                         {selectedProductDetail.price}
                       </span>
                     </div>
                     
                     <div className="flex justify-between items-center">
-                      <span className="text-sm font-medium text-slate-600">Đơn vị tính:</span>
+                      <span className="text-sm font-medium text-slate-600">{t('products.detail.unitName')}:</span>
                       <span className="text-sm font-medium text-slate-700">
-                        {selectedProductDetail.unit_name || "N/A"}
+                        {selectedProductDetail.unit_name || t('products.na')}
                       </span>
                     </div>
                     
                     <div className="flex justify-between items-center">
-                      <span className="text-sm font-medium text-slate-600">Tổng số đơn vị:</span>
+                      <span className="text-sm font-medium text-slate-600">{t('products.detail.unitTotal')}:</span>
                       <span className="text-sm font-medium text-slate-700">
-                        {selectedProductDetail.unit_total || "N/A"}
+                        {selectedProductDetail.unit_total || t('products.na')}
                       </span>
                     </div>
                     
                     <div className="flex justify-between items-center">
-                      <span className="text-sm font-medium text-slate-600">Bước chia lẻ tối thiểu:</span>
+                      <span className="text-sm font-medium text-slate-600">{t('products.detail.unitStep')}</span>
                       <span className="text-sm font-medium text-slate-700">
-                        {selectedProductDetail.unit_step || "N/A"}
+                        {selectedProductDetail.unit_step || t('products.na')}
                       </span>
                     </div>
                     
                     <div className="flex justify-between items-center">
-                      <span className="text-sm font-medium text-slate-600">Ngày tạo:</span>
+                      <span className="text-sm font-medium text-slate-600">{t('products.detail.createdAt')}</span>
                       <span className="text-sm text-slate-600">
                         {new Date(selectedProductDetail.created_at).toLocaleDateString("vi-VN")}
                       </span>
@@ -1385,13 +1387,13 @@ export default function ProductsPage() {
                 {/* Tags and Branches */}
                 <div className="space-y-4">
                   <h4 className="text-lg font-semibold text-slate-800 border-b border-slate-200 pb-2">
-                    Phân loại
+                    {t('products.detail.classification')}
                   </h4>
                   
                   <div className="space-y-4">
                     {/* Tags */}
                     <div>
-                      <span className="text-sm font-medium text-slate-600 block mb-2">Tags:</span>
+                      <span className="text-sm font-medium text-slate-600 block mb-2">{t('products.detail.tags')}</span>
                       {selectedProductDetail.productTags && selectedProductDetail.productTags.length > 0 ? (
                         <div className="flex flex-wrap gap-1">
                           {selectedProductDetail.productTags.map((tag: any, index: number) => (
@@ -1404,13 +1406,13 @@ export default function ProductsPage() {
                           ))}
                         </div>
                       ) : (
-                        <span className="text-sm text-slate-500">Chưa có tags</span>
+                        <span className="text-sm text-slate-500">{t('products.detail.noTags')}</span>
                       )}
                     </div>
 
                     {/* Branches */}
                     <div>
-                      <span className="text-sm font-medium text-slate-600 block mb-2">Chi nhánh:</span>
+                      <span className="text-sm font-medium text-slate-600 block mb-2">{t('products.detail.branches')}</span>
                       {selectedProductDetail.productBranches && selectedProductDetail.productBranches.length > 0 ? (
                         <div className="flex flex-wrap gap-1">
                           {selectedProductDetail.productBranches.map((branchItem: any, index: number) => (
@@ -1423,7 +1425,7 @@ export default function ProductsPage() {
                           ))}
                         </div>
                       ) : (
-                        <span className="text-sm text-slate-500">Chưa phân bổ</span>
+                        <span className="text-sm text-slate-500">{t('products.detail.notAssigned')}</span>
                       )}
                     </div>
                   </div>
@@ -1434,7 +1436,7 @@ export default function ProductsPage() {
               {selectedProductDetail.product_info && (
                 <div className="space-y-3">
                   <h4 className="text-lg font-semibold text-slate-800 border-b border-slate-200 pb-2">
-                    Thông tin sản phẩm
+                    {t('products.detail.productInfo')}
                   </h4>
                   <div className="p-4 bg-slate-50 rounded-lg border border-slate-200">
                     <p className="text-slate-700 leading-relaxed">
@@ -1452,7 +1454,7 @@ export default function ProductsPage() {
               onClick={() => setDetailDialogOpen(false)}
               className="rounded-xl"
             >
-              Đóng
+              {t('products.detail.close')}
             </Button>
             <Button 
               onClick={() => {
@@ -1462,7 +1464,7 @@ export default function ProductsPage() {
               className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white rounded-xl"
             >
               <Edit className="mr-2 h-4 w-4" />
-              Chỉnh sửa
+              {t('products.table.edit')}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -1472,11 +1474,11 @@ export default function ProductsPage() {
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent className="bg-white/95 backdrop-blur-xl border-slate-200/60 shadow-2xl rounded-2xl">
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-xl font-semibold text-slate-900">Xác nhận xóa sản phẩm</AlertDialogTitle>
+            <AlertDialogTitle className="text-xl font-semibold text-slate-900">{t('products.delete.title')}</AlertDialogTitle>
             <AlertDialogDescription className="text-slate-600">
-              Bạn có chắc chắn muốn xóa sản phẩm <strong>{productToDelete?.product_name}</strong> ({productToDelete?.product_code})?
+              {t('products.delete.description')}
               <br />
-              <span className="text-red-600 font-semibold">⚠️ Hành động này không thể hoàn tác và sẽ xóa vĩnh viễn sản phẩm khỏi hệ thống.</span>
+              <span className="text-red-600 font-semibold">⚠️ {t('products.delete.warning.permanent')}</span>
             </AlertDialogDescription>
           </AlertDialogHeader>
           
@@ -1487,12 +1489,12 @@ export default function ProductsPage() {
                 <span className="text-red-600 text-sm font-bold">⚠️</span>
               </div>
               <div className="text-sm text-red-800">
-                <div className="font-semibold mb-1">Cảnh báo quan trọng:</div>
+                <div className="font-semibold mb-1">{t('products.delete.warning.title')}</div>
                 <ul className="list-disc list-inside space-y-1 text-xs">
-                  <li>Sản phẩm sẽ bị xóa vĩnh viễn khỏi hệ thống</li>
-                  <li>Tất cả dữ liệu liên quan đến sản phẩm sẽ bị mất</li>
-                  <li>Không thể khôi phục sau khi xóa</li>
-                  <li>Ảnh hưởng đến các báo cáo và thống kê</li>
+                  <li>{t('products.delete.warning.permanent')}</li>
+                  <li>{t('products.delete.warning.dataLoss')}</li>
+                  <li>{t('products.delete.warning.noRecovery')}</li>
+                  <li>{t('products.delete.warning.affectReports')}</li>
                 </ul>
               </div>
             </div>
@@ -1505,21 +1507,21 @@ export default function ProductsPage() {
             </div>
             <div>
               <div className="font-semibold text-slate-800">{productToDelete?.product_name}</div>
-              <div className="text-sm text-slate-600">Mã: <code className="bg-white px-1 rounded text-slate-700">{productToDelete?.product_code}</code></div>
-              <div className="text-sm text-slate-600">Giá: {productToDelete?.price ? productToDelete.price : "N/A"}</div>
+              <div className="text-sm text-slate-600">{t('products.table.headers.code')}: <code className="bg-white px-1 rounded text-slate-700">{productToDelete?.product_code}</code></div>
+              <div className="text-sm text-slate-600">{t('products.table.headers.price')}: {productToDelete?.price ? productToDelete.price : "N/A"}</div>
             </div>
           </div>
 
           {/* Input xác nhận */}
           <div className="space-y-3">
             <Label htmlFor="delete-confirmation" className="text-sm font-medium text-slate-700">
-              Để xác nhận xóa, vui lòng nhập mã sản phẩm: <code className="bg-red-100 px-1 rounded text-red-700 font-bold">{productToDelete?.product_code}</code>
+              {t('products.delete.confirmationLabel')}: <code className="bg-red-100 px-1 rounded text-red-700 font-bold">{productToDelete?.product_code}</code>
             </Label>
             <Input
               id="delete-confirmation"
               value={deleteConfirmation}
               onChange={(e) => setDeleteConfirmation(e.target.value)}
-              placeholder="Nhập mã sản phẩm để xác nhận"
+              placeholder={t('products.delete.confirmationPlaceholder')}
               className="rounded-xl border-slate-200 focus:border-red-300 focus:ring-2 focus:ring-red-100"
             />
           </div>
@@ -1530,7 +1532,7 @@ export default function ProductsPage() {
               disabled={deleteProductMutation.isPending}
               onClick={() => setDeleteConfirmation("")}
             >
-              Hủy
+              {t('products.delete.buttons.cancel')}
             </AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDeleteConfirm}
@@ -1540,12 +1542,12 @@ export default function ProductsPage() {
               {deleteProductMutation.isPending ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Đang xóa...
+                  {t('products.delete.loading.deleting')}
                 </>
               ) : (
                 <>
                   <Trash2 className="mr-2 h-4 w-4" />
-                  Xóa Sản phẩm
+                  {t('products.delete.buttons.delete')}
                 </>
               )}
             </AlertDialogAction>
@@ -1558,7 +1560,7 @@ export default function ProductsPage() {
         <Card className="relative overflow-hidden bg-gradient-to-br from-green-50 to-emerald-50 border-green-200/50 hover:shadow-xl transition-all duration-300 group hover:-translate-y-1 rounded-xl">
           <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-green-400/20 to-emerald-400/20 rounded-full -mr-10 -mt-10"></div>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative">
-            <CardTitle className="text-sm font-medium text-slate-700">Tổng sản phẩm</CardTitle>
+            <CardTitle className="text-sm font-medium text-slate-700">{t('products.stats.totalProducts')}</CardTitle>
             <div className="h-12 w-12 rounded-xl bg-gradient-to-r from-green-500 to-emerald-500 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
               <Package className="h-6 w-6 text-white" />
             </div>
@@ -1573,7 +1575,7 @@ export default function ProductsPage() {
             </div>
             <div className="flex items-center text-xs text-green-600 mt-2">
               <TrendingUp className="h-3 w-3 mr-1" />
-              {pagination.totalPages > 1 ? `Trang ${pagination.page}/${pagination.totalPages}` : 'Tất cả sản phẩm'}
+              {pagination.totalPages > 1 ? `${t('products.stats.page')} ${pagination.page}/${pagination.totalPages}` : t('products.stats.allProducts')}
             </div>
           </CardContent>
         </Card>
@@ -1581,7 +1583,7 @@ export default function ProductsPage() {
         <Card className="relative overflow-hidden bg-gradient-to-br from-blue-50 to-cyan-50 border-blue-200/50 hover:shadow-xl transition-all duration-300 group hover:-translate-y-1 rounded-xl">
           <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-blue-400/20 to-cyan-400/20 rounded-full -mr-10 -mt-10"></div>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative">
-            <CardTitle className="text-sm font-medium text-slate-700">Đang hoạt động</CardTitle>
+            <CardTitle className="text-sm font-medium text-slate-700">{t('products.stats.activeProducts')}</CardTitle>
             <div className="h-12 w-12 rounded-xl bg-gradient-to-r from-blue-500 to-cyan-500 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
               <ShoppingCart className="h-6 w-6 text-white" />
             </div>
@@ -1601,7 +1603,7 @@ export default function ProductsPage() {
                 productStatistics?.totalProducts > 0 
                   ? Math.round((productStatistics.activeProducts / productStatistics.totalProducts) * 100) 
                   : 0
-              )}% tổng số
+              )}% {t('products.stats.ofTotal')}
             </p>
           </CardContent>
         </Card>
@@ -1609,7 +1611,7 @@ export default function ProductsPage() {
         <Card className="relative overflow-hidden bg-gradient-to-br from-purple-50 to-violet-50 border-purple-200/50 hover:shadow-xl transition-all duration-300 group hover:-translate-y-1 rounded-xl">
           <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-purple-400/20 to-violet-400/20 rounded-full -mr-10 -mt-10"></div>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative">
-            <CardTitle className="text-sm font-medium text-slate-700">Không hoạt động</CardTitle>
+            <CardTitle className="text-sm font-medium text-slate-700">{t('products.stats.inactiveProducts')}</CardTitle>
             <div className="h-12 w-12 rounded-xl bg-gradient-to-r from-purple-500 to-violet-500 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
               <Tags className="h-6 w-6 text-white" />
             </div>
@@ -1629,7 +1631,7 @@ export default function ProductsPage() {
                 productStatistics?.totalProducts > 0 
                   ? Math.round((productStatistics.inactiveProducts / productStatistics.totalProducts) * 100) 
                   : 0
-              )}% tổng số
+              )}% {t('products.stats.ofTotal')}
             </p>
           </CardContent>
         </Card>
@@ -1637,7 +1639,7 @@ export default function ProductsPage() {
         <Card className="relative overflow-hidden bg-gradient-to-br from-orange-50 to-red-50 border-orange-200/50 hover:shadow-xl transition-all duration-300 group hover:-translate-y-1 rounded-xl">
           <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-orange-400/20 to-red-400/20 rounded-full -mr-10 -mt-10"></div>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative">
-            <CardTitle className="text-sm font-medium text-slate-700">Giá trị TB</CardTitle>
+            <CardTitle className="text-sm font-medium text-slate-700">{t('products.stats.avgValue')}</CardTitle>
             <div className="h-12 w-12 rounded-xl bg-gradient-to-r from-orange-500 to-red-500 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
               <Star className="h-6 w-6 text-white" />
             </div>
@@ -1667,7 +1669,7 @@ export default function ProductsPage() {
       <Card className="bg-white/70 backdrop-blur-sm border-slate-200/60 hover:shadow-xl transition-all duration-300 rounded-xl">
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle className="text-slate-900">Tìm kiếm & Lọc</CardTitle>
+            <CardTitle className="text-slate-900">{t('products.search.title')}</CardTitle>
             <div className="flex items-center space-x-2">
               {hasActiveFilters && (
                 <Button
@@ -1677,7 +1679,7 @@ export default function ProductsPage() {
                   className="rounded-lg"
                 >
                   <X className="mr-2 h-4 w-4" />
-                  Xóa bộ lọc
+                  {t('products.search.clearFilters')}
                 </Button>
               )}
               <Button
@@ -1687,7 +1689,7 @@ export default function ProductsPage() {
                 className="rounded-lg"
               >
                 <Filter className="mr-2 h-4 w-4" />
-                Bộ lọc nâng cao
+                {t('products.search.advancedFilters')}
                 {showAdvancedFilters ? <ChevronUp className="ml-2 h-4 w-4" /> : <ChevronDown className="ml-2 h-4 w-4" />}
               </Button>
             </div>
@@ -1700,7 +1702,7 @@ export default function ProductsPage() {
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
                 <Input
-                  placeholder="Tìm kiếm theo tên, mã sản phẩm, chi nhánh..."
+                  placeholder={t('products.search.placeholder')}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10 rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100"
@@ -1708,10 +1710,10 @@ export default function ProductsPage() {
               </div>
               <Select value={selectedCategory} onValueChange={setSelectedCategory}>
                 <SelectTrigger className="w-[180px] rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100">
-                  <SelectValue placeholder="Danh mục" />
+                  <SelectValue placeholder={t('products.search.filters.category')} />
                 </SelectTrigger>
                 <SelectContent className="rounded-xl border-slate-200 shadow-xl">
-                  <SelectItem value="all">Tất cả danh mục</SelectItem>
+                  <SelectItem value="all">{t('products.search.allCategories')}</SelectItem>
                   {flattenedCategories.map((category: any, index: number) => (
                     <SelectItem key={index} value={category.category_id.toString()}>
                       {category.category_name}
@@ -1721,12 +1723,12 @@ export default function ProductsPage() {
               </Select>
               <Select value={selectedStatus} onValueChange={setSelectedStatus}>
                 <SelectTrigger className="w-[180px] rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100">
-                  <SelectValue placeholder="Trạng thái" />
+                  <SelectValue placeholder={t('products.search.filters.status')} />
                 </SelectTrigger>
                 <SelectContent className="rounded-xl border-slate-200 shadow-xl">
-                  <SelectItem value="all">Tất cả trạng thái</SelectItem>
-                  <SelectItem value="active">Hoạt động</SelectItem>
-                  <SelectItem value="inactive">Không hoạt động</SelectItem>
+                  <SelectItem value="all">{t('products.search.allStatuses')}</SelectItem>
+                  <SelectItem value="active">{t('products.status.active')}</SelectItem>
+                  <SelectItem value="inactive">{t('products.status.inactive')}</SelectItem>
                 </SelectContent>
               </Select>
               <Select 
@@ -1740,10 +1742,10 @@ export default function ProductsPage() {
                 }}
               >
                 <SelectTrigger className="w-[180px] rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100">
-                  <SelectValue placeholder="Chi nhánh" />
+                  <SelectValue placeholder={t('products.search.filters.branches')} />
                 </SelectTrigger>
                 <SelectContent className="rounded-xl border-slate-200 shadow-xl">
-                  <SelectItem value="all">Tất cả chi nhánh</SelectItem>
+                  <SelectItem value="all">{t('products.search.allBranches')}</SelectItem>
                   {branches.map((branch: any) => (
                     <SelectItem key={branch.branch_id} value={branch.branch_id.toString()}>
                       {branch.branch_name}
@@ -1757,84 +1759,84 @@ export default function ProductsPage() {
             {showAdvancedFilters && (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-4 border-t border-slate-200">
                 <div className="space-y-2">
-                  <Label className="text-sm font-medium text-slate-700">Tên sản phẩm</Label>
+                  <Label className="text-sm font-medium text-slate-700">{t('products.search.filters.productName')}</Label>
                   <Input
-                    placeholder="Nhập tên sản phẩm..."
+                    placeholder={t('products.search.filters.productNamePlaceholder')}
                     value={productName}
                     onChange={(e) => setProductName(e.target.value)}
                     className="rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-sm font-medium text-slate-700">Mã sản phẩm</Label>
+                  <Label className="text-sm font-medium text-slate-700">{t('products.search.filters.productCode')}</Label>
                   <Input
-                    placeholder="Nhập mã sản phẩm..."
+                    placeholder={t('products.search.filters.productCodePlaceholder')}
                     value={productCode}
                     onChange={(e) => setProductCode(e.target.value)}
                     className="rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-sm font-medium text-slate-700">Mô tả</Label>
+                  <Label className="text-sm font-medium text-slate-700">{t('products.search.filters.description')}</Label>
                   <Input
-                    placeholder="Nhập từ khóa mô tả..."
+                    placeholder={t('products.search.filters.descriptionPlaceholder')}
                     value={productDescription}
                     onChange={(e) => setProductDescription(e.target.value)}
                     className="rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-sm font-medium text-slate-700">Giá tối thiểu</Label>
+                  <Label className="text-sm font-medium text-slate-700">{t('products.search.filters.minPrice')}</Label>
                   <Input
                     type="number"
-                    placeholder="0"
+                    placeholder={t('products.search.filters.minPricePlaceholder')}
                     value={minPrice}
                     onChange={(e) => setMinPrice(e.target.value)}
                     className="rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-sm font-medium text-slate-700">Giá tối đa</Label>
+                  <Label className="text-sm font-medium text-slate-700">{t('products.search.filters.maxPrice')}</Label>
                   <Input
                     type="number"
-                    placeholder="999999999"
+                    placeholder={t('products.search.filters.maxPricePlaceholder')}
                     value={maxPrice}
                     onChange={(e) => setMaxPrice(e.target.value)}
                     className="rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-sm font-medium text-slate-700">Sắp xếp theo</Label>
+                  <Label className="text-sm font-medium text-slate-700">{t('products.search.filters.sortBy')}</Label>
                   <Select value={sortBy} onValueChange={setSortBy}>
                     <SelectTrigger className="rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent className="rounded-xl border-slate-200 shadow-xl">
-                      <SelectItem value="created_at">Ngày tạo</SelectItem>
-                      <SelectItem value="product_name">Tên sản phẩm</SelectItem>
-                      <SelectItem value="product_code">Mã sản phẩm</SelectItem>
-                      <SelectItem value="price">Giá</SelectItem>
-                      <SelectItem value="product_status">Trạng thái</SelectItem>
+                      <SelectItem value="created_at">{t('products.search.sortOptions.createdAt')}</SelectItem>
+                      <SelectItem value="product_name">{t('products.search.sortOptions.productName')}</SelectItem>
+                      <SelectItem value="product_code">{t('products.search.sortOptions.productCode')}</SelectItem>
+                      <SelectItem value="price">{t('products.search.sortOptions.price')}</SelectItem>
+                      <SelectItem value="product_status">{t('products.search.sortOptions.status')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-sm font-medium text-slate-700">Thứ tự</Label>
+                  <Label className="text-sm font-medium text-slate-700">{t('products.search.filters.sortOrder')}</Label>
                   <Select value={sortOrder} onValueChange={(value: "asc" | "desc") => setSortOrder(value)}>
                     <SelectTrigger className="rounded-xl border-slate-200 focus:border-green-300 focus:ring-2 focus:ring-green-100">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent className="rounded-xl border-slate-200 shadow-xl">
-                      <SelectItem value="desc">Giảm dần</SelectItem>
-                      <SelectItem value="asc">Tăng dần</SelectItem>
+                      <SelectItem value="desc">{t('products.search.sortOrder.desc')}</SelectItem>
+                      <SelectItem value="asc">{t('products.search.sortOrder.asc')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 <div className="space-y-2 md:col-span-2 lg:col-span-3">
-                  <Label className="text-sm font-medium text-slate-700">Tags</Label>
+                  <Label className="text-sm font-medium text-slate-700">{t('products.search.filters.tags')}</Label>
                   <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 max-h-32 overflow-y-auto border border-slate-200 rounded-xl p-3">
                     {isLoadingTags ? (
-                      <div className="text-sm text-slate-500">Đang tải tags...</div>
+                      <div className="text-sm text-slate-500">{t('products.search.loading.tags')}</div>
                     ) : tags.length > 0 ? (
                       tags.map((tag: any) => (
                         <div key={tag.tag_id} className="flex items-center space-x-2">
@@ -1853,15 +1855,15 @@ export default function ProductsPage() {
                         </div>
                       ))
                     ) : (
-                      <div className="text-sm text-slate-500">Không có tags nào</div>
+                      <div className="text-sm text-slate-500">{t('products.search.noTags')}</div>
                     )}
                   </div>
                 </div>
                 <div className="space-y-2 md:col-span-2 lg:col-span-3">
-                  <Label className="text-sm font-medium text-slate-700">Chi nhánh</Label>
+                  <Label className="text-sm font-medium text-slate-700">{t('products.search.filters.branches')}</Label>
                   <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 max-h-32 overflow-y-auto border border-slate-200 rounded-xl p-3">
                     {isLoadingBranches ? (
-                      <div className="text-sm text-slate-500">Đang tải chi nhánh...</div>
+                      <div className="text-sm text-slate-500">{t('products.search.loading.branches')}</div>
                     ) : branches.length > 0 ? (
                       branches.map((branch: any) => (
                         <div key={branch.branch_id} className="flex items-center space-x-2">
@@ -1880,7 +1882,7 @@ export default function ProductsPage() {
                         </div>
                       ))
                     ) : (
-                      <div className="text-sm text-slate-500">Không có chi nhánh nào</div>
+                      <div className="text-sm text-slate-500">{t('products.search.noBranches')}</div>
                     )}
                   </div>
                 </div>
@@ -1897,7 +1899,7 @@ export default function ProductsPage() {
             <div className="flex items-center space-x-2">
               <Loader2 className="h-5 w-5 animate-spin text-green-600" />
               <span className="text-sm text-slate-600">
-                {isLoadingProducts ? "Đang tải dữ liệu..." : "Đang cập nhật dữ liệu..."}
+                {isLoadingProducts ? t('products.table.loading.loading') : t('products.table.loading.updating')}
               </span>
             </div>
           </div>
@@ -1932,7 +1934,7 @@ export default function ProductsPage() {
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-slate-100 rounded-lg">
-                      <span className="sr-only">Mở menu</span>
+                      <span className="sr-only">{t('products.table.openMenu')}</span>
                       <MoreHorizontal className="h-4 w-4" />
                     </Button>
                   </DropdownMenuTrigger>
@@ -1940,27 +1942,27 @@ export default function ProductsPage() {
                     align="end"
                     className="bg-white/95 backdrop-blur-xl border-slate-200/60 shadow-xl rounded-xl"
                   >
-                    <DropdownMenuLabel>Thao tác</DropdownMenuLabel>
+                    <DropdownMenuLabel>{t('products.table.actions')}</DropdownMenuLabel>
                     <DropdownMenuItem 
                       className="hover:bg-slate-50/80 rounded-lg"
                       onClick={() => handleViewDetail(product)}
                     >
                       <Eye className="mr-2 h-4 w-4" />
-                      Xem chi tiết
+                      {t('products.table.viewDetail')}
                     </DropdownMenuItem>
                     <DropdownMenuItem 
                       className="hover:bg-slate-50/80 rounded-lg"
                       onClick={() => handleEditProduct(product)}
                     >
                       <Edit className="mr-2 h-4 w-4" />
-                      Chỉnh sửa
+                      {t('products.table.edit')}
                     </DropdownMenuItem>
                     <DropdownMenuItem 
                       className="hover:bg-slate-50/80 rounded-lg"
                       onClick={() => handleManageTags(product)}
                     >
                       <Tags className="mr-2 h-4 w-4" />
-                      Quản lý Tags
+                      {t('products.table.manageTags')}
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem 
@@ -1971,12 +1973,12 @@ export default function ProductsPage() {
                       {product.product_status === "active" ? (
                         <>
                           <div className="mr-2 h-4 w-4 rounded-full bg-orange-500"></div>
-                          Tạm ngưng
+                          {t('products.table.deactivate')}
                         </>
                       ) : (
                         <>
                           <div className="mr-2 h-4 w-4 rounded-full bg-green-500"></div>
-                          Kích hoạt
+                          {t('products.table.activate')}
                         </>
                       )}
                     </DropdownMenuItem>
@@ -1986,7 +1988,7 @@ export default function ProductsPage() {
                       disabled={deleteProductMutation.isPending}
                     >
                       <Trash2 className="mr-2 h-4 w-4" />
-                      Xóa
+                      {t('products.table.delete')}
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -1994,13 +1996,13 @@ export default function ProductsPage() {
 
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-slate-600">Danh mục:</span>
+                  <span className="text-sm text-slate-600">{t('products.cards.category')}:</span>
                   <Badge variant="outline" className="border-slate-300 text-slate-700 rounded-lg">
                     {product.category?.category_name || "N/A"}
                   </Badge>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-slate-600">Xuất xứ:</span>
+                  <span className="text-sm text-slate-600">{t('products.cards.origin')}:</span>
                   <div className="flex items-center space-x-2">
                     <span className="text-lg">{getCountryFlag(product.origin?.country_code)}</span>
                     <span className="text-sm font-medium text-slate-700">
@@ -2009,11 +2011,11 @@ export default function ProductsPage() {
                   </div>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-slate-600">Giá:</span>
+                  <span className="text-sm text-slate-600">{t('products.cards.price')}:</span>
                   <span className="font-semibold text-slate-900">{product.price}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-slate-600">Đơn vị:</span>
+                  <span className="text-sm text-slate-600">{t('products.cards.unit')}:</span>
                   <span className="text-sm text-slate-700">
                     {product.unit_total && product.unit_name ? (
                       <span>{product.unit_total} {product.unit_name}</span>
@@ -2023,7 +2025,7 @@ export default function ProductsPage() {
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-slate-600">Chi nhánh:</span>
+                  <span className="text-sm text-slate-600">{t('products.cards.branches')}:</span>
                   <div className="flex flex-wrap gap-1">
                     {product.productBranches?.slice(0, 2).map((branchItem: any, index: number) => (
                       <Badge
@@ -2039,12 +2041,12 @@ export default function ProductsPage() {
                       </Badge>
                     )}
                     {(!product.productBranches || product.productBranches.length === 0) && (
-                      <span className="text-xs text-slate-500">Chưa phân bổ</span>
+                      <span className="text-xs text-slate-500">{t('products.cards.notAssigned')}</span>
                     )}
                   </div>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-slate-600">Tags:</span>
+                  <span className="text-sm text-slate-600">{t('products.cards.tags')}:</span>
                   <div className="flex flex-wrap gap-1">
                     {product.productTags?.slice(0, 2).map((tag: any, index: number) => (
                       <Badge
@@ -2062,11 +2064,11 @@ export default function ProductsPage() {
                   </div>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-slate-600">Trạng thái:</span>
+                  <span className="text-sm text-slate-600">{t('products.cards.status')}:</span>
                   {getStatusBadge(product.product_status)}
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-slate-600">Ngày tạo:</span>
+                  <span className="text-sm text-slate-600">{t('products.cards.created')}:</span>
                   <div className="text-sm text-slate-600">
                     {new Date(product.created_at).toLocaleDateString("vi-VN")}
                   </div>
@@ -2081,8 +2083,8 @@ export default function ProductsPage() {
       <div className="hidden lg:block">
         <Card className="bg-white/70 backdrop-blur-sm border-slate-200/60 hover:shadow-xl transition-all duration-300 rounded-xl">
           <CardHeader>
-            <CardTitle className="text-slate-900">Danh sách Sản phẩm</CardTitle>
-            <CardDescription>Tổng cộng {pagination.total} sản phẩm trong hệ thống</CardDescription>
+            <CardTitle className="text-slate-900">{t('products.table.title')}</CardTitle>
+            <CardDescription>{t('products.table.description', { count: pagination.total })}</CardDescription>
           </CardHeader>
           <CardContent className="relative">
             {(isFetchingProducts || isLoadingProducts) && (
@@ -2090,7 +2092,7 @@ export default function ProductsPage() {
                 <div className="flex items-center space-x-2">
                   <Loader2 className="h-6 w-6 animate-spin text-green-600" />
                   <span className="text-sm text-slate-600">
-                    {isLoadingProducts ? "Đang tải dữ liệu..." : "Đang cập nhật dữ liệu..."}
+                    {isLoadingProducts ? t('products.table.loading.loading') : t('products.table.loading.updating')}
                   </span>
                 </div>
               </div>
@@ -2098,17 +2100,17 @@ export default function ProductsPage() {
             <Table>
               <TableHeader>
                 <TableRow className="border-slate-100 hover:bg-slate-50/50">
-                  <TableHead className="text-slate-600 font-semibold">Sản phẩm</TableHead>
-                  <TableHead className="text-slate-600 font-semibold">Mã SP</TableHead>
-                  <TableHead className="text-slate-600 font-semibold">Danh mục</TableHead>
-                  <TableHead className="text-slate-600 font-semibold">Xuất xứ</TableHead>
-                  <TableHead className="text-slate-600 font-semibold">Giá</TableHead>
-                  <TableHead className="text-slate-600 font-semibold">Đơn vị</TableHead>
-                  <TableHead className="text-slate-600 font-semibold">Chi nhánh</TableHead>
-                  <TableHead className="text-slate-600 font-semibold">Tags</TableHead>
-                  <TableHead className="text-slate-600 font-semibold">Trạng thái</TableHead>
-                  <TableHead className="text-slate-600 font-semibold">Ngày tạo</TableHead>
-                  <TableHead className="text-right text-slate-600 font-semibold">Thao tác</TableHead>
+                  <TableHead className="text-slate-600 font-semibold">{t('products.table.headers.product')}</TableHead>
+                  <TableHead className="text-slate-600 font-semibold">{t('products.table.headers.code')}</TableHead>
+                  <TableHead className="text-slate-600 font-semibold">{t('products.table.headers.category')}</TableHead>
+                  <TableHead className="text-slate-600 font-semibold">{t('products.table.headers.origin')}</TableHead>
+                  <TableHead className="text-slate-600 font-semibold">{t('products.table.headers.price')}</TableHead>
+                  <TableHead className="text-slate-600 font-semibold">{t('products.table.headers.unit')}</TableHead>
+                  <TableHead className="text-slate-600 font-semibold">{t('products.table.headers.branches')}</TableHead>
+                  <TableHead className="text-slate-600 font-semibold">{t('products.table.headers.tags')}</TableHead>
+                  <TableHead className="text-slate-600 font-semibold">{t('products.table.headers.status')}</TableHead>
+                  <TableHead className="text-slate-600 font-semibold">{t('products.table.headers.createdAt')}</TableHead>
+                  <TableHead className="text-right text-slate-600 font-semibold">{t('products.table.headers.actions')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -2175,7 +2177,7 @@ export default function ProductsPage() {
                           </Badge>
                         )}
                         {(!product.productBranches || product.productBranches.length === 0) && (
-                          <span className="text-xs text-slate-500">Chưa phân bổ</span>
+                          <span className="text-xs text-slate-500">{t('products.detail.notAssigned')}</span>
                         )}
                       </div>
                     </TableCell>
@@ -2206,7 +2208,7 @@ export default function ProductsPage() {
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-slate-100 rounded-lg">
-                            <span className="sr-only">Mở menu</span>
+                            <span className="sr-only">{t('products.table.openMenu')}</span>
                             <MoreHorizontal className="h-4 w-4" />
                           </Button>
                         </DropdownMenuTrigger>
@@ -2214,27 +2216,27 @@ export default function ProductsPage() {
                           align="end"
                           className="bg-white/95 backdrop-blur-xl border-slate-200/60 shadow-xl rounded-xl"
                         >
-                          <DropdownMenuLabel>Thao tác</DropdownMenuLabel>
+                          <DropdownMenuLabel>{t('products.table.actions')}</DropdownMenuLabel>
                           <DropdownMenuItem 
                             className="hover:bg-slate-50/80 rounded-lg"
                             onClick={() => handleViewDetail(product)}
                           >
                             <Eye className="mr-2 h-4 w-4" />
-                            Xem chi tiết
+                            {t('products.table.viewDetail')}
                           </DropdownMenuItem>
                           <DropdownMenuItem 
                             className="hover:bg-slate-50/80 rounded-lg"
                             onClick={() => handleEditProduct(product)}
                           >
                             <Edit className="mr-2 h-4 w-4" />
-                            Chỉnh sửa
+                            {t('products.table.edit')}
                           </DropdownMenuItem>
                           <DropdownMenuItem 
                             className="hover:bg-slate-50/80 rounded-lg"
                             onClick={() => handleManageTags(product)}
                           >
                             <Tags className="mr-2 h-4 w-4" />
-                            Quản lý Tags
+                            {t('products.table.manageTags')}
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
                           <DropdownMenuItem 
@@ -2245,12 +2247,12 @@ export default function ProductsPage() {
                             {product.product_status === "active" ? (
                               <>
                                 <div className="mr-2 h-4 w-4 rounded-full bg-orange-500"></div>
-                                Tạm ngưng
+                                {t('products.table.deactivate')}
                               </>
                             ) : (
                               <>
                                 <div className="mr-2 h-4 w-4 rounded-full bg-green-500"></div>
-                                Kích hoạt
+                                {t('products.table.activate')}
                               </>
                             )}
                           </DropdownMenuItem>
@@ -2260,7 +2262,7 @@ export default function ProductsPage() {
                             disabled={deleteProductMutation.isPending}
                           >
                             <Trash2 className="mr-2 h-4 w-4" />
-                            Xóa
+                            {t('products.table.delete')}
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -2279,7 +2281,7 @@ export default function ProductsPage() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div className="text-sm text-slate-600">
-                Hiển thị {((currentPage - 1) * pageSize) + 1} - {Math.min(currentPage * pageSize, pagination.total)} trong tổng số {pagination.total} sản phẩm
+                {t('products.pagination.showing')} {((currentPage - 1) * pageSize) + 1} - {Math.min(currentPage * pageSize, pagination.total)} {t('products.pagination.of')} {pagination.total} {t('products.pagination.products')}
               </div>
               <div className="flex items-center space-x-2">
                 <Button
@@ -2289,7 +2291,7 @@ export default function ProductsPage() {
                   disabled={currentPage === 1}
                   className="rounded-lg"
                 >
-                  Trước
+                  {t('products.pagination.previous')}
                 </Button>
                 <div className="flex items-center space-x-1">
                   {Array.from({ length: Math.min(5, pagination.totalPages) }, (_, i) => {
@@ -2323,7 +2325,7 @@ export default function ProductsPage() {
                   disabled={currentPage === pagination.totalPages}
                   className="rounded-lg"
                 >
-                  Sau
+                  {t('products.pagination.next')}
                 </Button>
               </div>
             </div>

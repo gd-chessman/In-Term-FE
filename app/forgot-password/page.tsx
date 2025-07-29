@@ -10,8 +10,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Mail, ArrowLeft, CheckCircle, AlertCircle, Sparkles } from "lucide-react"
 import { forgotPassword } from "@/services/AccountService"
+import { useLang } from "@/lang/useLang"
 
 export default function ForgotPasswordPage() {
+  const { t } = useLang()
   const router = useRouter()
   const [email, setEmail] = useState("")
   const [isLoading, setIsLoading] = useState(false)
@@ -38,7 +40,7 @@ export default function ForgotPasswordPage() {
       } else if (err.message) {
         setError(err.message)
       } else {
-        setError("Đã xảy ra lỗi. Vui lòng thử lại.")
+        setError(t('forgotPassword.errors.general'))
       }
     } finally {
       setIsLoading(false)
@@ -59,10 +61,10 @@ export default function ForgotPasswordPage() {
             <Sparkles className="h-8 w-8 text-white" />
           </div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-            Admin Panel
+            {process.env.NEXT_PUBLIC_APP_NAME}
           </h1>
           <p className="text-gray-600 dark:text-gray-400">
-            Khôi phục mật khẩu tài khoản
+            {t('forgotPassword.subtitle')}
           </p>
         </div>
 
@@ -70,10 +72,10 @@ export default function ForgotPasswordPage() {
         <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl border-gray-200/60 dark:border-gray-700/60 shadow-2xl rounded-2xl">
           <CardHeader className="space-y-1 pb-4">
             <CardTitle className="text-xl font-semibold text-gray-900 dark:text-gray-100 text-center">
-              Quên mật khẩu
+              {t('forgotPassword.title')}
             </CardTitle>
             <CardDescription className="text-gray-600 dark:text-gray-400 text-center">
-              Nhập email để nhận link khôi phục mật khẩu
+              {t('forgotPassword.description')}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -82,7 +84,7 @@ export default function ForgotPasswordPage() {
                 {/* Email Field */}
                 <div className="space-y-2">
                   <Label htmlFor="email" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Email
+                    {t('forgotPassword.fields.email')}
                   </Label>
                   <div className="relative">
                     <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 dark:text-gray-500" />
@@ -92,7 +94,7 @@ export default function ForgotPasswordPage() {
                       type="email"
                       value={email}
                       onChange={handleEmailChange}
-                      placeholder="Nhập email của bạn"
+                      placeholder={t('forgotPassword.placeholders.email')}
                       className="pl-10 h-12 rounded-xl border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 transition-all duration-200"
                       required
                     />
@@ -118,10 +120,10 @@ export default function ForgotPasswordPage() {
                   {isLoading ? (
                     <div className="flex items-center space-x-2">
                       <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                      <span>Đang gửi...</span>
+                      <span>{t('forgotPassword.loading')}</span>
                     </div>
                   ) : (
-                    "Gửi mã khôi phục"
+                    t('forgotPassword.submit')
                   )}
                 </Button>
               </form>
@@ -133,15 +135,15 @@ export default function ForgotPasswordPage() {
                 </div>
                 <div className="space-y-2">
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                    Email đã được gửi!
+                    {t('forgotPassword.success.title')}
                   </h3>
                   <p className="text-gray-600 dark:text-gray-400 text-sm">
-                    Chúng tôi đã gửi link khôi phục mật khẩu đến <strong>{email}</strong>
+                    {t('forgotPassword.success.description', { email })}
                   </p>
                 </div>
                 <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-4">
                   <p className="text-sm text-blue-800 dark:text-blue-200">
-                    Vui lòng kiểm tra hộp thư và spam folder. Link có hiệu lực trong 24 giờ.
+                    {t('forgotPassword.success.note')}
                   </p>
                 </div>
               </div>
@@ -154,7 +156,7 @@ export default function ForgotPasswordPage() {
                 className="inline-flex items-center text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors duration-200"
               >
                 <ArrowLeft className="mr-2 h-4 w-4" />
-                Quay lại đăng nhập
+                {t('forgotPassword.backToLogin')}
               </Link>
             </div>
           </CardContent>
@@ -163,7 +165,7 @@ export default function ForgotPasswordPage() {
         {/* Footer */}
         <div className="text-center mt-8">
           <p className="text-sm text-gray-500 dark:text-gray-400">
-            © 2025 Admin Panel. All rights reserved.
+            © 2025 {process.env.NEXT_PUBLIC_APP_NAME}. {t('forgotPassword.footer.rights')}
           </p>
         </div>
       </div>

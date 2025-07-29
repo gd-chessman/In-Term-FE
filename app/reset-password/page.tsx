@@ -10,8 +10,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Eye, EyeOff, Lock, ArrowLeft, CheckCircle, AlertCircle, Sparkles, Shield } from "lucide-react"
 import { resetPassword } from "@/services/AccountService"
+import { useLang } from "@/lang/useLang"
 
 export default function ResetPasswordPage() {
+  const { t } = useLang()
   const router = useRouter()
   const [showCurrentPassword, setShowCurrentPassword] = useState(false)
   const [showNewPassword, setShowNewPassword] = useState(false)
@@ -58,14 +60,14 @@ export default function ResetPasswordPage() {
     // Validate new password
     const passwordValidation = validatePassword(formData.new_password)
     if (!passwordValidation.isValid) {
-      setError("Mật khẩu mới không đáp ứng yêu cầu bảo mật")
+      setError(t('resetPassword.errors.passwordRequirements'))
       setIsLoading(false)
       return
     }
 
     // Validate confirm password
     if (formData.new_password !== formData.confirm_password) {
-      setError("Mật khẩu xác nhận không khớp")
+      setError(t('resetPassword.errors.passwordMismatch'))
       setIsLoading(false)
       return
     }
@@ -86,7 +88,7 @@ export default function ResetPasswordPage() {
       } else if (err.message) {
         setError(err.message)
       } else {
-        setError("Đã xảy ra lỗi. Vui lòng thử lại.")
+        setError(t('resetPassword.errors.general'))
       }
     } finally {
       setIsLoading(false)
@@ -104,10 +106,10 @@ export default function ResetPasswordPage() {
             <Shield className="h-8 w-8 text-white" />
           </div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-            Admin Panel
+            {process.env.NEXT_PUBLIC_APP_NAME}
           </h1>
           <p className="text-gray-600 dark:text-gray-400">
-            Đổi mật khẩu tài khoản
+            {t('resetPassword.subtitle')}
           </p>
         </div>
 
@@ -115,10 +117,10 @@ export default function ResetPasswordPage() {
         <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl border-gray-200/60 dark:border-gray-700/60 shadow-2xl rounded-2xl">
           <CardHeader className="space-y-1 pb-4">
             <CardTitle className="text-xl font-semibold text-gray-900 dark:text-gray-100 text-center">
-              Đổi mật khẩu
+              {t('resetPassword.title')}
             </CardTitle>
             <CardDescription className="text-gray-600 dark:text-gray-400 text-center">
-              Cập nhật mật khẩu mới cho tài khoản của bạn
+              {t('resetPassword.description')}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -127,7 +129,7 @@ export default function ResetPasswordPage() {
                 {/* Reset Code Field */}
                 <div className="space-y-2">
                   <Label htmlFor="reset_code" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Nhập mã xác thực
+                    {t('resetPassword.fields.resetCode')}
                   </Label>
                   <div className="relative">
                     <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 dark:text-gray-500" />
@@ -137,7 +139,7 @@ export default function ResetPasswordPage() {
                       type="text"
                       value={formData.reset_code}
                       onChange={handleInputChange}
-                      placeholder="Nhập mã xác thực 6 số"
+                      placeholder={t('resetPassword.placeholders.resetCode')}
                       className="pl-10 h-12 rounded-xl border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 transition-all duration-200"
                       required
                     />
@@ -152,14 +154,14 @@ export default function ResetPasswordPage() {
                     </Button>
                   </div>
                   <div className="text-xs text-gray-500 dark:text-gray-400">
-                    Mã xác thực đã được gửi đến email của bạn
+                    {t('resetPassword.resetCodeNote')}
                   </div>
                 </div>
 
                 {/* New Password Field */}
                 <div className="space-y-2">
                   <Label htmlFor="new_password" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Mật khẩu mới
+                    {t('resetPassword.fields.newPassword')}
                   </Label>
                   <div className="relative">
                     <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 dark:text-gray-500" />
@@ -169,7 +171,7 @@ export default function ResetPasswordPage() {
                       type={showNewPassword ? "text" : "password"}
                       value={formData.new_password}
                       onChange={handleInputChange}
-                      placeholder="Nhập mật khẩu mới"
+                      placeholder={t('resetPassword.placeholders.newPassword')}
                       className="pl-10 pr-10 h-12 rounded-xl border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 transition-all duration-200"
                       required
                     />
@@ -204,9 +206,9 @@ export default function ResetPasswordPage() {
                       </div>
                       <div className="text-xs text-gray-500 dark:text-gray-400">
                         {passwordValidation.isValid ? (
-                          <span className="text-green-600 dark:text-green-400">Mật khẩu mạnh</span>
+                          <span className="text-green-600 dark:text-green-400">{t('resetPassword.passwordStrength.strong')}</span>
                         ) : (
-                          <span className="text-orange-600 dark:text-orange-400">Cần cải thiện</span>
+                          <span className="text-orange-600 dark:text-orange-400">{t('resetPassword.passwordStrength.weak')}</span>
                         )}
                       </div>
                     </div>
@@ -215,27 +217,27 @@ export default function ResetPasswordPage() {
                   {/* Password Requirements */}
                   {formData.new_password && (
                     <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-3 space-y-2">
-                      <div className="text-xs font-medium text-gray-700 dark:text-gray-300">Yêu cầu mật khẩu:</div>
+                      <div className="text-xs font-medium text-gray-700 dark:text-gray-300">{t('resetPassword.requirements.title')}:</div>
                       <div className="space-y-1 text-xs">
                         <div className={`flex items-center space-x-2 ${formData.new_password.length >= 8 ? 'text-green-600 dark:text-green-400' : 'text-gray-500 dark:text-gray-400'}`}>
                           <div className={`w-1.5 h-1.5 rounded-full ${formData.new_password.length >= 8 ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-600'}`} />
-                          <span>Ít nhất 8 ký tự</span>
+                          <span>{t('resetPassword.requirements.minLength')}</span>
                         </div>
                         <div className={`flex items-center space-x-2 ${/[A-Z]/.test(formData.new_password) ? 'text-green-600 dark:text-green-400' : 'text-gray-500 dark:text-gray-400'}`}>
                           <div className={`w-1.5 h-1.5 rounded-full ${/[A-Z]/.test(formData.new_password) ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-600'}`} />
-                          <span>Có chữ hoa</span>
+                          <span>{t('resetPassword.requirements.uppercase')}</span>
                         </div>
                         <div className={`flex items-center space-x-2 ${/[a-z]/.test(formData.new_password) ? 'text-green-600 dark:text-green-400' : 'text-gray-500 dark:text-gray-400'}`}>
                           <div className={`w-1.5 h-1.5 rounded-full ${/[a-z]/.test(formData.new_password) ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-600'}`} />
-                          <span>Có chữ thường</span>
+                          <span>{t('resetPassword.requirements.lowercase')}</span>
                         </div>
                         <div className={`flex items-center space-x-2 ${/\d/.test(formData.new_password) ? 'text-green-600 dark:text-green-400' : 'text-gray-500 dark:text-gray-400'}`}>
                           <div className={`w-1.5 h-1.5 rounded-full ${/\d/.test(formData.new_password) ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-600'}`} />
-                          <span>Có số</span>
+                          <span>{t('resetPassword.requirements.numbers')}</span>
                         </div>
                         <div className={`flex items-center space-x-2 ${/[!@#$%^&*(),.?":{}|<>]/.test(formData.new_password) ? 'text-green-600 dark:text-green-400' : 'text-gray-500 dark:text-gray-400'}`}>
                           <div className={`w-1.5 h-1.5 rounded-full ${/[!@#$%^&*(),.?":{}|<>]/.test(formData.new_password) ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-600'}`} />
-                          <span>Có ký tự đặc biệt</span>
+                          <span>{t('resetPassword.requirements.special')}</span>
                         </div>
                       </div>
                     </div>
@@ -245,7 +247,7 @@ export default function ResetPasswordPage() {
                 {/* Confirm Password Field */}
                 <div className="space-y-2">
                   <Label htmlFor="confirm_password" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Xác nhận mật khẩu mới
+                    {t('resetPassword.fields.confirmPassword')}
                   </Label>
                   <div className="relative">
                     <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 dark:text-gray-500" />
@@ -255,7 +257,7 @@ export default function ResetPasswordPage() {
                       type={showConfirmPassword ? "text" : "password"}
                       value={formData.confirm_password}
                       onChange={handleInputChange}
-                      placeholder="Nhập lại mật khẩu mới"
+                      placeholder={t('resetPassword.placeholders.confirmPassword')}
                       className="pl-10 pr-10 h-12 rounded-xl border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 transition-all duration-200"
                       required
                     />
@@ -276,12 +278,12 @@ export default function ResetPasswordPage() {
                       {formData.new_password === formData.confirm_password ? (
                         <span className="flex items-center space-x-1">
                           <CheckCircle className="h-3 w-3" />
-                          <span>Mật khẩu khớp</span>
+                          <span>{t('resetPassword.passwordMatch.match')}</span>
                         </span>
                       ) : (
                         <span className="flex items-center space-x-1">
                           <AlertCircle className="h-3 w-3" />
-                          <span>Mật khẩu không khớp</span>
+                          <span>{t('resetPassword.passwordMatch.mismatch')}</span>
                         </span>
                       )}
                     </div>
@@ -307,10 +309,10 @@ export default function ResetPasswordPage() {
                   {isLoading ? (
                     <div className="flex items-center space-x-2">
                       <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                      <span>Đang cập nhật...</span>
+                      <span>{t('resetPassword.loading')}</span>
                     </div>
                   ) : (
-                    "Cập nhật mật khẩu"
+                    t('resetPassword.submit')
                   )}
                 </Button>
               </form>
@@ -322,22 +324,22 @@ export default function ResetPasswordPage() {
                 </div>
                 <div className="space-y-2">
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                    Đổi mật khẩu thành công!
+                    {t('resetPassword.success.title')}
                   </h3>
                   <p className="text-gray-600 dark:text-gray-400 text-sm">
-                    Mật khẩu của bạn đã được cập nhật. Vui lòng đăng nhập lại với mật khẩu mới.
+                    {t('resetPassword.success.description')}
                   </p>
                 </div>
                 <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl p-4">
                   <p className="text-sm text-green-800 dark:text-green-200">
-                    Để bảo mật tài khoản, bạn sẽ được đăng xuất khỏi tất cả thiết bị khác.
+                    {t('resetPassword.success.securityNote')}
                   </p>
                 </div>
                 <Button
                   onClick={() => window.location.href = "/login"}
                   className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white"
                 >
-                  Đăng nhập lại
+                  {t('resetPassword.success.loginAgain')}
                 </Button>
               </div>
             )}
@@ -350,7 +352,7 @@ export default function ResetPasswordPage() {
                   className="inline-flex items-center text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors duration-200"
                 >
                   <ArrowLeft className="mr-2 h-4 w-4" />
-                  Quay lại Dashboard
+                  {t('resetPassword.backToDashboard')}
                 </Link>
               </div>
             )}
@@ -360,7 +362,7 @@ export default function ResetPasswordPage() {
         {/* Footer */}
         <div className="text-center mt-8">
           <p className="text-sm text-gray-500 dark:text-gray-400">
-            © 2025 Admin Panel. All rights reserved.
+            © 2025 {process.env.NEXT_PUBLIC_APP_NAME}. {t('resetPassword.footer.rights')}
           </p>
         </div>
       </div>

@@ -1,3 +1,1839 @@
 {
-    
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Přehled správy systému",
+    "stats": {
+      "totalUsers": "Celkem uživatelů",
+      "products": "Produkty",
+      "countries": "Země",
+      "todayPrints": "Dnešní tisky",
+      "currentSystem": "Aktuální stav systému"
+    },
+    "recentActivities": {
+      "title": "Poslední aktivity",
+      "subtitle": "Nejnovější aktivity v systému",
+      "loading": "Načítání aktivit...",
+      "noActivities": "Žádné nedávné aktivity",
+      "actions": {
+        "login": "se přihlásil",
+        "logout": "se odhlásil",
+        "create": "vytvořil",
+        "update": "aktualizoval",
+        "delete": "smazal",
+        "unknown": "provedl"
+      },
+      "timeAgo": {
+        "seconds": "sekund zpět",
+        "minutes": "minut zpět",
+        "hours": "hodin zpět",
+        "days": "dní zpět"
+      }
+    },
+    "printDistribution": {
+      "title": "Distribuce typů tisku",
+      "subtitle": "Statistiky podle typu tiskové šablony",
+      "noData": "Žádná data tisku",
+      "noActivity": "Zatím žádná aktivita tisku",
+      "tooltip": {
+        "prints": "tisků",
+        "totalPrints": "Celkem tisků",
+        "type": "Typ"
+      },
+      "unknown": "Neznámé"
+    }
+  },
+  "profile": {
+    "title": "Osobní profil",
+    "subtitle": "Správa osobních informací a nastavení účtu",
+    "loading": "Načítání...",
+    "error": "Nelze načíst informace o profilu",
+    "tabs": {
+      "personalInfo": "Osobní informace",
+      "changePassword": "Změnit heslo"
+    },
+    "personalInfo": {
+      "title": "Osobní informace",
+      "subtitle": "Aktualizujte své osobní informace",
+      "edit": "Upravit",
+      "save": "Uložit",
+      "cancel": "Zrušit",
+      "updateImage": "Aktualizovat obrázek",
+      "fields": {
+        "fullname": "Celé jméno",
+        "email": "Email",
+        "phone": "Telefonní číslo",
+        "address": "Adresa",
+        "branch": "Pobočka",
+        "accountCreated": "Datum vytvoření účtu"
+      },
+      "placeholders": {
+        "fullname": "Zadejte celé jméno",
+        "email": "Zadejte email",
+        "phone": "Zadejte telefonní číslo",
+        "address": "Zadejte adresu",
+        "branch": "Vyberte pobočku"
+      },
+      "notAssigned": "Nepřiřazeno",
+      "notUpdated": "Neaktualizováno",
+      "noInfo": "Žádné informace",
+      "loading": "Načítání..."
+    },
+    "changePassword": {
+      "title": "Změnit heslo",
+      "subtitle": "Aktualizujte heslo svého účtu",
+      "changePassword": "Změnit heslo",
+      "fields": {
+        "currentPassword": "Aktuální heslo",
+        "newPassword": "Nové heslo",
+        "confirmPassword": "Potvrdit nové heslo"
+      },
+      "placeholders": {
+        "currentPassword": "Zadejte aktuální heslo",
+        "newPassword": "Zadejte nové heslo",
+        "confirmPassword": "Znovu zadejte nové heslo"
+      }
+    },
+    "toasts": {
+      "profileUpdated": {
+        "title": "Úspěch",
+        "description": "Informace o profilu byly aktualizovány"
+      },
+      "profileError": {
+        "title": "Chyba",
+        "description": "Nelze aktualizovat informace o profilu"
+      },
+      "avatarUpdated": {
+        "title": "Úspěch",
+        "description": "Avatar byl aktualizován"
+      },
+      "avatarError": {
+        "title": "Chyba",
+        "description": "Nelze aktualizovat avatar"
+      },
+      "passwordChanged": {
+        "title": "Úspěch",
+        "description": "Heslo bylo změněno"
+      },
+      "passwordError": {
+        "title": "Chyba",
+        "description": "Nelze změnit heslo"
+      },
+      "passwordMismatch": {
+        "title": "Chyba",
+        "description": "Potvrzení hesla se neshoduje"
+      }
+    }
+  },
+  "admins": {
+    "title": "Správa uživatelů",
+    "subtitle": "Správa uživatelských účtů a oprávnění",
+    "addUser": "Přidat uživatele",
+    "createUser": {
+      "title": "Přidat nového uživatele",
+      "subtitle": "Vytvořit nový uživatelský účet pro systém",
+      "create": "Vytvořit uživatele",
+      "creating": "Vytváření...",
+      "fields": {
+        "username": "Uživatelské jméno",
+        "email": "Email",
+        "fullname": "Celé jméno",
+        "level": "Úroveň",
+        "role": "Role",
+        "branch": "Pobočka",
+        "password": "Heslo"
+      },
+      "placeholders": {
+        "username": "Zadejte uživatelské jméno",
+        "email": "Zadejte email",
+        "fullname": "Zadejte celé jméno",
+        "level": "Vyberte úroveň",
+        "role": "Vyberte roli",
+        "branch": "Vyberte pobočku",
+        "password": "Zadejte heslo"
+      },
+      "loading": "Načítání...",
+      "validation": "Prosím vyplňte všechny požadované informace"
+    },
+    "stats": {
+      "totalUsers": "Celkem uživatelů",
+      "totalUsersDesc": "Celkový počet uživatelů",
+      "activeUsers": "Aktivní",
+      "inactiveUsers": "Neaktivní",
+      "inactiveUsersDesc": "Vyžaduje pozornost",
+      "roles": "Role",
+      "totalRoles": "Celkem rolí"
+    },
+    "search": {
+      "title": "Hledat a filtrovat",
+      "placeholder": "Hledat podle jména, emailu, uživatelského jména...",
+      "status": "Stav",
+      "level": "Úroveň",
+      "all": "Vše"
+    },
+    "table": {
+      "title": "Seznam Adminů",
+      "loading": "Načítání...",
+      "loadingData": "Načítání dat...",
+      "error": "Došlo k chybě při načítání dat",
+      "totalUsers": "Celkem {count} adminů",
+      "noData": "Žádná data adminů",
+      "actions": "Akce",
+      "openMenu": "Otevřít menu",
+      "role": "Role",
+      "level": "Úroveň",
+      "branch": "Pobočka",
+      "status": "Stav",
+      "lastLogin": "Poslední přihlášení",
+      "createdAt": "Vytvořeno",
+      "noRole": "Není přiřazena role",
+      "noBranch": "Není přiřazena pobočka",
+      "neverLogin": "Nikdy se nepřihlásil",
+      "headers": {
+        "admin": "Admin",
+        "email": "Email",
+        "level": "Úroveň",
+        "role": "Role",
+        "branch": "Pobočka",
+        "status": "Stav",
+        "lastLogin": "Poslední přihlášení",
+        "actions": "Akce"
+      },
+      "actions": {
+        "assignRole": "Přiřadit roli",
+        "changeBranch": "Změnit pobočku",
+        "deactivate": "Deaktivovat",
+        "suspend": "Pozastavit",
+        "activate": "Aktivovat"
+      }
+    },
+    "na": "N/A",
+    "status": {
+      "active": "Aktivní",
+      "inactive": "Neaktivní",
+      "suspended": "Pozastaveno"
+    },
+    "levels": {
+      "super_admin": "Super Admin",
+      "admin": "Admin",
+      "moderator": "Moderátor",
+      "support": "Podpora"
+    },
+    "actions": {
+      "changeLevel": "Změnit úroveň",
+      "changeBranch": "Změnit pobočku",
+      "updateLevel": "Aktualizovat úroveň",
+      "updateBranch": "Aktualizovat pobočku",
+      "confirmLevel": "Potvrdit změnu úrovně",
+      "confirmBranch": "Potvrdit změnu pobočky",
+      "currentLevel": "Aktuální úroveň",
+      "newLevel": "Nová úroveň",
+      "currentBranch": "Aktuální pobočka",
+      "newBranch": "Nová pobočka",
+      "selectNewLevel": "Vyberte novou úroveň",
+      "selectNewBranch": "Vyberte novou pobočku",
+      "notAssigned": "Nepřiřazeno"
+    },
+    "toasts": {
+      "userCreated": {
+        "title": "Úspěch",
+        "description": "Uživatel byl úspěšně vytvořen"
+      },
+      "userCreatedError": {
+        "title": "Chyba",
+        "description": "Nepodařilo se vytvořit uživatele"
+      },
+      "levelUpdated": {
+        "title": "Úspěch",
+        "description": "Úroveň byla úspěšně aktualizována"
+      },
+      "levelUpdatedError": {
+        "title": "Chyba",
+        "description": "Nepodařilo se aktualizovat úroveň"
+      },
+      "branchUpdated": {
+        "title": "Úspěch",
+        "description": "Pobočka byla úspěšně aktualizována"
+      },
+      "branchUpdatedError": {
+        "title": "Chyba",
+        "description": "Nepodařilo se aktualizovat pobočku"
+      },
+      "statusUpdated": {
+        "title": "Úspěch",
+        "description": "Stav byl úspěšně aktualizován"
+      },
+      "statusUpdatedError": {
+        "title": "Chyba",
+        "description": "Nepodařilo se aktualizovat stav"
+      }
+    },
+    "updateLevel": {
+      "title": "Aktualizovat úroveň",
+      "description": "Změnit úroveň pro tohoto uživatele",
+      "currentLevel": "Aktuální úroveň",
+      "newLevel": "Nová úroveň",
+      "selectNewLevel": "Vybrat novou úroveň",
+      "updating": "Aktualizuji...",
+      "updateLevel": "Aktualizovat úroveň"
+    },
+    "updateBranch": {
+      "title": "Aktualizovat pobočku",
+      "description": "Změnit pobočku pro tohoto uživatele",
+      "currentBranch": "Aktuální pobočka",
+      "newBranch": "Nová pobočka",
+      "selectNewBranch": "Vybrat novou pobočku",
+      "noBranch": "Žádná pobočka",
+      "updating": "Aktualizuji...",
+      "updateBranch": "Aktualizovat pobočku"
+    }
+  },
+  "roles": {
+    "title": "Role a oprávnění",
+    "subtitle": "Správa rolí a oprávnění v systému",
+    "loading": "Načítání dat...",
+    "loadingRoles": "Načítání seznamu rolí...",
+    "error": "Při načítání dat došlo k chybě",
+    "stats": {
+      "totalRoles": "Celkem rolí",
+      "totalRolesDesc": "Všechny role",
+      "activeRoles": "Aktivní role",
+      "activeRolesDesc": "Aktivní",
+      "inactiveRoles": "Neaktivní role",
+      "inactiveRolesDesc": "Neaktivní",
+      "totalUsers": "Celkem uživatelů",
+      "totalUsersDesc": "Celkový počet uživatelů"
+    },
+    "table": {
+      "title": "Seznam rolí",
+      "totalRoles": "Celkem {count} rolí v systému",
+      "headers": {
+        "role": "Role",
+        "description": "Popis",
+        "userCount": "Počet uživatelů",
+        "status": "Stav",
+        "createdAt": "Datum vytvoření",
+        "actions": "Akce"
+      }
+    },
+    "status": {
+      "active": "Aktivní",
+      "inactive": "Neaktivní"
+    },
+    "permissions": {
+      "title": "Oprávnění pro roli: {roleName}",
+      "subtitle": "Vyberte oprávnění pro tuto roli",
+      "savePermissions": "Uložit oprávnění",
+      "actions": {
+        "edit": "Upravit",
+        "permissions": "Oprávnění",
+        "delete": "Smazat"
+      },
+      "list": {
+        "viewAdmins": "Zobrazit seznam administrátorů",
+        "createAdmin": "Vytvořit nového administrátora",
+        "updateAdmin": "Aktualizovat administrátora",
+        "deleteAdmin": "Smazat administrátora",
+        "viewProducts": "Zobrazit produkty",
+        "createProduct": "Vytvořit produkt",
+        "updateProduct": "Aktualizovat produkt",
+        "deleteProduct": "Smazat produkt"
+      }
+    }
+  },
+  "logs": {
+    "title": "Protokoly aktivit",
+    "subtitle": "Sledování všech aktivit v systému",
+    "loading": "Načítání dat...",
+    "stats": {
+      "totalActivities": "Celkem aktivit",
+      "totalActivitiesDesc": "Celkový počet",
+      "login24h": "Přihlášení 24h",
+      "login24hDesc": "Posledních 24h",
+      "actionsToday": "Akce dnes",
+      "actionsTodayDesc": "Dnes",
+      "uniqueIps": "Unikátní IP",
+      "uniqueIpsDesc": "IP adresy"
+    },
+    "search": {
+      "title": "Hledat a filtrovat",
+      "placeholder": "Hledat podle admina, produktu, IP...",
+      "action": "Akce",
+      "module": "Modul",
+      "all": "Vše"
+    },
+    "actions": {
+      "login": "Přihlášení",
+      "logout": "Odhlášení",
+      "create": "Vytvořit",
+      "update": "Aktualizovat",
+      "delete": "Smazat",
+      "approve": "Schválit",
+      "reject": "Odmítnout",
+      "suspend": "Pozastavit",
+      "activate": "Aktivovat",
+      "view": "Zobrazit",
+      "export": "Exportovat",
+      "import": "Importovat"
+    },
+    "modules": {
+      "admins": "Admin",
+      "roles": "Role",
+      "countries": "Země",
+      "categories": "Kategorie",
+      "products": "Produkty",
+      "product_tags": "Tagy produktů",
+      "price_printing": "Tisk cen",
+      "settings": "Nastavení"
+    },
+    "table": {
+      "title": "Historie aktivit",
+      "description": "Zobrazení {count} nedávných aktivit",
+      "headers": {
+        "time": "Čas",
+        "admin": "Administrátor",
+        "action": "Akce",
+        "module": "Modul",
+        "description": "Popis",
+        "ipAddress": "IP adresa",
+        "userAgent": "Zařízení/Prohlížeč"
+      },
+      "noData": "N/A"
+    },
+    "timeAgo": {
+      "justNow": "Právě teď",
+      "minutesAgo": "před {minutes} minutami",
+      "hoursAgo": "před {hours} hodinami",
+      "daysAgo": "před {days} dny"
+    }
+  },
+  "branches": {
+    "title": "Správa poboček",
+    "subtitle": "Správa informací o pobočkách v systému",
+    "loading": "Načítání dat poboček...",
+    "error": "Při načítání dat došlo k chybě",
+    "retry": "Zkusit znovu",
+    "stats": {
+      "totalBranches": "Celkem poboček",
+      "totalBranchesDesc": "V systému",
+      "activeBranches": "Aktivní",
+      "activeBranchesDesc": "Aktivní pobočky",
+      "inactiveBranches": "Neaktivní",
+      "inactiveBranchesDesc": "Pozastavené pobočky",
+      "activityRate": "Míra aktivity",
+      "activityRateDesc": "Aktivní pobočky"
+    },
+    "search": {
+      "title": "Hledat a filtrovat",
+      "placeholder": "Hledat podle názvu pobočky, popisu...",
+      "status": "Stav",
+      "all": "Vše",
+      "active": "Aktivní",
+      "inactive": "Neaktivní"
+    },
+    "table": {
+      "title": "Seznam poboček",
+      "description": "Celkem {count} poboček v systému",
+      "headers": {
+        "name": "Název pobočky",
+        "description": "Popis",
+        "status": "Stav",
+        "createdAt": "Vytvořeno",
+        "updatedAt": "Aktualizováno",
+        "actions": "Akce"
+      },
+      "noDescription": "Žádný popis"
+    },
+    "cards": {
+      "edit": "Upravit",
+      "delete": "Smazat",
+      "status": "Stav:",
+      "createdAt": "Vytvořeno:",
+      "updatedAt": "Aktualizováno:"
+    },
+    "create": {
+      "title": "Přidat novou pobočku",
+      "subtitle": "Přidat novou pobočku do systému",
+      "fields": {
+        "name": "Název pobočky",
+        "description": "Popis"
+      },
+      "placeholders": {
+        "name": "Zadejte název pobočky",
+        "description": "Zadejte popis pobočky (volitelné)"
+      },
+      "buttons": {
+        "add": "Přidat pobočku",
+        "adding": "Přidávání..."
+      },
+      "validation": {
+        "nameRequired": "Název pobočky nemůže být prázdný"
+      }
+    },
+    "edit": {
+      "title": "Upravit pobočku",
+      "subtitle": "Aktualizovat informace o pobočce",
+      "buttons": {
+        "update": "Aktualizovat pobočku",
+        "updating": "Aktualizace..."
+      }
+    },
+    "delete": {
+      "title": "Potvrdit smazání",
+      "description": "Opravdu chcete smazat pobočku {name}? Tuto akci nelze vrátit zpět.",
+      "buttons": {
+        "cancel": "Zrušit",
+        "delete": "Smazat pobočku",
+        "deleting": "Mazání..."
+      }
+    },
+    "toasts": {
+      "createSuccess": "Pobočka byla úspěšně vytvořena!",
+      "createError": "Při vytváření pobočky došlo k chybě",
+      "updateSuccess": "Pobočka byla úspěšně aktualizována!",
+      "updateError": "Při aktualizaci pobočky došlo k chybě",
+      "deleteSuccess": "Pobočka byla úspěšně smazána!",
+      "deleteError": "Při mazání pobočky došlo k chybě",
+      "statusUpdateSuccess": "Stav byl úspěšně aktualizován!",
+      "statusUpdateError": "Při aktualizaci stavu došlo k chybě"
+    }
+  },
+  "header": {
+    "language": "Jazyk",
+    "vietnamese": "Tiếng Việt",
+    "english": "English",
+    "czech": "Čeština",
+    "defaultUser": "Admin User",
+    "defaultEmail": "admin@example.com",
+    "profile": "Profil",
+    "dashboard": "Dashboard",
+    "products": "Správa produktů",
+    "printSelect": "Výběr tisku",
+    "printHistory": "Historie tisku",
+    "users": "Správa uživatelů",
+    "activityLogs": "Protokoly aktivit",
+    "logout": "Odhlášení",
+    "loggingOut": "Odhlášení...",
+    "searchPlaceholder": "Hledat produkty, tiskové šablony, země..."
+  },
+  "sidebar": {
+    "dashboard": "Dashboard",
+    "profile": "Profil",
+    "userManagement": "Správa uživatelů",
+    "userList": "Seznam uživatelů",
+    "rolesPermissions": "Role & Oprávnění",
+    "activityLogs": "Protokoly aktivit",
+    "system": "Systém",
+    "branches": "Pobočky",
+    "countries": "Země",
+    "settings": "Nastavení",
+    "products": "Produkty",
+    "productList": "Seznam produktů",
+    "categories": "Kategorie",
+    "tags": "Tagy",
+    "printing": "Tisk",
+    "printTemplates": "Tiskové šablony",
+    "printSelection": "Výběr tisku",
+    "printHistory": "Historie tisku",
+    "defaultUser": "AU",
+    "defaultEmail": "admin@example.com"
+  },
+  "countries": {
+    "title": "Správa zemí",
+    "subtitle": "Správa seznamu zemí a tiskových šablon",
+    "loading": "Načítání dat zemí...",
+    "error": "Při načítání dat došlo k chybě",
+    "retry": "Zkusit znovu",
+    "stats": {
+      "totalCountries": "Celkem zemí",
+      "active": "Aktivní",
+      "totalProducts": "Celkem produktů",
+      "acrossAllCountries": "Ve všech zemích",
+      "printTemplates": "Tiskové šablony",
+      "totalTemplates": "Celkem šablon",
+      "avgProducts": "Průměr produktů",
+      "productsPerCountry": "Produktů/zemi"
+    },
+    "search": {
+      "title": "Hledat",
+      "placeholder": "Hledat podle názvu země, kódu země..."
+    },
+    "table": {
+      "title": "Seznam zemí",
+      "description": "Celkem {count} zemí v systému",
+      "headers": {
+        "country": "Země",
+        "code": "Kód",
+        "products": "Produkty",
+        "templates": "Šablony",
+        "createdAt": "Vytvořeno",
+        "actions": "Akce"
+      },
+      "actions": "Akce",
+      "edit": "Upravit",
+      "delete": "Smazat"
+    },
+    "cards": {
+      "products": "Produkty",
+      "templates": "Šablony",
+      "created": "Vytvořeno"
+    },
+    "create": {
+      "title": "Přidat novou zemi",
+      "subtitle": "Přidat novou zemi do systému",
+      "button": "Přidat zemi",
+      "fields": {
+        "name": "Název země",
+        "code": "Kód země"
+      },
+      "placeholders": {
+        "name": "Zadejte název země",
+        "code": "VN, US, JP..."
+      },
+      "buttons": {
+        "add": "Přidat zemi",
+        "adding": "Přidávání..."
+      }
+    },
+    "edit": {
+      "title": "Upravit zemi",
+      "subtitle": "Aktualizovat informace o zemi",
+      "fields": {
+        "name": "Název země",
+        "code": "Kód země"
+      },
+      "placeholders": {
+        "name": "Zadejte název země",
+        "code": "VN, US, JP..."
+      },
+      "buttons": {
+        "update": "Aktualizovat zemi",
+        "updating": "Aktualizace..."
+      }
+    },
+    "delete": {
+      "title": "Potvrdit smazání",
+      "description": "Opravdu chcete smazat zemi {name} ({code})? Tuto akci nelze vrátit zpět.",
+      "code": "Kód",
+      "buttons": {
+        "cancel": "Zrušit",
+        "delete": "Smazat zemi",
+        "deleting": "Mazání..."
+      }
+    },
+    "validation": {
+      "fillAllFields": "Prosím vyplňte všechna povinná pole"
+    },
+    "toasts": {
+      "createSuccess": "Země byla úspěšně přidána!",
+      "createError": "Při přidávání země došlo k chybě",
+      "createErrorDuplicate": "Země již existuje, duplicitní název nebo kód země",
+      "updateSuccess": "Země byla úspěšně aktualizována!",
+      "updateError": "Při aktualizaci země došlo k chybě",
+      "deleteSuccess": "Země byla úspěšně smazána!",
+      "deleteError": "Při mazání země došlo k chybě"
+    }
+  },
+  "products": {
+    "title": "Správa produktů",
+    "subtitle": "Zobrazit a spravovat všechny produkty v systému",
+    "status": {
+      "active": "Aktivní",
+      "inactive": "Neaktivní"
+    },
+    "na": "N/A",
+    "create": {
+      "title": "Přidat nový produkt",
+      "subtitle": "Vytvořit nový produkt v systému",
+      "button": "Přidat produkt",
+      "fields": {
+        "name": "Název produktu",
+        "code": "Kód produktu",
+        "description": "Popis",
+        "tags": "Tagy",
+        "branches": "Pobočky",
+        "origin": "Původ",
+        "category": "Kategorie",
+        "price": "Cena",
+        "unitName": "Jednotka",
+        "unitTotal": "Celkové jednotky",
+        "unitStep": "Minimální krok",
+        "productInfo": "Informace o produktu",
+        "image": "Obrázek produktu"
+      },
+      "placeholders": {
+        "name": "Zadejte název produktu (1-200 znaků)",
+        "code": "Zadejte kód produktu (1-100 znaků)",
+        "description": "Zadejte popis produktu (volitelné)",
+        "origin": "Vyberte zemi původu",
+        "category": "Vyberte kategorii",
+        "price": "Zadejte cenu produktu",
+        "unitName": "Např: gram, kg, ml, litr, kus, krabice...",
+        "unitTotal": "Např: 500 (gram), 1 (kg), 330 (ml)...",
+        "unitStep": "Např: 0.1, 0.5, 1...",
+        "productInfo": "Zadejte informace o produktu"
+      },
+      "loading": {
+        "tags": "Načítání tagů...",
+        "branches": "Načítání poboček...",
+        "countries": "Načítání...",
+        "categories": "Načítání..."
+      },
+      "noTags": "Žádné tagy k dispozici",
+      "noBranches": "Žádné pobočky k dispozici",
+      "buttons": {
+        "create": "Vytvořit produkt"
+      }
+    },
+    "edit": {
+      "title": "Upravit produkt",
+      "subtitle": "Aktualizovat informace o produktu",
+      "fields": {
+        "name": "Název produktu",
+        "code": "Kód produktu",
+        "description": "Popis",
+        "origin": "Původ",
+        "category": "Kategorie",
+        "price": "Cena",
+        "unitName": "Název jednotky",
+        "unitTotal": "Celkem jednotek",
+        "unitStep": "Krok jednotky",
+        "productInfo": "Informace o produktu",
+        "image": "Obrázek produktu",
+        "branches": "Pobočky"
+      },
+      "placeholders": {
+        "name": "Zadejte název produktu...",
+        "code": "Zadejte kód produktu...",
+        "description": "Zadejte popis produktu...",
+        "origin": "Vyberte zemi původu",
+        "category": "Vyberte kategorii",
+        "price": "Zadejte cenu produktu",
+        "unitName": "Např: gram, kg, ml, litr, kus, krabice...",
+        "unitTotal": "Např: 500 (gram), 1 (kg), 330 (ml)...",
+        "unitStep": "Např: 10 (gram), 0.1 (kg), 50 (ml)...",
+        "productInfo": "Zadejte podrobné informace o produktu"
+      },
+      "buttons": {
+        "update": "Aktualizovat produkt"
+      },
+      "loading": {
+        "loading": "Načítání...",
+        "updating": "Aktualizace...",
+        "branches": "Načítání poboček...",
+        "tags": "Načítání tagů..."
+      }
+    },
+    "delete": {
+      "title": "Smazat produkt",
+      "description": "Opravdu chcete smazat tento produkt? Tuto akci nelze vrátit zpět.",
+      "confirmationPlaceholder": "Zadejte kód produktu pro potvrzení",
+      "confirmationLabel": "Pro potvrzení smazání zadejte kód produktu",
+      "warning": {
+        "title": "Důležité varování:",
+        "permanent": "Produkt bude trvale smazán ze systému",
+        "dataLoss": "Všechna data související s produktem budou ztracena",
+        "noRecovery": "Po smazání nelze obnovit",
+        "affectReports": "Ovlivní to reporty a statistiky"
+      },
+      "buttons": {
+        "cancel": "Zrušit",
+        "delete": "Smazat produkt"
+      },
+      "loading": {
+        "deleting": "Mazání..."
+      }
+    },
+    "pagination": {
+      "showing": "Zobrazeno",
+      "of": "z",
+      "products": "produktů",
+      "previous": "Předchozí",
+      "next": "Další"
+    },
+    "detail": {
+      "title": "Detaily produktu",
+      "description": "Zobrazit podrobné informace o produktu",
+      "close": "Zavřít",
+      "basicInfo": "Základní informace",
+      "classification": "Klasifikace",
+      "noDescription": "Žádný popis",
+      "tags": "Tagy:",
+      "branches": "Pobočky:",
+      "noTags": "Zatím žádné tagy",
+      "notAssigned": "Nepřiřazeno",
+      "createdAt": "Vytvořeno:",
+      "category": "Kategorie:",
+      "origin": "Původ:",
+      "price": "Cena:",
+      "unitName": "Jednotka:",
+      "unitTotal": "Celkem jednotek:",
+      "unitStep": "Min krok:",
+      "productInfo": "Informace o produktu"
+    },
+    "tags": {
+      "title": "Správa tagů",
+      "subtitle": "Přidat nebo odebrat tagy pro produkt",
+      "currentTags": "Aktuální tagy",
+      "addTags": "Přidat tagy",
+      "removeTags": "Odebrat tagy",
+      "noTagsToAdd": "Žádné tagy k dispozici pro přidání",
+      "noTagsToRemove": "Žádné tagy k dispozici pro odebrání",
+      "buttons": {
+        "add": "Přidat tagy",
+        "adding": "Přidávání...",
+        "remove": "Odebrat tagy",
+        "removing": "Odebírání...",
+        "close": "Zavřít"
+      }
+    },
+    "stats": {
+      "totalProducts": "Celkem produktů",
+      "activeProducts": "Aktivní produkty",
+      "inactiveProducts": "Neaktivní produkty",
+      "totalCategories": "Celkem kategorií",
+      "avgValue": "Průměrná hodnota",
+      "page": "Stránka",
+      "allProducts": "Všechny produkty",
+      "ofTotal": "z celku"
+    },
+    "search": {
+      "title": "Hledat & Filtrovat",
+      "placeholder": "Hledat podle názvu, kódu, popisu...",
+      "advancedFilters": "Pokročilé filtry",
+      "clearFilters": "Vymazat filtry",
+      "filters": {
+        "category": "Kategorie",
+        "status": "Stav",
+        "branches": "Pobočky",
+        "productName": "Název produktu",
+        "productCode": "Kód produktu",
+        "description": "Popis",
+        "minPrice": "Minimální cena",
+        "maxPrice": "Maximální cena",
+        "sortBy": "Seřadit podle",
+        "sortOrder": "Pořadí",
+        "tags": "Tagy",
+        "productNamePlaceholder": "Zadejte název produktu...",
+        "productCodePlaceholder": "Zadejte kód produktu...",
+        "descriptionPlaceholder": "Zadejte klíčová slova popisu...",
+        "minPricePlaceholder": "Zadejte minimální cenu...",
+        "maxPricePlaceholder": "Zadejte maximální cenu..."
+      },
+      "sortOptions": {
+        "created_at": "Datum vytvoření",
+        "createdAt": "Datum vytvoření",
+        "product_name": "Název produktu",
+        "productName": "Název produktu",
+        "product_code": "Kód produktu",
+        "productCode": "Kód produktu",
+        "price": "Cena",
+        "product_status": "Stav",
+        "status": "Stav"
+      },
+      "sortOrder": {
+        "asc": "Vzestupně",
+        "desc": "Sestupně"
+      },
+      "allCategories": "Všechny kategorie",
+      "allStatuses": "Všechny stavy",
+      "allBranches": "Všechny pobočky"
+    },
+    "table": {
+      "title": "Seznam produktů",
+      "description": "Zobrazit a spravovat všech {count} produktů v systému",
+      "loading": {
+        "loading": "Načítání dat...",
+        "updating": "Aktualizace dat..."
+      },
+      "headers": {
+        "name": "Název produktu",
+        "code": "Kód produktu",
+        "product": "Produkt",
+        "category": "Kategorie",
+        "origin": "Původ",
+        "price": "Cena",
+        "unit": "Jednotka",
+        "branches": "Pobočky",
+        "tags": "Tagy",
+        "status": "Stav",
+        "createdAt": "Vytvořeno",
+        "actions": "Akce"
+      },
+      "actions": "Akce",
+      "openMenu": "Otevřít menu",
+      "viewDetail": "Zobrazit detaily",
+      "edit": "Upravit",
+      "manageTags": "Spravovat tagy",
+      "activate": "Aktivovat",
+      "deactivate": "Deaktivovat",
+      "delete": "Smazat"
+    },
+          "cards": {
+        "products": "Produkty",
+        "templates": "Šablony",
+        "created": "Vytvořeno",
+        "status": "Stav",
+        "category": "Kategorie",
+        "origin": "Původ",
+        "price": "Cena",
+        "unit": "Jednotka",
+        "branches": "Pobočky",
+        "tags": "Tagy",
+        "notAssigned": "Nepřiřazeno"
+      },
+    "toasts": {
+      "createSuccess": {
+        "title": "Úspěch",
+        "description": "Produkt byl úspěšně vytvořen"
+      },
+      "createError": {
+        "title": "Chyba",
+        "description": "Při vytváření produktu došlo k chybě"
+      },
+      "updateSuccess": {
+        "title": "Úspěch",
+        "description": "Produkt byl úspěšně aktualizován"
+      },
+      "updateError": {
+        "title": "Chyba",
+        "description": "Při aktualizaci produktu došlo k chybě"
+      },
+      "statusUpdateSuccess": {
+        "title": "Úspěch",
+        "description": "Stav produktu byl aktualizován"
+      },
+      "statusUpdateError": {
+        "title": "Chyba",
+        "description": "Při aktualizaci stavu produktu došlo k chybě"
+      },
+      "deleteTagsSuccess": {
+        "title": "Úspěch",
+        "description": "Tagy byly odebrány z produktu"
+      },
+      "deleteTagsError": {
+        "title": "Chyba",
+        "description": "Při odebírání tagů došlo k chybě"
+      },
+      "addTagsSuccess": {
+        "title": "Úspěch",
+        "description": "Tagy byly přidány k produktu"
+      },
+      "addTagsError": {
+        "title": "Chyba",
+        "description": "Při přidávání tagů došlo k chybě"
+      },
+      "deleteSuccess": {
+        "title": "Úspěch",
+        "description": "Produkt byl úspěšně smazán"
+      },
+      "deleteError": {
+        "title": "Chyba",
+        "description": "Při mazání produktu došlo k chybě"
+      }
+    }
+  },
+  "categories": {
+    "title": "Správa kategorií",
+    "subtitle": "Spravovat strom kategorií produktů",
+    "loading": "Načítání dat...",
+    "error": "Při načítání dat došlo k chybě",
+    "create": {
+      "title": "Přidat novou kategorii",
+      "subtitle": "Vytvořit novou kategorii produktů",
+      "button": "Přidat kategorii",
+      "fields": {
+        "name": "Název kategorie",
+        "parent": "Nadřazená kategorie"
+      },
+      "placeholders": {
+        "name": "Zadejte název kategorie...",
+        "parent": "Vyberte nadřazenou kategorii (volitelné)"
+      },
+      "buttons": {
+        "create": "Vytvořit kategorii",
+        "creating": "Vytváření..."
+      }
+    },
+    "edit": {
+      "title": "Upravit kategorii",
+      "subtitle": "Aktualizovat informace o kategorii",
+      "fields": {
+        "name": "Název kategorie",
+        "parent": "Nadřazená kategorie"
+      },
+      "placeholders": {
+        "name": "Zadejte název kategorie...",
+        "parent": "Vyberte nadřazenou kategorii (volitelné)"
+      },
+      "buttons": {
+        "update": "Aktualizovat kategorii",
+        "updating": "Aktualizace..."
+      }
+    },
+    "delete": {
+      "title": "Potvrdit smazání kategorie",
+      "description": "Opravdu chcete smazat kategorii {name}? Tuto akci nelze vrátit zpět.",
+      "warning": "Varování: Smazání kategorie smaže všechny podkategorie a související produkty.",
+      "note": "⚠️ Poznámka:",
+      "noteDescription": "Pokud je tato kategorie používána produkty nebo má podkategorie, nebudete ji moci smazat. Nejprve odstraňte kategorii z produktů a smažte podkategorie.",
+      "cannotUndo": "Tuto akci nelze vrátit zpět.",
+      "childCategories": "Má {count} podkategorií",
+      "buttons": {
+        "cancel": "Zrušit",
+        "delete": "Smazat kategorii",
+        "deleting": "Mazání..."
+      }
+    },
+    "stats": {
+      "totalCategories": "Celkem kategorií",
+      "rootCategories": "Kořenové kategorie",
+      "childCategories": "Podkategorie",
+      "avgDepth": "Průměrná hloubka",
+      "highestLevel": "Nejvyšší úroveň",
+      "level2": "Úroveň 2",
+      "totalProducts": "Celkem produktů"
+    },
+    "table": {
+      "headers": {
+        "name": "Název kategorie",
+        "parent": "Nadřazená kategorie",
+        "products": "Produkty",
+        "children": "Potomci",
+        "actions": "Akce"
+      },
+      "actions": {
+        "edit": "Upravit",
+        "delete": "Smazat",
+        "expand": "Rozbalit",
+        "collapse": "Sbalit"
+      },
+      "noParent": "Žádná",
+      "noChildren": "Žádní",
+      "noProducts": "0 produktů",
+      "noParentOption": "📁 Žádná nadřazená kategorie (Kořenová kategorie)"
+    },
+    "search": {
+      "title": "Vyhledávání",
+      "placeholder": "Vyhledat podle názvu kategorie..."
+    },
+    "tree": {
+      "title": "Strom kategorií",
+      "description": "Seznam kategorií ve stromové struktuře",
+      "headers": {
+        "category": "Kategorie",
+        "children": "Potomci",
+        "id": "ID",
+        "actions": "Akce"
+      },
+      "noData": "Žádná data k dispozici",
+      "openMenu": "Otevřít menu"
+    },
+    "toasts": {
+      "createSuccess": {
+        "title": "Úspěch",
+        "description": "Kategorie byla úspěšně vytvořena"
+      },
+      "createError": {
+        "title": "Chyba",
+        "description": "Při vytváření kategorie došlo k chybě"
+      },
+      "updateSuccess": {
+        "title": "Úspěch",
+        "description": "Kategorie byla úspěšně aktualizována"
+      },
+      "updateError": {
+        "title": "Chyba",
+        "description": "Při aktualizaci kategorie došlo k chybě"
+      },
+      "deleteSuccess": {
+        "title": "Úspěch",
+        "description": "Kategorie byla úspěšně smazána"
+      },
+      "deleteError": {
+        "title": "Chyba",
+        "description": "Při mazání kategorie došlo k chybě"
+      }
+    }
+  },
+  "tags": {
+    "title": "Správa tagů",
+    "subtitle": "Správa seznamu tagů a informací",
+    "create": {
+      "title": "Vytvořit nový tag",
+      "subtitle": "Přidat nový tag do systému",
+      "fields": {
+        "name": "Název tagu",
+        "description": "Popis"
+      },
+      "placeholders": {
+        "name": "Zadejte název tagu...",
+        "description": "Zadejte popis tagu..."
+      },
+      "buttons": {
+        "create": "Vytvořit tag"
+      },
+      "loading": {
+        "creating": "Vytváření tagu..."
+      }
+    },
+    "edit": {
+      "title": "Upravit tag",
+      "subtitle": "Aktualizovat informace o tagu",
+      "fields": {
+        "name": "Název tagu",
+        "description": "Popis"
+      },
+      "placeholders": {
+        "name": "Zadejte název tagu...",
+        "description": "Zadejte popis tagu..."
+      },
+      "buttons": {
+        "update": "Aktualizovat tag"
+      },
+      "loading": {
+        "updating": "Aktualizace tagu..."
+      }
+    },
+    "delete": {
+      "title": "Smazat tag",
+      "description": "Opravdu chcete smazat tento tag? Tuto akci nelze vrátit zpět.",
+      "buttons": {
+        "cancel": "Zrušit",
+        "delete": "Smazat tag"
+      },
+      "loading": {
+        "deleting": "Mazání tagu..."
+      }
+    },
+    "stats": {
+      "totalTags": "Celkem tagů",
+      "activeTags": "Aktivní tagy",
+      "inactiveTags": "Neaktivní tagy",
+      "totalProducts": "Celkem produktů",
+      "page": "Stránka",
+      "allTags": "Všechny tagy",
+      "ofTotal": "z celkového počtu",
+      "popularTag": "Populární tag",
+      "popularTagId": "ID populárního tagu",
+      "avgProductsPerTag": "Prům. produktů/tag",
+      "productsPerTag": "Produktů/tag"
+    },
+    "search": {
+      "placeholder": "Hledat podle názvu tagu..."
+    },
+    "table": {
+      "title": "Seznam tagů",
+      "description": "Celkem {count} tagů v systému",
+      "headers": {
+        "tag": "Tag",
+        "name": "Název",
+        "description": "Popis",
+        "products": "Produkty",
+        "createdAt": "Vytvořeno",
+        "actions": "Akce"
+      },
+      "loading": {
+        "loading": "Načítání dat...",
+        "updating": "Aktualizace dat..."
+      },
+      "actions": "Akce",
+      "edit": "Upravit",
+      "delete": "Smazat",
+      "viewDetail": "Zobrazit detaily"
+    },
+    "cards": {
+      "tags": "Tagy",
+      "created": "Vytvořeno",
+      "description": "Popis",
+      "products": "Produkty",
+      "noDescription": "Žádný popis"
+    },
+    "toasts": {
+      "createSuccess": {
+        "title": "Úspěch!",
+        "message": "Tag byl úspěšně vytvořen!"
+      },
+      "createError": {
+        "title": "Chyba!",
+        "message": "Při vytváření tagu došlo k chybě"
+      },
+      "updateSuccess": {
+        "title": "Úspěch!",
+        "message": "Tag byl úspěšně aktualizován!"
+      },
+      "updateError": {
+        "title": "Chyba!",
+        "message": "Při aktualizaci tagu došlo k chybě"
+      },
+      "deleteSuccess": {
+        "title": "Úspěch!",
+        "message": "Tag byl úspěšně smazán!"
+      },
+      "deleteError": {
+        "title": "Chyba!",
+        "message": "Při mazání tagu došlo k chybě"
+      }
+    },
+    "validation": {
+      "tagNameRequired": "Prosím zadejte název tagu"
+    },
+    "accessibility": {
+      "openMenu": "Otevřít menu"
+    },
+    "labels": {
+      "id": "ID",
+      "updated": "Aktualizováno",
+      "idWithColon": "ID:"
+    }
+  },
+  "printTemplates": {
+    "title": "Správa tiskových šablon",
+    "subtitle": "Spravovat tiskové šablony produktů",
+    "loading": "Načítání dat...",
+    "error": "Při načítání dat došlo k chybě",
+    "na": "N/A",
+    "id": "ID",
+    "retry": "Zkusit znovu",
+    "searchAndFilter": "Hledat a filtrovat",
+    "copy": "Kopírovat",
+    "create": {
+      "title": "Vytvořit novou tiskovou šablonu",
+      "subtitle": "Vytvořit novou tiskovou šablonu produktu",
+      "button": "Vytvořit šablonu",
+      "cancel": "Zrušit",
+      "creating": "Vytváření...",
+      "createTemplate": "Vytvořit šablonu",
+      "tabs": {
+        "basic": "Základní informace",
+        "content": "Použitá slova",
+        "preview": "Náhled"
+      },
+      "fields": {
+        "title": "Název šablony",
+        "country": "Země",
+        "brand": "Značka",
+        "originCountry": "Země původu",
+        "productCode": "Kód produktu",
+        "originalPrice": "Původní cena",
+        "unitPrice": "Jednotková cena",
+        "currency": "Měna",
+        "vendor": "Dodavatel",
+        "content": "Obsah"
+      },
+      "placeholders": {
+        "title": "Zadejte název šablony...",
+        "brand": "Zadejte značku...",
+        "originCountry": "Zadejte zemi původu...",
+        "productCode": "Zadejte kód produktu...",
+        "originalPrice": "Zadejte původní cenu...",
+        "unitPrice": "Zadejte jednotkovou cenu...",
+        "currency": "Např: $, €, ¥, ₫...",
+        "vendor": "Zadejte dodavatele...",
+        "content": "Zadejte obsah šablony..."
+      },
+      "buttons": {
+        "create": "Vytvořit šablonu",
+        "creating": "Vytváření..."
+      }
+    },
+    "edit": {
+      "edit": "Upravit",
+      "title": "Upravit tiskovou šablonu",
+      "subtitle": "Aktualizovat informace o šabloně",
+      "editTemplate": "Upravit šablonu",
+      "tabs": {
+        "basic": "Základní informace",
+        "content": "Použitá slova",
+        "analytics": "Analýza"
+      },
+      "templateTitle": "Název šablony",
+      "country": "Země",
+      "brandWords": "Slova pro značku",
+      "brandWordsPlaceholder": "Např: Značka, Brand, Thương hiệu...",
+      "originCountryWords": "Slova pro zemi původu",
+      "originCountryWordsPlaceholder": "Např: Původ, Origin, Xuất xứ...",
+      "productCodeWords": "Slova pro kód produktu",
+      "productCodeWordsPlaceholder": "Např: Kód produktu, Product Code, SKU...",
+      "originalPriceWords": "Slova pro původní cenu",
+      "originalPriceWordsPlaceholder": "Např: Původní cena, Original Price, MSRP...",
+      "unitPriceWords": "Slova pro jednotkovou cenu",
+      "unitPriceWordsPlaceholder": "Např: Jednotková cena, Unit Price, Price per unit...",
+      "currencySymbol": "Symbol měny",
+      "currencySymbolPlaceholder": "Např: $, €, ¥, ₫...",
+      "vendorWords": "Slova pro dodavatele",
+      "vendorWordsPlaceholder": "Např: Dodavatel, Vendor, Supplier...",
+      "cancel": "Zrušit",
+      "saveChanges": "Uložit změny",
+      "saving": "Ukládání...",
+      "fields": {
+        "title": "Název šablony",
+        "country": "Země",
+        "brand": "Značka",
+        "originCountry": "Země původu",
+        "productCode": "Kód produktu",
+        "originalPrice": "Původní cena",
+        "unitPrice": "Jednotková cena",
+        "currency": "Měna",
+        "vendor": "Dodavatel"
+      },
+      "placeholders": {
+        "title": "Zadejte název šablony...",
+        "brand": "Zadejte značku...",
+        "originCountry": "Zadejte zemi původu...",
+        "productCode": "Zadejte kód produktu...",
+        "originalPrice": "Zadejte původní cenu...",
+        "unitPrice": "Zadejte jednotkovou cenu...",
+        "vendor": "Zadejte dodavatele..."
+      },
+      "buttons": {
+        "update": "Aktualizovat šablonu",
+        "updating": "Aktualizace...",
+        "cancel": "Zrušit",
+        "saving": "Ukládání...",
+        "saveChanges": "Uložit změny"
+      }
+    },
+    "delete": {
+      "title": "Potvrdit smazání šablony",
+      "description": "Opravdu chcete smazat tuto tiskovou šablonu? Tuto akci nelze vrátit zpět.",
+      "confirmDelete": "Potvrdit smazání šablony",
+      "confirmDeleteMessage": "Opravdu chcete smazat šablonu \"{templateTitle}\"?",
+      "warning": "Upozornění",
+      "warningMessage": "Tato šablona se používá pro zemi {countryName}. Smazání šablony může ovlivnit proces tisku.",
+      "actionCannotBeUndone": "Tuto akci nelze vrátit zpět.",
+      "country": "Země",
+      "usageCount": "Počet použití",
+      "delete": "Smazat",
+      "buttons": {
+        "cancel": "Zrušit",
+        "delete": "Smazat šablonu",
+        "deleting": "Mazání...",
+        "deleteTemplate": "Smazat šablonu"
+      }
+    },
+    "stats": {
+      "totalTemplates": "Celkem šablon",
+      "activeTemplates": "Aktivní šablony",
+      "totalCountries": "Země",
+      "avgTemplatesPerCountry": "Prům. šablon/země",
+      "allTemplates": "Všechny šablony",
+      "totalUsage": "Celkové použití",
+      "supportedCountries": "Podporované",
+      "usageCount": "počet použití",
+      "usageLevel": "Úroveň použití",
+      "high": "Vysoká",
+      "medium": "Střední",
+      "low": "Nízká",
+      "mostPopular": "Nejpopulárnější"
+    },
+    "search": {
+      "title": "Vyhledávání",
+      "placeholder": "Vyhledat podle názvu šablony...",
+      "allCountries": "Všechny země",
+      "searchAndFilter": "Vyhledávání a filtrování",
+      "filter": {
+        "selectCountry": "Vyberte zemi",
+        "allCountries": "Všechny země"
+      }
+    },
+    "table": {
+      "title": "Seznam tiskových šablon",
+      "description": "Celkem {count} šablon v systému",
+      "headers": {
+        "template": "Šablona",
+        "title": "Název",
+        "country": "Země",
+        "brand": "Značka",
+        "currency": "Měna",
+        "createdAt": "Vytvořeno",
+        "actions": "Akce"
+      },
+      "actions": {
+        "actions": "Akce",
+        "edit": "Upravit",
+        "delete": "Smazat",
+        "preview": "Náhled",
+        "copy": "Kopírovat"
+      },
+      "noData": "Žádná data k dispozici"
+    },
+    "list": {
+      "templateList": "Seznam šablon",
+      "totalTemplates": "Celkem {count} šablon",
+      "template": "Šablona",
+      "country": "Země",
+      "content": "Obsah",
+      "usageCount": "Počet použití",
+      "updatedAt": "Aktualizováno",
+      "actions": "Akce"
+    },
+    "analytics": {
+      "usageCount": "Počet použití",
+      "usageLevel": "Úroveň použití",
+      "wordsUsed": "Použitá slova"
+    },
+    "cards": {
+      "template": "Šablona",
+      "created": "Vytvořeno",
+      "country": "Země",
+      "brand": "Značka",
+      "currency": "Měna",
+      "noBrand": "Žádná značka"
+    },
+    "preview": {
+      "title": "Náhled šablony",
+      "close": "Zavřít",
+      "preview": "Náhled",
+      "previewTemplate": "Náhled šablony",
+      "wordsUsed": "Použité slova",
+      "wordsUsedInTemplate": "Slova použité v šabloně",
+      "notEntered": "Nezadáno",
+      "notSelected": "Nevybráno",
+      "usageCount": "Počet použití",
+      "usageLevel": "Úroveň použití"
+    },
+    "toasts": {
+      "createSuccess": {
+        "title": "Úspěch",
+        "message": "Šablona byla úspěšně vytvořena!"
+      },
+      "createError": {
+        "title": "Chyba",
+        "message": "Při vytváření šablony došlo k chybě"
+      },
+      "updateSuccess": {
+        "title": "Úspěch",
+        "message": "Šablona byla úspěšně aktualizována!"
+      },
+      "updateError": {
+        "title": "Chyba",
+        "message": "Při aktualizaci šablony došlo k chybě"
+      },
+      "deleteSuccess": {
+        "title": "Úspěch",
+        "message": "Šablona byla úspěšně smazána!"
+      },
+      "deleteError": {
+        "title": "Chyba",
+        "message": "Při mazání šablony došlo k chybě",
+        "validation": {
+          "requiredFields": "Prosím vyplňte všechna povinná pole"
+        }
+      }
+    }
+  },
+  "printSelect": {
+    "title": "Výběr produktů k tisku",
+    "subtitle": "Správa seznamu produktů vybraných k tisku s moderním rozhraním",
+    "na": "N/A",
+    "stats": {
+      "totalProducts": "Celkem produktů",
+      "inPrintList": "V seznamu tisku",
+      "active": "Aktivní",
+      "readyToPrint": "Připraveno k tisku",
+      "totalPrints": "Celkem tisků",
+      "totalPrintCount": "Celkový počet tisků",
+      "topProduct": "Nejlepší produkt",
+      "printCount": "tisků"
+    },
+    "search": {
+      "title": "Vyhledávání a pokročilé filtrování",
+      "placeholder": "Vyhledat podle názvu produktu, kódu produktu...",
+      "selectCountry": "Vyberte zemi",
+      "allCountries": "Všechny země",
+      "status": "Stav",
+      "all": "Vše",
+      "active": "Aktivní",
+      "inactive": "Neaktivní"
+    },
+    "loading": "Načítání dat...",
+    "actions": {
+      "actions": "Akce",
+      "printNow": "Tisknout nyní",
+      "cannotPrint": "Nelze tisknout (Pozastaveno)",
+      "edit": "Upravit",
+      "delete": "Smazat",
+      "deleting": "Mazání..."
+    },
+    "addProduct": {
+      "addProduct": "Přidat produkt",
+      "title": "Přidat produkt do seznamu tisku",
+      "description": "Vyberte produkt a nakonfigurujte informace o tisku",
+      "tabs": {
+        "basic": "Základní informace",
+        "config": "Konfigurace tisku"
+      },
+      "fields": {
+        "product": "Produkt",
+        "selectProduct": "Vyberte produkt",
+        "searchProduct": "Vyhledat produkt...",
+        "countryTemplate": "Šablona tisku země",
+        "selectCountryTemplate": "Vyberte šablonu tisku země",
+        "salePrice": "Prodejní cena (volitelné)",
+        "enterSalePrice": "Zadejte prodejní cenu",
+        "saleStartTime": "Čas začátku prodeje",
+        "saleEndTime": "Čas konce prodeje",
+        "status": "Stav",
+        "selectStatus": "Vyberte stav",
+        "active": "Aktivní",
+        "inactive": "Neaktivní",
+        "option1": "Možnost 1 (volitelné)",
+        "enterOption1": "Zadejte možnost 1",
+        "option2": "Možnost 2 (volitelné)",
+        "enterOption2": "Zadejte možnost 2",
+        "option3": "Možnost 3 (volitelné)",
+        "enterOption3": "Zadejte možnost 3"
+      },
+      "buttons": {
+        "adding": "Přidávání...",
+        "addToList": "Přidat do seznamu"
+      }
+    },
+    "buttons": {
+      "printSelected": "Tisknout vybrané"
+    },
+    "editInfo": {
+      "title": "Upravit informace o tisku",
+      "description": "Aktualizovat informace o produktu v seznamu tisku",
+      "tabs": {
+        "basic": "Základní informace",
+        "config": "Konfigurace tisku"
+      },
+      "fields": {
+        "product": "Produkt",
+        "selectProduct": "Vyberte produkt",
+        "countryTemplate": "Šablona tisku země",
+        "selectCountryTemplate": "Vyberte šablonu tisku země",
+        "salePrice": "Prodejní cena (volitelné)",
+        "enterSalePrice": "Zadejte prodejní cenu",
+        "saleStartTime": "Čas začátku prodeje",
+        "saleEndTime": "Čas konce prodeje",
+        "status": "Stav",
+        "selectStatus": "Vyberte stav",
+        "active": "Aktivní",
+        "inactive": "Neaktivní",
+        "option1": "Možnost 1 (volitelné)",
+        "enterOption1": "Zadejte možnost 1",
+        "option2": "Možnost 2 (volitelné)",
+        "enterOption2": "Zadejte možnost 2",
+        "option3": "Možnost 3 (volitelné)",
+        "enterOption3": "Zadejte možnost 3"
+      },
+      "buttons": {
+        "updating": "Aktualizace...",
+        "updateInfo": "Aktualizovat informace"
+      }
+    },
+    "editNum": {
+      "title": "Aktualizovat konfiguraci množství tisku",
+      "description": "Upravit konfiguraci množství tisku pro všechny velikosti papíru",
+      "placeholders": {
+        "a4": "Množství A4",
+        "a5": "Množství A5",
+        "v1": "Množství V1",
+        "v2": "Množství V2",
+        "v3": "Množství V3",
+        "i4": "Množství I4"
+      },
+      "info": {
+        "product": "Produkt",
+        "origin": "Původ",
+        "totalQuantity": "Celkové množství",
+        "copies": "kopií"
+      },
+      "buttons": {
+        "cancel": "Zrušit",
+        "updating": "Aktualizace...",
+        "updateAll": "Aktualizovat vše"
+      }
+    },
+    "productList": {
+      "title": "Seznam produktů k tisku",
+      "description": "Zobrazení {filtered} / {total} produktů",
+      "notSet": "Není nastaveno",
+      "noOptions": "Žádné",
+      "openMenu": "Otevřít menu",
+      "headers": {
+        "product": "Produkt",
+        "countryTemplate": "Šablona tisku země",
+        "originalPrice": "Původní cena",
+        "salePrice": "Prodejní cena",
+        "saleTime": "Čas prodeje",
+        "options": "Možnosti",
+        "printConfig": "Konfigurace množství tisku",
+        "status": "Stav",
+        "createdAt": "Vytvořeno",
+        "actions": "Akce"
+      }
+    },
+    "printDialog": {
+      "title": "Tisk produktů ({count} produktů)",
+      "description": "Nakonfigurujte a proveďte tisk vybraných produktů",
+      "itemsToPrint": "Produkty k tisku:",
+      "paused": "Pozastaveno",
+      "warning": {
+        "inactiveItems": "Upozornění: {count} produktů má neaktivní stav",
+        "onlyActive": "Pouze produkty se stavem \"Aktivní\" budou vytištěny"
+      },
+      "settings": {
+        "template": "Tisková šablona",
+        "templateFor": "Šablona pro {country}",
+        "multipleTemplates": "Více šablon ({count} šablon)",
+        "productsWithTemplates": "{products} produktů s {templates} různými šablonami",
+        "noTemplateFound": "Nebyla nalezena šablona země",
+        "printSize": "Velikost tisku",
+        "customSize1": "Vlastní velikost 1",
+        "customSize2": "Vlastní velikost 2",
+        "customSize3": "Vlastní velikost 3",
+        "labelTemplate": "Šablona štítku I4",
+        "copies": "Počet kopií",
+        "quantityFromConfig": "Množství převzato z konfigurace tisku {size}",
+        "printInfo": "Informace o tisku",
+        "totalPages": "Celkem stránek",
+        "printNote": "Poznámka k tisku (volitelné)",
+        "enterPrintNote": "Zadejte poznámku pro tento tisk...",
+        "noteWillBeSaved": "Poznámka bude uložena do historie tisku",
+        "previewContent": "Náhled obsahu k tisku",
+        "previewPrintContent": "Náhled obsahu tisku",
+        "previewDescription": "Náhled obsahu k tisku s {count} produkty"
+      },
+      "preview": {
+        "template": "Šablona {size}",
+        "productCopy": "Produkt {product}/{total} - Kopie {copy}/{copies}"
+      },
+      "progress": {
+        "processing": "Zpracování tisku...",
+        "pleaseWait": "Prosím čekejte"
+      },
+      "footer": {
+        "total": "Celkem",
+        "pages": "stránek",
+        "cancel": "Zrušit"
+      },
+      "buttons": {
+        "printing": "Tisk...",
+        "startPrint": "Spustit tisk"
+      }
+    },
+    "deleteDialog": {
+      "title": "Potvrdit smazání produktu",
+      "description": "Opravdu chcete smazat produkt <strong>{productName}</strong> ze seznamu tisku?",
+      "warning": "⚠️ Tuto akci nelze vrátit zpět.",
+      "info": {
+        "code": "Kód",
+        "origin": "Původ",
+        "paperSize": "Velikost papíru"
+      },
+      "buttons": {
+        "cancel": "Zrušit",
+        "deleting": "Mazání...",
+        "deleteProduct": "Smazat produkt"
+      }
+    },
+    "status": {
+      "active": "Aktivní",
+      "inactive": "Neaktivní"
+    },
+    "priority": {
+      "high": "Vysoká",
+      "medium": "Střední",
+      "low": "Nízká"
+    },
+    "card": {
+      "printConfig": "Konfigurace množství tisku:",
+      "paperSize": "Velikost papíru",
+      "quantity": "Množství",
+      "saleTime": "Čas prodeje",
+      "createdAt": "Vytvořeno",
+      "updated": "Aktualizováno"
+    },
+    "toasts": {
+      "addSuccess": "Produkt úspěšně přidán do seznamu tisku!",
+      "addError": "Při přidávání produktu došlo k chybě!",
+      "deleteSuccess": "Produkt odstraněn ze seznamu tisku!",
+      "deleteError": "Při mazání produktu došlo k chybě!",
+      "updateSuccess": "Informace o produktu aktualizovány!",
+      "updateError": "Při aktualizaci produktu došlo k chybě!",
+      "updateNumSuccess": "Množství tisku úspěšně aktualizováno!",
+      "updateNumError": "Při aktualizaci množství tisku došlo k chybě!",
+      "printError": "Při odesílání příkazu tisku došlo k chybě!",
+      "requiredFields": "Prosím vyplňte všechna povinná pole!",
+      "cannotPrintProduct": "Produkt \"{productName}\" nelze vytisknout, protože současný stav je {status}",
+      "minQuantity": "Množství musí být větší nebo rovno 1!",
+      "negativeQuantity": "Množství nemůže být záporné!",
+      "updateAllNumSuccess": "Všechna množství tisku úspěšně aktualizována!",
+      "updateAllNumError": "Při aktualizaci množství tisku došlo k chybě!"
+    },
+    "templateFor": "Šablona pro {country}",
+    "printLogNote": "Tisk {copies} kopií se šablonou {template}{note}",
+    "printLogNote.note": "Poznámka",
+    "printAll": "Tisknout vše ({active}/{total})"
+  },
+  "printLogs": {
+    "title": "Historie tisku",
+    "subtitle": "Sledujte všechny tiskové aktivity v systému",
+    "na": "N/A",
+    "loading": "Načítání historie tisku...",
+    "status": {
+      "success": "Úspěch",
+      "error": "Chyba",
+      "processing": "Zpracování",
+      "cancelled": "Zrušeno"
+    },
+    "timeAgo": {
+      "justNow": "Právě teď",
+      "minutesAgo": "před {minutes} minutami",
+      "hoursAgo": "před {hours} hodinami",
+      "daysAgo": "před {days} dny"
+    },
+    "stats": {
+      "todayPrints": "Dnešní tisky",
+      "totalPrints": "Celkem tisků",
+      "activeTemplates": "Aktivní šablony",
+      "topAdmin": "Nejlepší Admin",
+      "topProduct": "Nejlepší Produkt",
+      "today": "Dnes",
+      "allTime": "Všechny časy",
+      "active": "Aktivní",
+      "prints": "tisků"
+    },
+    "search": {
+      "title": "Hledat a filtrovat",
+      "table": "Tabulka",
+      "timeline": "Časová osa",
+      "placeholder": "Hledat podle admina, produktu, šablony...",
+      "fromDate": "Od data",
+      "toDate": "Do data"
+    },
+    "table": {
+      "title": "Detailní historie tisku",
+      "description": "Zobrazení {count} nedávných tiskových aktivit",
+      "headers": {
+        "time": "Čas",
+        "admin": "Admin",
+        "product": "Produkt",
+        "template": "Šablona",
+        "status": "Stav",
+        "quantity": "Množství",
+        "actions": "Akce"
+      }
+    },
+    "timeline": {
+      "title": "Zobrazení časové osy",
+      "description": "Zobrazit tiskové aktivity podle času",
+      "prints": "tisků"
+    },
+    "dialog": {
+      "title": "Detail historie tisku #{id}",
+      "description": "Detailní informace o této tiskové aktivitě",
+      "admin": "Admin",
+      "product": "Produkt",
+      "template": "Šablona",
+      "quantity": "Množství tisku",
+      "copies": "kopií",
+      "note": "Poznámka",
+      "noNote": "Žádná poznámka"
+    },
+    "pagination": {
+      "showing": "Zobrazení {start} - {end} z {total} záznamů",
+      "previous": "Předchozí",
+      "next": "Další"
+    }
+  },
+  "login": {
+    "title": "Přihlášení",
+    "subtitle": "Přihlaste se pro přístup do administračního systému",
+    "description": "Zadejte své přihlašovací údaje",
+    "fields": {
+      "username": "Uživatelské jméno",
+      "password": "Heslo"
+    },
+    "placeholders": {
+      "username": "Zadejte uživatelské jméno",
+      "password": "Zadejte heslo"
+    },
+    "forgotPassword": "Zapomněli jste heslo?",
+    "loading": "Přihlašuji...",
+    "submit": "Přihlásit",
+    "footer": {
+      "rights": "Všechna práva vyhrazena."
+    },
+    "errors": {
+      "general": "Došlo k chybě. Zkuste to prosím znovu."
+    }
+  },
+  "forgotPassword": {
+    "title": "Zapomenuté heslo",
+    "subtitle": "Obnovte heslo svého účtu",
+    "description": "Zadejte svůj email pro obdržení odkazu na obnovení hesla",
+    "fields": {
+      "email": "Email"
+    },
+    "placeholders": {
+      "email": "Zadejte svůj email"
+    },
+    "loading": "Odesílám...",
+    "submit": "Odeslat kód pro obnovení",
+    "success": {
+      "title": "Email odeslán!",
+      "description": "Odeslali jsme odkaz na obnovení hesla na {email}",
+      "note": "Zkontrolujte prosím svou doručenou poštu a spam složku. Odkaz je platný 24 hodin."
+    },
+    "backToLogin": "Zpět na přihlášení",
+    "footer": {
+      "rights": "Všechna práva vyhrazena."
+    },
+    "errors": {
+      "general": "Došlo k chybě. Zkuste to prosím znovu."
+    }
+  },
+  "resetPassword": {
+    "title": "Obnovit heslo",
+    "subtitle": "Změnit heslo účtu",
+    "description": "Aktualizovat nové heslo pro váš účet",
+    "fields": {
+      "resetCode": "Zadejte ověřovací kód",
+      "newPassword": "Nové heslo",
+      "confirmPassword": "Potvrdit nové heslo"
+    },
+    "placeholders": {
+      "resetCode": "Zadejte 6místný ověřovací kód",
+      "newPassword": "Zadejte nové heslo",
+      "confirmPassword": "Znovu zadejte nové heslo"
+    },
+    "resetCodeNote": "Ověřovací kód byl odeslán na váš email",
+    "passwordStrength": {
+      "strong": "Silné heslo",
+      "weak": "Potřebuje vylepšení"
+    },
+    "requirements": {
+      "title": "Požadavky na heslo",
+      "minLength": "Alespoň 8 znaků",
+      "uppercase": "Má velké písmeno",
+      "lowercase": "Má malé písmeno",
+      "numbers": "Má číslo",
+      "special": "Má speciální znak"
+    },
+    "passwordMatch": {
+      "match": "Hesla se shodují",
+      "mismatch": "Hesla se neshodují"
+    },
+    "loading": "Aktualizuji...",
+    "submit": "Aktualizovat heslo",
+    "success": {
+      "title": "Heslo bylo úspěšně změněno!",
+      "description": "Vaše heslo bylo aktualizováno. Přihlaste se prosím znovu s novým heslem.",
+      "securityNote": "Pro bezpečnost účtu budete odhlášeni ze všech ostatních zařízení.",
+      "loginAgain": "Přihlásit se znovu"
+    },
+    "backToDashboard": "Zpět na Dashboard",
+    "footer": {
+      "rights": "Všechna práva vyhrazena."
+    },
+    "errors": {
+      "general": "Došlo k chybě. Zkuste to prosím znovu.",
+      "passwordRequirements": "Nové heslo nesplňuje bezpečnostní požadavky",
+      "passwordMismatch": "Potvrzovací heslo se neshoduje"
+    }
+  }
 }

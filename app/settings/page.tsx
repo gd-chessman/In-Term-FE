@@ -190,7 +190,7 @@ export default function SettingsPage() {
                   </Label>
                   <Input
                     id="site_name"
-                    defaultValue="Admin Panel System"
+                    defaultValue={process.env.NEXT_PUBLIC_APP_NAME}
                     className="rounded-xl border-slate-200 focus:border-blue-300 focus:ring-2 focus:ring-blue-100"
                   />
                 </div>
@@ -621,7 +621,7 @@ export default function SettingsPage() {
                 </div>
                 <div>
                   <CardTitle className="text-slate-900">Cài đặt giao diện</CardTitle>
-                  <CardDescription>Tùy chỉnh giao diện admin panel</CardDescription>
+                  <CardDescription>Tùy chỉnh giao diện {process.env.NEXT_PUBLIC_APP_NAME}</CardDescription>
                 </div>
               </div>
             </CardHeader>

@@ -1,3 +1,1848 @@
 {
-    
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "System Administration Overview",
+    "stats": {
+      "totalUsers": "Total Users",
+      "products": "Products",
+      "countries": "Countries",
+      "todayPrints": "Today's Prints",
+      "currentSystem": "Current System Status"
+    },
+    "recentActivities": {
+      "title": "Recent Activities",
+      "subtitle": "Latest activities in the system",
+      "loading": "Loading activities...",
+      "noActivities": "No recent activities",
+      "actions": {
+        "login": "logged in",
+        "logout": "logged out",
+        "create": "created",
+        "update": "updated",
+        "delete": "deleted",
+        "unknown": "performed"
+      },
+      "timeAgo": {
+        "seconds": "seconds ago",
+        "minutes": "minutes ago",
+        "hours": "hours ago",
+        "days": "days ago"
+      }
+    },
+    "printDistribution": {
+      "title": "Print Type Distribution",
+      "subtitle": "Statistics by print template type",
+      "noData": "No print data",
+      "noActivity": "No print activity yet",
+      "tooltip": {
+        "prints": "prints",
+        "totalPrints": "Total Prints",
+        "type": "Type"
+      },
+      "unknown": "Unknown"
+    }
+  },
+  "profile": {
+    "title": "Personal Profile",
+    "subtitle": "Manage personal information and account settings",
+    "loading": "Loading...",
+    "error": "Unable to load profile information",
+    "tabs": {
+      "personalInfo": "Personal Information",
+      "changePassword": "Change Password"
+    },
+    "personalInfo": {
+      "title": "Personal Information",
+      "subtitle": "Update your personal information",
+      "edit": "Edit",
+      "save": "Save",
+      "cancel": "Cancel",
+      "updateImage": "Update Image",
+      "fields": {
+        "fullname": "Full Name",
+        "email": "Email",
+        "phone": "Phone Number",
+        "address": "Address",
+        "branch": "Branch",
+        "accountCreated": "Account Created Date"
+      },
+      "placeholders": {
+        "fullname": "Enter full name",
+        "email": "Enter email",
+        "phone": "Enter phone number",
+        "address": "Enter address",
+        "branch": "Select branch"
+      },
+      "notAssigned": "Not Assigned",
+      "notUpdated": "Not Updated",
+      "noInfo": "No Information",
+      "loading": "Loading..."
+    },
+    "changePassword": {
+      "title": "Change Password",
+      "subtitle": "Update your account password",
+      "changePassword": "Change Password",
+      "fields": {
+        "currentPassword": "Current Password",
+        "newPassword": "New Password",
+        "confirmPassword": "Confirm New Password"
+      },
+      "placeholders": {
+        "currentPassword": "Enter current password",
+        "newPassword": "Enter new password",
+        "confirmPassword": "Re-enter new password"
+      }
+    },
+    "toasts": {
+      "profileUpdated": {
+        "title": "Success",
+        "description": "Profile information has been updated"
+      },
+      "profileError": {
+        "title": "Error",
+        "description": "Unable to update profile information"
+      },
+      "avatarUpdated": {
+        "title": "Success",
+        "description": "Avatar has been updated"
+      },
+      "avatarError": {
+        "title": "Error",
+        "description": "Unable to update avatar"
+      },
+      "passwordChanged": {
+        "title": "Success",
+        "description": "Password has been changed"
+      },
+      "passwordError": {
+        "title": "Error",
+        "description": "Unable to change password"
+      },
+      "passwordMismatch": {
+        "title": "Error",
+        "description": "Password confirmation does not match"
+      }
+    }
+  },
+  "admins": {
+    "title": "User Management",
+    "subtitle": "Manage user accounts and permissions",
+    "addUser": "Add User",
+    "createUser": {
+      "title": "Add New User",
+      "subtitle": "Create a new user account for the system",
+      "create": "Create User",
+      "creating": "Creating...",
+      "fields": {
+        "username": "Username",
+        "email": "Email",
+        "fullname": "Full Name",
+        "level": "Level",
+        "role": "Role",
+        "branch": "Branch",
+        "password": "Password"
+      },
+      "placeholders": {
+        "username": "Enter username",
+        "email": "Enter email",
+        "fullname": "Enter full name",
+        "level": "Select level",
+        "role": "Select role",
+        "branch": "Select branch",
+        "password": "Enter password"
+      },
+      "loading": "Loading...",
+      "validation": "Please fill in all required information"
+    },
+    "stats": {
+      "totalUsers": "Total Users",
+      "totalUsersDesc": "Total number of users",
+      "activeUsers": "Active",
+      "inactiveUsers": "Inactive",
+      "inactiveUsersDesc": "Needs attention",
+      "roles": "Roles",
+      "totalRoles": "Total roles"
+    },
+    "search": {
+      "title": "Search & Filter",
+      "placeholder": "Search by name, email, username...",
+      "status": "Status",
+      "level": "Level",
+      "all": "All"
+    },
+    "table": {
+      "title": "Admin List",
+      "loading": "Loading...",
+      "loadingData": "Loading data...",
+      "error": "Error occurred while loading data",
+      "totalUsers": "Total {count} admins",
+      "noData": "No admin data",
+      "actions": "Actions",
+      "openMenu": "Open menu",
+      "role": "Role",
+      "level": "Level",
+      "branch": "Branch",
+      "status": "Status",
+      "lastLogin": "Last Login",
+      "createdAt": "Created At",
+      "noRole": "No role assigned",
+      "noBranch": "No branch assigned",
+      "neverLogin": "Never logged in",
+      "headers": {
+        "admin": "Admin",
+        "email": "Email",
+        "level": "Level",
+        "role": "Role",
+        "branch": "Branch",
+        "status": "Status",
+        "lastLogin": "Last Login",
+        "actions": "Actions"
+      },
+      "actions": {
+        "assignRole": "Assign Role",
+        "changeBranch": "Change Branch",
+        "deactivate": "Deactivate",
+        "suspend": "Suspend",
+        "activate": "Activate"
+      }
+    },
+    "na": "N/A",
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "suspended": "Suspended"
+    },
+    "levels": {
+      "super_admin": "Super Admin",
+      "admin": "Admin",
+      "moderator": "Moderator",
+      "support": "Support"
+    },
+    "actions": {
+      "changeLevel": "Change Level",
+      "changeBranch": "Change Branch",
+      "updateLevel": "Update Level",
+      "updateBranch": "Update Branch",
+      "confirmLevel": "Confirm Level Change",
+      "confirmBranch": "Confirm Branch Change",
+      "currentLevel": "Current Level",
+      "newLevel": "New Level",
+      "currentBranch": "Current Branch",
+      "newBranch": "New Branch",
+      "selectNewLevel": "Select new level",
+      "selectNewBranch": "Select new branch",
+      "notAssigned": "Not Assigned"
+    },
+    "toasts": {
+      "userCreated": {
+        "title": "Success",
+        "description": "User created successfully"
+      },
+      "userCreatedError": {
+        "title": "Error",
+        "description": "Failed to create user"
+      },
+      "levelUpdated": {
+        "title": "Success",
+        "description": "Level updated successfully"
+      },
+      "levelUpdatedError": {
+        "title": "Error",
+        "description": "Failed to update level"
+      },
+      "branchUpdated": {
+        "title": "Success",
+        "description": "Branch updated successfully"
+      },
+      "branchUpdatedError": {
+        "title": "Error",
+        "description": "Failed to update branch"
+      },
+      "statusUpdated": {
+        "title": "Success",
+        "description": "Status updated successfully"
+      },
+      "statusUpdatedError": {
+        "title": "Error",
+        "description": "Failed to update status"
+      }
+    },
+    "updateLevel": {
+      "title": "Update Level",
+      "description": "Change the level for this user",
+      "currentLevel": "Current Level",
+      "newLevel": "New Level",
+      "selectNewLevel": "Select new level",
+      "updating": "Updating...",
+      "updateLevel": "Update Level"
+    },
+    "updateBranch": {
+      "title": "Update Branch",
+      "description": "Change the branch for this user",
+      "currentBranch": "Current Branch",
+      "newBranch": "New Branch",
+      "selectNewBranch": "Select new branch",
+      "noBranch": "No branch",
+      "updating": "Updating...",
+      "updateBranch": "Update Branch"
+    }
+  },
+  "roles": {
+    "title": "Roles & Permissions",
+    "subtitle": "Manage roles and permissions in the system",
+    "loading": "Loading data...",
+    "loadingRoles": "Loading roles list...",
+    "error": "An error occurred while loading data",
+    "stats": {
+      "totalRoles": "Total Roles",
+      "totalRolesDesc": "All roles",
+      "activeRoles": "Active Roles",
+      "activeRolesDesc": "Active",
+      "inactiveRoles": "Inactive Roles",
+      "inactiveRolesDesc": "Inactive",
+      "totalUsers": "Total Users",
+      "totalUsersDesc": "Total number of users"
+    },
+    "table": {
+      "title": "Roles List",
+      "totalRoles": "Total of {count} roles in the system",
+      "headers": {
+        "role": "Role",
+        "description": "Description",
+        "userCount": "User Count",
+        "status": "Status",
+        "createdAt": "Created Date",
+        "actions": "Actions"
+      }
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "permissions": {
+      "title": "Permissions for role: {roleName}",
+      "subtitle": "Select permissions for this role",
+      "savePermissions": "Save Permissions",
+      "actions": {
+        "edit": "Edit",
+        "permissions": "Permissions",
+        "delete": "Delete"
+      },
+      "list": {
+        "viewAdmins": "View admin list",
+        "createAdmin": "Create new admin",
+        "updateAdmin": "Update admin",
+        "deleteAdmin": "Delete admin",
+        "viewProducts": "View products",
+        "createProduct": "Create product",
+        "updateProduct": "Update product",
+        "deleteProduct": "Delete product"
+      }
+    }
+  },
+  "logs": {
+    "title": "Activity Logs",
+    "subtitle": "Track all activities in the system",
+    "loading": "Loading data...",
+    "stats": {
+      "totalActivities": "Total Activities",
+      "totalActivitiesDesc": "Total count",
+      "login24h": "Login 24h",
+      "login24hDesc": "Last 24h",
+      "actionsToday": "Actions Today",
+      "actionsTodayDesc": "Today",
+      "uniqueIps": "Unique IPs",
+      "uniqueIpsDesc": "IP addresses"
+    },
+    "search": {
+      "title": "Search & Filter",
+      "placeholder": "Search by admin, product, IP...",
+      "action": "Action",
+      "module": "Module",
+      "all": "All"
+    },
+    "actions": {
+      "login": "Login",
+      "logout": "Logout",
+      "create": "Create",
+      "update": "Update",
+      "delete": "Delete",
+      "approve": "Approve",
+      "reject": "Reject",
+      "suspend": "Suspend",
+      "activate": "Activate",
+      "view": "View",
+      "export": "Export",
+      "import": "Import"
+    },
+    "modules": {
+      "admins": "Admin",
+      "roles": "Roles",
+      "countries": "Countries",
+      "categories": "Categories",
+      "products": "Products",
+      "product_tags": "Product Tags",
+      "price_printing": "Price Printing",
+      "settings": "Settings"
+    },
+    "table": {
+      "title": "Activity History",
+      "description": "Showing {count} recent activities",
+      "headers": {
+        "time": "Time",
+        "admin": "Administrator",
+        "action": "Action",
+        "module": "Module",
+        "description": "Description",
+        "ipAddress": "IP Address",
+        "userAgent": "Device/Browser"
+      },
+      "noData": "N/A"
+    },
+    "timeAgo": {
+      "justNow": "Just now",
+      "minutesAgo": "{minutes} minutes ago",
+      "hoursAgo": "{hours} hours ago",
+      "daysAgo": "{days} days ago"
+    }
+  },
+  "branches": {
+    "title": "Branch Management",
+    "subtitle": "Manage branch information in the system",
+    "loading": "Loading branch data...",
+    "error": "An error occurred while loading data",
+    "retry": "Retry",
+    "stats": {
+      "totalBranches": "Total Branches",
+      "totalBranchesDesc": "In system",
+      "activeBranches": "Active",
+      "activeBranchesDesc": "Active branches",
+      "inactiveBranches": "Inactive",
+      "inactiveBranchesDesc": "Suspended branches",
+      "activityRate": "Activity Rate",
+      "activityRateDesc": "Active branches"
+    },
+    "search": {
+      "title": "Search & Filter",
+      "placeholder": "Search by branch name, description...",
+      "status": "Status",
+      "all": "All",
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "table": {
+      "title": "Branch List",
+      "description": "Total of {count} branches in the system",
+      "headers": {
+        "name": "Branch Name",
+        "description": "Description",
+        "status": "Status",
+        "createdAt": "Created At",
+        "updatedAt": "Updated At",
+        "actions": "Actions"
+      },
+      "noDescription": "No description"
+    },
+    "cards": {
+      "edit": "Edit",
+      "delete": "Delete",
+      "status": "Status:",
+      "createdAt": "Created:",
+      "updatedAt": "Updated:"
+    },
+    "create": {
+      "title": "Add New Branch",
+      "subtitle": "Add a new branch to the system",
+      "fields": {
+        "name": "Branch Name",
+        "description": "Description"
+      },
+      "placeholders": {
+        "name": "Enter branch name",
+        "description": "Enter branch description (optional)"
+      },
+      "buttons": {
+        "add": "Add Branch",
+        "adding": "Adding..."
+      },
+      "validation": {
+        "nameRequired": "Branch name cannot be empty"
+      }
+    },
+    "edit": {
+      "title": "Edit Branch",
+      "subtitle": "Update branch information",
+      "buttons": {
+        "update": "Update Branch",
+        "updating": "Updating..."
+      }
+    },
+    "delete": {
+      "title": "Confirm Delete",
+      "description": "Are you sure you want to delete branch {name}? This action cannot be undone.",
+      "buttons": {
+        "cancel": "Cancel",
+        "delete": "Delete Branch",
+        "deleting": "Deleting..."
+      }
+    },
+    "toasts": {
+      "createSuccess": "Branch created successfully!",
+      "createError": "An error occurred while creating branch",
+      "updateSuccess": "Branch updated successfully!",
+      "updateError": "An error occurred while updating branch",
+      "deleteSuccess": "Branch deleted successfully!",
+      "deleteError": "An error occurred while deleting branch",
+      "statusUpdateSuccess": "Status updated successfully!",
+      "statusUpdateError": "An error occurred while updating status"
+    }
+  },
+  "header": {
+    "language": "Language",
+    "vietnamese": "Tiếng Việt",
+    "english": "English",
+    "czech": "Čeština",
+    "defaultUser": "Admin User",
+    "defaultEmail": "admin@example.com",
+    "profile": "Profile",
+    "dashboard": "Dashboard",
+    "products": "Product Management",
+    "printSelect": "Print Selection",
+    "printHistory": "Print History",
+    "users": "User Management",
+    "activityLogs": "Activity Logs",
+    "logout": "Logout",
+    "loggingOut": "Logging out...",
+    "searchPlaceholder": "Search products, print templates, countries..."
+  },
+  "sidebar": {
+    "dashboard": "Dashboard",
+    "profile": "Profile",
+    "userManagement": "User Management",
+    "userList": "User List",
+    "rolesPermissions": "Roles & Permissions",
+    "activityLogs": "Activity Logs",
+    "system": "System",
+    "branches": "Branches",
+    "countries": "Countries",
+    "settings": "Settings",
+    "products": "Products",
+    "productList": "Product List",
+    "categories": "Categories",
+    "tags": "Tags",
+    "printing": "Printing",
+    "printTemplates": "Print Templates",
+    "printSelection": "Print Selection",
+    "printHistory": "Print History",
+    "defaultUser": "AU",
+    "defaultEmail": "admin@example.com"
+  },
+  "countries": {
+    "title": "Country Management",
+    "subtitle": "Manage country list and print templates",
+    "loading": "Loading country data...",
+    "error": "An error occurred while loading data",
+    "retry": "Retry",
+    "stats": {
+      "totalCountries": "Total Countries",
+      "active": "Active",
+      "totalProducts": "Total Products",
+      "acrossAllCountries": "Across all countries",
+      "printTemplates": "Print Templates",
+      "totalTemplates": "Total templates",
+      "avgProducts": "Avg Products",
+      "productsPerCountry": "Products/country"
+    },
+    "search": {
+      "title": "Search",
+      "placeholder": "Search by country name, country code..."
+    },
+    "table": {
+      "title": "Country List",
+      "description": "Total {count} countries in the system",
+      "headers": {
+        "country": "Country",
+        "code": "Code",
+        "products": "Products",
+        "templates": "Templates",
+        "createdAt": "Created",
+        "actions": "Actions"
+      },
+      "actions": "Actions",
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "cards": {
+      "products": "Products",
+      "templates": "Templates",
+      "created": "Created"
+    },
+    "create": {
+      "title": "Add New Country",
+      "subtitle": "Add new country to the system",
+      "button": "Add Country",
+      "fields": {
+        "name": "Country Name",
+        "code": "Country Code"
+      },
+      "placeholders": {
+        "name": "Enter country name",
+        "code": "VN, US, JP..."
+      },
+      "buttons": {
+        "add": "Add Country",
+        "adding": "Adding..."
+      }
+    },
+    "edit": {
+      "title": "Edit Country",
+      "subtitle": "Update country information",
+      "fields": {
+        "name": "Country Name",
+        "code": "Country Code"
+      },
+      "placeholders": {
+        "name": "Enter country name",
+        "code": "VN, US, JP..."
+      },
+      "buttons": {
+        "update": "Update Country",
+        "updating": "Updating..."
+      }
+    },
+    "delete": {
+      "title": "Confirm Delete",
+      "description": "Are you sure you want to delete country {name} ({code})? This action cannot be undone.",
+      "code": "Code",
+      "buttons": {
+        "cancel": "Cancel",
+        "delete": "Delete Country",
+        "deleting": "Deleting..."
+      }
+    },
+    "validation": {
+      "fillAllFields": "Please fill in all required fields"
+    },
+    "toasts": {
+      "createSuccess": "Country added successfully!",
+      "createError": "An error occurred while adding country",
+      "createErrorDuplicate": "Country already exists, duplicate name or country code",
+      "updateSuccess": "Country updated successfully!",
+      "updateError": "An error occurred while updating country",
+      "deleteSuccess": "Country deleted successfully!",
+      "deleteError": "An error occurred while deleting country"
+    }
+  },
+  "products": {
+    "title": "Product Management",
+    "subtitle": "View and manage all products in the system",
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "na": "N/A",
+    "create": {
+      "title": "Add New Product",
+      "subtitle": "Create new product in the system",
+      "button": "Add Product",
+      "fields": {
+        "name": "Product Name",
+        "code": "Product Code",
+        "description": "Description",
+        "tags": "Tags",
+        "branches": "Branches",
+        "origin": "Origin",
+        "category": "Category",
+        "price": "Price",
+        "unitName": "Unit",
+        "unitTotal": "Total Units",
+        "unitStep": "Minimum Step",
+        "productInfo": "Product Info",
+        "image": "Product image"
+      },
+      "placeholders": {
+        "name": "Enter product name (1-200 characters)",
+        "code": "Enter product code (1-100 characters)",
+        "description": "Enter product description (optional)",
+        "origin": "Select origin country",
+        "category": "Select category",
+        "price": "Enter product price",
+        "unitName": "E.g: gram, kg, ml, liter, piece, box...",
+        "unitTotal": "E.g: 500 (gram), 1 (kg), 330 (ml)...",
+        "unitStep": "E.g: 0.1, 0.5, 1...",
+        "productInfo": "Enter product information"
+      },
+      "loading": {
+        "tags": "Loading tags...",
+        "branches": "Loading branches...",
+        "countries": "Loading...",
+        "categories": "Loading..."
+      },
+      "noTags": "No tags available",
+      "noBranches": "No branches available",
+      "buttons": {
+        "create": "Create Product"
+      }
+    },
+    "edit": {
+      "title": "Edit Product",
+      "subtitle": "Update product information",
+      "fields": {
+        "name": "Product name",
+        "code": "Product code",
+        "description": "Description",
+        "origin": "Origin",
+        "category": "Category",
+        "price": "Price",
+        "unitName": "Unit name",
+        "unitTotal": "Unit total",
+        "unitStep": "Unit step",
+        "productInfo": "Product info",
+        "image": "Product image",
+        "branches": "Branches"
+      },
+      "placeholders": {
+        "name": "Enter product name...",
+        "code": "Enter product code...",
+        "description": "Enter product description...",
+        "origin": "Select origin country",
+        "category": "Select category",
+        "price": "Enter product price",
+        "unitName": "E.g: gram, kg, ml, liter, piece, box...",
+        "unitTotal": "E.g: 500 (gram), 1 (kg), 330 (ml)...",
+        "unitStep": "E.g: 10 (gram), 0.1 (kg), 50 (ml)...",
+        "productInfo": "Enter detailed product information"
+      },
+      "buttons": {
+        "update": "Update Product"
+      },
+      "loading": {
+        "loading": "Loading...",
+        "updating": "Updating...",
+        "branches": "Loading branches...",
+        "tags": "Loading tags..."
+      }
+    },
+    "delete": {
+      "title": "Confirm Delete Product",
+      "description": "Are you sure you want to delete product {name}? This action cannot be undone.",
+      "confirmation": "Enter product name to confirm",
+      "buttons": {
+        "cancel": "Cancel",
+        "delete": "Delete Product",
+        "deleting": "Deleting..."
+      }
+    },
+    "pagination": {
+      "showing": "Showing",
+      "of": "of",
+      "products": "products",
+      "previous": "Previous",
+      "next": "Next"
+    },
+    "detail": {
+      "title": "Product Details",
+      "description": "View detailed product information",
+      "close": "Close",
+      "basicInfo": "Basic Information",
+      "classification": "Classification",
+      "noDescription": "No description",
+      "tags": "Tags:",
+      "branches": "Branches:",
+      "noTags": "No tags yet",
+      "notAssigned": "Not assigned",
+      "createdAt": "Created:",
+      "category": "Category:",
+      "origin": "Origin:",
+      "price": "Price:",
+      "unitName": "Unit:",
+      "unitTotal": "Total Units:",
+      "unitStep": "Min Step:",
+      "productInfo": "Product Information"
+    },
+    "tags": {
+      "title": "Manage Tags",
+      "description": "Manage tags for product",
+      "currentTags": "Current tags",
+      "noTags": "Product has no tags yet",
+      "addTags": "Add Tags",
+      "deleteTags": "Delete Selected Tags",
+      "availableTags": "Available tags",
+      "noAvailableTags": "All tags have been assigned to this product",
+      "loading": {
+        "adding": "Adding..."
+      },
+      "buttons": {
+        "add": "Add",
+        "close": "Close"
+      }
+    },
+    "stats": {
+      "totalProducts": "Total Products",
+      "activeProducts": "Active Products",
+      "inactiveProducts": "Inactive Products",
+      "totalCategories": "Total Categories",
+      "avgValue": "Average Value",
+      "page": "Page",
+      "allProducts": "All Products",
+      "ofTotal": "of total"
+    },
+    "search": {
+      "title": "Search & Filter",
+      "placeholder": "Search by name, code, description...",
+      "advancedFilters": "Advanced Filters",
+      "clearFilters": "Clear Filters",
+      "filters": {
+        "category": "Category",
+        "status": "Status",
+        "branches": "Branches",
+        "productName": "Product Name",
+        "productCode": "Product Code",
+        "description": "Description",
+        "minPrice": "Min Price",
+        "maxPrice": "Max Price",
+        "sortBy": "Sort By",
+        "sortOrder": "Sort Order",
+        "tags": "Tags",
+        "productNamePlaceholder": "Enter product name...",
+        "productCodePlaceholder": "Enter product code...",
+        "descriptionPlaceholder": "Enter description keywords...",
+        "minPricePlaceholder": "Enter minimum price...",
+        "maxPricePlaceholder": "Enter maximum price..."
+      },
+      "sortOptions": {
+        "created_at": "Created Date",
+        "createdAt": "Created Date",
+        "product_name": "Product Name",
+        "productName": "Product Name",
+        "product_code": "Product Code",
+        "productCode": "Product Code",
+        "price": "Price",
+        "product_status": "Status",
+        "status": "Status"
+      },
+      "sortOrder": {
+        "asc": "Ascending",
+        "desc": "Descending"
+      },
+      "allCategories": "All Categories",
+      "allStatuses": "All Statuses",
+      "allBranches": "All Branches"
+    },
+    "table": {
+      "title": "Product List",
+      "description": "View and manage all {count} products in the system",
+      "loading": {
+        "loading": "Loading data...",
+        "updating": "Updating data..."
+      },
+      "headers": {
+        "name": "Product name",
+        "code": "Product code",
+        "product": "Product",
+        "category": "Category",
+        "origin": "Origin",
+        "price": "Price",
+        "unit": "Unit",
+        "branches": "Branches",
+        "tags": "Tags",
+        "status": "Status",
+        "createdAt": "Created",
+        "actions": "Actions"
+      },
+      "actions": "Actions",
+      "openMenu": "Open menu",
+      "viewDetail": "View details",
+      "edit": "Edit",
+      "manageTags": "Manage tags",
+      "activate": "Activate",
+      "deactivate": "Deactivate",
+      "delete": "Delete"
+    },
+          "cards": {
+        "products": "Products",
+        "templates": "Templates",
+        "created": "Created",
+        "status": "Status",
+        "category": "Category",
+        "origin": "Origin",
+        "price": "Price",
+        "unit": "Unit",
+        "branches": "Branches",
+        "tags": "Tags",
+        "notAssigned": "Not Assigned"
+      },
+    "toasts": {
+      "createSuccess": {
+        "title": "Success",
+        "description": "Product created successfully"
+      },
+      "createError": {
+        "title": "Error",
+        "description": "An error occurred while creating product"
+      },
+      "updateSuccess": {
+        "title": "Success",
+        "description": "Product updated successfully"
+      },
+      "updateError": {
+        "title": "Error",
+        "description": "An error occurred while updating product"
+      },
+      "statusUpdateSuccess": {
+        "title": "Success",
+        "description": "Product status updated"
+      },
+      "statusUpdateError": {
+        "title": "Error",
+        "description": "An error occurred while updating product status"
+      },
+      "deleteTagsSuccess": {
+        "title": "Success",
+        "description": "Tags removed from product"
+      },
+      "deleteTagsError": {
+        "title": "Error",
+        "description": "An error occurred while removing tags"
+      },
+      "addTagsSuccess": {
+        "title": "Success",
+        "description": "Tags added to product"
+      },
+      "addTagsError": {
+        "title": "Error",
+        "description": "An error occurred while adding tags"
+      },
+      "deleteSuccess": {
+        "title": "Success",
+        "description": "Product deleted successfully"
+      },
+      "deleteError": {
+        "title": "Error",
+        "description": "An error occurred while deleting product"
+      }
+    }
+  },
+  "categories": {
+    "title": "Category Management",
+    "subtitle": "Manage product category tree",
+    "loading": "Loading data...",
+    "error": "An error occurred while loading data",
+    "create": {
+      "title": "Add New Category",
+      "subtitle": "Create a new product category",
+      "button": "Add Category",
+      "fields": {
+        "name": "Category name",
+        "parent": "Parent category"
+      },
+      "placeholders": {
+        "name": "Enter category name...",
+        "parent": "Select parent category (optional)"
+      },
+      "buttons": {
+        "create": "Create Category",
+        "creating": "Creating..."
+      }
+    },
+    "edit": {
+      "title": "Edit Category",
+      "subtitle": "Update category information",
+      "fields": {
+        "name": "Category name",
+        "parent": "Parent category"
+      },
+      "placeholders": {
+        "name": "Enter category name...",
+        "parent": "Select parent category (optional)"
+      },
+      "buttons": {
+        "update": "Update Category",
+        "updating": "Updating..."
+      }
+    },
+    "delete": {
+      "title": "Confirm Delete Category",
+      "description": "Are you sure you want to delete category {name}? This action cannot be undone.",
+      "warning": "Warning: Deleting a category will delete all child categories and related products.",
+      "note": "⚠️ Note:",
+      "noteDescription": "If this category is being used by products or has child categories, you will not be able to delete it. Please remove the category from products and delete child categories first.",
+      "cannotUndo": "This action cannot be undone.",
+      "childCategories": "Has {count} child categories",
+      "buttons": {
+        "cancel": "Cancel",
+        "delete": "Delete Category",
+        "deleting": "Deleting..."
+      }
+    },
+    "stats": {
+      "totalCategories": "Total Categories",
+      "rootCategories": "Root Categories",
+      "childCategories": "Child Categories",
+      "avgDepth": "Average Depth",
+      "highestLevel": "Highest level",
+      "level2": "Level 2",
+      "totalProducts": "Total Products"
+    },
+    "table": {
+      "headers": {
+        "name": "Category Name",
+        "parent": "Parent Category",
+        "products": "Products",
+        "children": "Children",
+        "actions": "Actions"
+      },
+      "actions": {
+        "edit": "Edit",
+        "delete": "Delete",
+        "expand": "Expand",
+        "collapse": "Collapse"
+      },
+      "noParent": "None",
+      "noChildren": "None",
+      "noProducts": "0 products",
+      "noParentOption": "📁 No parent category (Root category)"
+    },
+    "search": {
+      "title": "Search",
+      "placeholder": "Search by category name..."
+    },
+    "tree": {
+      "title": "Category Tree",
+      "description": "List of categories in tree structure",
+      "headers": {
+        "category": "Category",
+        "children": "Children",
+        "id": "ID",
+        "actions": "Actions"
+      },
+      "noData": "No data available",
+      "openMenu": "Open menu"
+    },
+    "toasts": {
+      "createSuccess": {
+        "title": "Success",
+        "description": "Category created successfully"
+      },
+      "createError": {
+        "title": "Error",
+        "description": "An error occurred while creating the category"
+      },
+      "updateSuccess": {
+        "title": "Success",
+        "description": "Category updated successfully"
+      },
+      "updateError": {
+        "title": "Error",
+        "description": "An error occurred while updating the category"
+      },
+      "deleteSuccess": {
+        "title": "Success",
+        "description": "Category deleted successfully"
+      },
+      "deleteError": {
+        "title": "Error",
+        "description": "An error occurred while deleting the category"
+      }
+    }
+  },
+  "tags": {
+    "title": "Manage Tags",
+    "subtitle": "Manage tag list and information",
+    "create": {
+      "title": "Create New Tag",
+      "subtitle": "Add new tag to the system",
+      "fields": {
+        "name": "Tag name",
+        "description": "Description"
+      },
+      "placeholders": {
+        "name": "Enter tag name...",
+        "description": "Enter tag description..."
+      },
+      "buttons": {
+        "create": "Create Tag"
+      },
+      "loading": {
+        "creating": "Creating tag..."
+      }
+    },
+    "edit": {
+      "title": "Edit Tag",
+      "subtitle": "Update tag information",
+      "fields": {
+        "name": "Tag name",
+        "description": "Description"
+      },
+      "placeholders": {
+        "name": "Enter tag name...",
+        "description": "Enter tag description..."
+      },
+      "buttons": {
+        "update": "Update Tag"
+      },
+      "loading": {
+        "updating": "Updating tag..."
+      }
+    },
+    "delete": {
+      "title": "Delete Tag",
+      "description": "Are you sure you want to delete this tag? This action cannot be undone.",
+      "buttons": {
+        "cancel": "Cancel",
+        "delete": "Delete Tag"
+      },
+      "loading": {
+        "deleting": "Deleting tag..."
+      }
+    },
+    "stats": {
+      "totalTags": "Total tags",
+      "activeTags": "Active tags",
+      "inactiveTags": "Inactive tags",
+      "totalProducts": "Total products",
+      "page": "Page",
+      "allTags": "All tags",
+      "ofTotal": "of total",
+      "popularTag": "Popular tag",
+      "popularTagId": "Popular tag ID",
+      "avgProductsPerTag": "Avg products/tag",
+      "productsPerTag": "Products/tag"
+    },
+    "search": {
+      "placeholder": "Search by tag name..."
+    },
+    "table": {
+      "title": "Tags List",
+      "description": "Total {count} tags in the system",
+      "headers": {
+        "tag": "Tag",
+        "name": "Name",
+        "description": "Description",
+        "products": "Products",
+        "createdAt": "Created",
+        "actions": "Actions"
+      },
+      "loading": {
+        "loading": "Loading data...",
+        "updating": "Updating data..."
+      },
+      "actions": "Actions",
+      "edit": "Edit",
+      "delete": "Delete",
+      "viewDetail": "View Details"
+    },
+    "cards": {
+      "tags": "Tags",
+      "created": "Created",
+      "description": "Description",
+      "products": "Products",
+      "noDescription": "No description"
+    },
+    "toasts": {
+      "createSuccess": {
+        "title": "Success!",
+        "message": "Tag created successfully!"
+      },
+      "createError": {
+        "title": "Error!",
+        "message": "An error occurred while creating tag"
+      },
+      "updateSuccess": {
+        "title": "Success!",
+        "message": "Tag updated successfully!"
+      },
+      "updateError": {
+        "title": "Error!",
+        "message": "An error occurred while updating tag"
+      },
+      "deleteSuccess": {
+        "title": "Success!",
+        "message": "Tag deleted successfully!"
+      },
+      "deleteError": {
+        "title": "Error!",
+        "message": "An error occurred while deleting tag"
+      }
+    },
+    "validation": {
+      "tagNameRequired": "Please enter tag name"
+    },
+    "accessibility": {
+      "openMenu": "Open menu"
+    },
+    "labels": {
+      "id": "ID",
+      "updated": "Updated",
+      "idWithColon": "ID:"
+    }
+  },
+  "printTemplates": {
+    "title": "Print Templates Management",
+    "subtitle": "Manage product print templates",
+    "loading": "Loading data...",
+    "error": "An error occurred while loading data",
+    "na": "N/A",
+    "id": "ID",
+    "retry": "Retry",
+    "searchAndFilter": "Search & Filter",
+    "copy": "Copy",
+    "create": {
+      "title": "Create New Print Template",
+      "subtitle": "Create a new product print template",
+      "button": "Create Template",
+      "cancel": "Cancel",
+      "creating": "Creating...",
+      "createTemplate": "Create Template",
+      "tabs": {
+        "basic": "Basic Information",
+        "content": "Words Used",
+        "preview": "Preview"
+      },
+      "fields": {
+        "title": "Template title",
+        "country": "Country",
+        "brand": "Brand",
+        "originCountry": "Origin country",
+        "productCode": "Product code",
+        "originalPrice": "Original price",
+        "unitPrice": "Unit price",
+        "currency": "Currency",
+        "vendor": "Vendor",
+        "content": "Content"
+      },
+      "placeholders": {
+        "title": "Enter template title...",
+        "brand": "Enter brand...",
+        "originCountry": "Enter origin country...",
+        "productCode": "Enter product code...",
+        "originalPrice": "Enter original price...",
+        "unitPrice": "Enter unit price...",
+        "currency": "E.g: $, €, ¥, ₫...",
+        "vendor": "Enter vendor...",
+        "content": "Enter template content..."
+      },
+      "buttons": {
+        "create": "Create Template",
+        "creating": "Creating..."
+      }
+    },
+    "edit": {
+      "edit": "Edit",
+      "title": "Edit Print Template",
+      "subtitle": "Update template information",
+      "editTemplate": "Edit Template",
+      "tabs": {
+        "basic": "Basic Information",
+        "content": "Words Used",
+        "analytics": "Analytics"
+      },
+      "templateTitle": "Template Title",
+      "country": "Country",
+      "brandWords": "Words for Brand",
+      "brandWordsPlaceholder": "E.g: Brand, Thương hiệu, Nhãn hiệu...",
+      "originCountryWords": "Words for Origin Country",
+      "originCountryWordsPlaceholder": "E.g: Origin, Xuất xứ, Nguồn gốc...",
+      "productCodeWords": "Words for Product Code",
+      "productCodeWordsPlaceholder": "E.g: Product Code, Mã SP, SKU...",
+      "originalPriceWords": "Words for Original Price",
+      "originalPriceWordsPlaceholder": "E.g: Original Price, Giá gốc, MSRP...",
+      "unitPriceWords": "Words for Unit Price",
+      "unitPriceWordsPlaceholder": "E.g: Unit Price, Giá đơn vị, Price per unit...",
+      "currencySymbol": "Currency Symbol",
+      "currencySymbolPlaceholder": "E.g: $, €, ¥, ₫...",
+      "vendorWords": "Words for Vendor",
+      "vendorWordsPlaceholder": "E.g: Vendor, Supplier, Provider...",
+      "cancel": "Cancel",
+      "saveChanges": "Save Changes",
+      "saving": "Saving...",
+      "fields": {
+        "title": "Template title",
+        "country": "Country",
+        "brand": "Brand",
+        "originCountry": "Origin country",
+        "productCode": "Product code",
+        "originalPrice": "Original price",
+        "unitPrice": "Unit price",
+        "currency": "Currency",
+        "vendor": "Vendor"
+      },
+      "placeholders": {
+        "title": "Enter template title...",
+        "brand": "Enter brand...",
+        "originCountry": "Enter origin country...",
+        "productCode": "Enter product code...",
+        "originalPrice": "Enter original price...",
+        "unitPrice": "Enter unit price...",
+        "vendor": "Enter vendor..."
+      },
+      "buttons": {
+        "update": "Update Template",
+        "updating": "Updating...",
+        "cancel": "Cancel",
+        "saving": "Saving...",
+        "saveChanges": "Save Changes"
+      }
+    },
+    "delete": {
+      "title": "Confirm Delete Template",
+      "description": "Are you sure you want to delete this print template? This action cannot be undone.",
+      "confirmDelete": "Confirm Delete Template",
+      "confirmDeleteMessage": "Are you sure you want to delete template \"{templateTitle}\"?",
+      "warning": "Warning",
+      "warningMessage": "This template is being used for country {countryName}. Deleting the template may affect the printing process.",
+      "actionCannotBeUndone": "This action cannot be undone.",
+      "country": "Country",
+      "usageCount": "Usage count",
+      "delete": "Delete",
+      "buttons": {
+        "cancel": "Cancel",
+        "delete": "Delete Template",
+        "deleting": "Deleting...",
+        "deleteTemplate": "Delete Template"
+      }
+    },
+    "stats": {
+      "totalTemplates": "Total templates",
+      "activeTemplates": "Active templates",
+      "totalCountries": "Countries",
+      "avgTemplatesPerCountry": "Avg templates/country",
+      "allTemplates": "All templates",
+      "totalUsage": "Total usage",
+      "supportedCountries": "Supported",
+      "usageCount": "usage count",
+      "usageLevel": "Usage level",
+      "high": "High",
+      "medium": "Medium",
+      "low": "Low",
+      "mostPopular": "Most Popular"
+    },
+    "search": {
+      "title": "Search",
+      "placeholder": "Search by template title...",
+      "allCountries": "All countries",
+      "searchAndFilter": "Search & Filter",
+      "filter": {
+        "selectCountry": "Select country",
+        "allCountries": "All countries"
+      }
+    },
+    "table": {
+      "title": "Print Templates List",
+      "description": "Total {count} templates in the system",
+      "headers": {
+        "template": "Template",
+        "title": "Title",
+        "country": "Country",
+        "brand": "Brand",
+        "currency": "Currency",
+        "createdAt": "Created",
+        "actions": "Actions"
+      },
+      "actions": {
+        "edit": "Edit",
+        "delete": "Delete",
+        "preview": "Preview",
+        "copy": "Copy"
+      },
+      "noData": "No data available",
+      "table": {
+        "actions": {
+          "actions": "Actions",
+          "edit": "Edit",
+          "delete": "Delete",
+          "preview": "Preview",
+          "copy": "Copy"
+        }
+      },
+      "preview": {
+        "preview": "Preview"
+      },
+      "edit": {
+        "edit": "Edit"
+      },
+      "delete": {
+        "delete": "Delete"
+      }
+    },
+    "list": {
+      "templateList": "Template List",
+      "totalTemplates": "Total {count} templates",
+      "template": "Template",
+      "country": "Country",
+      "content": "Content",
+      "usageCount": "Usage count",
+      "updatedAt": "Updated",
+      "actions": "Actions"
+    },
+    "analytics": {
+      "usageCount": "Usage count",
+      "usageLevel": "Usage level",
+      "wordsUsed": "Words used"
+    },
+    "cards": {
+      "template": "Template",
+      "created": "Created",
+      "country": "Country",
+      "brand": "Brand",
+      "currency": "Currency",
+      "noBrand": "No brand"
+    },
+    "copy": "Copy",
+    "preview": {
+      "title": "Template Preview",
+      "close": "Close",
+      "preview": "Preview",
+      "previewTemplate": "Template Preview",
+      "wordsUsed": "Words used",
+      "wordsUsedInTemplate": "Words used in template",
+      "notEntered": "Not entered",
+      "notSelected": "Not selected",
+      "usageCount": "Usage count",
+      "usageLevel": "Usage level"
+    },
+    "toasts": {
+      "createSuccess": {
+        "title": "Success",
+        "message": "Template created successfully!"
+      },
+      "createError": {
+        "title": "Error",
+        "message": "An error occurred while creating template"
+      },
+      "updateSuccess": {
+        "title": "Success",
+        "message": "Template updated successfully!"
+      },
+      "updateError": {
+        "title": "Error",
+        "message": "An error occurred while updating template"
+      },
+      "deleteSuccess": {
+        "title": "Success",
+        "message": "Template deleted successfully!"
+      },
+      "deleteError": {
+        "title": "Error",
+        "message": "An error occurred while deleting template"
+      },
+      "validation": {
+        "requiredFields": "Please fill in all required fields"
+      }
+    }
+  },
+  "printSelect": {
+    "title": "Print Product Selection",
+    "subtitle": "Manage list of products selected for printing with modern interface",
+    "templateFor": "Template for {country}",
+    "printLogNote": "Print {copies} copies with template {template}{note}",
+    "printLogNote.note": "Note",
+    "printAll": "Print All ({active}/{total})",
+    "na": "N/A",
+    "stats": {
+      "totalProducts": "Total Products",
+      "inPrintList": "In print list",
+      "active": "Active",
+      "readyToPrint": "Ready to print",
+      "totalPrints": "Total Prints",
+      "totalPrintCount": "Total print count",
+      "topProduct": "Top Product",
+      "printCount": "prints"
+    },
+    "search": {
+      "title": "Search & Advanced Filter",
+      "placeholder": "Search by product name, product code...",
+      "selectCountry": "Select country",
+      "allCountries": "All countries",
+      "status": "Status",
+      "all": "All",
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "loading": "Loading data...",
+    "actions": {
+      "actions": "Actions",
+      "printNow": "Print now",
+      "cannotPrint": "Cannot print (Paused)",
+      "edit": "Edit",
+      "delete": "Delete",
+      "deleting": "Deleting..."
+    },
+    "card": {
+      "printConfig": "Print quantity config:",
+      "paperSize": "Paper size",
+      "quantity": "Quantity",
+      "saleTime": "Sale time",
+      "createdAt": "Created at",
+      "updated": "Updated"
+    },
+    "addProduct": {
+      "addProduct": "Add Product",
+      "title": "Add Product to Print List",
+      "description": "Select product and configure print information",
+      "tabs": {
+        "basic": "Basic Information",
+        "config": "Print Configuration"
+      },
+      "fields": {
+        "product": "Product",
+        "selectProduct": "Select product",
+        "searchProduct": "Search product...",
+        "countryTemplate": "Country print template",
+        "selectCountryTemplate": "Select country print template",
+        "salePrice": "Sale price (optional)",
+        "enterSalePrice": "Enter sale price",
+        "saleStartTime": "Sale start time",
+        "saleEndTime": "Sale end time",
+        "status": "Status",
+        "selectStatus": "Select status",
+        "active": "Active",
+        "inactive": "Inactive",
+        "option1": "Option 1 (optional)",
+        "enterOption1": "Enter option 1",
+        "option2": "Option 2 (optional)",
+        "enterOption2": "Enter option 2",
+        "option3": "Option 3 (optional)",
+        "enterOption3": "Enter option 3"
+      },
+      "buttons": {
+        "adding": "Adding...",
+        "addToList": "Add to list"
+      }
+    },
+    "buttons": {
+      "printSelected": "Print Selected"
+    },
+    "editInfo": {
+      "title": "Edit Print Information",
+      "description": "Update product information in print list",
+      "tabs": {
+        "basic": "Basic Information",
+        "config": "Print Configuration"
+      },
+      "fields": {
+        "product": "Product",
+        "selectProduct": "Select product",
+        "countryTemplate": "Country print template",
+        "selectCountryTemplate": "Select country print template",
+        "salePrice": "Sale price (optional)",
+        "enterSalePrice": "Enter sale price",
+        "saleStartTime": "Sale start time",
+        "saleEndTime": "Sale end time",
+        "status": "Status",
+        "selectStatus": "Select status",
+        "active": "Active",
+        "inactive": "Inactive",
+        "option1": "Option 1 (optional)",
+        "enterOption1": "Enter option 1",
+        "option2": "Option 2 (optional)",
+        "enterOption2": "Enter option 2",
+        "option3": "Option 3 (optional)",
+        "enterOption3": "Enter option 3"
+      },
+      "buttons": {
+        "updating": "Updating...",
+        "updateInfo": "Update Information"
+      }
+    },
+    "editNum": {
+      "title": "Update Print Quantity Configuration",
+      "description": "Edit print quantity configuration for all paper sizes",
+      "placeholders": {
+        "a4": "A4 quantity",
+        "a5": "A5 quantity",
+        "v1": "V1 quantity",
+        "v2": "V2 quantity",
+        "v3": "V3 quantity",
+        "i4": "I4 quantity"
+      },
+      "info": {
+        "product": "Product",
+        "origin": "Origin",
+        "totalQuantity": "Total quantity",
+        "copies": "copies"
+      },
+      "buttons": {
+        "cancel": "Cancel",
+        "updating": "Updating...",
+        "updateAll": "Update All"
+      }
+    },
+    "productList": {
+      "title": "Print Product List",
+      "description": "Showing {filtered} / {total} products",
+      "notSet": "Not set",
+      "noOptions": "None",
+      "openMenu": "Open menu",
+      "headers": {
+        "product": "Product",
+        "countryTemplate": "Country print template",
+        "originalPrice": "Original price",
+        "salePrice": "Sale price",
+        "saleTime": "Sale time",
+        "options": "Options",
+        "printConfig": "Print quantity config",
+        "status": "Status",
+        "createdAt": "Created at",
+        "actions": "Actions"
+      }
+    },
+    "printDialog": {
+      "title": "Print Products ({count} products)",
+      "description": "Configure and execute printing for selected products",
+      "itemsToPrint": "Products to print:",
+      "paused": "Paused",
+      "warning": {
+        "inactiveItems": "Warning: {count} products have inactive status",
+        "onlyActive": "Only products with \"Active\" status will be printed"
+      },
+      "settings": {
+        "template": "Print template",
+        "templateFor": "Template for {country}",
+        "multipleTemplates": "Multiple templates ({count} templates)",
+        "productsWithTemplates": "{products} products with {templates} different templates",
+        "noTemplateFound": "No country template found",
+        "printSize": "Print size",
+        "customSize1": "Custom size 1",
+        "customSize2": "Custom size 2",
+        "customSize3": "Custom size 3",
+        "labelTemplate": "Label template I4",
+        "copies": "Number of copies",
+        "quantityFromConfig": "Quantity taken from {size} print configuration",
+        "printInfo": "Print information",
+        "totalPages": "Total pages",
+        "printNote": "Print note (optional)",
+        "enterPrintNote": "Enter note for this print...",
+        "noteWillBeSaved": "Note will be saved to print history",
+        "previewContent": "Preview content to be printed",
+        "previewPrintContent": "Preview print content",
+        "previewDescription": "Preview content to be printed with {count} products"
+      },
+      "preview": {
+        "template": "Template {size}",
+        "productCopy": "Product {product}/{total} - Copy {copy}/{copies}"
+      },
+      "progress": {
+        "processing": "Processing print...",
+        "pleaseWait": "Please wait"
+      },
+      "footer": {
+        "total": "Total",
+        "pages": "pages",
+        "cancel": "Cancel"
+      },
+      "buttons": {
+        "printing": "Printing...",
+        "startPrint": "Start Print"
+      }
+    },
+    "deleteDialog": {
+      "title": "Confirm Delete Product",
+      "description": "Are you sure you want to delete product <strong>{productName}</strong> from the print list?",
+      "warning": "⚠️ This action cannot be undone.",
+      "info": {
+        "code": "Code",
+        "origin": "Origin",
+        "paperSize": "Paper size"
+      },
+      "buttons": {
+        "cancel": "Cancel",
+        "deleting": "Deleting...",
+        "deleteProduct": "Delete Product"
+      }
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "priority": {
+      "high": "High",
+      "medium": "Medium",
+      "low": "Low"
+    },
+    "toasts": {
+      "addSuccess": "Product added to print list successfully!",
+      "addError": "Error occurred when adding product!",
+      "deleteSuccess": "Product removed from print list!",
+      "deleteError": "Error occurred when deleting product!",
+      "updateSuccess": "Product information updated!",
+      "updateError": "Error occurred when updating product!",
+      "updateNumSuccess": "Print quantity updated successfully!",
+      "updateNumError": "Error occurred when updating print quantity!",
+      "printError": "Error occurred when sending print command!",
+      "requiredFields": "Please fill in all required information!",
+      "cannotPrintProduct": "Cannot print product \"{productName}\" because current status is {status}",
+      "minQuantity": "Quantity must be greater than or equal to 1!",
+      "negativeQuantity": "Quantity cannot be negative!",
+      "updateAllNumSuccess": "All print quantities updated successfully!",
+      "updateAllNumError": "Error occurred when updating print quantities!"
+    }
+  },
+  "printLogs": {
+    "title": "Print History",
+    "subtitle": "Track all print activities in the system",
+    "na": "N/A",
+    "loading": "Loading print history...",
+    "status": {
+      "success": "Success",
+      "error": "Error",
+      "processing": "Processing",
+      "cancelled": "Cancelled"
+    },
+    "timeAgo": {
+      "justNow": "Just now",
+      "minutesAgo": "{minutes} minutes ago",
+      "hoursAgo": "{hours} hours ago",
+      "daysAgo": "{days} days ago"
+    },
+    "stats": {
+      "todayPrints": "Today's prints",
+      "totalPrints": "Total prints",
+      "activeTemplates": "Active templates",
+      "topAdmin": "Top Admin",
+      "topProduct": "Top Product",
+      "today": "Today",
+      "allTime": "All time",
+      "active": "Active",
+      "prints": "prints"
+    },
+    "search": {
+      "title": "Search & Filter",
+      "table": "Table",
+      "timeline": "Timeline",
+      "placeholder": "Search by admin, product, template...",
+      "fromDate": "From date",
+      "toDate": "To date"
+    },
+    "table": {
+      "title": "Detailed Print History",
+      "description": "Showing {count} recent print activities",
+      "headers": {
+        "time": "Time",
+        "admin": "Admin",
+        "product": "Product",
+        "template": "Template",
+        "status": "Status",
+        "quantity": "Quantity",
+        "actions": "Actions"
+      }
+    },
+    "timeline": {
+      "title": "Timeline View",
+      "description": "View print activities by time",
+      "prints": "prints"
+    },
+    "dialog": {
+      "title": "Print History Detail #{id}",
+      "description": "Detailed information about this print activity",
+      "admin": "Admin",
+      "product": "Product",
+      "template": "Template",
+      "quantity": "Print quantity",
+      "copies": "copies",
+      "note": "Note",
+      "noNote": "No note"
+    },
+    "pagination": {
+      "showing": "Showing {start} - {end} of {total} records",
+      "previous": "Previous",
+      "next": "Next"
+    }
+  },
+  "login": {
+    "title": "Login",
+    "subtitle": "Login to access the admin system",
+    "description": "Enter your login information",
+    "fields": {
+      "username": "Username",
+      "password": "Password"
+    },
+    "placeholders": {
+      "username": "Enter username",
+      "password": "Enter password"
+    },
+    "forgotPassword": "Forgot password?",
+    "loading": "Logging in...",
+    "submit": "Login",
+    "footer": {
+      "rights": "All rights reserved."
+    },
+    "errors": {
+      "general": "An error occurred. Please try again."
+    }
+  },
+  "forgotPassword": {
+    "title": "Forgot Password",
+    "subtitle": "Recover your account password",
+    "description": "Enter your email to receive password recovery link",
+    "fields": {
+      "email": "Email"
+    },
+    "placeholders": {
+      "email": "Enter your email"
+    },
+    "loading": "Sending...",
+    "submit": "Send Recovery Code",
+    "success": {
+      "title": "Email sent!",
+      "description": "We have sent a password recovery link to {email}",
+      "note": "Please check your inbox and spam folder. The link is valid for 24 hours."
+    },
+    "backToLogin": "Back to login",
+    "footer": {
+      "rights": "All rights reserved."
+    },
+    "errors": {
+      "general": "An error occurred. Please try again."
+    }
+  },
+  "resetPassword": {
+    "title": "Reset Password",
+    "subtitle": "Change account password",
+    "description": "Update new password for your account",
+    "fields": {
+      "resetCode": "Enter verification code",
+      "newPassword": "New password",
+      "confirmPassword": "Confirm new password"
+    },
+    "placeholders": {
+      "resetCode": "Enter 6-digit verification code",
+      "newPassword": "Enter new password",
+      "confirmPassword": "Re-enter new password"
+    },
+    "resetCodeNote": "Verification code has been sent to your email",
+    "passwordStrength": {
+      "strong": "Strong password",
+      "weak": "Needs improvement"
+    },
+    "requirements": {
+      "title": "Password requirements",
+      "minLength": "At least 8 characters",
+      "uppercase": "Has uppercase letter",
+      "lowercase": "Has lowercase letter",
+      "numbers": "Has number",
+      "special": "Has special character"
+    },
+    "passwordMatch": {
+      "match": "Passwords match",
+      "mismatch": "Passwords don't match"
+    },
+    "loading": "Updating...",
+    "submit": "Update password",
+    "success": {
+      "title": "Password changed successfully!",
+      "description": "Your password has been updated. Please log in again with your new password.",
+      "securityNote": "For account security, you will be logged out from all other devices.",
+      "loginAgain": "Log in again"
+    },
+    "backToDashboard": "Back to Dashboard",
+    "footer": {
+      "rights": "All rights reserved."
+    },
+    "errors": {
+      "general": "An error occurred. Please try again.",
+      "passwordRequirements": "New password does not meet security requirements",
+      "passwordMismatch": "Confirm password does not match"
+    }
+  }
 }

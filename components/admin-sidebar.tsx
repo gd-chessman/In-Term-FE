@@ -11,6 +11,7 @@ import { useTheme } from "@/contexts/theme-context"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { getUserMe, logout } from "@/services/AdminService"
 import { useRouter } from "next/navigation"
+import { useLang } from "@/lang/useLang"
 import {
   LayoutDashboard,
   Users,
@@ -32,63 +33,64 @@ import {
   Building2,
 } from "lucide-react"
 
-const menuItems = [
+// Menu items sẽ được tạo động với bản dịch
+const createMenuItems = (t: any) => [
   {
-    title: "Dashboard",
+    title: t('sidebar.dashboard'),
     href: "/",
     icon: LayoutDashboard,
     color: "text-blue-600 dark:text-blue-400",
     bgColor: "bg-blue-50 dark:bg-blue-900/20",
   },
   {
-    title: "Hồ sơ cá nhân",
+    title: t('sidebar.profile'),
     href: "/profile",
     icon: User,
     color: "text-indigo-600 dark:text-indigo-400",
     bgColor: "bg-indigo-50 dark:bg-indigo-900/20",
   },
   {
-    title: "Quản lý người dùng",
+    title: t('sidebar.userManagement'),
     icon: Users,
     color: "text-purple-600 dark:text-purple-400",
     bgColor: "bg-purple-50 dark:bg-purple-900/20",
     children: [
-      { title: "Danh sách người dùng", href: "/admins", icon: Users },
-      { title: "Vai trò & Quyền", href: "/roles", icon: Shield },
-      { title: "Nhật ký hoạt động", href: "/logs", icon: Activity },
+      { title: t('sidebar.userList'), href: "/admins", icon: Users },
+      { title: t('sidebar.rolesPermissions'), href: "/roles", icon: Shield },
+      { title: t('sidebar.activityLogs'), href: "/logs", icon: Activity },
     ],
   },
   {
-    title: "Hệ thống",
+    title: t('sidebar.system'),
     icon: Settings,
     color: "text-gray-600 dark:text-gray-400",
     bgColor: "bg-gray-50 dark:bg-gray-900/20",
     children: [
-      { title: "Chi nhánh", href: "/branches", icon: Building2 },
-      { title: "Quốc gia", href: "/countries", icon: Globe },
-      // { title: "Cài đặt", href: "/settings", icon: Setting s },
+      { title: t('sidebar.branches'), href: "/branches", icon: Building2 },
+      { title: t('sidebar.countries'), href: "/countries", icon: Globe },
+      // { title: t('sidebar.settings'), href: "/settings", icon: Settings },
     ],
   },
   {
-    title: "Sản phẩm",
+    title: t('sidebar.products'),
     icon: Package,
     color: "text-green-600 dark:text-green-400",
     bgColor: "bg-green-50 dark:bg-green-900/20",
     children: [
-      { title: "Danh sách sản phẩm", href: "/products", icon: Package },
-      { title: "Danh mục", href: "/categories", icon: FileText },
-      { title: "Tags", href: "/tags", icon: Tags },
+      { title: t('sidebar.productList'), href: "/products", icon: Package },
+      { title: t('sidebar.categories'), href: "/categories", icon: FileText },
+      { title: t('sidebar.tags'), href: "/tags", icon: Tags },
     ],
   },
   {
-    title: "In ấn",
+    title: t('sidebar.printing'),
     icon: Printer,
     color: "text-orange-600 dark:text-orange-400",
     bgColor: "bg-orange-50 dark:bg-orange-900/20",
     children: [
-      { title: "Template in", href: "/print-templates", icon: FileText },
-      { title: "Chọn sản phẩm in", href: "/print-select", icon: Printer },
-      { title: "Lịch sử in", href: "/print-logs", icon: History },
+      { title: t('sidebar.printTemplates'), href: "/print-templates", icon: FileText },
+      { title: t('sidebar.printSelection'), href: "/print-select", icon: Printer },
+      { title: t('sidebar.printHistory'), href: "/print-logs", icon: History },
     ],
   },
 ]
@@ -98,10 +100,14 @@ interface AdminSidebarProps {
 }
 
 export function AdminSidebar({ onClose }: AdminSidebarProps) {
+  const { t } = useLang()
   const pathname = usePathname()
   const { settings } = useTheme()
   const router = useRouter()
   const queryClient = useQueryClient()
+
+  // Tạo menu items với bản dịch
+  const menuItems = createMenuItems(t)
 
   // Fetch user data
   const { data: userMe } = useQuery({
@@ -318,7 +324,7 @@ export function AdminSidebar({ onClose }: AdminSidebarProps) {
           >
             <AvatarImage src={userMe?.admin_avatar || "/placeholder.svg"} />
             <AvatarFallback className="bg-gradient-to-r from-blue-500 to-blue-700 text-white font-semibold text-xs lg:text-sm">
-              {userMe?.admin_fullname ? getInitials(userMe.admin_fullname) : "AU"}
+              {userMe?.admin_fullname ? getInitials(userMe.admin_fullname) : t('sidebar.defaultUser')}
             </AvatarFallback>
           </Avatar>
           <div className="flex-1 min-w-0">
@@ -328,10 +334,10 @@ export function AdminSidebar({ onClose }: AdminSidebarProps) {
                 settings.compactMode && "text-xs",
               )}
             >
-              {userMe?.admin_fullname || "Admin User"}
+              {userMe?.admin_fullname || t('sidebar.defaultUser')}
             </p>
             <p className={cn("text-xs text-gray-500 dark:text-zinc-400 truncate", settings.compactMode && "text-xs")}>
-              {userMe?.admin_email || "admin@example.com"}
+              {userMe?.admin_email || t('sidebar.defaultEmail')}
             </p>
           </div>
           <Button

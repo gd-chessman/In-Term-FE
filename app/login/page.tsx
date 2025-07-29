@@ -12,8 +12,10 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Eye, EyeOff, Lock, Mail, User, AlertCircle, Sparkles } from "lucide-react"
 import { getUserMe, login } from "@/services/AdminService"
 import { useQuery } from "@tanstack/react-query"
+import { useLang } from "@/lang/useLang"
 
 export default function LoginPage() {
+  const { t } = useLang()
   const { refetch: refetchUserMe } = useQuery({
     queryKey: ["userMe"],
     queryFn: getUserMe,
@@ -57,7 +59,7 @@ export default function LoginPage() {
       } else if (err.message) {
         setError(err.message)
       } else {
-        setError("Đã xảy ra lỗi. Vui lòng thử lại.")
+        setError(t('login.errors.general'))
       }
     } finally {
       setIsLoading(false)
@@ -73,10 +75,10 @@ export default function LoginPage() {
             <Sparkles className="h-8 w-8 text-white" />
           </div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-            Admin Panel
+            {process.env.NEXT_PUBLIC_APP_NAME}
           </h1>
           <p className="text-gray-600 dark:text-gray-400">
-            Đăng nhập để truy cập hệ thống quản trị
+            {t('login.subtitle')}
           </p>
         </div>
 
@@ -84,10 +86,10 @@ export default function LoginPage() {
         <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl border-gray-200/60 dark:border-gray-700/60 shadow-2xl rounded-2xl">
           <CardHeader className="space-y-1 pb-4">
             <CardTitle className="text-xl font-semibold text-gray-900 dark:text-gray-100 text-center">
-              Đăng nhập
+              {t('login.title')}
             </CardTitle>
             <CardDescription className="text-gray-600 dark:text-gray-400 text-center">
-              Nhập thông tin đăng nhập của bạn
+              {t('login.description')}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -95,7 +97,7 @@ export default function LoginPage() {
               {/* Username Field */}
               <div className="space-y-2">
                 <Label htmlFor="username" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                  Tên người dùng
+                  {t('login.fields.username')}
                 </Label>
                 <div className="relative">
                   <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 dark:text-gray-500" />
@@ -105,7 +107,7 @@ export default function LoginPage() {
                     type="text"
                     value={formData.username}
                     onChange={handleInputChange}
-                    placeholder="Nhập tên người dùng"
+                    placeholder={t('login.placeholders.username')}
                     className="pl-10 h-12 rounded-xl border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 transition-all duration-200"
                     required
                   />
@@ -115,7 +117,7 @@ export default function LoginPage() {
               {/* Password Field */}
               <div className="space-y-2">
                 <Label htmlFor="password" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                  Mật khẩu
+                  {t('login.fields.password')}
                 </Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 dark:text-gray-500" />
@@ -125,7 +127,7 @@ export default function LoginPage() {
                     type={showPassword ? "text" : "password"}
                     value={formData.password}
                     onChange={handleInputChange}
-                    placeholder="Nhập mật khẩu"
+                    placeholder={t('login.placeholders.password')}
                     className="pl-10 pr-10 h-12 rounded-xl border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 transition-all duration-200"
                     required
                   />
@@ -147,7 +149,7 @@ export default function LoginPage() {
                   href="/forgot-password"
                   className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors duration-200"
                 >
-                  Quên mật khẩu?
+                  {t('login.forgotPassword')}
                 </Link>
               </div>
 
@@ -170,10 +172,10 @@ export default function LoginPage() {
                 {isLoading ? (
                   <div className="flex items-center space-x-2">
                     <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                    <span>Đang đăng nhập...</span>
+                    <span>{t('login.loading')}</span>
                   </div>
                 ) : (
-                  "Đăng nhập"
+                  t('login.submit')
                 )}
               </Button>
             </form>
@@ -183,7 +185,7 @@ export default function LoginPage() {
         {/* Footer */}
         <div className="text-center mt-8">
           <p className="text-sm text-gray-500 dark:text-gray-400">
-            © 2025 Admin Panel. All rights reserved.
+            © 2025 {process.env.NEXT_PUBLIC_APP_NAME}. {t('login.footer.rights')}
           </p>
         </div>
       </div>

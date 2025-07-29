@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useRef, useEffect } from "react"
-import { Bell, Search, Settings, Sun, Moon, Monitor, User, LayoutDashboard, Package, Printer, History, Users, Logs } from "lucide-react"
+import { Bell, Search, Settings, Sun, Moon, Monitor, User, LayoutDashboard, Package, Printer, History, Users, Logs, Globe } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -19,8 +19,10 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { getUserMe, logout } from "@/services/AdminService"
 import { useRouter } from "next/navigation"
 import { SearchDropdown } from "@/components/search-dropdown"
+import { useLang } from "@/lang/useLang"
 
 export function AdminHeader() {
+  const { lang, setLang } = useLang()
   const [searchQuery, setSearchQuery] = useState("")
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const searchInputRef = useRef<HTMLInputElement>(null)
@@ -30,6 +32,7 @@ export function AdminHeader() {
     queryFn: getUserMe,
   })
   const { settings, updateTheme } = useTheme()
+  const { t } = useLang()
   const router = useRouter()
   const queryClient = useQueryClient()
 
@@ -111,7 +114,7 @@ export function AdminHeader() {
           <Input
             ref={searchInputRef}
             type="search"
-            placeholder="Tìm kiếm sản phẩm, mẫu in, quốc gia..."
+            placeholder={t('header.searchPlaceholder')}
             value={searchQuery}
             onChange={handleSearchChange}
             onFocus={handleSearchFocus}
@@ -127,8 +130,42 @@ export function AdminHeader() {
         </div>
       </div>
 
-      {/* Right side - Theme toggle, settings, user menu */}
+      {/* Right side - Language toggle, theme toggle, settings, user menu */}
       <div className="flex items-center space-x-2 lg:space-x-3 flex-1 justify-end">
+        {/* Language Toggle */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="relative hover:bg-gray-100 dark:hover:bg-zinc-800 transition-all duration-200 rounded-xl h-10 w-10"
+            >
+              <Globe className="h-4 w-4 text-gray-600 dark:text-zinc-400" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent
+            align="end"
+            className="w-48 bg-white dark:bg-zinc-900 border-gray-200 dark:border-zinc-800 shadow-xl rounded-xl"
+          >
+            <DropdownMenuLabel className="text-gray-700 dark:text-zinc-300">{t('header.language')}</DropdownMenuLabel>
+            <DropdownMenuSeparator className="bg-gray-200 dark:bg-zinc-800" />
+            <DropdownMenuItem
+              onClick={() => setLang("cs")}
+              className={`hover:bg-gray-50 dark:hover:bg-zinc-800 rounded-lg m-1 text-gray-700 dark:text-zinc-300 ${lang === "cs" ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400" : ""}`}
+            >
+              <span className="mr-2">🇨🇿</span>
+              <span>{t('header.czech')}</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => setLang("en")}
+              className={`hover:bg-gray-50 dark:hover:bg-zinc-800 rounded-lg m-1 text-gray-700 dark:text-zinc-300 ${lang === "en" ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400" : ""}`}
+            >
+              <span className="mr-2">🇺🇸</span>
+              <span>{t('header.english')}</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+
         {/* Theme Toggle */}
         {/* <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -203,10 +240,10 @@ export function AdminHeader() {
             <DropdownMenuLabel className="font-normal p-4">
               <div className="flex flex-col space-y-1">
                 <p className="text-sm font-semibold leading-none text-gray-900 dark:text-zinc-100">
-                  {userMe?.admin_fullname || "Admin User"}
+                  {userMe?.admin_fullname || t('header.defaultUser')}
                 </p>
                 <p className="text-xs leading-none text-gray-500 dark:text-zinc-400">
-                  {userMe?.admin_email || "admin@example.com"}
+                  {userMe?.admin_email || t('header.defaultEmail')}
                 </p>
               </div>
             </DropdownMenuLabel>
@@ -218,7 +255,7 @@ export function AdminHeader() {
               className="hover:bg-gray-50 dark:hover:bg-zinc-800 rounded-lg m-1 text-gray-700 dark:text-zinc-300"
             >
               <User className="mr-2 h-4 w-4" />
-              <span>Hồ sơ cá nhân</span>
+              <span>{t('header.profile')}</span>
             </DropdownMenuItem>
             
             <DropdownMenuItem 
@@ -226,7 +263,7 @@ export function AdminHeader() {
               className="hover:bg-gray-50 dark:hover:bg-zinc-800 rounded-lg m-1 text-gray-700 dark:text-zinc-300"
             >
               <LayoutDashboard className="mr-2 h-4 w-4" />
-              <span>Dashboard</span>
+              <span>{t('header.dashboard')}</span>
             </DropdownMenuItem>
             
             <DropdownMenuSeparator className="bg-gray-200 dark:bg-zinc-800" />
@@ -237,7 +274,7 @@ export function AdminHeader() {
               className="hover:bg-gray-50 dark:hover:bg-zinc-800 rounded-lg m-1 text-gray-700 dark:text-zinc-300"
             >
               <Package className="mr-2 h-4 w-4" />
-              <span>Quản lý sản phẩm</span>
+              <span>{t('header.products')}</span>
             </DropdownMenuItem>
             
             <DropdownMenuItem 
@@ -245,7 +282,7 @@ export function AdminHeader() {
               className="hover:bg-gray-50 dark:hover:bg-zinc-800 rounded-lg m-1 text-gray-700 dark:text-zinc-300"
             >
               <Printer className="mr-2 h-4 w-4" />
-              <span>Chọn sản phẩm in</span>
+              <span>{t('header.printSelect')}</span>
             </DropdownMenuItem>
             
             <DropdownMenuItem 
@@ -253,7 +290,7 @@ export function AdminHeader() {
               className="hover:bg-gray-50 dark:hover:bg-zinc-800 rounded-lg m-1 text-gray-700 dark:text-zinc-300"
             >
               <History className="mr-2 h-4 w-4" />
-              <span>Lịch sử in</span>
+              <span>{t('header.printHistory')}</span>
             </DropdownMenuItem>
             
             <DropdownMenuSeparator className="bg-gray-200 dark:bg-zinc-800" />
@@ -264,7 +301,7 @@ export function AdminHeader() {
               className="hover:bg-gray-50 dark:hover:bg-zinc-800 rounded-lg m-1 text-gray-700 dark:text-zinc-300"
             >
               <Users className="mr-2 h-4 w-4" />
-              <span>Quản lý người dùng</span>
+              <span>{t('header.users')}</span>
             </DropdownMenuItem>
             
             <DropdownMenuItem 
@@ -272,7 +309,7 @@ export function AdminHeader() {
               className="hover:bg-gray-50 dark:hover:bg-zinc-800 rounded-lg m-1 text-gray-700 dark:text-zinc-300"
             >
               <Logs className="mr-2 h-4 w-4" />
-              <span>Nhật ký hoạt động</span>
+              <span>{t('header.activityLogs')}</span>
             </DropdownMenuItem>
             
             <DropdownMenuSeparator className="bg-gray-200 dark:bg-zinc-800" />
@@ -283,7 +320,7 @@ export function AdminHeader() {
               className="hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 dark:text-red-400 rounded-lg m-1"
             >
               <span>
-                {logoutMutation.isPending ? "Đang đăng xuất..." : "Đăng xuất"}
+                {logoutMutation.isPending ? t('header.loggingOut') : t('header.logout')}
               </span>
             </DropdownMenuItem>
           </DropdownMenuContent>
