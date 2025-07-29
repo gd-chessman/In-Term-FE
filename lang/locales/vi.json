@@ -1655,6 +1655,8 @@
       "updateNumSuccess": "Đã cập nhật số lượng in thành công!",
       "updateNumError": "Có lỗi xảy ra khi cập nhật số lượng in!",
       "printError": "Có lỗi xảy ra khi gửi lệnh in!",
+      "printSuccess": "Đã gửi lệnh in thành công",
+      "printSuccessWithCheck": "Đã gửi lệnh in thành công! Vui lòng kiểm tra máy in của bạn.",
       "requiredFields": "Vui lòng điền đầy đủ thông tin bắt buộc!",
       "cannotPrintProduct": "Không thể in sản phẩm \"{productName}\" vì trạng thái hiện tại là {status}",
       "minQuantity": "Số lượng phải lớn hơn hoặc bằng 1!",

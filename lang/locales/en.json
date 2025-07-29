@@ -1670,6 +1670,8 @@
       "updateNumSuccess": "Print quantity updated successfully!",
       "updateNumError": "Error occurred when updating print quantity!",
       "printError": "Error occurred when sending print command!",
+      "printSuccess": "Print command sent successfully",
+      "printSuccessWithCheck": "Print command sent successfully! Please check your printer.",
       "requiredFields": "Please fill in all required information!",
       "cannotPrintProduct": "Cannot print product \"{productName}\" because current status is {status}",
       "minQuantity": "Quantity must be greater than or equal to 1!",

@@ -319,10 +319,10 @@ export default function PrintSelectPage() {
         }, 2000);
       }
       
-      return { success: true, message: 'Đã gửi lệnh in thành công' };
+      return { success: true, message: t('printSelect.toasts.printSuccess') };
     },
     onSuccess: (data) => {
-      toast.success(`Đã gửi lệnh in thành công! Vui lòng kiểm tra máy in của bạn.`)
+      toast.success(t('printSelect.toasts.printSuccessWithCheck'))
       setIsPrintDialogOpen(false)
       setPrintProgress(0)
       setPrintingItems([])
