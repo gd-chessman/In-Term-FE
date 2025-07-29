@@ -189,11 +189,8 @@ export const getFormatInfo = (format: string) => {
 
 const getCountryFlag = (countryCode: string) => {
   if (!countryCode || typeof countryCode !== 'string') {
-    return "🌍"
+    return '<img src="/WW.png" alt="World" style="width: 24px; height: 18px; object-fit: cover; display: inline; margin-bottom: 4px;" />'
   }
-  const codePoints = countryCode
-    .toUpperCase()
-    .split('')
-    .map(char => 127397 + char.charCodeAt(0));
-  return String.fromCodePoint(...codePoints);
+  const upperCode = countryCode.toUpperCase()
+  return `<img src="/${upperCode}.png" alt="${upperCode}" style="width: 24px; height: 18px; object-fit: cover; display: inline; margin-bottom: 4px;" />`
 }
