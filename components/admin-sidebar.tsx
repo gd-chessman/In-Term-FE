@@ -100,7 +100,7 @@ interface AdminSidebarProps {
 }
 
 export function AdminSidebar({ onClose }: AdminSidebarProps) {
-  const { t } = useLang()
+  const { t, lang } = useLang()
   const pathname = usePathname()
   const { settings } = useTheme()
   const router = useRouter()
@@ -144,10 +144,10 @@ export function AdminSidebar({ onClose }: AdminSidebarProps) {
   }
 
   // Tìm section chứa pathname hiện tại để tự động mở
-  const findActiveSection = (items: any[]) => {
-    for (const item of items) {
+  const findActiveSection = () => {
+    for (const item of menuItems) {
       if (item.children) {
-        const hasActiveChild = item.children.some((child: any) => child.href === pathname)
+        const hasActiveChild = item.children.some(child => child.href === pathname)
         if (hasActiveChild) {
           return item.title
         }
@@ -158,17 +158,17 @@ export function AdminSidebar({ onClose }: AdminSidebarProps) {
     return null
   }
 
-  const [expandedItem, setExpandedItem] = useState<string | null>(() => findActiveSection(menuItems))
+  const [expandedItem, setExpandedItem] = useState<string | null>(() => findActiveSection())
 
   const toggleExpanded = (title: string) => {
     setExpandedItem((prev) => (prev === title ? null : title))
   }
 
-  // Cập nhật expandedItem khi pathname hoặc menuItems thay đổi
+  // Cập nhật expandedItem khi pathname hoặc ngôn ngữ thay đổi
   useEffect(() => {
-    const activeSection = findActiveSection(menuItems)
+    const activeSection = findActiveSection()
     setExpandedItem(activeSection)
-  }, [pathname, menuItems])
+  }, [pathname, lang]) // Thêm lang vào dependencies
 
   const handleLinkClick = () => {
     if (onClose) {
