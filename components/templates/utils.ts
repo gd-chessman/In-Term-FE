@@ -74,8 +74,21 @@ export const prepareTemplateData = (
     // Tính giá cho 1 đơn vị nhỏ nhất
     const unitPrice = (salePrice / unitTotal) * unitStep
     
-    // Format giá đơn vị
-    const unitPriceFormatted = formatPrice(unitPrice)
+    // Format giá đơn vị với 2 chữ số thập phân
+    const wholePart = Math.floor(unitPrice)
+    const decimalPart = (unitPrice % 1).toFixed(2).substring(2) // Luôn lấy 2 chữ số thập phân
+    
+    // Danh sách các currency symbol đặt trước giá
+    const prefixCurrencies = ['$', '€', '£', '¥', '₩', '₽', '₹', '₪', '₦', '₨', '₱', '₴', '₸', '₺', '₼', '₾', '₿']
+    
+    const formattedWholePart = wholePart.toLocaleString('en-US')
+    
+    let unitPriceFormatted = ''
+    if (prefixCurrencies.includes(currencySymbol)) {
+      unitPriceFormatted = `${currencySymbol}${formattedWholePart}.${decimalPart}`
+    } else {
+      unitPriceFormatted = `${formattedWholePart}.${decimalPart} ${currencySymbol}`
+    }
     
     // Lấy từ ngữ cho giá đơn vị từ template
     const unitPriceLabel = product.templates?.pt_unit_price || ''
