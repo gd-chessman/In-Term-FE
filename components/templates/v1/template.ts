@@ -248,7 +248,7 @@ export const v1Template = (data: {
 <p style="position:absolute;top:0.9rem;left:3.4375rem;white-space:normal;text-align:left;max-width:10.5rem;line-height:0.9;" class="ft10 brand-text">${data.pt_brand}</p>
 <p style="position:absolute;top:0.4375rem;left:16.75rem;white-space:nowrap" class="ft11">${data.product_name}</p>
 <p style="position:absolute;top:1.9375rem;left:30.8125rem;white-space:nowrap" class="ft12">${data.pt_original_price}:</p>
-<p style="position:absolute;top:2.4rem;left:17rem;white-space:nowrap" class="ft13">${data.discount_percentage}</p>
+<p style="position:absolute;top:2.4rem;left:17rem;white-space:nowrap;font-weight:bold" class="ft13">${data.discount_percentage}</p>
 <p style="position:absolute;top:${originalPriceTop};left:32rem;white-space:nowrap" class="${originalPriceClass}">${data.price.replace(/(\d+)(\s*[^\d\s]+)$/, '$1')}${data.price_decimal ? `<span class="decimal-superscript">&thinsp;${data.price_decimal}</span>` : ''}</p>
 <p style="position:absolute;top:3.3375rem;right:2rem;white-space:nowrap;text-align:right;" class="${priceClass}">${data.price_sale.replace(/(\d+)(\s*[^\d\s]+)$/, '$1')}&thinsp;<span style="display:inline-block;vertical-align:top;line-height:0.8;margin-top:0.4em;"><span style="display:block;font-size:0.4em;margin:0;">${data.price_sale_decimal || '&nbsp;'}</span><span style="display:block;font-size:0.35em;margin:0;">${data.price_sale.match(/(\s*[^\d\s]+)$/)?.[1] || '&nbsp;'}&nbsp;</span></span></p>
 <p style="position:absolute;top:8.8rem;right:1rem;white-space:nowrap;text-align:right;font-weight:600;font-size:0.875rem;font-family:'Sriracha',cursive;" class="ft11">${data.unit_price_info}&nbsp;</p>
