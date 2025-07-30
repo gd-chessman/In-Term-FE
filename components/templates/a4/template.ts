@@ -241,16 +241,16 @@ export const a4Template = (data: {
 <img src="/a4s.png" alt="background image"/>
 <p style="position:absolute;top:10rem;left:50%;transform:translateX(-50%);white-space:nowrap" class="ft10">${data.pt_brand}</p>
 <p style="position:absolute;top:21.8125rem;left:50%;transform:translateX(-50%);white-space:nowrap" class="ft11">${data.product_name}</p>
-${data.ps_option_1 ? `<p style="position:absolute;top:24rem;left:50%;transform:translateX(-50%);white-space:nowrap;font-weight:bold" class="ft12-inter">${data.ps_option_1}</p>` : ''}
+${data.ps_option_1 ? `<p style="position:absolute;top:24rem;left:50%;transform:translateX(-50%);white-space:nowrap;font-weight:bold" class="ft12">${data.ps_option_1}</p>` : ''}
 <p style="position:absolute;top:25.375rem;left:1.625rem;white-space:nowrap" class="ft12">${data.pt_origin_country}: ${data.country_code} ${data.country_name}</p>
-${data.ps_option_2 ? `<p style="position:absolute;top:25.375rem;right:1.625rem;white-space:nowrap;text-align:right;font-weight:bold" class="ft12-inter">${data.ps_option_2}</p>` : ''}
+${data.ps_option_2 ? `<p style="position:absolute;top:25.375rem;right:1.625rem;white-space:nowrap;text-align:right;font-weight:bold" class="ft12">${data.ps_option_2}</p>` : ''}
 <p style="position:absolute;top:29.25rem;left:1.625rem;white-space:nowrap" class="ft13">${data.pt_product_code} : ${data.product_code}</p>
 <p style="position:absolute;top:29rem;left:24.1875rem;white-space:nowrap" class="ft12-inter">${data.pt_original_price} : </p>
 <p style="position:absolute;top:30rem;left:2.0625rem;white-space:nowrap;font-weight:bold" class="ft14">${data.discount_percentage}</p>
 <p style="position:absolute;top:${originalPriceTop};left:30.2rem;white-space:nowrap" class="${originalPriceClass}">${data.price.replace(/(\d+)(\s*[^\d\s]+)$/, '$1')}${data.price_decimal ? `<span class="decimal-superscript">&thinsp;${data.price_decimal}</span>` : ''}</p>
 <p style="position:absolute;top:38.25rem;left:50%;transform:translateX(-50%);white-space:nowrap;" class="${priceClass}">${data.price_sale.replace(/(\d+)(\s*[^\d\s]+)$/, '$1')}&thinsp;<span style="display:inline-block;vertical-align:top;line-height:0.8;margin-top:0.4em;"><span style="display:block;font-size:0.4em;margin:0;">${data.price_sale_decimal || '&nbsp;'}</span><span style="display:block;font-size:0.25em;margin:0;margin-top:0.2em;">${data.price_sale.match(/(\s*[^\d\s]+)$/)?.[1] || '&nbsp;'}&nbsp;</span></span></p>
 <p style="position:absolute;top:54.8rem;left:50%;transform:translateX(-50%);white-space:nowrap;font-weight:600;font-size:1.5rem;font-family:'Sriracha',cursive;" class="ft12">${data.unit_price_info}&nbsp;</p>
-${data.ps_option_3 ? `<p style="position:absolute;top:53rem;left:50%;transform:translateX(-50%);white-space:nowrap;font-weight:bold" class="ft12-inter">${data.ps_option_3}</p>` : ''}
+${data.ps_option_3 ? `<p style="position:absolute;top:53rem;left:50%;transform:translateX(-50%);white-space:nowrap;font-weight:bold" class="ft12">${data.ps_option_3}</p>` : ''}
 </div>
 </body>
 </html>`;
