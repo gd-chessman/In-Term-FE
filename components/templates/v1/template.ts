@@ -19,15 +19,15 @@ export const v1Template = (data: {
   const getPriceClass = (price: string) => {
     if (!price) return 'ft16';
     const length = price.length;
-    if (length <= 3) return 'ft16'; // 5.3rem (giảm từ 5.5rem)
-    if (length <= 4) return 'ft16-small'; // 4.2rem (giảm từ 4.4rem)
-    if (length <= 5) return 'ft16-medium'; // 4rem (giảm từ 4.2rem)
-    if (length <= 6) return 'ft16-large'; // 3.8rem (giảm từ 4rem)
-    if (length <= 7) return 'ft16-xlarge'; // 3.6rem (giảm từ 3.8rem)
-    if (length <= 8) return 'ft16-xxlarge'; // 3rem (giảm từ 3.2rem)
-    if (length <= 9) return 'ft16-xxxlarge'; // 2.8rem (giảm từ 3rem)
-    if (length <= 10) return 'ft16-mini'; // 2.6rem (giảm từ 2.8rem)
-    return 'ft16-tiny'; // 2.4rem (giảm từ 2.6rem) - cho trường hợp vượt quá 10
+    if (length <= 3) return 'ft16'; // 7rem - kích thước gốc
+    if (length <= 4) return 'ft16-small'; // 5.6rem
+    if (length <= 5) return 'ft16-medium'; // 5.4rem
+    if (length <= 6) return 'ft16-large'; // 5.2rem
+    if (length <= 7) return 'ft16-xlarge'; // 5rem
+    if (length <= 8) return 'ft16-xxlarge'; // 4.2rem
+    if (length <= 9) return 'ft16-xxxlarge'; // 4rem
+    if (length <= 10) return 'ft16-mini'; // 3.8rem
+    return 'ft16-tiny'; // 3.6rem - cho trường hợp vượt quá 10
   };
 
   // Hàm chọn class cho giá gốc (nhỏ hơn 0.6 lần)
@@ -103,15 +103,15 @@ export const v1Template = (data: {
 	.ft14-original-mini{font-size:2rem;font-family:"Sriracha",cursive;color:#000000;}
 	.ft14-original-tiny{font-size:1.9rem;font-family:"Sriracha",cursive;color:#000000;}
 	.ft15{font-size:2.125rem;font-family:"Inter",sans-serif;color:#000000;}
-	.ft16{font-size:5.3rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
-	.ft16-small{font-size:4.2rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
-	.ft16-medium{font-size:4rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
-	.ft16-large{font-size:3.8rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
-	.ft16-xlarge{font-size:3.6rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
-	.ft16-xxlarge{font-size:3rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
-	.ft16-xxxlarge{font-size:2.8rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
-	.ft16-mini{font-size:2.6rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
-	.ft16-tiny{font-size:2.4rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
+	.ft16{font-size:7rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
+	.ft16-small{font-size:5.6rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
+	.ft16-medium{font-size:5.4rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
+	.ft16-large{font-size:5.2rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
+	.ft16-xlarge{font-size:5rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
+	.ft16-xxlarge{font-size:4.2rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
+	.ft16-xxxlarge{font-size:4rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
+	.ft16-mini{font-size:3.8rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
+	.ft16-tiny{font-size:3.6rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
 	.ft17{font-size:2.3125rem;font-family:"Inter",sans-serif;color:#000000;}
 	.ft18{font-size:1.5625rem;font-family:"Inter",sans-serif;color:#000000;}
 	.ft19{font-size:0.625rem;font-family:"Inter",sans-serif;color:#000000;}
@@ -250,9 +250,9 @@ export const v1Template = (data: {
 <p style="position:absolute;top:1.9375rem;left:30.8125rem;white-space:nowrap" class="ft12">${data.pt_original_price}:</p>
 <p style="position:absolute;top:2.4rem;left:17rem;white-space:nowrap;font-weight:bold" class="ft13">${data.discount_percentage}</p>
 <p style="position:absolute;top:${originalPriceTop};left:32rem;white-space:nowrap" class="${originalPriceClass}">${data.price.replace(/(\d+)(\s*[^\d\s]+)$/, '$1')}${data.price_decimal ? `<span class="decimal-superscript">&thinsp;${data.price_decimal}</span>` : ''}</p>
-<p style="position:absolute;top:3.3375rem;right:2rem;white-space:nowrap;text-align:right;" class="${priceClass}">${data.price_sale.replace(/(\d+)(\s*[^\d\s]+)$/, '$1')}&thinsp;<span style="display:inline-block;vertical-align:top;line-height:0.8;margin-top:0.4em;"><span style="display:block;font-size:0.4em;margin:0;">${data.price_sale_decimal || '&nbsp;'}</span><span style="display:block;font-size:0.35em;margin:0;">${data.price_sale.match(/(\s*[^\d\s]+)$/)?.[1] || '&nbsp;'}&nbsp;</span></span></p>
-<p style="position:absolute;top:8.8rem;right:1rem;white-space:nowrap;text-align:right;font-weight:600;font-size:0.875rem;font-family:'Sriracha',cursive;" class="ft11">${data.unit_price_info}&nbsp;</p>
-<p style="position:absolute;top:8.1875rem;left:16.75rem;white-space:nowrap" class="ft111">${data.pt_origin_country}: ${data.country_code} ${data.country_name}<br/><span class="ft111-inter">${data.pt_product_code}: ${data.product_code}</span></p>
+<p style="position:absolute;top:1.2rem;right:2rem;white-space:nowrap;text-align:right;" class="${priceClass}">${data.price_sale.replace(/(\d+)(\s*[^\d\s]+)$/, '$1')}&thinsp;<span style="display:inline-block;vertical-align:top;line-height:0.8;margin-top:0.4em;"><span style="display:block;font-size:0.4em;margin:0;">${data.price_sale_decimal || '&nbsp;'}</span><span style="display:block;font-size:0.25em;margin:0;margin-top:0.2em;margin-right:0.5em;">${data.price_sale.match(/(\s*[^\d\s]+)$/)?.[1] || '&nbsp;'}&nbsp;</span></span></p>
+<p style="position:absolute;top:9.2rem;right:1rem;white-space:nowrap;text-align:right;font-weight:600;font-size:0.875rem;font-family:'Sriracha',cursive;" class="ft11">${data.unit_price_info}&nbsp;</p>
+<p style="position:absolute;top:8rem;left:16.75rem;white-space:nowrap" class="ft111">${data.pt_origin_country}: ${data.country_code} ${data.country_name}<br/><span class="ft111-inter">${data.pt_product_code}: ${data.product_code}</span></p>
 </div>
 </body>
 </html>`;
