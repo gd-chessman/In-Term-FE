@@ -616,9 +616,9 @@ export default function PrintSelectPage() {
       ps_time_sale_start: formatDateForInput(item.ps_time_sale_start),
       ps_time_sale_end: formatDateForInput(item.ps_time_sale_end),
       ps_status: item.ps_status || "active",
-      ps_option_1: item.ps_option_1 || "",
-      ps_option_2: item.ps_option_2 || "",
-      ps_option_3: item.ps_option_3 || "",
+      ps_option_1: item.templates?.ps_option_1 || "",
+      ps_option_2: item.templates?.ps_option_2 || "",
+      ps_option_3: item.templates?.ps_option_3 || "",
     })
     setIsEditDialogOpen(true)
   }
@@ -645,9 +645,9 @@ export default function PrintSelectPage() {
       ps_time_sale_start: formatDateForInput(item.ps_time_sale_start),
       ps_time_sale_end: formatDateForInput(item.ps_time_sale_end),
       ps_status: item.ps_status || "active",
-      ps_option_1: item.ps_option_1 || "",
-      ps_option_2: item.ps_option_2 || "",
-      ps_option_3: item.ps_option_3 || "",
+      ps_option_1: item.templates?.ps_option_1 || "",
+      ps_option_2: item.templates?.ps_option_2 || "",
+      ps_option_3: item.templates?.ps_option_3 || "",
     })
     setFocusCountryField(true)
     setActiveEditTab("basic")
@@ -676,9 +676,9 @@ export default function PrintSelectPage() {
       ps_time_sale_start: formatDateForInput(item.ps_time_sale_start),
       ps_time_sale_end: formatDateForInput(item.ps_time_sale_end),
       ps_status: item.ps_status || "active",
-      ps_option_1: item.ps_option_1 || "",
-      ps_option_2: item.ps_option_2 || "",
-      ps_option_3: item.ps_option_3 || "",
+      ps_option_1: item.templates?.ps_option_1 || "",
+      ps_option_2: item.templates?.ps_option_2 || "",
+      ps_option_3: item.templates?.ps_option_3 || "",
     })
     setFocusPriceField(true)
     setActiveEditTab("basic")
@@ -707,9 +707,9 @@ export default function PrintSelectPage() {
       ps_time_sale_start: formatDateForInput(item.ps_time_sale_start),
       ps_time_sale_end: formatDateForInput(item.ps_time_sale_end),
       ps_status: item.ps_status || "active",
-      ps_option_1: item.ps_option_1 || "",
-      ps_option_2: item.ps_option_2 || "",
-      ps_option_3: item.ps_option_3 || "",
+      ps_option_1: item.templates?.ps_option_1 || "",
+      ps_option_2: item.templates?.ps_option_2 || "",
+      ps_option_3: item.templates?.ps_option_3 || "",
     })
     setFocusTimeField(true)
     setActiveEditTab("basic")
@@ -738,9 +738,9 @@ export default function PrintSelectPage() {
       ps_time_sale_start: formatDateForInput(item.ps_time_sale_start),
       ps_time_sale_end: formatDateForInput(item.ps_time_sale_end),
       ps_status: item.ps_status || "active",
-      ps_option_1: item.ps_option_1 || "",
-      ps_option_2: item.ps_option_2 || "",
-      ps_option_3: item.ps_option_3 || "",
+      ps_option_1: item.templates?.ps_option_1 || "",
+      ps_option_2: item.templates?.ps_option_2 || "",
+      ps_option_3: item.templates?.ps_option_3 || "",
     })
     setFocusOptionField(true)
     setActiveEditTab("config")
