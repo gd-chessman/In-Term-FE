@@ -22,15 +22,15 @@ export const a4Template = (data: {
   const getPriceClass = (price: string) => {
     if (!price) return 'ft17';
     const length = price.length;
-    if (length <= 3) return 'ft17'; // 13.75rem - kích thước gốc
-    if (length <= 4) return 'ft17-small'; // 11rem
-    if (length <= 5) return 'ft17-medium'; // 10.5rem
-    if (length <= 6) return 'ft17-large'; // 10rem
-    if (length <= 7) return 'ft17-xlarge'; // 9.5rem
-    if (length <= 8) return 'ft17-xxlarge'; // 9rem
-    if (length <= 9) return 'ft17-xxxlarge'; // 8.5rem
-    if (length <= 10) return 'ft17-mini'; // 8rem
-    return 'ft17-tiny'; // 7.5rem - cho trường hợp vượt quá 10
+    if (length <= 3) return 'ft17'; // 15rem - kích thước gốc
+    if (length <= 4) return 'ft17-small'; // 12rem
+    if (length <= 5) return 'ft17-medium'; // 11.5rem
+    if (length <= 6) return 'ft17-large'; // 11rem
+    if (length <= 7) return 'ft17-xlarge'; // 10.5rem
+    if (length <= 8) return 'ft17-xxlarge'; // 10rem
+    if (length <= 9) return 'ft17-xxxlarge'; // 9.5rem
+    if (length <= 10) return 'ft17-mini'; // 9rem
+    return 'ft17-tiny'; // 8.5rem - cho trường hợp vượt quá 10
   };
 
   // Hàm chọn class cho giá gốc (nhỏ hơn 0.6 lần)
@@ -65,8 +65,6 @@ export const a4Template = (data: {
 	else if (length <= 9) fontSize = 7.35;
 	else if (length <= 10) fontSize = 7.05;
 	else fontSize = 6.75;
-	
-	
 
 
     // Tính toán sự khác biệt về chiều cao và điều chỉnh top (tăng thêm 1rem)
@@ -101,15 +99,15 @@ export const a4Template = (data: {
 	.ft14{font-size:7.1875rem;font-family:"Sriracha",cursive;color:#ffffff;}
 	.ft15{font-size:7.5rem;font-family:"Sriracha",cursive;color:#000000;}
 	.ft16{font-size:4.0625rem;font-family:"Inter",sans-serif;color:#000000;}
-	.ft17{font-size:13.75rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
-	.ft17-small{font-size:11rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
-	.ft17-medium{font-size:10.5rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
-	.ft17-large{font-size:10rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
-	.ft17-xlarge{font-size:9.5rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
-	.ft17-xxlarge{font-size:9rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
-	.ft17-xxxlarge{font-size:8.5rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
-	.ft17-mini{font-size:8rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
-	.ft17-tiny{font-size:7.5rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
+	.ft17{font-size:15rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
+	.ft17-small{font-size:12rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
+	.ft17-medium{font-size:11.5rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
+	.ft17-large{font-size:11rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
+	.ft17-xlarge{font-size:10.5rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
+	.ft17-xxlarge{font-size:10rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
+	.ft17-xxxlarge{font-size:9.5rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
+	.ft17-mini{font-size:9rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
+	.ft17-tiny{font-size:8.5rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
 	.ft17-original{font-size:8.25rem;font-family:"Sriracha",cursive;color:#000000;}
 	.ft17-original-small{font-size:6.6rem;font-family:"Sriracha",cursive;color:#000000;}
 	.ft17-original-medium{font-size:6.3rem;font-family:"Sriracha",cursive;color:#000000;}
@@ -126,7 +124,7 @@ export const a4Template = (data: {
 	
 	/* CSS cho phần thập phân (số mũ) */
 	.decimal-superscript {
-		font-size: 0.7em;
+		font-size: 0.6em;
 		vertical-align: super;
 		line-height: 1;
 		font-family: "Sriracha", cursive;
@@ -250,9 +248,9 @@ ${data.ps_option_2 ? `<p style="position:absolute;top:25.375rem;right:1.625rem;w
 <p style="position:absolute;top:29rem;left:24.1875rem;white-space:nowrap" class="ft12-inter">${data.pt_original_price} : </p>
 <p style="position:absolute;top:30rem;left:2.0625rem;white-space:nowrap;font-weight:bold" class="ft14">${data.discount_percentage}</p>
 <p style="position:absolute;top:${originalPriceTop};left:30.2rem;white-space:nowrap" class="${originalPriceClass}">${data.price.replace(/(\d+)(\s*[^\d\s]+)$/, '$1')}${data.price_decimal ? `<span class="decimal-superscript">&thinsp;${data.price_decimal}</span>` : ''}</p>
-<p style="position:absolute;top:39.25rem;left:50%;transform:translateX(-50%);white-space:nowrap;" class="${priceClass}">${data.price_sale.replace(/(\d+)(\s*[^\d\s]+)$/, '$1')}&thinsp;<span style="display:inline-block;vertical-align:top;line-height:0.8;margin-top:0.4em;"><span style="display:block;font-size:0.4em;margin:0;">${data.price_sale_decimal || '&nbsp;'}</span><span style="display:block;font-size:0.35em;margin:0;">${data.price_sale.match(/(\s*[^\d\s]+)$/)?.[1] || '&nbsp;'}&nbsp;</span></span></p>
-<p style="position:absolute;top:54.5rem;left:50%;transform:translateX(-50%);white-space:nowrap;font-weight:600;font-size:1.5rem;font-family:'Sriracha',cursive;" class="ft12">${data.unit_price_info}&nbsp;</p>
-${data.ps_option_3 ? `<p style="position:absolute;top:52.8rem;left:50%;transform:translateX(-50%);white-space:nowrap;font-weight:bold" class="ft12-inter">${data.ps_option_3}</p>` : ''}
+<p style="position:absolute;top:38.25rem;left:50%;transform:translateX(-50%);white-space:nowrap;" class="${priceClass}">${data.price_sale.replace(/(\d+)(\s*[^\d\s]+)$/, '$1')}&thinsp;<span style="display:inline-block;vertical-align:top;line-height:0.8;margin-top:0.4em;"><span style="display:block;font-size:0.4em;margin:0;">${data.price_sale_decimal || '&nbsp;'}</span><span style="display:block;font-size:0.25em;margin:0;margin-top:0.2em;">${data.price_sale.match(/(\s*[^\d\s]+)$/)?.[1] || '&nbsp;'}&nbsp;</span></span></p>
+<p style="position:absolute;top:54.8rem;left:50%;transform:translateX(-50%);white-space:nowrap;font-weight:600;font-size:1.5rem;font-family:'Sriracha',cursive;" class="ft12">${data.unit_price_info}&nbsp;</p>
+${data.ps_option_3 ? `<p style="position:absolute;top:53rem;left:50%;transform:translateX(-50%);white-space:nowrap;font-weight:bold" class="ft12-inter">${data.ps_option_3}</p>` : ''}
 </div>
 </body>
 </html>`;
