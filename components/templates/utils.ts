@@ -147,7 +147,11 @@ export const prepareTemplateData = (
     // Thông tin đơn vị giá
     unit_price_info: calculateUnitPrice(),
     product_info: product.product?.product_info || '',
-    pt_vendor: product.templates?.pt_vendor || ''
+    pt_vendor: product.templates?.pt_vendor || '',
+    // Các trường tùy chọn
+    ps_option_1: product.templates?.ps_option_1 || '',
+    ps_option_2: product.templates?.ps_option_2 || '',
+    ps_option_3: product.templates?.ps_option_3 || ''
   };
 };
 

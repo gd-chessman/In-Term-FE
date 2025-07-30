@@ -32,6 +32,10 @@ export interface TemplateData {
   // Thông tin đơn vị giá
   unit_price_info: string;
   product_info: string;
+  // Các trường tùy chọn
+  ps_option_1?: string;
+  ps_option_2?: string;
+  ps_option_3?: string;
 }
 
 export const getTemplate = (format: string) => {
