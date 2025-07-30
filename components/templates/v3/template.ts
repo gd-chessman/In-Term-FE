@@ -19,37 +19,37 @@ export const v3Template = (data: {
   const getPriceClass = (price: string) => {
     if (!price) return 'ft17';
     const length = price.length;
-    if (length <= 3) return 'ft17'; // 8.75rem - kích thước gốc
-    if (length <= 4) return 'ft17-small'; // 7rem
-    if (length <= 5) return 'ft17-medium'; // 6.7rem
-    if (length <= 6) return 'ft17-large'; // 6.4rem
-    if (length <= 7) return 'ft17-xlarge'; // 4.5rem (giảm từ 5rem)
-    if (length <= 8) return 'ft17-xxlarge'; // 4.2rem (giảm từ 4.7rem)
-    if (length <= 9) return 'ft17-xxxlarge'; // 3.9rem (giảm từ 4.4rem)
-    if (length <= 10) return 'ft17-mini'; // 3.6rem (giảm từ 4.1rem)
-    return 'ft17-tiny'; // 3.3rem (giảm từ 3.8rem) - cho trường hợp vượt quá 10
+    if (length <= 3) return 'ft17'; // 10rem - kích thước gốc
+    if (length <= 4) return 'ft17-small'; // 8.2rem
+    if (length <= 5) return 'ft17-medium'; // 7.9rem
+    if (length <= 6) return 'ft17-large'; // 7.6rem
+    if (length <= 7) return 'ft17-xlarge'; // 5.2rem
+    if (length <= 8) return 'ft17-xxlarge'; // 4.9rem
+    if (length <= 9) return 'ft17-xxxlarge'; // 4.6rem
+    if (length <= 10) return 'ft17-mini'; // 4.3rem
+    return 'ft17-tiny'; // 4rem - cho trường hợp vượt quá 10
   };
 
   // Hàm chọn class cho giá gốc (nhỏ hơn 0.6 lần)
   const getOriginalPriceClass = (price: string) => {
     if (!price) return 'ft15-original';
     const length = price.length;
-    if (length <= 3) return 'ft15-original'; // 3.5rem
-    if (length <= 4) return 'ft15-original-small'; // 2.9rem
-    if (length <= 5) return 'ft15-original-medium'; // 2.8rem
-    if (length <= 6) return 'ft15-original-large'; // 2.7rem
-    if (length <= 7) return 'ft15-original-xlarge'; // 2.6rem
-    if (length <= 8) return 'ft15-original-xxlarge'; // 2.5rem
-    if (length <= 9) return 'ft15-original-xxxlarge'; // 2.4rem
-    if (length <= 10) return 'ft15-original-mini'; // 2.3rem
-    return 'ft15-original-tiny'; // 2.2rem - cho trường hợp vượt quá 10
+    if (length <= 3) return 'ft15-original'; // 4.5rem
+    if (length <= 4) return 'ft15-original-small'; // 3.9rem
+    if (length <= 5) return 'ft15-original-medium'; // 3.8rem
+    if (length <= 6) return 'ft15-original-large'; // 3.7rem
+    if (length <= 7) return 'ft15-original-xlarge'; // 3.6rem
+    if (length <= 8) return 'ft15-original-xxlarge'; // 3.5rem
+    if (length <= 9) return 'ft15-original-xxxlarge'; // 3.4rem
+    if (length <= 10) return 'ft15-original-mini'; // 3.3rem
+    return 'ft15-original-tiny'; // 3.2rem - cho trường hợp vượt quá 10
   };
 
   // Hàm tính toán top position cho giá gốc dựa trên độ dài
   const getOriginalPriceTop = (price: string) => {
-    if (!price) return '8.75rem';
+    if (!price) return '7.75rem';
     const length = price.length;
-    const baseTop = 8.75; // vị trí gốc (giảm từ 9 xuống 8.75)
+    const baseTop = 7.75; // vị trí gốc (giảm từ 8.25 xuống 7.75)
     const baseFontSize = 4.9375; // font-size gốc của ft15
     
     let fontSize;
@@ -94,25 +94,25 @@ export const v3Template = (data: {
 	.ft13{font-size:1rem;font-family:"Inter",sans-serif;color:#000000;}
 	.ft14{font-size:4rem;font-family:"Sriracha",cursive;color:#ffffff;}
 	.ft15{font-size:4.9375rem;font-family:"Sriracha",cursive;color:#000000;}
-	.ft15-original{font-size:3.5rem;font-family:"Sriracha",cursive;color:#000000;}
-	.ft15-original-small{font-size:2.9rem;font-family:"Sriracha",cursive;color:#000000;}
-	.ft15-original-medium{font-size:2.8rem;font-family:"Sriracha",cursive;color:#000000;}
-	.ft15-original-large{font-size:2.7rem;font-family:"Sriracha",cursive;color:#000000;}
-	.ft15-original-xlarge{font-size:2.6rem;font-family:"Sriracha",cursive;color:#000000;}
-	.ft15-original-xxlarge{font-size:2.5rem;font-family:"Sriracha",cursive;color:#000000;}
-	.ft15-original-xxxlarge{font-size:2.4rem;font-family:"Sriracha",cursive;color:#000000;}
-	.ft15-original-mini{font-size:2.3rem;font-family:"Sriracha",cursive;color:#000000;}
-	.ft15-original-tiny{font-size:2.2rem;font-family:"Sriracha",cursive;color:#000000;}
+	.ft15-original{font-size:4.5rem;font-family:"Sriracha",cursive;color:#000000;}
+	.ft15-original-small{font-size:3.9rem;font-family:"Sriracha",cursive;color:#000000;}
+	.ft15-original-medium{font-size:3.8rem;font-family:"Sriracha",cursive;color:#000000;}
+	.ft15-original-large{font-size:3.7rem;font-family:"Sriracha",cursive;color:#000000;}
+	.ft15-original-xlarge{font-size:3.6rem;font-family:"Sriracha",cursive;color:#000000;}
+	.ft15-original-xxlarge{font-size:3.5rem;font-family:"Sriracha",cursive;color:#000000;}
+	.ft15-original-xxxlarge{font-size:3.4rem;font-family:"Sriracha",cursive;color:#000000;}
+	.ft15-original-mini{font-size:3.3rem;font-family:"Sriracha",cursive;color:#000000;}
+	.ft15-original-tiny{font-size:3.2rem;font-family:"Sriracha",cursive;color:#000000;}
 	.ft16{font-size:1.75rem;font-family:"Inter",sans-serif;color:#000000;}
-	.ft17{font-size:8.75rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
-	.ft17-small{font-size:7rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
-	.ft17-medium{font-size:6.7rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
-	.ft17-large{font-size:6.4rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
-	.ft17-xlarge{font-size:4.5rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
-	.ft17-xxlarge{font-size:4.2rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
-	.ft17-xxxlarge{font-size:3.9rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
-	.ft17-mini{font-size:3.6rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
-	.ft17-tiny { font-size: 3.3rem; font-family: "Sriracha", cursive; color: #000000; margin-top: 1.5rem; font-weight:bold; }
+	.ft17{font-size:10rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
+	.ft17-small{font-size:8.2rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
+	.ft17-medium{font-size:7.9rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
+	.ft17-large{font-size:7.6rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
+	.ft17-xlarge{font-size:5.2rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
+	.ft17-xxlarge{font-size:4.9rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
+	.ft17-xxxlarge{font-size:4.6rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
+	.ft17-mini{font-size:4.3rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
+	.ft17-tiny { font-size: 4rem; font-family: "Sriracha", cursive; color: #000000; margin-top: 1.5rem; font-weight:bold; }
 	.ft18{font-size:3.125rem;font-family:"Inter",sans-serif;color:#000000;}
 	.ft19{font-size:1.9375rem;font-family:"Inter",sans-serif;color:#000000;}
 	.ft110{font-size:0.8125rem;font-family:"Inter",sans-serif;color:#000000;}
@@ -241,8 +241,8 @@ export const v3Template = (data: {
 <p style="position:absolute;top:5.9375rem;left:0.5625rem;white-space:nowrap" class="ft12">${data.pt_origin_country}: ${data.country_code} ${data.country_name}</p>
 <p style="position:absolute;top:7.3125rem;left:20.1875rem;white-space:nowrap" class="ft13">${data.pt_original_price}:</p>
 <p style="position:absolute;top:8.6rem;left:0.8125rem;white-space:nowrap;font-weight:bold" class="ft14">${data.discount_percentage}</p>
-<p style="position:absolute;top:${originalPriceTop};left:24rem;white-space:nowrap" class="${originalPriceClass}">${data.price.replace(/(\d+)(\s*[^\d\s]+)$/, '$1')}${data.price_decimal ? `<span class="decimal-superscript">&thinsp;${data.price_decimal}</span>` : ''}</p>
-<p style="position:absolute;top:6.8rem;right:2rem;white-space:nowrap" class="${priceClass}">${data.price_sale.replace(/(\d+)(\s*[^\d\s]+)$/, '$1')}&thinsp;<span style="display:inline-block;vertical-align:top;line-height:0.8;margin-top:0.4em;"><span style="display:block;font-size:0.4em;margin:0;">${data.price_sale_decimal || '&nbsp;'}</span><span style="display:block;font-size:0.35em;margin:0;">${data.price_sale.match(/(\s*[^\d\s]+)$/)?.[1] || '&nbsp;'}&nbsp;</span></span></p>
+<p style="position:absolute;top:${originalPriceTop};left:23.6rem;white-space:nowrap" class="${originalPriceClass}">${data.price.replace(/(\d+)(\s*[^\d\s]+)$/, '$1')}${data.price_decimal ? `<span class="decimal-superscript">&thinsp;${data.price_decimal}</span>` : ''}</p>
+<p style="position:absolute;top:5.4rem;right:2rem;white-space:nowrap" class="${priceClass}">${data.price_sale.replace(/(\d+)(\s*[^\d\s]+)$/, '$1')}&thinsp;<span style="display:inline-block;vertical-align:top;line-height:0.8;margin-top:0.4em;"><span style="display:block;font-size:0.4em;margin:0;">${data.price_sale_decimal || '&nbsp;'}</span><span style="display:block;font-size:0.25em;margin:0;margin-top:0.2em;">${data.price_sale.match(/(\s*[^\d\s]+)$/)?.[1] || '&nbsp;'}&nbsp;</span></span></p>
 <p style="position:absolute;top:15.1875rem;right:2rem;white-space:nowrap;font-weight:600;font-size:1rem;font-family:'Sriracha',cursive;" class="ft13">${data.unit_price_info}&nbsp;</p>
 <p style="position:absolute;top:15.1875rem;left:0.5625rem;white-space:nowrap" class="ft110">${data.pt_product_code}: ${data.product_code}</p>
 </div>
