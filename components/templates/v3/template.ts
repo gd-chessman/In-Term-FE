@@ -104,15 +104,15 @@ export const v3Template = (data: {
 	.ft15-original-mini{font-size:3.3rem;font-family:"Sriracha",cursive;color:#000000;}
 	.ft15-original-tiny{font-size:3.2rem;font-family:"Sriracha",cursive;color:#000000;}
 	.ft16{font-size:1.75rem;font-family:"Inter",sans-serif;color:#000000;}
-	.ft17{font-size:11rem;font-family:"Sriracha",cursive;color:#000000;font-weight:900;}
-	.ft17-small{font-size:9.02rem;font-family:"Sriracha",cursive;color:#000000;font-weight:900;}
-	.ft17-medium{font-size:8.69rem;font-family:"Sriracha",cursive;color:#000000;font-weight:900;}
-	.ft17-large{font-size:8.36rem;font-family:"Sriracha",cursive;color:#000000;font-weight:900;}
-	.ft17-xlarge{font-size:5.72rem;font-family:"Sriracha",cursive;color:#000000;font-weight:900;}
-	.ft17-xxlarge{font-size:5.39rem;font-family:"Sriracha",cursive;color:#000000;font-weight:900;}
-	.ft17-xxxlarge{font-size:5.06rem;font-family:"Sriracha",cursive;color:#000000;font-weight:900;}
-	.ft17-mini{font-size:4.73rem;font-family:"Sriracha",cursive;color:#000000;font-weight:900;}
-	.ft17-tiny { font-size: 4.4rem; font-family: "Sriracha", cursive; color: #000000; margin-top: 1.5rem; font-weight:900; }
+	.ft17{font-size:12.1rem;font-family:"Sriracha",cursive;color:#000000;font-weight:900;}
+	.ft17-small{font-size:9.922rem;font-family:"Sriracha",cursive;color:#000000;font-weight:900;}
+	.ft17-medium{font-size:9.559rem;font-family:"Sriracha",cursive;color:#000000;font-weight:900;}
+	.ft17-large{font-size:9.196rem;font-family:"Sriracha",cursive;color:#000000;font-weight:900;}
+	.ft17-xlarge{font-size:6.292rem;font-family:"Sriracha",cursive;color:#000000;font-weight:900;}
+	.ft17-xxlarge{font-size:5.929rem;font-family:"Sriracha",cursive;color:#000000;font-weight:900;}
+	.ft17-xxxlarge{font-size:5.566rem;font-family:"Sriracha",cursive;color:#000000;font-weight:900;}
+	.ft17-mini{font-size:5.203rem;font-family:"Sriracha",cursive;color:#000000;font-weight:900;}
+	.ft17-tiny { font-size: 4.84rem; font-family: "Sriracha", cursive; color: #000000; margin-top: 1.5rem; font-weight:900; }
 	.ft18{font-size:3.125rem;font-family:"Inter",sans-serif;color:#000000;}
 	.ft19{font-size:1.9375rem;font-family:"Inter",sans-serif;color:#000000;}
 	.ft110{font-size:0.8125rem;font-family:"Inter",sans-serif;color:#000000;}
@@ -242,7 +242,7 @@ export const v3Template = (data: {
 <p style="position:absolute;top:7.3125rem;left:20.1875rem;white-space:nowrap" class="ft13">${data.pt_original_price}:</p>
 <p style="position:absolute;top:8.6rem;left:0.8125rem;white-space:nowrap;font-weight:bold" class="ft14">${data.discount_percentage}</p>
 <p style="position:absolute;top:${originalPriceTop};left:23.6rem;white-space:nowrap" class="${originalPriceClass}">${data.price.replace(/(\d+)(\s*[^\d\s]+)$/, '$1')}${data.price_decimal ? `<span class="decimal-superscript">&thinsp;${data.price_decimal}</span>` : ''}</p>
-<p style="position:absolute;top:4.2rem;right:2rem;white-space:nowrap" class="${priceClass}">${data.price_sale.replace(/(\d+)(\s*[^\d\s]+)$/, '$1')}&thinsp;<span style="display:inline-block;vertical-align:top;line-height:0.8;margin-top:0.4em;"><span style="display:block;font-size:0.4em;margin:0;">${data.price_sale_decimal || '&nbsp;'}</span><span style="display:block;font-size:0.25em;margin:0;margin-top:0.2em;">${data.price_sale.match(/(\s*[^\d\s]+)$/)?.[1] || '&nbsp;'}&nbsp;</span></span></p>
+<p style="position:absolute;top:3.2rem;right:1.5rem;white-space:nowrap" class="${priceClass}">${data.price_sale.replace(/(\d+)(\s*[^\d\s]+)$/, '$1')}&thinsp;<span style="display:inline-block;vertical-align:top;line-height:0.8;margin-top:0.4em;"><span style="display:block;font-size:0.4em;margin:0;">${data.price_sale_decimal || '&nbsp;'}</span><span style="display:block;font-size:0.25em;margin:0;margin-top:0.2em;">${data.price_sale.match(/(\s*[^\d\s]+)$/)?.[1] || '&nbsp;'}&nbsp;</span></span></p>
 <p style="position:absolute;top:15.1875rem;right:2rem;white-space:nowrap;font-weight:600;font-size:1rem;font-family:'Sriracha',cursive;" class="ft13">${data.unit_price_info}&nbsp;</p>
 <p style="position:absolute;top:15.1875rem;left:0.5625rem;white-space:nowrap" class="ft110">${data.pt_product_code}: ${data.product_code}</p>
 </div>
