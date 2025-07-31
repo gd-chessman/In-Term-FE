@@ -95,7 +95,7 @@ export const a5Template = (data: {
 	  /* Font classes với đơn vị rem */
 	  .ft10{font-size:4.0625rem;font-family:"Sriracha",cursive;color:#ffffff;}
 	  .ft11{font-size:1.75rem;font-family:"Inter",sans-serif;color:#000000;}
-	  .ft12{font-size:0.8125rem;font-family:"Sriracha",cursive;color:#000000;}
+	  .ft12{font-size:0.95rem;font-family:"Sriracha",cursive;color:#000000;}
 	  .ft13{font-size:0.625rem;font-family:"Inter",sans-serif;color:#000000;}
 	  .ft14{font-size:1.1875rem;font-family:"Inter",sans-serif;color:#000000;}
 	  .ft15{font-size:5rem;font-family:"Sriracha",cursive;color:#ffffff;}
