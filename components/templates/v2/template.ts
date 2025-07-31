@@ -104,15 +104,15 @@ export const v2Template = (data: {
 	.ft14-original-mini{font-size:1.9rem;font-family:"Sriracha",cursive;color:#000000;}
 	.ft14-original-tiny{font-size:1.8rem;font-family:"Sriracha",cursive;color:#000000;}
 	.ft15{font-size:1.1875rem;font-family:"Inter",sans-serif;color:#000000;}
-	.ft16{font-size:5rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
-	.ft16-small{font-size:4.1rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
-	.ft16-medium{font-size:3.9rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
-	.ft16-large{font-size:3.7rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
-	.ft16-xlarge{font-size:3.5rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
-	.ft16-xxlarge{font-size:3.3rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
-	.ft16-xxxlarge{font-size:3.1rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
-	.ft16-mini{font-size:3rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
-	.ft16-tiny{font-size:2.8rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
+	.ft16{font-size:5.5rem;font-family:"Sriracha",cursive;color:#000000;font-weight:900;}
+	.ft16-small{font-size:4.51rem;font-family:"Sriracha",cursive;color:#000000;font-weight:900;}
+	.ft16-medium{font-size:4.29rem;font-family:"Sriracha",cursive;color:#000000;font-weight:900;}
+	.ft16-large{font-size:4.07rem;font-family:"Sriracha",cursive;color:#000000;font-weight:900;}
+	.ft16-xlarge{font-size:3.85rem;font-family:"Sriracha",cursive;color:#000000;font-weight:900;}
+	.ft16-xxlarge{font-size:3.63rem;font-family:"Sriracha",cursive;color:#000000;font-weight:900;}
+	.ft16-xxxlarge{font-size:3.41rem;font-family:"Sriracha",cursive;color:#000000;font-weight:900;}
+	.ft16-mini{font-size:3.3rem;font-family:"Sriracha",cursive;color:#000000;font-weight:900;}
+	.ft16-tiny{font-size:3.08rem;font-family:"Sriracha",cursive;color:#000000;font-weight:900;}
 	.ft17{font-size:1.5625rem;font-family:"Inter",sans-serif;color:#000000;}
 	.ft18{font-size:1rem;font-family:"Inter",sans-serif;color:#000000;}
 	.ft19{font-size:0.625rem;font-family:"Inter",sans-serif;color:#000000;}

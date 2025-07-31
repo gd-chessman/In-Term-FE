@@ -110,15 +110,15 @@ export const a5Template = (data: {
 	  .ft16-original-mini{font-size:3.6rem;font-family:"Sriracha",cursive;color:#000000;}
 	  .ft16-original-tiny{font-size:3.375rem;font-family:"Sriracha",cursive;color:#000000;}
 	  .ft17{font-size:2.6875rem;font-family:"Inter",sans-serif;color:#000000;}
-	  .ft18{font-size:12.0625rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
-	  .ft18-small{font-size:9.65rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
-	  .ft18-medium{font-size:9.225rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
-	  .ft18-large{font-size:8.8rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
-	  .ft18-xlarge{font-size:8.375rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
-	  .ft18-xxlarge{font-size:7.95rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
-	  .ft18-xxxlarge{font-size:7.525rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
-	  .ft18-mini{font-size:7.1rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
-	  .ft18-tiny{font-size:6.675rem;font-family:"Sriracha",cursive;color:#000000;font-weight:bold;}
+	.ft18{font-size:13.26875rem;font-family:"Sriracha",cursive;color:#000000;font-weight:900;}
+	.ft18-small{font-size:10.615rem;font-family:"Sriracha",cursive;color:#000000;font-weight:900;}
+	.ft18-medium{font-size:10.1475rem;font-family:"Sriracha",cursive;color:#000000;font-weight:900;}
+	.ft18-large{font-size:9.68rem;font-family:"Sriracha",cursive;color:#000000;font-weight:900;}
+	.ft18-xlarge{font-size:9.2125rem;font-family:"Sriracha",cursive;color:#000000;font-weight:900;}
+	.ft18-xxlarge{font-size:8.745rem;font-family:"Sriracha",cursive;color:#000000;font-weight:900;}
+	.ft18-xxxlarge{font-size:8.2775rem;font-family:"Sriracha",cursive;color:#000000;font-weight:900;}
+	.ft18-mini{font-size:7.81rem;font-family:"Sriracha",cursive;color:#000000;font-weight:900;}
+	.ft18-tiny{font-size:7.3425rem;font-family:"Sriracha",cursive;color:#000000;font-weight:900;}
 	  .ft19{font-size:3.625rem;font-family:"Inter",sans-serif;color:#000000;}
 	  .ft110{font-size:1.5625rem;font-family:"Inter",sans-serif;color:#000000;}
 	  .ft111{font-size:1px;font-family:Helvetica;color:#000000;}
@@ -249,7 +249,7 @@ export const a5Template = (data: {
   <p style="position:absolute;top:11.1875rem;left:29.5rem;white-space:nowrap" class="ft14">${data.pt_original_price}:</p>
   <p style="position:absolute;top:11.8rem;left:5.1875rem;white-space:nowrap;font-weight:bold" class="ft15">${data.discount_percentage}</p>
   <p style="position:absolute;top:${originalPriceTop};left:32.8rem;white-space:nowrap" class="${originalPriceClass}">${data.price.replace(/(\d+)(\s*[^\d\s]+)$/, '$1')}${data.price_decimal ? `<span class="decimal-superscript">&thinsp;${data.price_decimal}</span>` : ''}</p>
-  <p style="position:absolute;top:16.525rem;left:50%;transform:translateX(-50%);white-space:nowrap" class="${priceClass}">${data.price_sale.replace(/(\d+)(\s*[^\d\s]+)$/, '$1')}&thinsp;<span style="display:inline-block;vertical-align:top;line-height:0.8;margin-top:0.4em;"><span style="display:block;font-size:0.4em;margin:0;">${data.price_sale_decimal || '&nbsp;'}</span><span style="display:block;font-size:0.25em;margin:0;margin-top:0.2em;">${data.price_sale.match(/(\s*[^\d\s]+)$/)?.[1] || '&nbsp;'}&nbsp;</span></span></p>
+  <p style="position:absolute;top:16rem;left:50%;transform:translateX(-50%);white-space:nowrap" class="${priceClass}">${data.price_sale.replace(/(\d+)(\s*[^\d\s]+)$/, '$1')}&thinsp;<span style="display:inline-block;vertical-align:top;line-height:0.8;margin-top:0.4em;"><span style="display:block;font-size:0.4em;margin:0;">${data.price_sale_decimal || '&nbsp;'}</span><span style="display:block;font-size:0.25em;margin:0;margin-top:0.2em;">${data.price_sale.match(/(\s*[^\d\s]+)$/)?.[1] || '&nbsp;'}&nbsp;</span></span></p>
   <p style="position:absolute;top:30rem;left:50%;transform:translateX(-50%);white-space:nowrap;font-weight:600;font-size:1.25rem;font-family:'Sriracha',cursive;" class="ft12">${data.unit_price_info}&nbsp;</p>
   ${data.ps_option_3 ? `<p style="position:absolute;top:28.8rem;left:50%;transform:translateX(-50%);white-space:nowrap;font-weight:bold" class="ft12">${data.ps_option_3}</p>` : ''}
   </div>
