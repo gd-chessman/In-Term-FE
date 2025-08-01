@@ -97,7 +97,6 @@ export default function PrintTemplatesPage() {
     pt_unit_price: "",
     pt_currency: "",
     pt_vendor: "",
-    pt_content: ""
   })
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [templateToDelete, setTemplateToDelete] = useState<any>(null)
@@ -172,7 +171,6 @@ export default function PrintTemplatesPage() {
       setFormData({
         pt_country_id: "",
         pt_title: "",
-        pt_content: "",
         pt_brand: "",
         pt_origin_country: "",
         pt_product_code: "",
@@ -229,8 +227,7 @@ export default function PrintTemplatesPage() {
 
   const filteredTemplates = templates.filter((template: any) => {
     const matchesSearch =
-      template.pt_title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      template.pt_content.toLowerCase().includes(searchTerm.toLowerCase())
+      template.pt_title.toLowerCase().includes(searchTerm.toLowerCase())
     const matchesCountry = selectedCountry === "all" || template.country?.country_code === selectedCountry
     return matchesSearch && matchesCountry
   })
@@ -259,7 +256,6 @@ export default function PrintTemplatesPage() {
       pt_unit_price: formData.pt_unit_price.trim(),
       pt_currency: formData.pt_currency.trim(),
       pt_vendor: formData.pt_vendor.trim(),
-      pt_content: formData.pt_content.trim()
     }
     
     createTemplateMutation.mutate(payload)
