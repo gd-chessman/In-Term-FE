@@ -1491,7 +1491,7 @@
         "product": "Product",
         "selectProduct": "Select product",
         "searchProduct": "Search product...",
-        "countryTemplate": "Country print template",
+        "countryTemplate": "Template Name",
         "selectCountryTemplate": "Select country print template",
         "salePrice": "Sale price (optional)",
         "enterSalePrice": "Enter sale price",
@@ -1526,7 +1526,7 @@
       "fields": {
         "product": "Product",
         "selectProduct": "Select product",
-        "countryTemplate": "Country print template",
+        "countryTemplate": "Template Name",
         "selectCountryTemplate": "Select country print template",
         "salePrice": "Sale price (optional)",
         "enterSalePrice": "Enter sale price",
@@ -1579,7 +1579,7 @@
       "openMenu": "Open menu",
       "headers": {
         "product": "Product",
-        "countryTemplate": "Country print template",
+        "countryTemplate": "Template Name",
         "originalPrice": "Original price",
         "salePrice": "Sale price",
         "saleTime": "Sale time",

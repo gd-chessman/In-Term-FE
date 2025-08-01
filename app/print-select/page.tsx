@@ -86,7 +86,7 @@ export default function PrintSelectPage() {
   const [editingItem, setEditingItem] = useState<any>(null)
   const [editFormData, setEditFormData] = useState({
     ps_product_id: "",
-    ps_country_id: "",
+    ps_template_id: "",
     ps_price_sale: "",
     ps_time_sale_start: "",
     ps_time_sale_end: "",
@@ -131,7 +131,7 @@ export default function PrintSelectPage() {
   // Form state for creating print selection
   const [formData, setFormData] = useState({
     ps_product_id: "",
-    ps_country_id: "",
+    ps_template_id: "",
     ps_price_sale: "",
     ps_time_sale_start: "",
     ps_time_sale_end: "",
@@ -201,7 +201,7 @@ export default function PrintSelectPage() {
       setIsCreateDialogOpen(false)
       setFormData({
         ps_product_id: "",
-        ps_country_id: "",
+        ps_template_id: "",
         ps_price_sale: "",
         ps_time_sale_start: "",
         ps_time_sale_end: "",
@@ -240,7 +240,7 @@ export default function PrintSelectPage() {
       setEditingItem(null)
       setEditFormData({
         ps_product_id: "",
-        ps_country_id: "",
+        ps_template_id: "",
         ps_price_sale: "",
         ps_time_sale_start: "",
         ps_time_sale_end: "",
@@ -335,14 +335,14 @@ export default function PrintSelectPage() {
   const handleCreateSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     
-    if (!formData.ps_product_id || !formData.ps_country_id) {
+    if (!formData.ps_product_id || !formData.ps_template_id) {
       toast.error(t('printSelect.toasts.requiredFields'))
       return
     }
 
     const submitData = {
       ps_product_id: parseInt(formData.ps_product_id),
-      ps_country_id: parseInt(formData.ps_country_id),
+      ps_template_id: parseInt(formData.ps_template_id),
       ps_price_sale: formData.ps_price_sale ? parseFloat(formData.ps_price_sale) : null,
       ps_time_sale_start: formData.ps_time_sale_start || null,
       ps_time_sale_end: formData.ps_time_sale_end || null,
@@ -611,7 +611,7 @@ export default function PrintSelectPage() {
     // Pre-fill form data
     setEditFormData({
       ps_product_id: item.ps_product_id?.toString() || "",
-      ps_country_id: item.ps_country_id?.toString() || "",
+      ps_template_id: item.ps_template_id?.toString() || "",
       ps_price_sale: Number(item.ps_price_sale).toString() || "",
       ps_time_sale_start: formatDateForInput(item.ps_time_sale_start),
       ps_time_sale_end: formatDateForInput(item.ps_time_sale_end),
@@ -640,7 +640,7 @@ export default function PrintSelectPage() {
     // Pre-fill form data
     setEditFormData({
       ps_product_id: item.ps_product_id?.toString() || "",
-      ps_country_id: item.ps_country_id?.toString() || "",
+      ps_template_id: item.ps_template_id?.toString() || "",
       ps_price_sale: Number(item.ps_price_sale).toString() || "",
       ps_time_sale_start: formatDateForInput(item.ps_time_sale_start),
       ps_time_sale_end: formatDateForInput(item.ps_time_sale_end),
@@ -671,7 +671,7 @@ export default function PrintSelectPage() {
     // Pre-fill form data
     setEditFormData({
       ps_product_id: item.ps_product_id?.toString() || "",
-      ps_country_id: item.ps_country_id?.toString() || "",
+      ps_template_id: item.ps_template_id?.toString() || "",
       ps_price_sale: Number(item.ps_price_sale).toString() || "",
       ps_time_sale_start: formatDateForInput(item.ps_time_sale_start),
       ps_time_sale_end: formatDateForInput(item.ps_time_sale_end),
@@ -702,7 +702,7 @@ export default function PrintSelectPage() {
     // Pre-fill form data
     setEditFormData({
       ps_product_id: item.ps_product_id?.toString() || "",
-      ps_country_id: item.ps_country_id?.toString() || "",
+      ps_template_id: item.ps_template_id?.toString() || "",
       ps_price_sale: Number(item.ps_price_sale).toString() || "",
       ps_time_sale_start: formatDateForInput(item.ps_time_sale_start),
       ps_time_sale_end: formatDateForInput(item.ps_time_sale_end),
@@ -733,7 +733,7 @@ export default function PrintSelectPage() {
     // Pre-fill form data
     setEditFormData({
       ps_product_id: item.ps_product_id?.toString() || "",
-      ps_country_id: item.ps_country_id?.toString() || "",
+      ps_template_id: item.ps_template_id?.toString() || "",
       ps_price_sale: Number(item.ps_price_sale).toString() || "",
       ps_time_sale_start: formatDateForInput(item.ps_time_sale_start),
       ps_time_sale_end: formatDateForInput(item.ps_time_sale_end),
@@ -754,7 +754,7 @@ export default function PrintSelectPage() {
 
     const updateData = {
       ps_product_id: parseInt(editFormData.ps_product_id),
-      ps_country_id: parseInt(editFormData.ps_country_id),
+      ps_template_id: parseInt(editFormData.ps_template_id),
       ps_price_sale: editFormData.ps_price_sale ? parseFloat(editFormData.ps_price_sale) : null,
       ps_time_sale_start: editFormData.ps_time_sale_start || null,
       ps_time_sale_end: editFormData.ps_time_sale_end || null,
@@ -1075,13 +1075,13 @@ export default function PrintSelectPage() {
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="country">{t('printSelect.addProduct.fields.countryTemplate')} *</Label>
-                      <Select value={formData.ps_country_id} onValueChange={(value) => setFormData({...formData, ps_country_id: value})}>
+                      <Select value={formData.ps_template_id} onValueChange={(value) => setFormData({...formData, ps_template_id: value})}>
                         <SelectTrigger>
                           <SelectValue placeholder={t('printSelect.addProduct.fields.selectCountryTemplate')} />
                         </SelectTrigger>
                         <SelectContent>
                           {printTemplates.map((template: any) => (
-                            <SelectItem key={template.pt_country_id} value={template.pt_country_id.toString()}>
+                            <SelectItem key={template.pt_id} value={template.pt_id.toString()}>
                               <div className="flex items-center space-x-2">
                                 <span>{getCountryFlag(template.country?.country_code)}</span>
                                 <span>{template.pt_title}</span>
@@ -1583,8 +1583,7 @@ export default function PrintSelectPage() {
                         className="flex items-center space-x-2 cursor-pointer hover:bg-blue-50 rounded px-2 py-1 transition-colors"
                         onClick={() => handleEditItemFromCountry(item)}
                       >
-                        <span className="text-xl">{item.country?.country_code ? getCountryFlag(item.country.country_code) : "🌍"}</span>
-                        <span>{item.country?.country_name}</span>
+                        <span>{item.templates?.pt_title}</span>
                       </div>
                     </TableCell>
                     <TableCell className="font-medium text-gray-600">
@@ -2239,8 +2238,8 @@ export default function PrintSelectPage() {
                   <div className="space-y-2">
                     <Label htmlFor="edit_country">{t('printSelect.editInfo.fields.countryTemplate')} *</Label>
                     <Select 
-                      value={editFormData.ps_country_id} 
-                      onValueChange={(value) => setEditFormData({...editFormData, ps_country_id: value})}
+                      value={editFormData.ps_template_id} 
+                      onValueChange={(value) => setEditFormData({...editFormData, ps_template_id: value})}
                       open={isCountrySelectOpen}
                       onOpenChange={setIsCountrySelectOpen}
                     >
@@ -2249,7 +2248,7 @@ export default function PrintSelectPage() {
                       </SelectTrigger>
                       <SelectContent>
                         {printTemplates.map((template: any) => (
-                          <SelectItem key={template.pt_country_id} value={template.pt_country_id.toString()}>
+                          <SelectItem key={template.pt_id} value={template.pt_id.toString()}>
                             <div className="flex items-center space-x-2">
                               <span className="text-lg">{getCountryFlag(template.country?.country_code)}</span>
                               <span>{template.pt_title}</span>

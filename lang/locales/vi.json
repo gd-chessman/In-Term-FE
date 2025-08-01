@@ -1467,7 +1467,7 @@
         "product": "Sản phẩm",
         "selectProduct": "Chọn sản phẩm",
         "searchProduct": "Tìm kiếm sản phẩm...",
-        "countryTemplate": "Mẫu in quốc gia",
+        "countryTemplate": "Tên mẫu in",
         "selectCountryTemplate": "Chọn mẫu in quốc gia",
         "salePrice": "Giá khuyến mãi (tùy chọn)",
         "enterSalePrice": "Nhập giá khuyến mãi",
@@ -1502,7 +1502,7 @@
       "fields": {
         "product": "Sản phẩm",
         "selectProduct": "Chọn sản phẩm",
-        "countryTemplate": "Mẫu in quốc gia",
+        "countryTemplate": "Tên mẫu in",
         "selectCountryTemplate": "Chọn mẫu in quốc gia",
         "salePrice": "Giá khuyến mãi (tùy chọn)",
         "enterSalePrice": "Nhập giá bán khuyến mãi",
@@ -1555,7 +1555,7 @@
       "openMenu": "Mở menu",
       "headers": {
         "product": "Sản phẩm",
-        "countryTemplate": "Mẫu in quốc gia",
+        "countryTemplate": "Tên mẫu in",
         "originalPrice": "Giá gốc",
         "salePrice": "Giá khuyến mãi",
         "saleTime": "Thời gian bán",

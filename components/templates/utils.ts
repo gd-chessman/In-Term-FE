@@ -49,7 +49,7 @@ export const prepareTemplateData = (
     if (!price) return '0'
     
     // Danh sách các currency symbol đặt trước giá (chỉ những symbol thực sự đặt trước)
-    const prefixCurrencies = ['$', '€', '£', '¥', '₩', '₽', '₹', '₪', '₦', '₨', '₱', '₴', '₸', '₺', '₼', '₾', '₿']
+    const prefixCurrencies = ['']
     
     // Chỉ lấy phần nguyên
     const wholePart = Math.floor(price)
@@ -79,7 +79,7 @@ export const prepareTemplateData = (
     const decimalPart = (unitPrice % 1).toFixed(2).substring(2) // Luôn lấy 2 chữ số thập phân
     
     // Danh sách các currency symbol đặt trước giá
-    const prefixCurrencies = ['$', '€', '£', '¥', '₩', '₽', '₹', '₪', '₦', '₨', '₱', '₴', '₸', '₺', '₼', '₾', '₿']
+    const prefixCurrencies = ['']
     
     const formattedWholePart = wholePart.toLocaleString('en-US')
     

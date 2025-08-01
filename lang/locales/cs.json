@@ -1469,7 +1469,7 @@
         "product": "Produkt",
         "selectProduct": "Vyberte produkt",
         "searchProduct": "Vyhledat produkt...",
-        "countryTemplate": "Šablona tisku země",
+        "countryTemplate": "Název šablony",
         "selectCountryTemplate": "Vyberte šablonu tisku země",
         "salePrice": "Prodejní cena (volitelné)",
         "enterSalePrice": "Zadejte prodejní cenu",
@@ -1504,7 +1504,7 @@
       "fields": {
         "product": "Produkt",
         "selectProduct": "Vyberte produkt",
-        "countryTemplate": "Šablona tisku země",
+        "countryTemplate": "Název šablony",
         "selectCountryTemplate": "Vyberte šablonu tisku země",
         "salePrice": "Prodejní cena (volitelné)",
         "enterSalePrice": "Zadejte prodejní cenu",
@@ -1557,7 +1557,7 @@
       "openMenu": "Otevřít menu",
       "headers": {
         "product": "Produkt",
-        "countryTemplate": "Šablona tisku země",
+        "countryTemplate": "Název šablony",
         "originalPrice": "Původní cena",
         "salePrice": "Prodejní cena",
         "saleTime": "Čas prodeje",
