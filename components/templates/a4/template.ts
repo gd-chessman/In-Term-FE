@@ -162,6 +162,11 @@ export const a4Template = (data: {
 	
 	/* Print media queries để đảm bảo in đúng */
 	@media print {
+		@page {
+			size: A4;
+			margin: 0;
+		}
+		
 		html {
 			font-size: 16px !important; /* Cố định font-size gốc cho rem */
 		}
@@ -208,10 +213,17 @@ export const a4Template = (data: {
 			position: absolute !important;
 		}
 		
-		/* Đảm bảo không có page break */
+		/* Đảm bảo không có page break không mong muốn */
 		* {
 			page-break-inside: avoid !important;
 			break-inside: avoid !important;
+		}
+		
+		/* Ngăn chặn trang trắng không cần thiết */
+		body:empty,
+		body:blank,
+		#page1-div:empty {
+			display: none !important;
 		}
 	}
 	
