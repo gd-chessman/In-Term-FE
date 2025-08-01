@@ -35,18 +35,18 @@ export const generateMultipleProductsHTML = (format: string, products: TemplateD
 /**
  * Chuẩn bị dữ liệu template từ dữ liệu sản phẩm
  * @param product - Dữ liệu sản phẩm từ API
- * @param currencySymbol - Ký hiệu tiền tệ từ template (VD: $, €, ¥, ₫)
  * @returns TemplateData
  */
 export const prepareTemplateData = (
-  product: any, 
-  currencySymbol: string = '$'
+  product: any
 ): TemplateData => {
   console.log(product)
   
   // Hàm format giá với currency symbol từ template (chỉ phần nguyên)
   const formatPrice = (price: number) => {
     if (!price) return '0'
+    
+    const currencySymbol = product.templates?.pt_currency || '$'
     
     // Danh sách các currency symbol đặt trước giá (chỉ những symbol thực sự đặt trước)
     const prefixCurrencies = ['']
@@ -77,6 +77,8 @@ export const prepareTemplateData = (
     // Format giá đơn vị với 2 chữ số thập phân
     const wholePart = Math.floor(unitPrice)
     const decimalPart = (unitPrice % 1).toFixed(2).substring(2) // Luôn lấy 2 chữ số thập phân
+    
+    const currencySymbol = product.templates?.pt_currency || '$'
     
     // Danh sách các currency symbol đặt trước giá
     const prefixCurrencies = ['']

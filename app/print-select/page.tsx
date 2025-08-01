@@ -450,7 +450,7 @@ export default function PrintSelectPage() {
       console.log(`Debug - item ${itemIndex + 1} has ${itemCopies} copies`)
       
       // Tạo template data cho sản phẩm này
-      const templateData = prepareTemplateData(item, template?.pt_currency || '$')
+      const templateData = prepareTemplateData(item)
       
       // Tạo nhiều bản in cho sản phẩm này
       for (let copyIndex = 0; copyIndex < itemCopies; copyIndex++) {
@@ -2014,7 +2014,7 @@ export default function PrintSelectPage() {
                             .map((item: any, itemIndex: number) => {
                               // Sử dụng template system mới
                               const selectedTemplate = printFormats.find((f: any) => f.id === selectedPrintFormat)?.template
-                              const templateData = prepareTemplateData(item, selectedTemplate?.pt_currency || '$')
+                              const templateData = prepareTemplateData(item)
                               const template = getTemplate(selectedPrintSize)
                               const previewHTML = template(templateData)
                               
