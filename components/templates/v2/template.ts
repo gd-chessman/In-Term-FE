@@ -161,6 +161,11 @@ export const v2Template = (data: {
 	
 	/* Print media queries để đảm bảo in đúng */
 	@media print {
+		@page {
+			size: A4;
+			margin: 0;
+		}
+		
 		html {
 			font-size: 16px !important; /* Cố định font-size gốc cho rem */
 		}
@@ -219,6 +224,12 @@ export const v2Template = (data: {
 		* {
 			page-break-inside: avoid !important;
 			break-inside: avoid !important;
+		}
+		
+		/* Ngăn chặn trang trắng đơn giản */
+		body {
+			page-break-after: avoid !important;
+			page-break-before: avoid !important;
 		}
 	}
 	
