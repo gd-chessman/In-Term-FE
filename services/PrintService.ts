@@ -11,7 +11,7 @@ export const getPrintTemplates = async () => {
 
 export const createPrintTemplate = async (item: any) => {
     try {
-        const temp = await axiosClient.post(`prints/setting-templates`, item);
+        const temp = await axiosClient.post(`prints/templates/setting-templates`, item);
         return temp.data;
     } catch (e) {
         throw e;
