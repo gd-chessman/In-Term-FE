@@ -104,16 +104,44 @@ export default function PrintSelectPage() {
   // Reset labelQuantity khi chuyển template
   const handlePrintSizeChange = (size: string) => {
     setSelectedPrintSize(size)
-    // Reset labelQuantity về 6 khi chuyển từ v1 hoặc v2 sang template khác
-    if (size !== 'v1' && size !== 'v2') {
+    // Reset labelQuantity theo template mới
+    if (size === 'v1' || size === 'v2' || size === 'v3') {
+      const defaultQuantity = getDefaultQuantity(size)
+      setLabelQuantity(defaultQuantity)
+      setLabelQuantityInput(defaultQuantity.toString())
+    } else {
       setLabelQuantity(6)
       setLabelQuantityInput('6')
     }
   }
   const [printCopies, setPrintCopies] = useState(1)
   const [selectedPrintCopies, setSelectedPrintCopies] = useState(1)
-  const [labelQuantity, setLabelQuantity] = useState(6) // Số lượng nhãn trong 1 trang (chỉ cho v1)
+  const [labelQuantity, setLabelQuantity] = useState(6) // Số lượng nhãn trong 1 trang (chỉ cho v1, v2, v3)
   const [labelQuantityInput, setLabelQuantityInput] = useState('6') // Giá trị input tạm thời
+  
+  // Hàm lấy max quantity theo template
+  const getMaxQuantity = (template: string) => {
+    switch (template) {
+      case 'v3':
+        return 4;
+      case 'v1':
+      case 'v2':
+      default:
+        return 6;
+    }
+  }
+  
+  // Hàm lấy default quantity theo template
+  const getDefaultQuantity = (template: string) => {
+    switch (template) {
+      case 'v3':
+        return 4;
+      case 'v1':
+      case 'v2':
+      default:
+        return 6;
+    }
+  }
   const [printNote, setPrintNote] = useState("")
   const [isEditNumDialogOpen, setIsEditNumDialogOpen] = useState(false)
   const [editingNumData, setEditingNumData] = useState({
@@ -462,7 +490,7 @@ export default function PrintSelectPage() {
       console.log(`Debug - item ${itemIndex + 1} has ${itemCopies} copies`)
       
       // Tạo template data cho sản phẩm này
-                                    const templateData = prepareTemplateData(item, (selectedPrintSize === 'v1' || selectedPrintSize === 'v2') ? labelQuantity : undefined)
+                                    const templateData = prepareTemplateData(item, (selectedPrintSize === 'v1' || selectedPrintSize === 'v2' || selectedPrintSize === 'v3') ? labelQuantity : undefined)
       
       // Tạo nhiều bản in cho sản phẩm này
       for (let copyIndex = 0; copyIndex < itemCopies; copyIndex++) {
@@ -1959,15 +1987,15 @@ export default function PrintSelectPage() {
                 </p>
               </div>
 
-              {/* Trường input số lượng nhãn - chỉ hiển thị với template v1 và v2 */}
-              {(selectedPrintSize === 'v1' || selectedPrintSize === 'v2') && (
+              {/* Trường input số lượng nhãn - chỉ hiển thị với template v1, v2 và v3 */}
+              {(selectedPrintSize === 'v1' || selectedPrintSize === 'v2' || selectedPrintSize === 'v3') && (
                 <div className="space-y-2">
                   <Label htmlFor="label-quantity">{t('printSelect.printDialog.settings.labelQuantity')}</Label>
                   <Input
                     id="label-quantity"
                     type="number"
                     min="1"
-                    max="6"
+                    max={getMaxQuantity(selectedPrintSize)}
                     value={labelQuantityInput}
                     onChange={(e) => {
                       const value = e.target.value;
@@ -1976,21 +2004,26 @@ export default function PrintSelectPage() {
                       // Cập nhật labelQuantity nếu giá trị hợp lệ
                       if (value !== '') {
                         const numValue = Number.parseInt(value);
-                        if (!isNaN(numValue) && numValue >= 1 && numValue <= 6) {
+                        const maxQuantity = getMaxQuantity(selectedPrintSize);
+                        if (!isNaN(numValue) && numValue >= 1 && numValue <= maxQuantity) {
                           setLabelQuantity(numValue);
                         }
                       }
                     }}
                     onBlur={(e) => {
                       const value = e.target.value;
-                      if (value === '' || Number.parseInt(value) < 1 || Number.parseInt(value) > 6) {
+                      const maxQuantity = getMaxQuantity(selectedPrintSize);
+                      if (value === '' || Number.parseInt(value) < 1 || Number.parseInt(value) > maxQuantity) {
                         // Reset về giá trị hợp lệ khi blur
                         setLabelQuantityInput(labelQuantity.toString());
                       }
                     }}
                   />
                   <p className="text-xs text-muted-foreground">
-                    {t('printSelect.printDialog.settings.labelQuantityDescription')}
+                    {selectedPrintSize === 'v3' 
+                      ? t('printSelect.printDialog.settings.labelQuantityDescription').replace('1-6', '1-4').replace('6', '4')
+                      : t('printSelect.printDialog.settings.labelQuantityDescription')
+                    }
                   </p>
                 </div>
               )}
@@ -2062,7 +2095,7 @@ export default function PrintSelectPage() {
                             .map((item: any, itemIndex: number) => {
                               // Sử dụng template system mới
                               const selectedTemplate = printFormats.find((f: any) => f.id === selectedPrintFormat)?.template
-                              const templateData = prepareTemplateData(item, (selectedPrintSize === 'v1' || selectedPrintSize === 'v2') ? labelQuantity : undefined)
+                              const templateData = prepareTemplateData(item, (selectedPrintSize === 'v1' || selectedPrintSize === 'v2' || selectedPrintSize === 'v3') ? labelQuantity : undefined)
                               const template = getTemplate(selectedPrintSize)
                               const previewHTML = template(templateData)
                               
