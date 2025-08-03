@@ -104,8 +104,8 @@ export default function PrintSelectPage() {
   // Reset labelQuantity khi chuyển template
   const handlePrintSizeChange = (size: string) => {
     setSelectedPrintSize(size)
-    // Reset labelQuantity về 6 khi chuyển từ v1 sang template khác
-    if (size !== 'v1') {
+    // Reset labelQuantity về 6 khi chuyển từ v1 hoặc v2 sang template khác
+    if (size !== 'v1' && size !== 'v2') {
       setLabelQuantity(6)
       setLabelQuantityInput('6')
     }
@@ -462,7 +462,7 @@ export default function PrintSelectPage() {
       console.log(`Debug - item ${itemIndex + 1} has ${itemCopies} copies`)
       
       // Tạo template data cho sản phẩm này
-                                    const templateData = prepareTemplateData(item, selectedPrintSize === 'v1' ? labelQuantity : undefined)
+                                    const templateData = prepareTemplateData(item, (selectedPrintSize === 'v1' || selectedPrintSize === 'v2') ? labelQuantity : undefined)
       
       // Tạo nhiều bản in cho sản phẩm này
       for (let copyIndex = 0; copyIndex < itemCopies; copyIndex++) {
@@ -1959,8 +1959,8 @@ export default function PrintSelectPage() {
                 </p>
               </div>
 
-              {/* Trường input số lượng nhãn - chỉ hiển thị với template v1 */}
-              {selectedPrintSize === 'v1' && (
+              {/* Trường input số lượng nhãn - chỉ hiển thị với template v1 và v2 */}
+              {(selectedPrintSize === 'v1' || selectedPrintSize === 'v2') && (
                 <div className="space-y-2">
                   <Label htmlFor="label-quantity">{t('printSelect.printDialog.settings.labelQuantity')}</Label>
                   <Input
@@ -2062,7 +2062,7 @@ export default function PrintSelectPage() {
                             .map((item: any, itemIndex: number) => {
                               // Sử dụng template system mới
                               const selectedTemplate = printFormats.find((f: any) => f.id === selectedPrintFormat)?.template
-                              const templateData = prepareTemplateData(item, selectedPrintSize === 'v1' ? labelQuantity : undefined)
+                              const templateData = prepareTemplateData(item, (selectedPrintSize === 'v1' || selectedPrintSize === 'v2') ? labelQuantity : undefined)
                               const template = getTemplate(selectedPrintSize)
                               const previewHTML = template(templateData)
                               
