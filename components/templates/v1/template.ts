@@ -14,7 +14,11 @@ export const v1Template = (data: {
   pt_product_code: string;
   pt_original_price: string;
   unit_price_info: string;
+  quantity?: number; // Thêm tham số quantity
 }) => {
+  // Xử lý quantity với validation
+  const quantity = Math.min(Math.max(data.quantity || 6, 1), 6); // Min: 1, Max: 6, Default: 6
+
   // Hàm chọn class dựa trên độ dài giá (cho giá khuyến mãi)
   const getPriceClass = (price: string) => {
     if (!price) return 'ft16';
@@ -69,6 +73,32 @@ export const v1Template = (data: {
     const adjustedTop = baseTop + heightDiff + 0.5;
     
     return `${adjustedTop}rem`;
+  };
+
+  // Hàm tạo section với offset
+  const createSection = (offset: number = 0) => {
+    const originalPriceTop = getOriginalPriceTop(data.price);
+    
+    return `<div style="position: relative; top: ${offset}rem;">
+<img src="/v1p.png" alt="background image"/>
+<p style="position:absolute;top:0.9rem;left:3.4375rem;white-space:normal;text-align:left;max-width:10.5rem;line-height:0.9;" class="ft10 brand-text">${data.pt_brand}</p>
+<p style="position:absolute;top:0.4375rem;left:16.75rem;white-space:nowrap" class="ft11">${data.product_name}</p>
+<p style="position:absolute;top:1.9375rem;left:30.8125rem;white-space:nowrap" class="ft12">${data.pt_original_price}:</p>
+<p style="position:absolute;top:2.4rem;left:17rem;white-space:nowrap;font-weight:bold" class="ft13">${data.discount_percentage}</p>
+<p style="position:absolute;top:${originalPriceTop};left:32rem;white-space:nowrap" class="${getOriginalPriceClass(data.price)}">${data.price.replace(/(\d+)(\s*[^\d\s]+)$/, '$1')}${data.price_decimal ? `<span class="decimal-superscript">&thinsp;${data.price_decimal}</span>` : ''}</p>
+<p style="position:absolute;top:0.6rem;right:2rem;white-space:nowrap;text-align:right;" class="${getPriceClass(data.price_sale)}">${data.price_sale.replace(/(\d+)(\s*[^\d\s]+)$/, '$1')}&thinsp;<span style="display:inline-block;vertical-align:top;line-height:0.8;margin-top:0.4em;"><span style="display:block;font-size:0.4em;margin:0;">${data.price_sale_decimal || '&nbsp;'}</span><span style="display:block;font-size:0.25em;margin:0;margin-top:0.2em;margin-right:0.5em;">${data.price_sale.match(/(\s*[^\d\s]+)$/)?.[1] || '&nbsp;'}&nbsp;</span></span></p>
+<p style="position:absolute;top:9.2rem;right:1rem;white-space:nowrap;text-align:right;font-weight:600;font-size:0.875rem;font-family:'Sriracha',cursive;" class="ft11">${data.unit_price_info}&nbsp;</p>
+<p style="position:absolute;top:8rem;left:16.75rem;white-space:nowrap" class="ft111">${data.pt_origin_country}: ${data.country_code} ${data.country_name}<br/><span class="ft111-inter">${data.pt_product_code}: ${data.product_code}</span></p>
+</div>`;
+  };
+
+  // Hàm tạo tất cả sections dựa trên quantity
+  const createAllSections = () => {
+    let sections = '';
+    for (let i = 0; i < quantity; i++) {
+      sections += createSection(i);
+    }
+    return sections;
   };
 
   const priceClass = getPriceClass(data.price_sale);
@@ -255,15 +285,7 @@ export const v1Template = (data: {
 </head>
 <body bgcolor="#A0A0A0" vlink="blue" link="blue">
 <div id="page1-div">
-<img src="/v1s.png" alt="background image"/>
-<p style="position:absolute;top:0.9rem;left:3.4375rem;white-space:normal;text-align:left;max-width:10.5rem;line-height:0.9;" class="ft10 brand-text">${data.pt_brand}</p>
-<p style="position:absolute;top:0.4375rem;left:16.75rem;white-space:nowrap" class="ft11">${data.product_name}</p>
-<p style="position:absolute;top:1.9375rem;left:30.8125rem;white-space:nowrap" class="ft12">${data.pt_original_price}:</p>
-<p style="position:absolute;top:2.4rem;left:17rem;white-space:nowrap;font-weight:bold" class="ft13">${data.discount_percentage}</p>
-<p style="position:absolute;top:${originalPriceTop};left:32rem;white-space:nowrap" class="${originalPriceClass}">${data.price.replace(/(\d+)(\s*[^\d\s]+)$/, '$1')}${data.price_decimal ? `<span class="decimal-superscript">&thinsp;${data.price_decimal}</span>` : ''}</p>
-<p style="position:absolute;top:0.6rem;right:2rem;white-space:nowrap;text-align:right;" class="${priceClass}">${data.price_sale.replace(/(\d+)(\s*[^\d\s]+)$/, '$1')}&thinsp;<span style="display:inline-block;vertical-align:top;line-height:0.8;margin-top:0.4em;"><span style="display:block;font-size:0.4em;margin:0;">${data.price_sale_decimal || '&nbsp;'}</span><span style="display:block;font-size:0.25em;margin:0;margin-top:0.2em;margin-right:0.5em;">${data.price_sale.match(/(\s*[^\d\s]+)$/)?.[1] || '&nbsp;'}&nbsp;</span></span></p>
-<p style="position:absolute;top:9.2rem;right:1rem;white-space:nowrap;text-align:right;font-weight:600;font-size:0.875rem;font-family:'Sriracha',cursive;" class="ft11">${data.unit_price_info}&nbsp;</p>
-<p style="position:absolute;top:8rem;left:16.75rem;white-space:nowrap" class="ft111">${data.pt_origin_country}: ${data.country_code} ${data.country_name}<br/><span class="ft111-inter">${data.pt_product_code}: ${data.product_code}</span></p>
+${createAllSections()}
 </div>
 </body>
 </html>`;
