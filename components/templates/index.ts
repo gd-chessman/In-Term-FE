@@ -32,6 +32,8 @@ export interface TemplateData {
   // Thông tin đơn vị giá
   unit_price_info: string;
   product_info: string;
+  // Số lượng nhãn trong 1 trang (chỉ áp dụng cho template v1)
+  quantity?: number;
   // Các trường tùy chọn
   ps_option_1?: string;
   ps_option_2?: string;

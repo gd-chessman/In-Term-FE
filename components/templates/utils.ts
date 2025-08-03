@@ -35,10 +35,12 @@ export const generateMultipleProductsHTML = (format: string, products: TemplateD
 /**
  * Chuẩn bị dữ liệu template từ dữ liệu sản phẩm
  * @param product - Dữ liệu sản phẩm từ API
+ * @param quantity - Số lượng nhãn trong 1 trang (chỉ áp dụng cho template v1)
  * @returns TemplateData
  */
 export const prepareTemplateData = (
-  product: any
+  product: any,
+  quantity?: number
 ): TemplateData => {
   console.log(product)
   
@@ -150,6 +152,8 @@ export const prepareTemplateData = (
     unit_price_info: calculateUnitPrice(),
     product_info: product.product?.product_info || '',
     pt_vendor: product.templates?.pt_vendor || '',
+    // Số lượng nhãn trong 1 trang (chỉ áp dụng cho template v1)
+    quantity: quantity,
     // Các trường tùy chọn
     ps_option_1: product.templates?.ps_option_1 || '',
     ps_option_2: product.templates?.ps_option_2 || '',

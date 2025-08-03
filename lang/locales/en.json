@@ -1612,6 +1612,8 @@
         "labelTemplate": "Label template I4",
         "copies": "Number of copies",
         "quantityFromConfig": "Quantity taken from {size} print configuration",
+        "labelQuantity": "Number of labels per page",
+        "labelQuantityDescription": "Number of labels to be printed on one page (1-6, default: 6)",
         "printInfo": "Print information",
         "totalPages": "Total pages",
         "printNote": "Print note (optional)",

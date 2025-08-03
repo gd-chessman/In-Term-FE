@@ -1588,6 +1588,8 @@
         "labelTemplate": "Mẫu nhãn I4",
         "copies": "Số bản in",
         "quantityFromConfig": "Số lượng được lấy từ cấu hình in khổ {size}",
+        "labelQuantity": "Số lượng nhãn trong 1 trang",
+        "labelQuantityDescription": "Số lượng nhãn sẽ được in trên 1 trang (từ 1-6, mặc định: 6)",
         "printInfo": "Thông tin in",
         "totalPages": "Tổng số trang",
         "printNote": "Ghi chú in (tùy chọn)",

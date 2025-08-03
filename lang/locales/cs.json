@@ -1590,6 +1590,8 @@
         "labelTemplate": "Šablona štítku I4",
         "copies": "Počet kopií",
         "quantityFromConfig": "Množství převzato z konfigurace tisku {size}",
+        "labelQuantity": "Počet štítků na stránku",
+        "labelQuantityDescription": "Počet štítků, které budou vytištěny na jedné stránce (1-6, výchozí: 6)",
         "printInfo": "Informace o tisku",
         "totalPages": "Celkem stránek",
         "printNote": "Poznámka k tisku (volitelné)",

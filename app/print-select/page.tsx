@@ -100,8 +100,20 @@ export default function PrintSelectPage() {
   const [selectedPrintFormat, setSelectedPrintFormat] = useState("")
 
   const [selectedPrintSize, setSelectedPrintSize] = useState("a4")
+
+  // Reset labelQuantity khi chuyển template
+  const handlePrintSizeChange = (size: string) => {
+    setSelectedPrintSize(size)
+    // Reset labelQuantity về 6 khi chuyển từ v1 sang template khác
+    if (size !== 'v1') {
+      setLabelQuantity(6)
+      setLabelQuantityInput('6')
+    }
+  }
   const [printCopies, setPrintCopies] = useState(1)
   const [selectedPrintCopies, setSelectedPrintCopies] = useState(1)
+  const [labelQuantity, setLabelQuantity] = useState(6) // Số lượng nhãn trong 1 trang (chỉ cho v1)
+  const [labelQuantityInput, setLabelQuantityInput] = useState('6') // Giá trị input tạm thời
   const [printNote, setPrintNote] = useState("")
   const [isEditNumDialogOpen, setIsEditNumDialogOpen] = useState(false)
   const [editingNumData, setEditingNumData] = useState({
@@ -450,7 +462,7 @@ export default function PrintSelectPage() {
       console.log(`Debug - item ${itemIndex + 1} has ${itemCopies} copies`)
       
       // Tạo template data cho sản phẩm này
-      const templateData = prepareTemplateData(item)
+                                    const templateData = prepareTemplateData(item, selectedPrintSize === 'v1' ? labelQuantity : undefined)
       
       // Tạo nhiều bản in cho sản phẩm này
       for (let copyIndex = 0; copyIndex < itemCopies; copyIndex++) {
@@ -1867,7 +1879,7 @@ export default function PrintSelectPage() {
 
               <div className="space-y-2">
                 <Label htmlFor="print-size">{t('printSelect.printDialog.settings.printSize')}</Label>
-                <Select value={selectedPrintSize} onValueChange={setSelectedPrintSize}>
+                <Select value={selectedPrintSize} onValueChange={handlePrintSizeChange}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
@@ -1946,6 +1958,42 @@ export default function PrintSelectPage() {
                   {t('printSelect.printDialog.settings.quantityFromConfig', { size: selectedPrintSize.toUpperCase() })}
                 </p>
               </div>
+
+              {/* Trường input số lượng nhãn - chỉ hiển thị với template v1 */}
+              {selectedPrintSize === 'v1' && (
+                <div className="space-y-2">
+                  <Label htmlFor="label-quantity">{t('printSelect.printDialog.settings.labelQuantity')}</Label>
+                  <Input
+                    id="label-quantity"
+                    type="number"
+                    min="1"
+                    max="6"
+                    value={labelQuantityInput}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      setLabelQuantityInput(value); // Cho phép nhập bất kỳ giá trị nào
+                      
+                      // Cập nhật labelQuantity nếu giá trị hợp lệ
+                      if (value !== '') {
+                        const numValue = Number.parseInt(value);
+                        if (!isNaN(numValue) && numValue >= 1 && numValue <= 6) {
+                          setLabelQuantity(numValue);
+                        }
+                      }
+                    }}
+                    onBlur={(e) => {
+                      const value = e.target.value;
+                      if (value === '' || Number.parseInt(value) < 1 || Number.parseInt(value) > 6) {
+                        // Reset về giá trị hợp lệ khi blur
+                        setLabelQuantityInput(labelQuantity.toString());
+                      }
+                    }}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    {t('printSelect.printDialog.settings.labelQuantityDescription')}
+                  </p>
+                </div>
+              )}
               <div className="space-y-2">
                 <Label>{t('printSelect.printDialog.settings.printInfo')}</Label>
                 <div className="text-sm text-muted-foreground">
@@ -2014,7 +2062,7 @@ export default function PrintSelectPage() {
                             .map((item: any, itemIndex: number) => {
                               // Sử dụng template system mới
                               const selectedTemplate = printFormats.find((f: any) => f.id === selectedPrintFormat)?.template
-                              const templateData = prepareTemplateData(item)
+                              const templateData = prepareTemplateData(item, selectedPrintSize === 'v1' ? labelQuantity : undefined)
                               const template = getTemplate(selectedPrintSize)
                               const previewHTML = template(templateData)
                               
